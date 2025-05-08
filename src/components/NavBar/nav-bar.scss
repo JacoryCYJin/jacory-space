@@ -1,0 +1,54 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 15rem;
+  border-bottom: #929292 1px dotted;  
+
+  &-left {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    height: 100%;
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding-left: 2rem;
+      font-size: 25px;
+      font-weight: bold;
+      font-family: "汇文明朝体", "微软雅黑", "思源黑体", sans-serif;
+    }
+    
+    .navbar-links {
+      display: flex;
+      height: 100%;
+      margin-left: 2rem;
+
+      .navbar-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 0 1.25rem;
+        cursor: pointer;
+        font-size: 18px;
+        font-family: "SimSun", "宋体", "NSimSun", "FangSong", "仿宋", serif;
+        transition: opacity 0.2s ease-in-out;
+        
+
+        &:hover {
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+
+  @font-face {
+    font-family: "汇文明朝体";
+    src: url("/fonts/汇文明朝体.otf");
+  }
+}
