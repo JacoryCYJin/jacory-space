@@ -1,0 +1,24 @@
+.page-header {
+  text-align: center;
+  margin: 2rem 0 3rem;
+  
+  .page-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-family: "汇文明朝体", "SimSun", "宋体", serif;
+  }
+  
+  .page-subtitle {
+    font-size: 1.25rem;
+    color: #666;
+  }
+}
+
+// 深色模式支持
+.dark {
+  .page-header {
+    .page-subtitle {
+      color: #aaa;
+    }
+  }
+}

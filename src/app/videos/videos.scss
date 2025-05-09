@@ -5,24 +5,6 @@
   font-family: "SimSun", "宋体", serif;
 }
 
-// 视频页面头部
-.videos-header {
-  text-align: center;
-  margin: 2rem 0 3rem;
-  
-  .videos-title {
-    font-size: 2.5rem;
-    // font-weight: bold;
-    margin-bottom: 1rem;
-    font-family: "汇文明朝体", "SimSun", "宋体", serif;
-  }
-  
-  .videos-subtitle {
-    font-size: 1.25rem;
-    color: #666;
-  }
-}
-
 // B站个人信息展示
 .bilibili-intro {
   display: flex;
@@ -276,7 +258,7 @@
     color: #f0f0f0;
   }
   
-  .videos-header .videos-subtitle {
+  .videos-subtitle {
     color: #aaa;
   }
   

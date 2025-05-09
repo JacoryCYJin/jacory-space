@@ -5,6 +5,7 @@ import Image from 'next/image';
 // import Link from 'next/link';
 import './videos.scss';
 import PageQuote from '@/components/PageQuote/PageQuote';
+import PageHeader from '@/components/PageHeader/PageHeader';
 
 // 视频数据类型定义
 interface Video {
@@ -62,7 +63,7 @@ const VideosPage = () => {
       },
       {
         id: 'BV4Lp4y1v7Mh',
-        title: '云南之旅 - 探寻丽江古城的人文风景',
+        title: '云南之旅 - 探寻丽江古城人文风景',
         cover: '/images/videos/lijiang-travel.jpg',
         url: 'https://www.bilibili.com/video/BV4Lp4y1v7Mh',
         date: '2023-09-12',
@@ -108,10 +109,10 @@ const VideosPage = () => {
   
   return (
     <div className="videos-container">
-      <section className="videos-header">
-        <h1 className="videos-title">视频创作</h1>
-        <p className="videos-subtitle">分享技术、设计与生活的点滴思考</p>
-      </section>
+      <PageHeader 
+        title="流光片羽" 
+        subtitle="分享技术、设计与生活的点滴思考" 
+      />
       
       <section className="bilibili-intro">
         <div className="bilibili-avatar">

@@ -5,23 +5,6 @@
   font-family: "SimSun", "宋体", serif;
 }
 
-// 页面标题区域
-.works-header {
-  text-align: center;
-  margin-bottom: 3rem;
-  
-  .works-title {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-    font-family: "汇文明朝体", "SimSun", "宋体", serif;
-  }
-  
-  .works-subtitle {
-    font-size: 1.1rem;
-    color: #666;
-  }
-}
-
 // 项目网格
 .projects-grid {
   display: grid;
@@ -154,12 +137,6 @@
     color: #f0f0f0;
   }
   
-  .works-header {
-    .works-subtitle {
-      color: #aaa;
-    }
-  }
-  
   .project-card {
     border-color: #333;
     
@@ -212,17 +189,6 @@
 
 // 响应式设计
 @media (max-width: 768px) {
-  .works-header {
-    margin-bottom: 2rem;
-    
-    .works-title {
-      font-size: 2rem;
-    }
-    
-    .works-subtitle {
-      font-size: 1rem;
-    }
-  }
   
   .projects-grid {
     grid-template-columns: 1fr;

@@ -5,9 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import './works.scss';
 import PageQuote from '@/components/PageQuote/PageQuote';
+import PageHeader from '@/components/PageHeader/PageHeader';
 
 const WorksPage = () => {
-  // 项目数据，将来可以从API或数据库获取
   const projects = [
     {
       id: 1,
@@ -23,10 +23,10 @@ const WorksPage = () => {
 
   return (
     <div className="works-container">
-      <section className="works-header">
-        <h1 className="works-title">拙作小集</h1>
-        <p className="works-subtitle">记录我的创作与实践</p>
-      </section>
+      <PageHeader 
+        title="拙作小集" 
+        subtitle="记录我的创作与实践" 
+      />
 
       {projects.length > 0 ? (
         <section className="projects-grid">

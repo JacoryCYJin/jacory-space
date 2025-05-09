@@ -3,14 +3,12 @@
 import React from 'react';
 import Image from 'next/image';
 import './views.scss';
+import PageHeader from '@/components/PageHeader/PageHeader';
 
 const ViewsPage = () => {
   return (
     <div className="views-container">
-      <section className="views-header">
-        <h1 className="views-title">寸心之介</h1>
-        <p className="views-subtitle">技术与人文的交融者</p>
-      </section>
+      <PageHeader title="寸心之介" subtitle="技术与人文的交融者" />
 
       <div className="profile-section">
         <div className="profile-image-container">
