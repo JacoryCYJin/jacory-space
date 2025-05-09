@@ -28,6 +28,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: "微软雅黑", "思源黑体", Arial, Helvetica, sans-serif;
+  padding-top: 60px; /* 添加与导航栏高度相同的顶部内边距 */
 }
 
 a {

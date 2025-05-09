@@ -5,6 +5,13 @@
   height: 60px;
   padding: 0 15rem;
   border-bottom: #929292 1px dotted;  
+  position: fixed; /* 添加固定定位 */
+  top: 0; /* 固定在顶部 */
+  left: 0; /* 左侧对齐 */
+  right: 0; /* 右侧对齐 */
+  width: 100%; /* 宽度100% */
+  z-index: 1000; /* 确保导航栏在其他元素上方 */
+  background: var(--background); /* 使用与body相同的背景色 */
 
   &-left {
     display: flex;
