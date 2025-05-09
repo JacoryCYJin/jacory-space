@@ -34,14 +34,15 @@
         justify-content: center;
         height: 100%;
         padding: 0 1.25rem;
-        cursor: pointer;
+        color: #333;
         font-size: 18px;
         font-family: "SimSun", "宋体", "NSimSun", "FangSong", "仿宋", serif;
-        transition: opacity 0.2s ease-in-out;
+        cursor: pointer;
+        transition: color 0.2s ease-in-out;
         
 
         &:hover {
-          opacity: 0.7;
+          color: #666;
         }
       }
     }

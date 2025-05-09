@@ -1,0 +1,112 @@
+.footer {
+  padding: 3rem 2rem 1.5rem;
+  background-color: #f8f8f8;
+  border-top: 1px dotted #929292;
+  font-family: "SimSun", "宋体", serif;
+  
+  &-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 2rem;
+  }
+  
+  &-section {
+    flex: 1;
+    min-width: 250px;
+  }
+  
+  &-title {
+    font-size: 1.27rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    font-family: "汇文明朝体", "SimSun", "宋体", serif;
+  }
+  
+  &-quote {
+    font-style: italic;
+    margin-top: 0.5rem;
+    color: #666;
+    font-size: 16px;
+  }
+  
+  &-links, &-contact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 16px;
+    
+    li {
+      margin-bottom: 0.75rem;
+      
+      a {
+        color: #333;
+        text-decoration: none;
+        transition: color 0.2s ease-in-out;
+        
+        &:hover {
+          color: #666;
+        }
+      }
+    }
+  }
+  
+  &-bottom {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    text-align: center;
+    border-top: 1px solid #eaeaea;
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  // 深色模式支持
+  .dark & {
+    background-color: #1a1a1a;
+    border-top: 1px dotted #555;
+    
+    &-title {
+      color: #f0f0f0;
+    }
+    
+    &-quote {
+      color: #aaa;
+    }
+    
+    &-links, &-contact {
+      li a {
+        color: #ddd;
+        text-decoration: none;
+        
+        &:hover {
+          color: #fff;
+        }
+      }
+    }
+    
+    &-bottom {
+      border-top: 1px solid #333;
+      color: #aaa;
+    }
+  }
+  
+  // 响应式设计
+  @media (max-width: 768px) {
+    padding: 2rem 1rem 1rem;
+    
+    &-content {
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    
+    &-section {
+      min-width: 100%;
+    }
+    
+    &-bottom {
+      margin-top: 2rem;
+    }
+  }
+}
