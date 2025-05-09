@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import './globals.scss';
 import NavBar from '@/components/NavBar/NavBar';
 import Footer from '@/components/Footer/Footer';
+import ScrollToTop from '@/components/ScrollToTop/ScrollToTop';
 
 export const metadata: Metadata = {
   title: '芥子不才',
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body className="antialiased flex-row">
         <NavBar />
         <main className="">{children}</main>
+        <ScrollToTop />
         <Footer />
       </body>
     </html>

@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import './works.scss';
+import PageQuote from '@/components/PageQuote/PageQuote';
 
 const WorksPage = () => {
   // 项目数据，将来可以从API或数据库获取
@@ -71,11 +72,8 @@ const WorksPage = () => {
         </section>
       )}
 
-      <section className="works-quote">
-        <blockquote>
-          <p>创作是一种自我对话，也是与世界的交流。</p>
-          <cite>— 芥子不才</cite>
-        </blockquote>
+      <section>
+        <PageQuote text="创作是一种自我对话，也是与世界的交流。" />
       </section>
     </div>
   );

@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import './home.scss';
+import PageQuote from '@/components/PageQuote/PageQuote';
 
 const HomePage = () => {
   return (
@@ -107,11 +108,8 @@ const HomePage = () => {
       </section>
 
       {/* 引言区域 */}
-      <section className="quote-section">
-        <blockquote>
-          <p>生如夏花之绚烂，死如秋叶之静美。</p>
-          <cite>— 三岛由纪夫</cite>
-        </blockquote>
+      <section>
+        <PageQuote text="生如夏花之绚烂，死如秋叶之静美。" author='三岛由纪夫'/>
       </section>
     </div>
   );

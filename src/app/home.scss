@@ -171,32 +171,6 @@
   }
 }
 
-// 引言区域
-.quote-section {
-  margin: 4rem 0;
-  text-align: center;
-  
-  blockquote {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: #f9f9f9;
-    border-left: 4px solid #ddd;
-    
-    p {
-      font-size: 1.25rem;
-      line-height: 1.8;
-      margin-bottom: 1rem;
-      font-style: italic;
-    }
-    
-    cite {
-      font-size: 0.95rem;
-      color: #666;
-    }
-  }
-}
-
 // 深色模式支持
 .dark {
   .home-container {
@@ -246,15 +220,6 @@
       }
     }
   }
-  
-  .quote-section blockquote {
-    background-color: #282c34;
-    border-left-color: #444;
-    
-    cite {
-      color: #aaa;
-    }
-  }
 }
 
 // 响应式设计
@@ -281,10 +246,6 @@
     .section-title {
       font-size: 1.5rem;
     }
-  }
-  
-  .quote-section blockquote p {
-    font-size: 1.1rem;
   }
 }
 
