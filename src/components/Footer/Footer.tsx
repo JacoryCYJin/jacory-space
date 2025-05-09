@@ -18,19 +18,18 @@ const Footer = () => {
           <ul className="footer-links">
             <li>
               <Link href="/">晴窗小坐</Link>
-              {/* <p className="link-description">网站首页：展示个人简介、最新动态或精选内容</p> */}
             </li>
             <li>
-              <Link href="/">拙作小集</Link>
-              {/* <p className="link-description">项目展示：列出完成的作品、项目或创作</p> */}
+              <Link href="/works">拙作小集</Link>
             </li>
             <li>
-              <Link href="/">闲笔偶记</Link>
-              {/* <p className="link-description">博客/日志：个人随笔、技术笔记、生活感悟</p> */}
+              <Link href="/videos">流光片羽</Link>
             </li>
             <li>
-              <Link href="/">寸心之介</Link>
-              {/* <p className="link-description">关于我与联系方式：个人经历、技能及联系信息</p> */}
+              <Link href="/blogs">闲笔偶记</Link>
+            </li>
+            <li>
+              <Link href="/views">寸心之介</Link>
             </li>
           </ul>
         </div>
@@ -46,6 +45,10 @@ const Footer = () => {
       
       <div className="footer-bottom">
         <p>© {currentYear} 芥子不才 | 文以载道，技以致用</p>
+        <div className="visitor-count">
+          <span className="visitor-number">1024</span>
+          <span className="visitor-text">访客</span>
+        </div>
       </div>
     </footer>
   );

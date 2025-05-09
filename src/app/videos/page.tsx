@@ -116,7 +116,7 @@ const VideosPage = () => {
       <section className="bilibili-intro">
         <div className="bilibili-avatar">
           <Image 
-            src="/images/bilibili-avatar.jpg" 
+            src="/images/avatar.jpg" 
             alt="B站头像" 
             width={80} 
             height={80} 
@@ -141,7 +141,7 @@ const VideosPage = () => {
             </div>
           </div>
           <a 
-            href="https://space.bilibili.com/your-id" 
+            href="https://space.bilibili.com/3546642829543497?spm_id_from=333.1007.0.0" 
             target="_blank" 
             rel="noopener noreferrer"
             className="bilibili-link"
