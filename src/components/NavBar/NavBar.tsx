@@ -51,7 +51,7 @@ const NavBar = () => {
           <Link href="/works" className={`navbar-link ${isActive('/works') ? 'active' : ''}`}>
             拙作小集
           </Link>
-          <Link href="/subusuji" className={`navbar-link ${isActive('/subusuji') ? 'active' : ''}`}>
+          <Link href="/blogs" className={`navbar-link ${isActive('/blogs') ? 'active' : ''}`}>
             闲笔偶记
           </Link>
           <Link href="/views" className={`navbar-link ${isActive('/views') ? 'active' : ''}`}>

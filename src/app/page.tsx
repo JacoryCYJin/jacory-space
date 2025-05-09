@@ -50,7 +50,7 @@ const HomePage = () => {
             </p>
           </Link>
 
-          <Link href="/subusuji" className="explanation-item">
+          <Link href="/blogs" className="explanation-item">
             <h3>闲笔偶记</h3>
             <p className="explanation-content">
               博客/日志页：个人随笔、技术笔记、生活感悟等不定期更新的文字记录。
@@ -77,7 +77,7 @@ const HomePage = () => {
             <p className="post-excerpt">
               探讨现代技术发展如何与传统人文思想相互影响，从而创造出更有温度的数字体验...
             </p>
-            <Link href="/subusuji/1" className="read-more">
+            <Link href="/blogs/1" className="read-more">
               继续阅读 →
             </Link>
           </div>
@@ -88,7 +88,7 @@ const HomePage = () => {
             <p className="post-excerpt">
               留白不仅是视觉上的空间，更是一种哲学思考。本文探讨东方美学中的留白概念如何应用于现代设计...
             </p>
-            <Link href="/subusuji/2" className="read-more">
+            <Link href="/blogs/2" className="read-more">
               继续阅读 →
             </Link>
           </div>
@@ -99,7 +99,7 @@ const HomePage = () => {
             <p className="post-excerpt">
               一次意外的旅行，一场偶然的相遇，有时最美好的记忆往往来自计划之外的惊喜...
             </p>
-            <Link href="/subusuji/3" className="read-more">
+            <Link href="/blogs/3" className="read-more">
               继续阅读 →
             </Link>
           </div>

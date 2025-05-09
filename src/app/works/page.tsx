@@ -12,7 +12,7 @@ const WorksPage = () => {
       id: 1,
       title: "个人博客空间",
       description: "使用Next.js构建的个人博客网站，融合了传统文学气息与现代技术实现。",
-      image: "/images/projects/blog.jpg",
+      image: "/images/avatar.jpg",
       tags: ["Next.js", "React", "SCSS", "响应式设计"],
       link: "/works/blog",
       date: "2023年12月"
