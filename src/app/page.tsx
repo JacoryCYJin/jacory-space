@@ -35,7 +35,7 @@ const HomePage = () => {
 
       {/* 导航解释区域 */}
       <section className="nav-explanation">
-        <h2 className="section-title">四方之境</h2>
+        <h2 className="section-title">闲庭五叙</h2>
         <div className="explanation-grid">
           <Link href="/" className="explanation-item">
             <h3>晴窗小坐</h3>
@@ -43,11 +43,18 @@ const HomePage = () => {
               网站首页：展示个人简介、最新动态或精选内容，相当于网站的&quot;门面&quot;入口。
             </p>
           </Link>
-
-          <Link href="/riyueyue" className="explanation-item">
+          
+          <Link href="/works" className="explanation-item">
             <h3>拙作小集</h3>
             <p className="explanation-content">
               项目展示页：列出完成的作品、项目或创作（如设计、代码、文章等），分类呈现并可跳转至详情。
+            </p>
+          </Link>
+
+          <Link href="/videos" className="explanation-item">
+            <h3>流光片羽</h3>
+            <p className="explanation-content">
+              视频创作：分享我的视频内容，记录技术分享、生活感悟和创作历程。
             </p>
           </Link>
 

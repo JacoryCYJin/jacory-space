@@ -69,8 +69,8 @@
   
   .explanation-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 1.5rem;
   }
   
   .explanation-item {
@@ -279,5 +279,31 @@
     .hero-title-container {
       text-align: center;
     }
+  }
+}
+
+@media (max-width: 1100px) {
+  .explanation-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .explanation-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .nav-explanation, .latest-posts {
+    margin: 3rem 0;
+    
+    .section-title {
+      font-size: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .explanation-grid {
+    grid-template-columns: 1fr !important;
   }
 }
