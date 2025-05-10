@@ -12,35 +12,87 @@ const ViewsPage = () => {
 
       <div className="profile-section">
         <div className="profile-image-container">
-          <Image 
-            src="/images/avatar.jpg" 
-            alt="金诚悦" 
-            width={200} 
-            height={200} 
+          <Image
+            src="/images/avatar.jpg"
+            alt="金诚悦"
+            width={200}
+            height={200}
             className="profile-image"
           />
         </div>
         <div className="profile-info">
           <h2>金诚悦</h2>
           <p className="profile-bio">
-            计算机科学与技术专业毕业，热衷于前后端技术的探索与实践。擅长将技术与用户体验相结合，
-            打造高效、美观、易用的应用系统。对智能化交通管理与数据可视化领域有深入研究。
+            热衷于技术与人文的交融，在编程世界和创意领域之间寻找平衡。通过博客和视频分享技术见解、设计思考和生活感悟，
+            希望用文字和影像记录成长，也为他人提供有价值的内容。
           </p>
-          <div className="profile-details">
-            <div className="detail-item">
-              <span className="detail-label">所在地</span>
-              <span className="detail-value">上海</span>
-            </div>
-            <div className="detail-item">
-              <span className="detail-label">邮箱</span>
-              <span className="detail-value">chengyuejin@outlook.com</span>
-            </div>
+          <p className="profile-bio">
+            <span>邮箱：chengyuejin@outlook.com</span>
+            <span>电话：19821269277</span>
+          </p>
+          <div className="profile-social">
+            <a href="/blog" className="social-link">
+              博客文章
+            </a>
+            <a href="/videos" className="social-link">
+              视频创作
+            </a>
+            <a href="/projects" className="social-link">
+              项目作品
+            </a>
           </div>
         </div>
       </div>
 
+      <section className="about-section">
+        <h2 className="section-title">关于我</h2>
+        <div className="about-content">
+          <p>
+            上海电力大学计算机科学与技术专业在读，热衷于前后端技术的探索与实践。擅长将技术与用户体验相结合，打造高效、美观、易用的应用系统。
+          </p>
+          <p>
+            同时，我也是一名内容创作者，在B站以&quot;芥子不才&quot;的名义分享技术教程和生活记录，希望通过视频形式传递知识和思考。
+          </p>
+          <p>
+            在博客中，我记录学习心得、技术分析和对行业的思考，用文字构建自己的知识体系，也希望能为读者提供有价值的参考。
+          </p>
+        </div>
+      </section>
+
+      <section className="content-section">
+        <h2 className="section-title">内容创作</h2>
+        <div className="content-cards">
+          <div className="content-card">
+            <div className="card-icon">📝</div>
+            <h3>技术博客</h3>
+            <p>分享编程技巧、项目实践和技术分析，记录学习路上的思考与收获。</p>
+            <a href="/blog" className="card-link">
+              阅读博客
+            </a>
+          </div>
+          <div className="content-card">
+            <div className="card-icon">🎬</div>
+            <h3>视频教程</h3>
+            <p>
+              在B站发布编程教学、技术分享和工具使用指南，用视频形式传递知识。
+            </p>
+            <a href="/videos" className="card-link">
+              观看视频
+            </a>
+          </div>
+          <div className="content-card">
+            <div className="card-icon">💻</div>
+            <h3>开源项目</h3>
+            <p>参与和创建开源项目，分享代码实践和解决方案。</p>
+            <a href="/projects" className="card-link">
+              查看项目
+            </a>
+          </div>
+        </div>
+      </section>
+
       <section className="skills-section">
-        <h2 className="section-title">技术能力</h2>
+        <h2 className="section-title">技术栈</h2>
         <div className="skills-container">
           <div className="skill-category">
             <h3>前端开发</h3>
@@ -87,7 +139,8 @@ const ViewsPage = () => {
             <p className="project-period">2024-04 ~ 2024-05</p>
             <p className="project-description">
               开发一套智慧道路交通与可视化解决方案，以提升交通管理的智能化水平和监控效率。系统采用前后端分离架构，
-              前端基于Vue3 实现响应式界面和动态数据可视化，后端通过Spring Boot和Apache Flink提供实时数据处理和扩展能力。
+              前端基于Vue3 实现响应式界面和动态数据可视化，后端通过Spring
+              Boot和Apache Flink提供实时数据处理和扩展能力。
             </p>
             <div className="project-tech">
               <span className="tech-tag">Vue3</span>
@@ -103,7 +156,8 @@ const ViewsPage = () => {
             <p className="project-period">2024-12</p>
             <p className="project-description">
               开发一套课程管理系统，以帮助学校或者教育机构管理教学资源和课程安排。系统采用前后端分离架构，
-              前端基于Vue3实现响应式界面和数据可视化，后端通过Spring Boot和Spring Cloud提供微服务架构支持。
+              前端基于Vue3实现响应式界面和数据可视化，后端通过Spring
+              Boot和Spring Cloud提供微服务架构支持。
             </p>
             <div className="project-tech">
               <span className="tech-tag">Vue3</span>
@@ -115,10 +169,13 @@ const ViewsPage = () => {
           </div>
 
           <div className="project-card">
-            <h3 className="project-title">基于ROS2的智能四轮小车运动控制与仿真系统</h3>
+            <h3 className="project-title">
+              基于ROS2的智能四轮小车运动控制与仿真系统
+            </h3>
             <p className="project-period">2024-11</p>
             <p className="project-description">
-              开发一套智能四轮小车运动控制与仿真系统，以支持高精度的运动控制和路径规划研究。基于ROS2 Humble系统，
+              开发一套智能四轮小车运动控制与仿真系统，以支持高精度的运动控制和路径规划研究。基于ROS2
+              Humble系统，
               测试多节点通讯和小车运动控制算法实现，并在Gazebo中完成高精度的仿真环境。
             </p>
             <div className="project-tech">
@@ -143,28 +200,11 @@ const ViewsPage = () => {
         </div>
       </section>
 
-      <section className="contact-section">
-        <h2 className="section-title">联系我</h2>
-        <div className="contact-methods">
-          <div className="contact-method">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
-            <span className="contact-value">chengyuejin@outlook.com</span>
-          </div>
-          <div className="contact-method">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-            </svg>
-            <span className="contact-value">19821269277</span>
-          </div>
-        </div>
-      </section>
-
       <section className="quote-section">
         <blockquote>
-          <p>具有良好的团队协作和沟通能力，坚持刻苦，能高效完成任务；擅长资源协调与任务分配，推动团队目标实现，为项目创造实际价值。</p>
+          <p>
+            技术改变世界，人文塑造灵魂。希望在代码的世界里保持人文关怀，在创作中传递技术之美。
+          </p>
         </blockquote>
       </section>
     </div>

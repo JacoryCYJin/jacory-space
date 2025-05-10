@@ -142,7 +142,7 @@ const VideosPage = () => {
             </div>
           </div>
           <a 
-            href="https://space.bilibili.com/3546642829543497?spm_id_from=333.1007.0.0" 
+            href="https://b23.tv/oYbIaKn" 
             target="_blank" 
             rel="noopener noreferrer"
             className="bilibili-link"
@@ -217,7 +217,7 @@ const VideosPage = () => {
         ))}
       </section>
       
-      <PageQuote text="视频创作是我表达思想、分享知识的另一种方式，希望能为观众带来价值与思考。" />
+      <PageQuote text="所谓艺术，就是巨大的晚霞。" author='三岛由纪夫' />
     </div>
   );
 };
