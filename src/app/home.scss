@@ -331,3 +331,38 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+// 添加动画效果
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-section {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+// 为不同区块设置不同的动画延迟
+.hero-section.animate-section {
+  animation-delay: 0.1s;
+}
+
+.nav-explanation.animate-section {
+  animation-delay: 0.5s;
+}
+
+.latest-posts.animate-section {
+  animation-delay: 0.9s;
+}
+
+.quote-section.animate-section {
+  animation-delay: 1.3s;
+}

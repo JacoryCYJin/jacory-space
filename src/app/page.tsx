@@ -62,7 +62,7 @@ const HomePage = () => {
   return (
     <div className="home-container">
       {/* 主要介绍区域 */}
-      <section className="hero-section">
+      <section className="hero-section animate-section">
         <div className="hero-content">
           <div className="hero-header">
             <div className="avatar-container">
@@ -86,7 +86,7 @@ const HomePage = () => {
       </section>
 
       {/* 导航解释区域 */}
-      <section className="nav-explanation">
+      <section className="nav-explanation animate-section">
         <h2 className="section-title">闲庭五叙</h2>
         <div className="explanation-grid">
           <Link href="/" className="explanation-item">
@@ -127,7 +127,7 @@ const HomePage = () => {
       </section>
 
       {/* 最新文章区域 */}
-      <section className="latest-posts">
+      <section className="latest-posts animate-section">
         <h2 className="section-title">近期笔记</h2>
         
         {loading ? (
@@ -156,7 +156,7 @@ const HomePage = () => {
       </section>
 
       {/* 引言区域 */}
-      <section>
+      <section className="quote-section animate-section">
         <PageQuote text="生如夏花之绚烂，死如秋叶之静美。" author='三岛由纪夫'/>
       </section>
     </div>
