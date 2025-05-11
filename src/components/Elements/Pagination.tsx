@@ -21,11 +21,13 @@ const Pagination: React.FC<PaginationProps> = ({
   prevText = '上一页',
   nextText = '下一页',
   maxPagesToShow = 5,
-  showPageInfo = false,
-  totalItems = 0,
-  pageSize = 10,
+  // showPageInfo = false,
+  // totalItems = 0,
+  // pageSize = 10,
   className = ''
 }) => {
+
+  console.log('currentPage:', currentPage);
   // 生成页码数组
   const getPageNumbers = () => {
     const pageNumbers = [];
@@ -66,11 +68,11 @@ const Pagination: React.FC<PaginationProps> = ({
   
   return (
     <div className={`pagination ${className}`}>
-      {showPageInfo && totalItems > 0 && (
+      {/* {showPageInfo && totalItems > 0 && (
         <div className="pagination-info">
           显示 {(currentPage - 1) * pageSize + 1} 至 {Math.min(currentPage * pageSize, totalItems)} 条，共 {totalItems} 条
         </div>
-      )}
+      )} */}
       
       <div className="pagination-controls">
         <button 

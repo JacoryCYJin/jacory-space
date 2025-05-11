@@ -52,12 +52,16 @@ const CategoryPage = () => {
   // 处理页码变化
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // 滚动到页面顶部
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
   };
+
+    // 监听 currentPage 的变化并触发滚动
+    useEffect(() => {
+      console.log('currentPage 更新，滚动到顶部:', currentPage);
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }, [currentPage]);
   
   // 转换为显示格式
   const displayArticles = articles.map(article => ({
