@@ -18,39 +18,41 @@ interface ArticleCardProps {
 
 const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
   return (
-    <div className="article-card">
-      {article.coverImage && (
-        <div className="article-image">
-          <Image 
-            src={article.coverImage} 
-            alt={article.title}
-            width={300}
-            height={200}
-            className="cover-image"
-          />
+    <Link href={`/blog/${article.slug}`} className="article-card-link">
+      <div className="article-card">
+        {article.coverImage && (
+          <div className="article-image">
+            <Image 
+              src={article.coverImage} 
+              alt={article.title}
+              width={300}
+              height={200}
+              className="cover-image"
+            />
+          </div>
+        )}
+        <div className="article-content">
+          <div className="article-meta">
+            <span className="article-date">{article.date}</span>
+            <span className="reading-time">{article.readingTime}</span>
+          </div>
+          <h2 className="article-title">
+            {article.title}
+          </h2>
+          <p className="article-excerpt">{article.excerpt}</p>
+          <div className="article-tags">
+            {article.tags.map(tag => (
+              <span key={tag} className="tag" onClick={(e) => {
+                e.preventDefault();
+                window.location.href = `/blog/tag/${tag}`;
+              }}>
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
-      )}
-      <div className="article-content">
-        <div className="article-meta">
-          <span className="article-date">{article.date}</span>
-          <span className="reading-time">{article.readingTime}</span>
-        </div>
-        <h2 className="article-title">
-          <Link href={`/blogs/${article.slug}`}>{article.title}</Link>
-        </h2>
-        <p className="article-excerpt">{article.excerpt}</p>
-        <div className="article-tags">
-          {article.tags.map(tag => (
-            <Link key={tag} href={`/blogs/tags/${tag}`} className="tag">
-              {tag}
-            </Link>
-          ))}
-        </div>
-        <Link href={`/blogs/${article.slug}`} className="read-more">
-          继续阅读 →
-        </Link>
       </div>
-    </div>
+    </Link>
   );
 };
 

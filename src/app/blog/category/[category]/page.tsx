@@ -1,76 +1,89 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useParams } from 'next/navigation';
-import { articles } from '@/data/blog/metadata.json';
+import { getArticleListApi } from '@/api/articleApi';
+import ArticleList from '@/components/Blog/ArticleList';
+import { ArticleVO } from '@/types/models/article';
+
+// // 定义前端使用的文章类型（与ArticleList组件兼容）
+// interface ArticleForDisplay {
+//   id: string;
+//   slug: string;
+//   title: string;
+//   date: string;
+//   excerpt: string;
+//   coverImage?: string;
+//   readingTime: string;
+//   categories: string[];
+//   tags: string[];
+// }
 
 const CategoryPage = () => {
   const params = useParams();
   const category = params.category as string;
+  const [articles, setArticles] = useState<ArticleVO[]>([]);
+  const [loading, setLoading] = useState(true);
   
-  // 筛选该分类下的文章
-  const filteredArticles = articles.filter(article => 
-    article.categories.includes(category)
-  );
+  useEffect(() => {
+    const fetchArticles = async () => {
+      try {
+        setLoading(true);
+        const res = await getArticleListApi();
+        if (res.code === 200) {
+          // 筛选该分类下的文章
+          const filteredArticles = res.data.filter(article => 
+            article.categories.some(cat => 
+              typeof cat === 'string' 
+                ? cat === category 
+                : cat.name === category
+            )
+          );
+          setArticles(filteredArticles);
+        }
+      } catch (error) {
+        console.error('Error fetching articles:', error);
+        // 使用更好的错误处理方式
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchArticles();
+  }, [category]);
+  
+  // 转换为显示格式
+  const displayArticles = articles.map(article => ({
+    id: article.nanoid || '',
+    slug: article.slug || '',
+    title: article.title || '',
+    date: article.publishedDate ? new Date(article.publishedDate).toLocaleDateString() : '',
+    excerpt: article.excerpt || '',
+    coverImage: article.coverImage,
+    readingTime: article.readingTime || '',
+    categories: article.categories?.map(cat => typeof cat === 'string' ? cat : cat.name) || [],
+    tags: article.tags?.map(tag => typeof tag === 'string' ? tag : tag.name) || []
+  }));
   
   return (
     <div className="category-container">
       <section className="category-header">
         <h1 className="category-title">分类：{category}</h1>
         <p className="category-description">
-          共有 {filteredArticles.length} 篇文章
+          共有 {articles.length} 篇文章
         </p>
       </section>
       
       {/* 文章列表 */}
-      <div className="article-list">
-        {filteredArticles.length > 0 ? (
-          filteredArticles.map(article => (
-            <div key={article.id} className="article-card">
-              {article.coverImage && (
-                <div className="article-image">
-                  <Image 
-                    src={article.coverImage} 
-                    alt={article.title}
-                    width={300}
-                    height={200}
-                    className="cover-image"
-                  />
-                </div>
-              )}
-              <div className="article-content">
-                <div className="article-meta">
-                  <span className="article-date">{article.date}</span>
-                  <span className="reading-time">{article.readingTime}</span>
-                </div>
-                <h2 className="article-title">
-                  <Link href={`/blogs/${article.slug}`}>{article.title}</Link>
-                </h2>
-                <p className="article-excerpt">{article.excerpt}</p>
-                <div className="article-tags">
-                  {article.tags.map(tag => (
-                    <Link key={tag} href={`/blogs/tags/${tag}`} className="tag">
-                      {tag}
-                    </Link>
-                  ))}
-                </div>
-                <Link href={`/blogs/${article.slug}`} className="read-more">
-                  继续阅读 →
-                </Link>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="no-articles">
-            <p>该分类下暂无文章</p>
-          </div>
-        )}
-      </div>
+      {loading ? (
+        <div className="loading">加载中...</div>
+      ) : (
+        <ArticleList articles={displayArticles} />
+      )}
       
       <div className="back-link">
-        <Link href="/blogs">返回博客首页</Link>
+        <Link href="/blog">返回博客首页</Link>
       </div>
     </div>
   );

@@ -1,39 +1,62 @@
 import React from 'react';
 import Link from 'next/link';
+import './TagCloud.scss'; // 确保创建并导入样式文件
 
 interface TagCloudProps {
   tags: Array<{
-    name: string;
+    name: {
+      nanoid: string;
+      name: string;
+    } | string;
     count: number;
   }>;
 }
 
 const TagCloud: React.FC<TagCloudProps> = ({ tags }) => {
-  // 根据文章数量计算标签大小
-  const getTagSize = (count: number): string => {
-    const min = Math.min(...tags.map(tag => tag.count));
-    const max = Math.max(...tags.map(tag => tag.count));
-    
-    // 如果所有标签的文章数量相同，返回默认大小
-    if (min === max) return '1rem';
-    
-    // 计算标签大小，范围从0.8rem到1.5rem
-    const size = 0.8 + ((count - min) / (max - min)) * 0.7;
-    return `${size}rem`;
+  // Get tag ID helper function - moved up before it's used
+  const getTagId = (tag: any): string => {
+    if (typeof tag.name === 'string') {
+      return tag.name;
+    }
+    return tag.name.nanoid || '';
   };
   
+  // Get tag name helper function - moved up before it's used
+  const getTagName = (tag: any): string => {
+    if (typeof tag.name === 'string') {
+      return tag.name;
+    }
+    return tag.name.name || '';
+  };
+  
+  // 去重处理：确保没有重复的标签ID
+  const uniqueTags = React.useMemo(() => {
+    const tagMap = new Map();
+    
+    // 遍历标签，如果有重复ID的标签，保留计数更高的那个
+    tags.forEach(tag => {
+      const tagId = getTagId(tag);
+      if (!tagMap.has(tagId) || tagMap.get(tagId).count < tag.count) {
+        tagMap.set(tagId, tag);
+      }
+    });
+    
+    return Array.from(tagMap.values());
+  }, [tags]);
+  
   return (
-    <div className="tag-cloud">
-      {tags.map(tag => (
-        <Link 
-          key={tag.name} 
-          href={`/blogs/tags/${tag.name}`}
-          className="tag-cloud-item"
-          style={{ fontSize: getTagSize(tag.count) }}
-        >
-          {tag.name} <span className="tag-count">({tag.count})</span>
-        </Link>
-      ))}
+    <div className="tag-cloud-container">
+      <div className="tag-cloud">
+        {uniqueTags.map(tag => (
+          <Link 
+            key={getTagId(tag)}
+            href={`/blog/tag/${encodeURIComponent(getTagName(tag))}`}
+            className="tag-item"
+          >
+            {getTagName(tag)} <span className="tag-count">({tag.count})</span>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };
