@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { queryArticlesApi } from '@/api/articleApi';
 import ArticleList from '@/components/Blog/ArticleList';
-import Pagination from '@/components/Elements/Pagination';
+import Pagination from '@/components/Pagination/Pagination';
 import { ArticleVO } from '@/types/models/article';
 
 const CategoryPage = () => {

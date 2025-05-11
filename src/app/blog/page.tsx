@@ -10,7 +10,7 @@ import { getCategoryListApi } from '@/api/categoryApi';
 import TagCloud from '@/components/Blog/TagCloud';
 import CategoryList from '@/components/Blog/CategoryList';
 import ArticleList from '@/components/Blog/ArticleList';
-import Pagination from '@/components/Elements/Pagination';
+import Pagination from '@/components/Pagination/Pagination';
 import { ArticleVO } from '@/types/models/article';
 
 // 定义标签类型
