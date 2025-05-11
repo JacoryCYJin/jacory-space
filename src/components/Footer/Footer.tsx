@@ -20,16 +20,16 @@ const Footer = () => {
               <Link href="/">晴窗小坐</Link>
             </li>
             <li>
-              <Link href="/works">拙作小集</Link>
+              <Link href="/work">拙作小集</Link>
             </li>
             <li>
-              <Link href="/videos">流光片羽</Link>
+              <Link href="/video">流光片羽</Link>
             </li>
             <li>
-              <Link href="/blogs">闲笔偶记</Link>
+              <Link href="/blog">闲笔偶记</Link>
             </li>
             <li>
-              <Link href="/views">寸心之介</Link>
+              <Link href="/view">寸心之介</Link>
             </li>
           </ul>
         </div>

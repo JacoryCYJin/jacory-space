@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
-import './views.scss';
+import './view.scss';
 import PageHeader from '@/components/PageHeader/PageHeader';
 
 const ViewsPage = () => {

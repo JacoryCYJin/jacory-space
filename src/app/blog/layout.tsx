@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import './blogs.scss';
+import './blog.scss';
 
 export default function BlogLayout({
   children,

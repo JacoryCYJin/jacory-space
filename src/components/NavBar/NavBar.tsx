@@ -66,26 +66,26 @@ const NavBar = () => {
             晴窗小坐
           </Link>
           <Link
-            href="/works"
-            className={`navbar-link ${isActive('/works') ? 'active' : ''}`}
+            href="/work"
+            className={`navbar-link ${isActive('/work') ? 'active' : ''}`}
           >
             拙作小集
           </Link>
           <Link
-            href="/videos"
-            className={`navbar-link ${isActive('/videos') ? 'active' : ''}`}
+            href="/video"
+            className={`navbar-link ${isActive('/video') ? 'active' : ''}`}
           >
             流光片羽
           </Link>
           <Link
-            href="/blogs"
-            className={`navbar-link ${isActive('/blogs') ? 'active' : ''}`}
+            href="/blog"
+            className={`navbar-link ${isActive('/blog') ? 'active' : ''}`}
           >
             闲笔偶记
           </Link>
           <Link
-            href="/views"
-            className={`navbar-link ${isActive('/views') ? 'active' : ''}`}
+            href="/view"
+            className={`navbar-link ${isActive('/view') ? 'active' : ''}`}
           >
             寸心之介
           </Link>

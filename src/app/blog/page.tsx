@@ -3,8 +3,9 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import './blogs.scss';
+import './blog.scss';
 import PageHeader from '@/components/PageHeader/PageHeader';
+import { getArticleListApi } from '@/api/articleApi';
 
 // 假设这是从某处导入的文章数据
 import { articles } from '@/data/blog/metadata.json';

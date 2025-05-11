@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import './works.scss';
+import './work.scss';
 import PageQuote from '@/components/PageQuote/PageQuote';
 import PageHeader from '@/components/PageHeader/PageHeader';
 

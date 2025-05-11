@@ -44,28 +44,28 @@ const HomePage = () => {
             </p>
           </Link>
           
-          <Link href="/works" className="explanation-item">
+          <Link href="/work" className="explanation-item">
             <h3>拙作小集</h3>
             <p className="explanation-content">
               项目展示页：列出完成的作品、项目或创作（如设计、代码、文章等），分类呈现并可跳转至详情。
             </p>
           </Link>
 
-          <Link href="/videos" className="explanation-item">
+          <Link href="/video" className="explanation-item">
             <h3>流光片羽</h3>
             <p className="explanation-content">
               视频创作：分享我的视频内容，记录技术分享、生活感悟和创作历程。
             </p>
           </Link>
 
-          <Link href="/blogs" className="explanation-item">
+          <Link href="/blog" className="explanation-item">
             <h3>闲笔偶记</h3>
             <p className="explanation-content">
               博客/日志页：个人随笔、技术笔记、生活感悟等不定期更新的文字记录。
             </p>
           </Link>
 
-          <Link href="/views" className="explanation-item">
+          <Link href="/view" className="explanation-item">
             <h3>寸心之介</h3>
             <p className="explanation-content">
               关于我与联系方式：个人详细经历、技能或简历，以及邮箱、社交媒体等联系信息。
