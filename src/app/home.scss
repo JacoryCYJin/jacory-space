@@ -127,17 +127,39 @@
     gap: 2rem;
   }
   
+  .loading-posts, .error-message {
+    text-align: center;
+    padding: 2rem;
+    border: 1px dashed #eaeaea;
+    border-radius: 5px;
+    color: #666;
+    font-size: 1rem;
+  }
+  
+  .error-message {
+    color: #d32f2f;
+    border-color: #ffcdd2;
+  }
+  
+  .post-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 5px;  /* 添加圆角与卡片一致 */
+    
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
   .post-card {
     padding: 1.5rem;
     border: 1px solid #eaeaea;
     border-radius: 5px;
-    transition: all 0.3s ease;
-    
-    &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-    }
-    
+    // background-color: #fff;  /* 添加背景色 */
+
     .post-date {
       font-size: 0.85rem;
       color: #888;
@@ -199,10 +221,12 @@
   
   .post-card {
     border-color: #333;
+    background-color: #1a1a1a;  /* 深色模式背景 */
     
-    &:hover {
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
+    // 删除这里的悬停效果
+    // &:hover {
+    //   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    // }
     
     .post-date {
       color: #999;

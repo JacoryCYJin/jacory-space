@@ -1,12 +1,64 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import './home.scss';
 import PageQuote from '@/components/PageQuote/PageQuote';
+import { getArticleListApi } from '@/api/articleApi';
+import { ArticleVO } from '@/types/models/article';
+
+// 定义博客文章的接口
+interface BlogPost {
+  id: string;
+  title: string;
+  date: string;
+  excerpt: string;
+  slug: string;
+}
 
 const HomePage = () => {
+  // 添加状态来存储博客文章
+  const [recentPosts, setRecentPosts] = useState<BlogPost[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 使用 useEffect 在组件挂载时获取数据
+  useEffect(() => {
+    const fetchRecentPosts = async () => {
+      try {
+        setLoading(true);
+        // 使用与博客页面相同的API获取文章列表
+        const res = await getArticleListApi();
+        
+        if (res.code === 200) {
+          // 获取最新的3篇文章
+          const latestArticles = res.data.slice(0, 3).map((article: ArticleVO) => ({
+            id: article.nanoid || '',
+            title: article.title || '',
+            date: article.publishedDate ? new Date(article.publishedDate).toLocaleDateString() : '',
+            excerpt: article.excerpt || '',
+            slug: article.slug || ''
+          }));
+          
+          setRecentPosts(latestArticles);
+          setError(null);
+        } else {
+          throw new Error('获取文章失败');
+        }
+      } catch (err) {
+        console.error('获取最近文章时出错:', err);
+        setError('获取文章失败，请稍后再试');
+        // 移除备用数据
+        setRecentPosts([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecentPosts();
+  }, []);
+
   return (
     <div className="home-container">
       {/* 主要介绍区域 */}
@@ -77,41 +129,30 @@ const HomePage = () => {
       {/* 最新文章区域 */}
       <section className="latest-posts">
         <h2 className="section-title">近期笔记</h2>
-        <div className="posts-grid">
-          {/* 这里可以后续从数据源获取文章，先用静态内容 */}
-          <div className="post-card">
-            <div className="post-date">2023年12月15日</div>
-            <h3 className="post-title">技术与人文的交融</h3>
-            <p className="post-excerpt">
-              探讨现代技术发展如何与传统人文思想相互影响，从而创造出更有温度的数字体验...
-            </p>
-            <Link href="/blogs/1" className="read-more">
-              继续阅读 →
-            </Link>
+        
+        {loading ? (
+          <div className="loading-posts">
+            <p>正在加载文章...</p>
           </div>
-
-          <div className="post-card">
-            <div className="post-date">2023年11月28日</div>
-            <h3 className="post-title">设计中的留白艺术</h3>
-            <p className="post-excerpt">
-              留白不仅是视觉上的空间，更是一种哲学思考。本文探讨东方美学中的留白概念如何应用于现代设计...
-            </p>
-            <Link href="/blogs/2" className="read-more">
-              继续阅读 →
-            </Link>
+        ) : error ? (
+          <div className="error-message">
+            <p>{error}</p>
           </div>
-
-          <div className="post-card">
-            <div className="post-date">2023年10月10日</div>
-            <h3 className="post-title">旅行中的偶遇</h3>
-            <p className="post-excerpt">
-              一次意外的旅行，一场偶然的相遇，有时最美好的记忆往往来自计划之外的惊喜...
-            </p>
-            <Link href="/blogs/3" className="read-more">
-              继续阅读 →
-            </Link>
+        ) : (
+          <div className="posts-grid">
+            {recentPosts.map((post) => (
+              <Link href={`/blog/${post.slug}`} key={post.id} className="post-card-link">
+                <div className="post-card">
+                  <div className="post-date">{post.date}</div>
+                  <h3 className="post-title">{post.title}</h3>
+                  <p className="post-excerpt">
+                    {post.excerpt}
+                  </p>
+                </div>
+              </Link>
+            ))}
           </div>
-        </div>
+        )}
       </section>
 
       {/* 引言区域 */}
