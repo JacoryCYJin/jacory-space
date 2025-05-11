@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import './home.scss';
 import PageQuote from '@/components/PageQuote/PageQuote';
-import { getArticleListApi } from '@/api/articleApi';
+import { queryArticlesApi } from '@/api/articleApi';
 import { ArticleVO } from '@/types/models/article';
 
 // 定义博客文章的接口
@@ -28,12 +28,16 @@ const HomePage = () => {
     const fetchRecentPosts = async () => {
       try {
         setLoading(true);
-        // 使用与博客页面相同的API获取文章列表
-        const res = await getArticleListApi();
+        // 使用查询API获取最新的3篇文章
+        const res = await queryArticlesApi({
+          pageNum: 1,
+          pageSize: 3,
+          fetchAll: false
+        });
         
         if (res.code === 200) {
           // 获取最新的3篇文章
-          const latestArticles = res.data.slice(0, 3).map((article: ArticleVO) => ({
+          const latestArticles = res.data.list.map((article: ArticleVO) => ({
             id: article.nanoid || '',
             title: article.title || '',
             date: article.publishedDate ? new Date(article.publishedDate).toLocaleDateString() : '',

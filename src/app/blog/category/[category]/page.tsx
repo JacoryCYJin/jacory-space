@@ -3,22 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { getArticleListApi } from '@/api/articleApi';
+import { queryArticlesApi } from '@/api/articleApi';
 import ArticleList from '@/components/Blog/ArticleList';
+import Pagination from '@/components/Elements/Pagination';
 import { ArticleVO } from '@/types/models/article';
-
-// // 定义前端使用的文章类型（与ArticleList组件兼容）
-// interface ArticleForDisplay {
-//   id: string;
-//   slug: string;
-//   title: string;
-//   date: string;
-//   excerpt: string;
-//   coverImage?: string;
-//   readingTime: string;
-//   categories: string[];
-//   tags: string[];
-// }
 
 const CategoryPage = () => {
   const params = useParams();
@@ -26,21 +14,29 @@ const CategoryPage = () => {
   const [articles, setArticles] = useState<ArticleVO[]>([]);
   const [loading, setLoading] = useState(true);
   
+  // 添加分页相关状态
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const pageSize = 10; // 每页显示的文章数量
+  
   useEffect(() => {
     const fetchArticles = async () => {
       try {
         setLoading(true);
-        const res = await getArticleListApi();
+        
+        // 使用查询API获取特定分类的文章
+        const res = await queryArticlesApi({
+          categoryNanoid: category,
+          pageNum: currentPage,
+          pageSize: pageSize,
+          fetchAll: false
+        });
+        
         if (res.code === 200) {
-          // 筛选该分类下的文章
-          const filteredArticles = res.data.filter(article => 
-            article.categories.some(cat => 
-              typeof cat === 'string' 
-                ? cat === category 
-                : cat.name === category
-            )
-          );
-          setArticles(filteredArticles);
+          setArticles(res.data.list || []);
+          setTotalPages(res.data.pages || 1);
+          setTotalItems(res.data.total || 0);
         }
       } catch (error) {
         console.error('Error fetching articles:', error);
@@ -51,7 +47,17 @@ const CategoryPage = () => {
     };
     
     fetchArticles();
-  }, [category]);
+  }, [category, currentPage]);
+  
+  // 处理页码变化
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // 滚动到页面顶部
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  };
   
   // 转换为显示格式
   const displayArticles = articles.map(article => ({
@@ -71,7 +77,7 @@ const CategoryPage = () => {
       <section className="category-header">
         <h1 className="category-title">分类：{category}</h1>
         <p className="category-description">
-          共有 {articles.length} 篇文章
+          共有 {totalItems} 篇文章
         </p>
       </section>
       
@@ -79,7 +85,21 @@ const CategoryPage = () => {
       {loading ? (
         <div className="loading">加载中...</div>
       ) : (
-        <ArticleList articles={displayArticles} />
+        <>
+          <ArticleList articles={displayArticles} />
+          
+          {/* 添加分页组件 */}
+          {totalPages > 1 && (
+            <Pagination 
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              showPageInfo={true}
+              totalItems={totalItems}
+              pageSize={pageSize}
+            />
+          )}
+        </>
       )}
       
       <div className="back-link">
