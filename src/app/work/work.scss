@@ -5,136 +5,318 @@
   font-family: "SimSun", "宋体", serif;
 }
 
-// 项目网格
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2.5rem;
-  margin-bottom: 4rem;
+// 时间轴容器
+.timeline-container {
+  position: relative;
+  max-width: 1000px;
+  margin: 0 auto 4rem;
+  padding: 2rem 0;
 }
 
-// 项目卡片
-.project-card {
+// 时间轴中线
+.timeline-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  background-color: #eaeaea;
+  transform: translateX(-50%);
+}
+
+// 时间轴项目
+.timeline-item {
+  position: relative;
+  margin-bottom: 4rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+  
+  // 时间轴圆点
+  .timeline-dot {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    transition: all 0.3s ease;
+  }
+  
+  // 左侧项目
+  &.left {
+    padding-right: calc(50% + 2rem);
+    
+    .timeline-card {
+      margin-right: 2rem;
+    }
+  }
+  
+  // 右侧项目
+  &.right {
+    padding-left: calc(50% + 2rem);
+    
+    .timeline-card {
+      margin-left: 2rem;
+    }
+  }
+  
+  &:hover {
+    .timeline-dot {
+      background-color: #f5f5f5;
+      transform: translateX(-50%) scale(1.2);
+    }
+  }
+}
+
+// 时间轴卡片 - 整体可点击
+.timeline-card {
   border: 1px solid #eaeaea;
   border-radius: 8px;
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer; // 添加指针样式表明可点击
   
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
   }
+}
+
+// 项目图片容器
+.project-image-container {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
   
-  .project-image-container {
+  .project-image {
     width: 100%;
-    height: 200px;
-    overflow: hidden;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
     
-    .project-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-      
-      &:hover {
-        transform: scale(1.05);
-      }
+    &:hover {
+      transform: scale(1.05);
     }
   }
+}
+
+// 项目内容区域 - 改进字体层次
+.project-content {
+  padding: 1.5rem;
   
-  .project-content {
-    padding: 1.5rem;
+  .project-title {
+    font-size: 1.6rem; // 增大标题字号
+    margin-bottom: 0.8rem;
+    font-family: "汇文明朝体", "SimSun", "宋体", serif;
+    color: #333; // 加深标题颜色
+  }
+  
+  .project-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #666; // 稍微淡化描述文字
+    margin-bottom: 1.5rem;
+  }
+  
+  // 标签样式 - 改为圆角按钮
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
     
-    .project-title {
-      font-size: 1.4rem;
-      margin-bottom: 0.5rem;
-      font-family: "汇文明朝体", "SimSun", "宋体", serif;
-    }
-    
-    .project-date {
-      font-size: 0.9rem;
-      color: #888;
-      margin-bottom: 1rem;
-    }
-    
-    .project-description {
-      font-size: 1rem;
-      line-height: 1.6;
-      color: #444;
-      margin-bottom: 1.5rem;
-    }
-    
-    .project-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin-bottom: 1.5rem;
-      
-      .project-tag {
-        padding: 0.3rem 0.8rem;
-        background-color: #f5f5f5;
-        border-radius: 30px;
-        font-size: 0.85rem;
-        color: #666;
-      }
-    }
-    
-    .project-link {
-      display: inline-block;
-      padding: 0.5rem 1.2rem;
-      background-color: #f9f9f9;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      color: #333;
-      font-size: 0.95rem;
-      text-decoration: none;
+    .project-tag {
+      padding: 0.4rem 1rem;
+      background-color: #f5f5f5;
+      border-radius: 20px; // 增加圆角
+      font-size: 0.85rem;
+      color: #555;
+      border: 1px solid #eee; // 添加细边框
       transition: all 0.2s ease;
       
       &:hover {
         background-color: #eee;
+        transform: translateY(-2px);
       }
     }
   }
 }
 
-// 空项目状态
-.empty-projects {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  margin-bottom: 4rem;
+// 项目状态和心情标签
+.project-meta {
+  position: absolute;
+  top: 0;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  padding: 0.8rem 1.2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  z-index: 3;
   
-  .empty-container {
-    text-align: center;
-    padding: 3rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    max-width: 500px;
+  // 左侧元数据
+  &.meta-left {
+    right: calc(50% + 3rem);
+    text-align: right;
+  }
+  
+  // 右侧元数据
+  &.meta-right {
+    left: calc(50% + 3rem);
+    text-align: left;
+  }
+  
+  .meta-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.5rem;
     
-    svg {
-      color: #888;
-      margin-bottom: 1.5rem;
+    .meta-left & {
+      flex-direction: row-reverse;
+    }
+  }
+  
+  // 时间日期
+  .timeline-date {
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: "汇文明朝体", "SimSun", "宋体", serif;
+    color: #555;
+  }
+  
+  // 项目状态标签
+  .project-status {
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+    
+    // 筹划中状态
+    &.planning {
+      background-color: #f3f4f6;
+      color: #6b7280;
+      border: 1px solid #e5e7eb;
     }
     
-    .empty-title {
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-      font-family: "汇文明朝体", "SimSun", "宋体", serif;
+    // 开发中状态
+    &.developing {
+      background-color: #f0f7ff;
+      color: #3b82f6;
+      border: 1px solid #dbeafe;
     }
     
-    .empty-description {
-      font-size: 1rem;
-      color: #666;
-      line-height: 1.6;
+    // 测试中状态
+    &.testing {
+      background-color: #fef3c7;
+      color: #d97706;
+      border: 1px solid #fde68a;
+    }
+    
+    // 已上线状态
+    &.online {
+      background-color: #dcfce7;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+    }
+    
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+    }
+  }
+  
+  // 创作心情小语
+  .project-mood {
+    font-size: 0.9rem;
+    color: #777;
+    font-style: italic;
+    font-family: "楷体", "KaiTi", serif;
+    border-top: 1px solid #eee;
+    padding-top: 0.5rem;
+    
+    &::before {
+      content: "「";
+      margin-right: 2px;
+    }
+    
+    &::after {
+      content: "」";
+      margin-left: 2px;
     }
   }
 }
 
 // 深色模式支持
 .dark {
-  .works-container {
-    color: #f0f0f0;
+  .timeline-item {
+    .timeline-date {
+      background: #222;
+      color: #ddd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+  }
+  
+  .project-meta {
+    .timeline-date {
+      background: #222;
+      color: #ddd;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    .project-status {
+      &.planning {
+        background-color: #374151;
+        color: #d1d5db;
+        border-color: #4b5563;
+      }
+      
+      &.developing {
+        background-color: #1e3a8a;
+        color: #93c5fd;
+        border-color: #1e40af;
+      }
+      
+      &.testing {
+        background-color: #78350f;
+        color: #fcd34d;
+        border-color: #92400e;
+      }
+      
+      &.online {
+        background-color: #14532d;
+        color: #86efac;
+        border-color: #166534;
+      }
+    }
+  }
+  
+  .project-content {
+    .project-title {
+      color: #eee;
+    }
+    
+    .project-description {
+      color: #bbb;
+    }
+    
+    .project-tags {
+      .project-tag {
+        background-color: #333;
+        color: #ddd;
+        border-color: #444;
+        
+        &:hover {
+          background-color: #444;
+        }
+      }
+    }
   }
   
   .project-card {
@@ -189,6 +371,46 @@
 
 // 响应式设计
 @media (max-width: 768px) {
+  .timeline-container {
+    padding-left: 2rem;
+  }
+  
+  .timeline-line {
+    left: 0;
+    transform: none;
+  }
+  
+  .timeline-item {
+    padding-left: 3rem !important;
+    padding-right: 0 !important;
+    
+    .timeline-dot {
+      left: 0;
+      transform: none;
+    }
+    
+    .project-meta {
+      position: relative;
+      top: 0;
+      left: 0 !important;
+      right: auto !important;
+      margin-bottom: 1rem;
+      
+      .timeline-date,
+      .project-status,
+      .project-mood {
+        display: inline-block;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+    
+    &.left .timeline-card,
+    &.right .timeline-card {
+      margin-left: 0;
+      margin-right: 0;
+    }
+  }
   
   .projects-grid {
     grid-template-columns: 1fr;
