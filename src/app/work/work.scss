@@ -109,19 +109,23 @@
 // 项目内容区域 - 改进字体层次
 .project-content {
   padding: 1.5rem;
+  background-color: #fff; // 添加白色背景
+  border-top: 1px solid #f0f0f0; // 添加顶部边框分隔
   
   .project-title {
     font-size: 1.6rem; // 增大标题字号
     margin-bottom: 0.8rem;
     font-family: "汇文明朝体", "SimSun", "宋体", serif;
-    color: #333; // 加深标题颜色
+    color: #222; // 加深标题颜色，从#333改为#222
+    font-weight: 600; // 增加字重
   }
   
   .project-description {
     font-size: 1rem;
     line-height: 1.6;
-    color: #666; // 稍微淡化描述文字
+    color: #444; // 加深描述文字颜色，从#666改为#444
     margin-bottom: 1.5rem;
+    text-shadow: 0 0 1px rgba(0,0,0,0.01); // 添加轻微文字阴影增强可读性
   }
   
   // 标签样式 - 改为圆角按钮
@@ -133,18 +137,36 @@
     
     .project-tag {
       padding: 0.4rem 1rem;
-      background-color: #f5f5f5;
+      background-color: #f0f0f0; // 稍微加深背景色
       border-radius: 20px; // 增加圆角
       font-size: 0.85rem;
-      color: #555;
-      border: 1px solid #eee; // 添加细边框
+      color: #444; // 加深文字颜色
+      border: 1px solid #e0e0e0; // 加深边框颜色
       transition: all 0.2s ease;
+      font-weight: 500; // 增加字重
       
       &:hover {
-        background-color: #eee;
+        background-color: #e5e5e5;
         transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); // 添加悬停阴影
       }
     }
+  }
+}
+
+// 时间轴卡片 - 整体可点击
+.timeline-card {
+  border: 1px solid #e0e0e0; // 加深边框颜色
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer; // 添加指针样式表明可点击
+  background-color: #fcfcfc; // 添加轻微背景色
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03); // 添加轻微阴影
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08); // 加深悬停阴影
   }
 }
 
@@ -152,11 +174,12 @@
 .project-meta {
   position: absolute;
   top: 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.98); // 增加不透明度
   border-radius: 8px;
   padding: 0.8rem 1.2rem;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08); // 加深阴影
   z-index: 3;
+  border: 1px solid #eaeaea; // 添加边框
   
   // 左侧元数据
   &.meta-left {
@@ -186,7 +209,7 @@
     font-size: 1rem;
     font-weight: 600;
     font-family: "汇文明朝体", "SimSun", "宋体", serif;
-    color: #555;
+    color: #444; // 加深颜色
   }
   
   // 项目状态标签
@@ -235,7 +258,7 @@
   // 创作心情小语
   .project-mood {
     font-size: 0.9rem;
-    color: #777;
+    color: #555; // 加深颜色，从#777改为#555
     font-style: italic;
     font-family: "楷体", "KaiTi", serif;
     border-top: 1px solid #eee;
@@ -255,100 +278,98 @@
 
 // 深色模式支持
 .dark {
+  .timeline-line {
+    background-color: #3a3a3a;  // 更改时间轴线颜色为深灰色
+  }
+  
   .timeline-item {
+    .timeline-dot {
+      background-color: #2a2a2a;
+      border-color: #555;
+      
+      &:hover {
+        background-color: #3a3a3a;
+      }
+    }
+    
     .timeline-date {
-      background: #222;
-      color: #ddd;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      background: #2a2a2a;
+      color: #e0e0e0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+  }
+  
+  .timeline-card {
+    background-color: #2a2a2a;
+    border-color: #444;
+    
+    &:hover {
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
     }
   }
   
   .project-meta {
+    background: rgba(42, 42, 42, 0.95);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    
     .timeline-date {
-      background: #222;
-      color: #ddd;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      background: transparent;
+      color: #e0e0e0;
     }
     
     .project-status {
       &.planning {
-        background-color: #374151;
-        color: #d1d5db;
-        border-color: #4b5563;
+        background-color: #2d3748;
+        color: #cbd5e0;
+        border-color: #4a5568;
       }
       
       &.developing {
-        background-color: #1e3a8a;
-        color: #93c5fd;
-        border-color: #1e40af;
+        background-color: #1a365d;
+        color: #90cdf4;
+        border-color: #2c5282;
       }
       
       &.testing {
-        background-color: #78350f;
-        color: #fcd34d;
-        border-color: #92400e;
+        background-color: #744210;
+        color: #fbd38d;
+        border-color: #975a16;
       }
       
       &.online {
-        background-color: #14532d;
-        color: #86efac;
-        border-color: #166534;
+        background-color: #1c4532;
+        color: #9ae6b4;
+        border-color: #2f855a;
       }
+      
+      &:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      }
+    }
+    
+    .project-mood {
+      color: #a0aec0;
+      border-top: 1px solid #444;
     }
   }
   
   .project-content {
     .project-title {
-      color: #eee;
+      color: #f0f0f0;
     }
     
     .project-description {
-      color: #bbb;
+      color: #a0aec0;
     }
     
     .project-tags {
       .project-tag {
-        background-color: #333;
-        color: #ddd;
-        border-color: #444;
+        background-color: #3a3a3a;
+        color: #e0e0e0;
+        border-color: #555;
         
         &:hover {
-          background-color: #444;
-        }
-      }
-    }
-  }
-  
-  .project-card {
-    border-color: #333;
-    
-    &:hover {
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-    
-    .project-content {
-      .project-date {
-        color: #999;
-      }
-      
-      .project-description {
-        color: #ccc;
-      }
-      
-      .project-tags {
-        .project-tag {
-          background-color: #333;
-          color: #ccc;
-        }
-      }
-      
-      .project-link {
-        background-color: #222;
-        border-color: #444;
-        color: #eee;
-        
-        &:hover {
-          background-color: #333;
+          background-color: #4a4a4a;
         }
       }
     }
@@ -356,14 +377,19 @@
   
   .empty-projects {
     .empty-container {
-      background-color: #222;
+      background-color: #2a2a2a;
+      border: 1px solid #444;
       
       svg {
-        color: #aaa;
+        color: #a0aec0;
+      }
+      
+      .empty-title {
+        color: #f0f0f0;
       }
       
       .empty-description {
-        color: #aaa;
+        color: #a0aec0;
       }
     }
   }
