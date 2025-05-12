@@ -28,9 +28,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: "微软雅黑", "思源黑体", Arial, Helvetica, sans-serif;
-  padding-top: 60px; /* 添加与导航栏高度相同的顶部内边距 */
+  padding-top: 60px;
   font-family: serif;
+}
 
+// 添加媒体查询，根据屏幕宽度调整body的padding-top
+@media (max-width: 768px) {
+  body {
+    padding-top: 150px; // 平板设备增加顶部内边距
+  }
 }
 
 a {

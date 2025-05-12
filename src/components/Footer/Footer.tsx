@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-section">
           <h3 className="footer-title">芥子不才</h3>
-          <p className="footer-quote">「海纳百川，有容乃大」</p>
+          <p className="footer-quote">「一个人有权利仰望，有权利痴迷于自己的幻觉，哪怕幻觉终将破灭」</p>
         </div>
         
         <div className="footer-section">
