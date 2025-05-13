@@ -241,6 +241,260 @@
   }
 }
 
+// 添加动画相关样式
+.blog-layout {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  
+  &.loaded {
+    opacity: 1;
+  }
+}
+
+// 博客容器动画
+.blog-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1.8rem 1.35rem;
+  font-family: "SimSun", "宋体", serif;
+}
+
+// 博客内容区域
+.blog-content {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 1.8rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// 分类筛选
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1.8rem;
+  
+  .category-button {
+    padding: 0.45rem 0.9rem;
+    border: 1px solid #eaeaea;
+    border-radius: 18px;
+    background-color: rgba($color: #fff, $alpha: 0.5);
+    font-size: 0.81rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: #f5f5f5;
+    }
+    
+    &.active {
+      background-color: #333;
+      color: white;
+      border-color: #333;
+    }
+  }
+}
+
+// 文章列表
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+// 文章卡片
+.article-card {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.35rem;
+  padding: 1.35rem;
+  border: 1px solid #eaeaea;
+  border-radius: 5px;
+  background-color: rgba($color: #fff, $alpha: 0.5);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 9px 18px rgba(0, 0, 0, 0.05);
+  }
+  
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+  
+  .article-image {
+    overflow: hidden;
+    border-radius: 5px;
+    
+    .cover-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+      
+      &:hover {
+        transform: scale(1.05);
+      }
+    }
+  }
+  
+  .article-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .article-meta {
+    display: flex;
+    gap: 0.9rem;
+    font-size: 0.77rem;
+    color: #888;
+    margin-bottom: 0.68rem;
+  }
+  
+  .article-title {
+    font-size: 1.35rem;
+    margin-bottom: 0.9rem;
+    font-family: "汇文明朝体", "SimSun", "宋体", serif;
+    
+    a {
+      color: inherit;
+      text-decoration: none;
+      
+      &:hover {
+        color: #666;
+      }
+    }
+  }
+  
+  .article-excerpt {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #444;
+    margin-bottom: 1.35rem;
+  }
+  
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-bottom: 0.9rem;
+    
+    .tag {
+      padding: 0.23rem 0.68rem;
+      background-color: #f5f5f5;
+      border-radius: 14px;
+      font-size: 0.72rem;
+      color: #666;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        background-color: #eaeaea;
+        color: #333;
+      }
+    }
+  }
+  
+  .read-more {
+    margin-top: auto;
+    font-size: 0.81rem;
+    color: #333;
+    text-decoration: none;
+    display: inline-block;
+    transition: color 0.2s ease;
+    
+    &:hover {
+      color: #666;
+    }
+  }
+}
+
+// 侧边栏
+.blog-sidebar {
+  .sidebar-section {
+    margin-bottom: 1.8rem;
+    padding: 1.35rem;
+    border: 1px solid #eaeaea;
+    border-radius: 5px;
+    background-color: rgba($color: #fff, $alpha: 0.5);
+    
+    .sidebar-title {
+      font-size: 1.13rem;
+      margin-bottom: 0.9rem;
+      font-family: "汇文明朝体", "SimSun", "宋体", serif;
+      position: relative;
+      
+      &:after {
+        content: "";
+        display: block;
+        width: 27px;
+        height: 2px;
+        background-color: #666;
+        margin: 0.45rem 0 0;
+      }
+    }
+  }
+  
+  // 添加小屏幕下的侧边栏样式
+  @media (max-width: 768px) {
+    margin-top: 3rem;
+    
+    // 小屏幕下使用两列网格布局显示侧边栏内容
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    
+    .sidebar-section {
+      margin-bottom: 0;
+    }
+    
+    // 关于博客部分占满宽度
+    .about-blog {
+      grid-column: 1 / -1;
+    }
+  }
+  
+  // 更小屏幕下恢复单列布局
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    
+    .sidebar-section {
+      margin-bottom: 1.5rem;
+    }
+  }
+  
+  .recent-posts {
+    list-style: none;
+    padding: 0;
+    
+    li {
+      margin-bottom: 0.68rem;
+      padding-bottom: 0.68rem;
+      border-bottom: 1px dashed #eaeaea;
+      
+      &:last-child {
+        margin-bottom: 0;
+        padding-bottom: 0;
+        border-bottom: none;
+      }
+      
+      a {
+        color: #333;
+        text-decoration: none;
+        transition: color 0.2s ease;
+        font-size: 0.9rem;
+        
+        &:hover {
+          color: #666;
+        }
+      }
+    }
+  }
+}
+
 // 深色模式支持
 .dark {
   .blog-container {
@@ -313,4 +567,78 @@
       }
     }
   }
+}
+
+// 动画元素基础样式
+.animate-item {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards;
+  animation-play-state: paused;
+}
+
+// 为不同元素设置不同的动画延迟
+.animate-header {
+  animation-delay: 0.1s;
+}
+
+.animate-category {
+  animation-delay: 0.3s;
+}
+
+.animate-articles {
+  animation-delay: 0.5s;
+}
+
+.animate-pagination {
+  animation-delay: 0.7s;
+}
+
+.animate-sidebar-1 {
+  animation-delay: 0.4s;
+}
+
+.animate-sidebar-2 {
+  animation-delay: 0.6s;
+}
+
+.animate-sidebar-3 {
+  animation-delay: 0.8s;
+}
+
+// 文章卡片的单独动画
+.article-card {
+  // ... existing code ...
+  
+  // 添加出现动画
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+  animation-delay: calc(0.1s * var(--article-index, 1));
+}
+
+// 定义淡入上移动画
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 定义淡入动画
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+// 页面切换时的动画
+.blog-layout-container {
+  animation: fadeIn 0.5s ease-in-out;
 }
