@@ -1,26 +1,26 @@
 .page-quote {
-  margin: 3rem auto;
+  margin: 2.7rem auto;
   display: flex;
   justify-content: center;
   
   blockquote {
     border-left: 4px solid #ddd;
-    padding: 1rem 4rem;
+    padding: 0.9rem 3.6rem;
     font-style: italic;
     color: #555;
-    max-width: 800px;
+    max-width: 720px;
     width: auto;
     display: inline-block;
     
     p {
-      font-size: 1.1rem;
+      font-size: 1rem;
       line-height: 1.7;
     }
     
     cite {
       display: block;
-      margin-top: 1rem;
-      font-size: 0.9rem;
+      margin-top: 0.9rem;
+      font-size: 0.81rem;
       text-align: right;
     }
   }

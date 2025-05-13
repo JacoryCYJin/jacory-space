@@ -2,11 +2,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 2rem 0;
-  gap: 1rem;
+  margin: 1.8rem 0;
+  gap: 0.9rem;
   
   .pagination-info {
-    font-size: 0.9rem;
+    font-size: 0.81rem;
     color: #666;
   }
   
@@ -14,11 +14,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
   
   .pagination-button {
-    padding: 0.5rem 1rem;
+    padding: 0.45rem 0.9rem;
     border: 1px solid #eaeaea;
     background: none;
     border-radius: 4px;
@@ -37,11 +37,11 @@
   
   .pagination-numbers {
     display: flex;
-    gap: 0.25rem;
+    gap: 0.23rem;
     
     .pagination-number {
-      width: 2rem;
-      height: 2rem;
+      width: 1.8rem;
+      height: 1.8rem;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -113,15 +113,15 @@
     }
     
     .pagination-button {
-      padding: 0.4rem 0.8rem;
-      font-size: 0.9rem;
+      padding: 0.36rem 0.72rem;
+      font-size: 0.81rem;
     }
     
     .pagination-numbers {
       .pagination-number {
-        width: 1.8rem;
-        height: 1.8rem;
-        font-size: 0.9rem;
+        width: 1.62rem;
+        height: 1.62rem;
+        font-size: 0.81rem;
       }
     }
   }

@@ -1,13 +1,13 @@
 .home-container {
-  max-width: 1200px;
+  max-width: 1080px;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 1.8rem 1.35rem;
   font-family: "SimSun", "宋体", serif;
 
   .avatar-container {
-    margin: 0 auto 1.5rem;
-    width: 120px;
-    height: 120px;
+    margin: 0 auto 1.35rem;
+    width: 108px;
+    height: 108px;
     border-radius: 50%;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -23,24 +23,24 @@
 // 主要介绍区域
 .hero-section {
   text-align: center;
-  margin: 3rem 0 4rem;
+  margin: 2.7rem 0 3.6rem;
   
   .hero-title {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
     font-weight: bold;
-    margin-bottom: 1rem;
+    margin-bottom: 0.9rem;
     font-family: "汇文明朝体", "SimSun", "宋体", serif;
   }
   
   .hero-subtitle {
-    font-size: 1.25rem;
+    font-size: 1.13rem;
     color: #666;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.35rem;
   }
   
   .hero-description {
-    font-size: 1.1rem;
-    max-width: 700px;
+    font-size: 1rem;
+    max-width: 630px;
     margin: 0 auto;
     line-height: 1.8;
   }
@@ -48,54 +48,54 @@
 
 // 导航解释区域
 .nav-explanation {
-  margin: 4rem 0;
+  margin: 3.6rem 0;
   
   .section-title {
     text-align: center;
-    font-size: 1.75rem;
-    margin-bottom: 2rem;
+    font-size: 1.58rem;
+    margin-bottom: 1.8rem;
     font-family: "汇文明朝体", "SimSun", "宋体", serif;
     position: relative;
     
     &:after {
       content: "";
       display: block;
-      width: 50px;
+      width: 45px;
       height: 2px;
       background-color: #666;
-      margin: 0.75rem auto 0;
+      margin: 0.68rem auto 0;
     }
   }
   
   .explanation-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(189px, 1fr));
+    gap: 1.35rem;
   }
   
   .explanation-item {
-    padding: 1.5rem;
-    border: 1px solid #eaeaea; // 加深边框颜色，从 #eaeaea 改为 #d0d0d0
+    padding: 1.35rem;
+    border: 1px solid #eaeaea;
     border-radius: 5px;
     transition: all 0.3s ease;
     text-decoration: none;
     color: inherit;
-    background-color: rgba(255, 255, 255, 0.5); // 添加轻微背景色以增强可见性
+    background-color: rgba(255, 255, 255, 0.5);
     
     &:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      background-color: rgba(255, 255, 255, 0.8); // 悬停时背景色更明显
+      transform: translateY(-4px);
+      box-shadow: 0 9px 18px rgba(0, 0, 0, 0.1);
+      background-color: rgba(255, 255, 255, 0.8);
     }
     
     h3 {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
+      font-size: 1.13rem;
+      margin-bottom: 0.9rem;
       font-family: "汇文明朝体", "SimSun", "宋体", serif;
     }
     
     .explanation-content {
-      font-size: 0.95rem;
+      font-size: 0.86rem;
       line-height: 1.7;
       color: #666;
     }
@@ -104,29 +104,29 @@
 
 // 最新文章区域
 .latest-posts {
-  margin: 4rem 0;
+  margin: 3.6rem 0;
   
   .section-title {
     text-align: center;
-    font-size: 1.75rem;
-    margin-bottom: 2rem;
+    font-size: 1.58rem;
+    margin-bottom: 1.8rem;
     font-family: "汇文明朝体", "SimSun", "宋体", serif;
     position: relative;
     
     &:after {
       content: "";
       display: block;
-      width: 50px;
+      width: 45px;
       height: 2px;
       background-color: #666;
-      margin: 0.75rem auto 0;
+      margin: 0.68rem auto 0;
     }
   }
   
   .posts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1.8rem;
   }
   
   .loading-posts, .error-message {
@@ -157,32 +157,32 @@
   }
   
   .post-card {
-    padding: 1.5rem;
+    padding: 1.35rem;
     border: 1px solid #eaeaea;
     border-radius: 5px;
-    background-color: rgba(255, 255, 255, 0.5); // 添加轻微背景色
+    background-color: rgba(255, 255, 255, 0.5);
     
     .post-date {
-      font-size: 0.85rem;
+      font-size: 0.77rem;
       color: #888;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.68rem;
     }
     
     .post-title {
-      font-size: 1.25rem;
-      margin-bottom: 1rem;
+      font-size: 1.13rem;
+      margin-bottom: 0.9rem;
       font-family: "汇文明朝体", "SimSun", "宋体", serif;
     }
     
     .post-excerpt {
-      font-size: 0.95rem;
+      font-size: 0.86rem;
       line-height: 1.7;
       color: #444;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.35rem;
     }
     
     .read-more {
-      font-size: 0.9rem;
+      font-size: 0.81rem;
       color: #333;
       text-decoration: none;
       display: inline-block;
@@ -253,26 +253,26 @@
 // 响应式设计
 @media (max-width: 768px) {
   .hero-section {
-    margin: 2rem 0 3rem;
+    margin: 1.8rem 0 2.7rem;
     
     .hero-title {
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
     
     .hero-subtitle {
-      font-size: 1.1rem;
+      font-size: 1rem;
     }
     
     .hero-description {
-      font-size: 1rem;
+      font-size: 0.9rem;
     }
   }
   
   .nav-explanation, .latest-posts {
-    margin: 3rem 0;
+    margin: 2.7rem 0;
     
     .section-title {
-      font-size: 1.5rem;
+      font-size: 1.35rem;
     }
   }
 }
@@ -281,13 +281,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 1.5rem;
-  gap: 2rem;
+  margin-bottom: 1.35rem;
+  gap: 1.8rem;
   
   .avatar-container {
     margin: 0;
-    width: 120px;
-    height: 120px;
+    width: 108px;
+    height: 108px;
     border-radius: 50%;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -340,7 +340,7 @@
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(27px);
   }
   to {
     opacity: 1;
