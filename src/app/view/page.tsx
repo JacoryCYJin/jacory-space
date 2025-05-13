@@ -22,7 +22,7 @@ const ViewsPage = () => {
           />
         </div>
         <div className="profile-info">
-          <h2>金诚悦</h2>
+          <h2>芥子不才</h2>
           <p className="profile-bio">
             热衷于技术与人文的交融，在编程世界和创意领域之间寻找平衡。通过博客和视频分享技术见解、设计思考和生活感悟，
             希望用文字和影像记录成长，也为他人提供有价值的内容。
