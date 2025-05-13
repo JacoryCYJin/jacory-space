@@ -42,7 +42,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article }) => {
           <p className="article-excerpt">{article.excerpt}</p>
           <div className="article-tags">
             {article.tags.map(tag => (
-              <span key={tag} className="tag" onClick={(e) => {
+              <span key={tag} className="tag bgc-tag" onClick={(e) => {
                 e.preventDefault();
                 window.location.href = `/blog/tag/${tag}`;
               }}>

@@ -27,7 +27,7 @@
     padding: 0.5rem 1rem;
     border: 1px solid #eaeaea;
     border-radius: 20px;
-    background: none;
+    background-color: rgba($color: #fff, $alpha: 0.5);
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -59,6 +59,7 @@
   padding: 1.5rem;
   border: 1px solid #eaeaea;
   border-radius: 5px;
+  background-color: rgba($color: #fff, $alpha: 0.5);
   transition: all 0.3s ease;
   
   &:hover {
@@ -164,6 +165,7 @@
     padding: 1.5rem;
     border: 1px solid #eaeaea;
     border-radius: 5px;
+    background-color: rgba($color: #fff, $alpha: 0.5);
     
     .sidebar-title {
       font-size: 1.25rem;

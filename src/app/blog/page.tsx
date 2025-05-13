@@ -237,7 +237,7 @@ const BlogPage = () => {
               <ul className="recent-posts">
                 {allArticles
                   .sort((a, b) => new Date(b.publishedDate || 0).getTime() - new Date(a.publishedDate || 0).getTime())
-                  .slice(0, 5)
+                  .slice(0, 8)
                   .map((article) => (
                     <li key={article.nanoid}>
                       <Link href={`/blog/${article.slug}`}>{article.title}</Link>

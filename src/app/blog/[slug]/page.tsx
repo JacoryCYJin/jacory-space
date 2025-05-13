@@ -142,7 +142,7 @@ const ArticlePage = () => {
           </div>
           <div className="article-tags">
             {article.tags.map((tag: string) => (
-              <Link key={tag} href={`/blog/tags/${tag}`} className="tag">
+              <Link key={tag} href={`/blog/tags/${tag}`} className="tag bgc-tag">
                 {tag}
               </Link>
             ))}

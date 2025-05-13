@@ -114,7 +114,7 @@ const VideosPage = () => {
         subtitle="分享技术、设计与生活的点滴思考" 
       />
       
-      <section className="bilibili-intro">
+      <section className="bilibili-intro bgc-element">
         <div className="bilibili-avatar">
           <Image 
             src="/images/avatar.jpg" 
@@ -168,7 +168,7 @@ const VideosPage = () => {
       
       <section className="videos-grid">
         {filteredVideos.map(video => (
-          <div key={video.id} className="video-card">
+          <div key={video.id} className="video-card bgc-element">
             <div className="video-thumbnail">
               <a 
                 href={video.url} 
@@ -205,7 +205,7 @@ const VideosPage = () => {
                 {video.tags.map(tag => (
                   <span 
                     key={tag} 
-                    className="video-tag"
+                    className="video-tag bgc-button"
                     onClick={() => setSelectedTag(tag)}
                   >
                     {tag}

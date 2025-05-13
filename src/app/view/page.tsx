@@ -32,13 +32,13 @@ const ViewsPage = () => {
             <span>电话：19821269277</span>
           </p>
           <div className="profile-social">
-            <Link href="/blog" className="social-link">
+            <Link href="/blog" className="social-link bgc-tag">
               博客文章
             </Link>
-            <Link href="/video" className="social-link">
+            <Link href="/video" className="social-link bgc-tag">
               视频创作
             </Link>
-            <Link href="/work" className="social-link">
+            <Link href="/work" className="social-link bgc-tag">
               项目作品
             </Link>
           </div>
