@@ -9,6 +9,7 @@ const NavBar = () => {
   const pathname = usePathname();
   const [darkMode, setDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   // 初始化时检查系统偏好
   useEffect(() => {
@@ -22,6 +23,7 @@ const NavBar = () => {
 
       setDarkMode(isDark);
       document.documentElement.classList.toggle('dark', isDark);
+      setMounted(true);
     }
   }, []);
 
@@ -50,6 +52,26 @@ const NavBar = () => {
       // router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
     }
   };
+
+  // 如果组件尚未挂载，返回一个预渲染的导航栏以避免闪烁
+  if (!mounted) {
+    return (
+      <nav className="navbar" style={{ visibility: 'hidden' }}>
+        {/* 与下面返回的结构相同，但设置为隐藏 */}
+        <div className="navbar-left">
+          <div className="navbar-logo">
+            <div>芥子不才</div>
+          </div>
+          <div className="navbar-links">
+            {/* 预渲染的链接 */}
+          </div>
+        </div>
+        <div className="navbar-right">
+          {/* 预渲染的搜索框和主题切换按钮 */}
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="navbar">

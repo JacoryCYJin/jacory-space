@@ -45,8 +45,9 @@
         font-size: 16px;
         font-family: "SimSun", "宋体", "NSimSun", "FangSong", "仿宋", serif;
         cursor: pointer;
-        transition: color 0.2s ease-in-out, font-weight 0.3s ease;
+        transition: color 0.2s ease-in-out, font-weight 0.3s ease, background-color 0.3s ease;
         position: relative;
+        text-decoration: none; /* 防止链接默认样式干扰 */
 
         &:hover {
           color: #666;
@@ -61,7 +62,7 @@
           width: 0;
           height: 2px;
           background-color: #333;
-          transition: width 0.3s ease;
+          transition: width 0.3s ease, background-color 0.3s ease;
         }
         
         &.active {
@@ -260,6 +261,12 @@
       }
     }
   }
+}
+
+* {
+  transition-property: background-color, color, border-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
 }
 
 .dark {
