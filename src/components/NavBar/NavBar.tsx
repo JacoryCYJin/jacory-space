@@ -38,8 +38,15 @@ const NavBar = () => {
   // 判断链接是否为当前活动页面
   const isActive = (path: string) => {
     if (path === '/' && pathname === '/') return true;
-    if (path !== '/' && pathname.startsWith(path)) return true;
+    if (path !== '/' && pathname && pathname.startsWith(path)) return true;
     return false;
+  };
+
+  // 处理链接点击，防止闪烁
+  const handleLinkClick = (e: React.MouseEvent, isCurrentActive: boolean) => {
+    if (isCurrentActive) {
+      e.preventDefault(); // 如果已经在当前页面，阻止默认行为
+    }
   };
 
   // 处理搜索提交
@@ -53,28 +60,9 @@ const NavBar = () => {
     }
   };
 
-  // 如果组件尚未挂载，返回一个预渲染的导航栏以避免闪烁
-  if (!mounted) {
-    return (
-      <nav className="navbar" style={{ visibility: 'hidden' }}>
-        {/* 与下面返回的结构相同，但设置为隐藏 */}
-        <div className="navbar-left">
-          <div className="navbar-logo">
-            <div>芥子不才</div>
-          </div>
-          <div className="navbar-links">
-            {/* 预渲染的链接 */}
-          </div>
-        </div>
-        <div className="navbar-right">
-          {/* 预渲染的搜索框和主题切换按钮 */}
-        </div>
-      </nav>
-    );
-  }
-
-  return (
-    <nav className="navbar">
+  // 预渲染的导航栏结构，与实际结构完全相同，但隐藏
+  const renderNavContent = (visible = true) => (
+    <nav className="navbar" style={{ visibility: visible ? 'visible' : 'hidden' }}>
       <div className="navbar-left">
         <div className="navbar-logo">
           <div>芥子不才</div>
@@ -84,30 +72,35 @@ const NavBar = () => {
           <Link
             href="/"
             className={`navbar-link ${isActive('/') ? 'active' : ''}`}
+            onClick={(e) => handleLinkClick(e, isActive('/'))}
           >
             晴窗小坐
           </Link>
           <Link
             href="/work"
             className={`navbar-link ${isActive('/work') ? 'active' : ''}`}
+            onClick={(e) => handleLinkClick(e, isActive('/work'))}
           >
             拙作小集
           </Link>
           <Link
             href="/video"
             className={`navbar-link ${isActive('/video') ? 'active' : ''}`}
+            onClick={(e) => handleLinkClick(e, isActive('/video'))}
           >
             流光片羽
           </Link>
           <Link
             href="/blog"
             className={`navbar-link ${isActive('/blog') ? 'active' : ''}`}
+            onClick={(e) => handleLinkClick(e, isActive('/blog'))}
           >
             闲笔偶记
           </Link>
           <Link
             href="/view"
             className={`navbar-link ${isActive('/view') ? 'active' : ''}`}
+            onClick={(e) => handleLinkClick(e, isActive('/view'))}
           >
             寸心之介
           </Link>
@@ -194,6 +187,13 @@ const NavBar = () => {
       </div>
     </nav>
   );
+
+  // 如果组件尚未挂载，返回一个预渲染的导航栏以避免闪烁
+  if (!mounted) {
+    return renderNavContent(false);
+  }
+
+  return renderNavContent(true);
 };
 
 export default NavBar;
