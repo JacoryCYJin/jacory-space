@@ -4,7 +4,7 @@ export const navTexts = {
     navbar: "导航栏",
     home: "首页",
     portfolio: "作品集", 
-    blog: "文章",
+    blog: "博客",
     about: "关于我",
     contact: "联系我"
   },
@@ -12,7 +12,7 @@ export const navTexts = {
     navbar: "導航欄",
     home: "首頁",
     portfolio: "作品集", 
-    blog: "文章",
+    blog: "博客",
     about: "關於我",
     contact: "聯繫我"
   },
