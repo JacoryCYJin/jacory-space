@@ -20,7 +20,7 @@ const BlogList = ({ filteredPosts, noResultsText }) => {
   }
 
   return (
-    <div className="grid gap-6" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
+    <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr">
       {filteredPosts.map((post) => (
         <BlogCard key={post.slug} article={post} />
       ))}

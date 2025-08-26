@@ -140,3 +140,21 @@
     @apply bg-background text-foreground;
   }
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .max-w-7\.5xl {
+    max-width: 85rem; /* 1360px */
+  }
+  
+  .max-w-8xl {
+    max-width: 96rem; /* 1536px */
+  }
+  
+  .max-w-9xl {
+    max-width: 112rem; /* 1792px */
+  }
+}

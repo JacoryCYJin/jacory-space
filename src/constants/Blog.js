@@ -1,8 +1,8 @@
 // 博客相关配置和翻译文本
 export const blogTexts = {
   "zh-cn": {
-    title: "我的博客",
-    subtitle: "分享技术与思考",
+    title: "思考与记录",
+    subtitle: "技术分享 · 学习笔记 · 生活随笔",
     allCategories: "全部分类",
     allTags: "全部标签",
     searchPlaceholder: "搜索文章...",
@@ -11,11 +11,20 @@ export const blogTexts = {
     publishedOn: "发布于",
     category: "分类",
     tags: "标签",
-    backToBlog: "返回博客"
+    backToBlog: "返回博客",
+    expandAll: "展开全部",
+    collapse: "收起",
+    clearFilters: "清除筛选",
+    articlesCount: "篇文章",
+    showPerPage: "每页显示",
+    pageInfo: "第",
+    of: "页，共",
+    pages: "页",
+    total: "共"
   },
   "zh-tw": {
-    title: "我的博客",
-    subtitle: "分享技術與思考", 
+    title: "思考與記錄",
+    subtitle: "技術分享 · 學習筆記 · 生活隨筆", 
     allCategories: "全部分類",
     allTags: "全部標籤",
     searchPlaceholder: "搜索文章...",
@@ -24,11 +33,20 @@ export const blogTexts = {
     publishedOn: "發佈於",
     category: "分類",
     tags: "標籤",
-    backToBlog: "返回博客"
+    backToBlog: "返回博客",
+    expandAll: "展開全部",
+    collapse: "收起",
+    clearFilters: "清除篩選",
+    articlesCount: "篇文章",
+    showPerPage: "每頁顯示",
+    pageInfo: "第",
+    of: "頁，共",
+    pages: "頁",
+    total: "共"
   },
   en: {
-    title: "My Blogs",
-    subtitle: "Sharing Tech & Thoughts",
+    title: "Thoughts & Notes",
+    subtitle: "Tech · Learning · Life",
     allCategories: "All Categories", 
     allTags: "All Tags",
     searchPlaceholder: "Search articles...",
@@ -37,7 +55,47 @@ export const blogTexts = {
     publishedOn: "Published on",
     category: "Category",
     tags: "Tags",
-    backToBlog: "Back to Blog"
+    backToBlog: "Back to Blog",
+    expandAll: "Show All",
+    collapse: "Show Less",
+    clearFilters: "Clear Filters",
+    articlesCount: "articles",
+    showPerPage: "Show",
+    pageInfo: "Page",
+    of: "of",
+    pages: "pages",
+    total: "Total"
+  }
+};
+
+// 分页组件多语言配置
+export const paginationTexts = {
+  "zh-cn": {
+    goToPage: "跳转到",
+    go: "确定",
+    pageInfo: "第",
+    of: "页，共",
+    pages: "页",
+    total: "共",
+    articlesCount: "篇文章"
+  },
+  "zh-tw": {
+    goToPage: "跳轉到",
+    go: "確定",
+    pageInfo: "第",
+    of: "頁，共",
+    pages: "頁",
+    total: "共",
+    articlesCount: "篇文章"
+  },
+  en: {
+    goToPage: "Go to",
+    go: "Go",
+    pageInfo: "Page",
+    of: "of",
+    pages: "pages",
+    total: "Total",
+    articlesCount: "articles"
   }
 };
 
@@ -87,6 +145,24 @@ export const blogCategories = [
       en: "Life & Thoughts"
     },
     color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+  },
+  {
+    id: "learning",
+    name: {
+      "zh-cn": "学习笔记",
+      "zh-tw": "學習筆記", 
+      en: "Learning Notes"
+    },
+    color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300"
+  },
+  {
+    id: "coffee",
+    name: {
+      "zh-cn": "咖啡时光",
+      "zh-tw": "咖啡時光", 
+      en: "Coffee Time"
+    },
+    color: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300"
   }
 ];
 
@@ -141,13 +217,76 @@ export const blogTags = [
     },
     color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
   },
-  {
+    {
     id: "experience",
     name: {
       "zh-cn": "经验分享",
-      "zh-tw": "經驗分享",
+      "zh-tw": "經驗分享", 
       en: "Experience"
     },
     color: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300"
+  },
+  {
+    id: "coffee",
+    name: {
+      "zh-cn": "咖啡",
+      "zh-tw": "咖啡", 
+      en: "Coffee"
+    },
+    color: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300"
+  },
+  {
+    id: "mindset",
+    name: {
+      "zh-cn": "思维模式",
+      "zh-tw": "思維模式", 
+      en: "Mindset"
+    },
+    color: "bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-300"
+  },
+  {
+    id: "growth",
+    name: {
+      "zh-cn": "个人成长",
+      "zh-tw": "個人成長", 
+      en: "Personal Growth"
+    },
+    color: "bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-300"
+  },
+  {
+    id: "lifestyle",
+    name: {
+      "zh-cn": "生活方式",
+      "zh-tw": "生活方式", 
+      en: "Lifestyle"
+    },
+    color: "bg-lime-100 text-lime-800 dark:bg-lime-900 dark:text-lime-300"
+  },
+  {
+    id: "minimalism",
+    name: {
+      "zh-cn": "极简主义",
+      "zh-tw": "極簡主義", 
+      en: "Minimalism"
+    },
+    color: "bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-300"
+  },
+  {
+    id: "reading",
+    name: {
+      "zh-cn": "阅读",
+      "zh-tw": "閱讀", 
+      en: "Reading"
+    },
+    color: "bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300"
+  },
+  {
+    id: "digital-wellness",
+    name: {
+      "zh-cn": "数字健康",
+      "zh-tw": "數字健康", 
+      en: "Digital Wellness"
+    },
+    color: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300"
   }
 ];
