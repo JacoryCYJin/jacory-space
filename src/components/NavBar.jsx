@@ -31,7 +31,7 @@ const NavBar = () => {
   };
   
   return (
-    <nav className="flex flex-row justify-between items-center px-8 py-2 fixed w-screen z-10 dark:bg-gray-900/80 backdrop-blur-sm">
+    <nav className="flex flex-row justify-between items-center px-8 py-2 fixed w-screen z-100 backdrop-blur-sm">
       <div>
         <div className="font-semibold text-lg">{currentTexts.navbar}</div>
       </div>
