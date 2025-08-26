@@ -85,7 +85,7 @@ const BlogPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen pt-12 px-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-300 rounded w-1/4 mb-4"></div>
             <div className="h-4 bg-gray-300 rounded w-1/2 mb-8"></div>
@@ -118,7 +118,7 @@ const BlogPage = () => {
         {/* 渐变遮罩，从上往下消失 */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background dark:to-backgroud pointer-events-none z-0"></div>
 
-        <div className="max-w-6xl mx-auto relative z-10">
+        <div className="max-w-10xl mx-auto relative z-10">
           {/* 页面标题 */}
           <div className="text-center pt-12 pb-8">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4">
@@ -132,7 +132,7 @@ const BlogPage = () => {
       </div>
 
       {/* 筛选和搜索区域 */}
-      <div className="max-w-6xl mx-auto mb-8 relative z-10">
+      <div className="max-w-7xl mx-auto mb-8 relative z-10">
         <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* 搜索框 */}
@@ -191,7 +191,7 @@ const BlogPage = () => {
       </div>
 
       {/* 文章列表 */}
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <BlogList
           filteredPosts={filteredPosts}
           noResultsText={currentTexts.noResults}
