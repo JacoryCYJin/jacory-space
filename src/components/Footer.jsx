@@ -13,8 +13,11 @@ const Footer = () => {
       <div className="max-w-8xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-foreground mb-4">
-              {currentTexts.companyName}
+            <h3 className="text-lg font-semibold mb-4 flex items-baseline">
+              <span className="text-7xl font-extrabold text-primary mr-0.5 italic">
+                J
+              </span>
+              <span className="text-4xl font-bold">Space</span>
             </h3>
             <p>{currentTexts.slogan}</p>
             <div className="text-muted-foreground space-y-2 text-sm">

@@ -33,7 +33,10 @@ const NavBar = () => {
   return (
     <nav className="flex flex-row justify-between items-center px-8 py-2 fixed w-screen z-100 backdrop-blur-sm">
       <div>
-        <div className="font-semibold text-lg">{currentTexts.navbar}</div>
+        <div className="flex items-baseline">
+          <span className="text-4xl font-extrabold text-primary mr-0.5 italic">J</span>
+          <span className="text-1xl font-bold">Space</span>
+        </div>
       </div>
       <div className="flex flex-row justify-between items-center space-x-30">
         {navItems.map((item) => (

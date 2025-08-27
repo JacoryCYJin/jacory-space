@@ -1,7 +1,7 @@
 // Footer翻译文本常量
 export const footerTexts = {
   "zh-cn": {
-    companyName: "Jacory Space",
+    companyName: "JSpace",
     slogan: "认知是序章，行走才是长诗",
     email: "邮箱: chengyue.jin@outlook.com",
     navigation: "导航",
@@ -23,7 +23,7 @@ export const footerTexts = {
     allRightsReserved: "保留所有权利"
   },
   "zh-tw": {
-    companyName: "Jacory Space",
+    companyName: "JSpace",
     slogan: "認知是序章，行走才是長詩",
     email: "郵箱: chengyue.jin@outlook.com",
     navigation: "導航",
@@ -45,7 +45,7 @@ export const footerTexts = {
     allRightsReserved: "保留所有權利"
   },
   en: {
-    companyName: "Jacory Space",
+    companyName: "JSpace",
     slogan: "Knowledge is the prelude, walking is the epic",
     email: "E-Mail: chengyue.jin@outlook.com",
     navigation: "Navigation",
