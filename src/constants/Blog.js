@@ -1,7 +1,7 @@
 // 博客相关配置和翻译文本
 export const blogTexts = {
   "zh-cn": {
-    title: "思考与记录",
+    title: "芥子博客",
     subtitle: "技术分享 · 学习笔记 · 生活随笔",
     allCategories: "全部分类",
     allTags: "全部标签",
@@ -23,7 +23,7 @@ export const blogTexts = {
     total: "共"
   },
   "zh-tw": {
-    title: "思考與記錄",
+    title: "芥子博客",
     subtitle: "技術分享 · 學習筆記 · 生活隨筆", 
     allCategories: "全部分類",
     allTags: "全部標籤",
@@ -45,7 +45,7 @@ export const blogTexts = {
     total: "共"
   },
   en: {
-    title: "Thoughts & Notes",
+    title: "Jacory Blog",
     subtitle: "Tech · Learning · Life",
     allCategories: "All Categories", 
     allTags: "All Tags",

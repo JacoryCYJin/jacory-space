@@ -213,26 +213,10 @@ const BlogPage = () => {
 
           {/* 分类筛选 */}
           <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="mb-3">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                 {currentTexts.category}
               </h3>
-              {blogCategories.length > 4 && (
-                <button
-                  onClick={() => setShowAllCategories(!showAllCategories)}
-                  className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
-                >
-                  {showAllCategories ? currentTexts.collapse : currentTexts.expandAll}
-                  <svg 
-                    className={`w-3 h-3 transition-transform duration-200 ${showAllCategories ? 'rotate-180' : ''}`} 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              )}
             </div>
             <div className="flex flex-wrap gap-2">
               <button
@@ -258,31 +242,23 @@ const BlogPage = () => {
                   {getCategoryName(category)}
                 </button>
               ))}
+              {blogCategories.length > 4 && (
+                <button
+                  onClick={() => setShowAllCategories(!showAllCategories)}
+                  className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center"
+                >
+                  {showAllCategories ? "❌" : "···"}
+                </button>
+              )}
             </div>
           </div>
 
           {/* 标签筛选 */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+            <div className="mb-3">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                 {currentTexts.tags}
               </h3>
-              {blogTags.length > 8 && (
-                <button
-                  onClick={() => setShowAllTags(!showAllTags)}
-                  className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
-                >
-                  {showAllTags ? currentTexts.collapse : currentTexts.expandAll}
-                  <svg 
-                    className={`w-3 h-3 transition-transform duration-200 ${showAllTags ? 'rotate-180' : ''}`} 
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              )}
             </div>
             <div className="flex flex-wrap gap-2">
               <button
@@ -308,6 +284,14 @@ const BlogPage = () => {
                   {getTagName(tag)}
                 </button>
               ))}
+              {blogTags.length > 8 && (
+                <button
+                  onClick={() => setShowAllTags(!showAllTags)}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center"
+                >
+                  {showAllTags ? "❌" : "···"}
+                </button>
+              )}
             </div>
           </div>
         </div>

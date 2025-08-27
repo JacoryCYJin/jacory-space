@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LanguageSwitcher from "./LanguageSwitcher";
-import ThemeSwitcher from "./ThemeSwitcher";
+import { AnimatedThemeToggler } from "./magicui/animated-theme-toggler";
 import { useApp } from "@/lib/context";
 import { navTexts } from "@/constants/NavBar";
 
@@ -51,7 +51,7 @@ const NavBar = () => {
         ))}
       </div>
       <div className="flex items-center space-x-3">
-        <ThemeSwitcher />
+        <AnimatedThemeToggler />
         <LanguageSwitcher />
       </div>
     </nav>
