@@ -123,7 +123,7 @@ const BlogPage = () => {
   }
 
   return (
-    <div className="min-h-screen pb-12">
+    <div className="min-h-screen pb-12 pt-14">
       {/* 页面标题部分 - 带背景 */}
       <div className="relative pb-8">
         <AnimatedGridPattern

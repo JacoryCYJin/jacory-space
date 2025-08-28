@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
       <body>
         <AppProvider>
           <NavBar />
-          <main className="pt-14">
+          <main>
             {children}
           </main>
           <Footer />
