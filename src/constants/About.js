@@ -1,0 +1,137 @@
+export const aboutTexts = {
+    "zh-cn": {
+        nickname: "芥子不才",
+        slogan: "认知是序章，行走才是长诗。",
+        bio: "我是一名热爱技术的全栈开发者，专注于现代Web开发技术。喜欢探索新技术，分享技术见解，用代码创造价值。",
+        sections: {
+            skills: "技能专长",
+            experience: "工作经历", 
+            education: "教育背景",
+            interests: "兴趣爱好",
+            contact: "联系方式"
+        },
+        skills: {
+            frontend: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS"],
+            backend: ["Node.js", "Python", "Express", "MongoDB", "PostgreSQL"],
+            tools: ["Git", "Docker", "AWS", "Vercel", "Figma"]
+        },
+        experiences: [
+            {
+                title: "全栈开发工程师",
+                company: "科技公司",
+                period: "2022 - 至今",
+                description: "负责前端和后端开发，参与多个项目的架构设计和实现。"
+            },
+            {
+                title: "前端开发工程师",
+                company: "互联网公司",
+                period: "2021 - 2022",
+                description: "专注于用户界面开发，优化用户体验和性能。"
+            }
+        ],
+        education: [
+            {
+                degree: "计算机科学学士",
+                school: "某某大学",
+                period: "2017 - 2021"
+            }
+        ],
+        interests: ["阅读", "摄影", "旅行", "开源贡献", "技术写作"],
+        contact: {
+            email: "hello@jacory.space",
+            github: "https://github.com/jacory",
+            twitter: "https://twitter.com/jacory",
+            linkedin: "https://linkedin.com/in/jacory"
+        }
+    },
+    "zh-tw": {
+        nickname: "芥子不才",
+        slogan: "認知是序章，行走才是長詩。",
+        bio: "我是一名熱愛技術的全端開發者，專注於現代Web開發技術。喜歡探索新技術，分享技術見解，用程式碼創造價值。",
+        sections: {
+            skills: "技能專長",
+            experience: "工作經歷",
+            education: "教育背景", 
+            interests: "興趣愛好",
+            contact: "聯絡方式"
+        },
+        skills: {
+            frontend: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS"],
+            backend: ["Node.js", "Python", "Express", "MongoDB", "PostgreSQL"],
+            tools: ["Git", "Docker", "AWS", "Vercel", "Figma"]
+        },
+        experiences: [
+            {
+                title: "全端開發工程師",
+                company: "科技公司",
+                period: "2022 - 至今",
+                description: "負責前端和後端開發，參與多個專案的架構設計和實現。"
+            },
+            {
+                title: "前端開發工程師", 
+                company: "網路公司",
+                period: "2021 - 2022",
+                description: "專注於使用者介面開發，最佳化使用者體驗和效能。"
+            }
+        ],
+        education: [
+            {
+                degree: "電腦科學學士",
+                school: "某某大學",
+                period: "2017 - 2021"
+            }
+        ],
+        interests: ["閱讀", "攝影", "旅行", "開源貢獻", "技術寫作"],
+        contact: {
+            email: "hello@jacory.space",
+            github: "https://github.com/jacory", 
+            twitter: "https://twitter.com/jacory",
+            linkedin: "https://linkedin.com/in/jacory"
+        }
+    },
+    en: {
+        nickname: "Jacory",
+        slogan: "Knowledge is the prelude, walking is the epic.",
+        bio: "I'm a passionate full-stack developer focused on modern web development technologies. I love exploring new tech, sharing insights, and creating value through code.",
+        sections: {
+            skills: "Skills & Expertise",
+            experience: "Work Experience",
+            education: "Education",
+            interests: "Interests",
+            contact: "Contact"
+        },
+        skills: {
+            frontend: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS"],
+            backend: ["Node.js", "Python", "Express", "MongoDB", "PostgreSQL"],
+            tools: ["Git", "Docker", "AWS", "Vercel", "Figma"]
+        },
+        experiences: [
+            {
+                title: "Full-Stack Developer",
+                company: "Tech Company",
+                period: "2022 - Present",
+                description: "Responsible for frontend and backend development, participating in architecture design and implementation of multiple projects."
+            },
+            {
+                title: "Frontend Developer",
+                company: "Internet Company", 
+                period: "2021 - 2022",
+                description: "Focused on user interface development, optimizing user experience and performance."
+            }
+        ],
+        education: [
+            {
+                degree: "Bachelor of Computer Science",
+                school: "University",
+                period: "2017 - 2021"
+            }
+        ],
+        interests: ["Reading", "Photography", "Travel", "Open Source", "Tech Writing"],
+        contact: {
+            email: "hello@jacory.space",
+            github: "https://github.com/jacory",
+            twitter: "https://twitter.com/jacory", 
+            linkedin: "https://linkedin.com/in/jacory"
+        }
+    }
+}

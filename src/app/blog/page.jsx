@@ -107,7 +107,7 @@ const BlogPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen pt-12 px-8">
-        <div className="max-w-8xl mx-auto">
+        <div className="max-w-7.5xl mx-auto">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-300 rounded w-1/4 mb-4"></div>
             <div className="h-4 bg-gray-300 rounded w-1/2 mb-8"></div>
@@ -140,7 +140,7 @@ const BlogPage = () => {
         {/* 渐变遮罩，从上往下消失 */}
         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background dark:to-backgroud pointer-events-none z-0"></div>
 
-        <div className="max-w-8xl mx-auto relative z-10 px-4">
+        <div className="max-w-7.5xl mx-auto relative z-10 px-4">
           {/* 页面标题 */}
           <div className="text-center pt-12 pb-8">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4">
@@ -157,7 +157,7 @@ const BlogPage = () => {
       </div>
 
       {/* 筛选和搜索区域 */}
-      <div className="max-w-8xl mx-auto mb-8 relative z-10 px-4">
+      <div className="max-w-7.5xl mx-auto mb-8 relative z-10 px-4">
         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 backdrop-blur-sm">
           {/* 搜索框和状态栏 */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
@@ -249,14 +249,15 @@ const BlogPage = () => {
                 >
                   {showAllCategories ? (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   ) : (
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <circle cx="5" cy="12" r="1"/>
+                      <circle cx="12" cy="12" r="1"/>
+                      <circle cx="19" cy="12" r="1"/>
                     </svg>
                   )}
-                  {showAllCategories ? "收起" : "更多"}
                 </button>
               )}
             </div>
@@ -300,14 +301,15 @@ const BlogPage = () => {
                 >
                   {showAllTags ? (
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   ) : (
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <circle cx="5" cy="12" r="1"/>
+                      <circle cx="12" cy="12" r="1"/>
+                      <circle cx="19" cy="12" r="1"/>
                     </svg>
                   )}
-                  {showAllTags ? "收起" : "更多"}
                 </button>
               )}
             </div>
@@ -316,7 +318,7 @@ const BlogPage = () => {
       </div>
 
       {/* 文章列表 */}
-      <div className="max-w-8xl mx-auto px-4 pb-8">
+      <div className="max-w-7.5xl mx-auto px-4 pb-8">
         <BlogList
           filteredPosts={currentPosts}
           noResultsText={currentTexts.noResults}
@@ -325,7 +327,7 @@ const BlogPage = () => {
 
       {/* 分页组件 */}
       {filteredPosts.length > 0 && (
-        <div className="max-w-8xl mx-auto px-4">
+        <div className="max-w-7.5xl mx-auto px-4">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
