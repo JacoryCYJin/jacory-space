@@ -2,6 +2,7 @@ export const aboutTexts = {
     "zh-cn": {
         nickname: "芥子不才",
         slogan: "认知是序章，行走才是长诗。",
+        aspiration: "理想成为一位独立开发者",
         bio: "我是一名热爱技术的全栈开发者，专注于现代Web开发技术。喜欢探索新技术，分享技术见解，用代码创造价值。",
         sections: {
             skills: "技能专长",
@@ -11,9 +12,10 @@ export const aboutTexts = {
             contact: "联系方式"
         },
         skills: {
-            frontend: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS"],
-            backend: ["Node.js", "Python", "Express", "MongoDB", "PostgreSQL"],
-            tools: ["Git", "Docker", "AWS", "Vercel", "Figma"]
+            frontend: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS", "HTML5", "CSS3", "JavaScript"],
+            backend: ["Node.js", "Python", "Express", "MongoDB", "PostgreSQL", "FastAPI", "Django"],
+            animation: ["GSAP", "Three.js", "Framer Motion", "Lottie", "WebGL", "CSS动画"],
+            design: ["Figma", "SVG制作", "视频剪辑", "UI设计", "图标设计", "品牌设计"]
         },
         experiences: [
             {
@@ -47,6 +49,7 @@ export const aboutTexts = {
     "zh-tw": {
         nickname: "芥子不才",
         slogan: "認知是序章，行走才是長詩。",
+        aspiration: "理想成為一位獨立開發者",
         bio: "我是一名熱愛技術的全端開發者，專注於現代Web開發技術。喜歡探索新技術，分享技術見解，用程式碼創造價值。",
         sections: {
             skills: "技能專長",
@@ -56,9 +59,10 @@ export const aboutTexts = {
             contact: "聯絡方式"
         },
         skills: {
-            frontend: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS"],
-            backend: ["Node.js", "Python", "Express", "MongoDB", "PostgreSQL"],
-            tools: ["Git", "Docker", "AWS", "Vercel", "Figma"]
+            frontend: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS", "HTML5", "CSS3", "JavaScript"],
+            backend: ["Node.js", "Python", "Express", "MongoDB", "PostgreSQL", "FastAPI", "Django"],
+            animation: ["GSAP", "Three.js", "Framer Motion", "Lottie", "WebGL", "CSS動畫"],
+            design: ["Figma", "SVG製作", "影片剪輯", "UI設計", "圖標設計", "品牌設計"]
         },
         experiences: [
             {
@@ -92,6 +96,7 @@ export const aboutTexts = {
     en: {
         nickname: "Jacory",
         slogan: "Knowledge is the prelude, walking is the epic.",
+        aspiration: "Aspiring to be an Independent Developer",
         bio: "I'm a passionate full-stack developer focused on modern web development technologies. I love exploring new tech, sharing insights, and creating value through code.",
         sections: {
             skills: "Skills & Expertise",
@@ -101,9 +106,10 @@ export const aboutTexts = {
             contact: "Contact"
         },
         skills: {
-            frontend: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS"],
-            backend: ["Node.js", "Python", "Express", "MongoDB", "PostgreSQL"],
-            tools: ["Git", "Docker", "AWS", "Vercel", "Figma"]
+            frontend: ["React", "Next.js", "Vue.js", "TypeScript", "Tailwind CSS", "HTML5", "CSS3", "JavaScript"],
+            backend: ["Node.js", "Python", "Express", "MongoDB", "PostgreSQL", "FastAPI", "Django"],
+            animation: ["GSAP", "Three.js", "Framer Motion", "Lottie", "WebGL", "CSS Animations"],
+            design: ["Figma", "SVG Creation", "Video Editing", "UI Design", "Icon Design", "Brand Design"]
         },
         experiences: [
             {
