@@ -132,7 +132,7 @@ const SkillsSection = ({ texts }) => {
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
       {/* 卡片容器 - 移除最大宽度限制，充分利用60vw宽度 */}
-      <div className="relative z-10 w-full h-[60vh] bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl shadow-xl shadow-primary/10 overflow-hidden group-hover:shadow-primary/20 group-hover:border-primary/30 transition-all duration-500">
+      <div className="relative z-10 w-full max-w-4xl h-[60vh] bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl shadow-xl shadow-primary/10 overflow-hidden group-hover:shadow-primary/20 group-hover:border-primary/30 transition-all duration-500">
         {children}
       </div>
     </div>
