@@ -113,14 +113,6 @@ const SkillsSection = ({ texts }) => {
             : '掌握全栈开发技术，专注于现代化工具和创意科技'
           }
         </p>
-        
-        {/* 引导箭头 */}
-        <div className="mt-6 flex items-center justify-center space-x-2 text-primary/60">
-          <span className="text-xs">
-            {language === 'en' ? 'Scroll to explore' : language === 'zh-tw' ? '滾動探索' : '滚动探索'}
-          </span>
-          <div className="w-3 h-3 border-r-2 border-b-2 border-current transform rotate-45 animate-pulse" />
-        </div>
       </div>
     </div>
   );
