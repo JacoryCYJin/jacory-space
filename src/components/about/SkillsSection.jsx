@@ -8,6 +8,7 @@ import FullStackCard from "./FullStackCard";
 import AnimationCard from "./AnimationCard";
 import DesignCard from "./DesignCard";
 import VideoCard from "./VideoCard";
+import TetrisGridBackground from "../magicui/TetrisGridBackground";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -70,25 +71,7 @@ const SkillsSection = ({ texts }) => {
     },
   ];
 
-  // 蜂窝背景组件
-  const HexagonBackground = () => (
-    <div className="absolute inset-0 overflow-hidden">
-      <div className="absolute inset-0 opacity-20 transition-opacity duration-500 group-hover:opacity-40 overflow-hidden">
-        <div 
-          className="absolute inset-0 overflow-hidden" 
-          style={{
-            backgroundImage: `
-              radial-gradient(circle at 25% 25%, #6b8a5a 2px, transparent 2px),
-              radial-gradient(circle at 75% 75%, #6b8a5a 2px, transparent 2px),
-              radial-gradient(circle at 50% 50%, #6b8a5a 1px, transparent 1px)
-            `,
-            backgroundSize: '60px 60px, 60px 60px, 30px 30px',
-            backgroundPosition: '0 0, 30px 30px, 0 0'
-          }} 
-        />
-      </div>
-    </div>
-  );
+
 
   // 标题卡片组件
   const TitleCard = () => (
@@ -98,21 +81,21 @@ const SkillsSection = ({ texts }) => {
       
       <div className="relative z-10">
         <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-center">
-          <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
+          <span className="text-background">
             {texts.sections.skills}
           </span>
         </h2>
         
         <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary/50 mx-auto rounded-full mb-4" />
         
-        <p className="text-sm lg:text-base text-muted-foreground text-center max-w-lg">
+        {/* <p className="text-sm lg:text-base text-muted-foreground text-center max-w-lg">
           {language === 'en' 
             ? 'Mastering full-stack development with focus on modern tools and creative technologies'
             : language === 'zh-tw'
             ? '掌握全端開發技術，專注於現代化工具和創意科技'  
             : '掌握全栈开发技术，专注于现代化工具和创意科技'
           }
-        </p>
+        </p> */}
       </div>
     </div>
   );
@@ -135,8 +118,8 @@ const SkillsSection = ({ texts }) => {
       {/* 背景装饰 */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background overflow-hidden" />
       
-      {/* 蜂窝背景 - 移到整个section级别 */}
-      <HexagonBackground />
+      {/* 俄罗斯方块网格背景 */}
+      <TetrisGridBackground />
       
       <div className="relative z-10 h-full flex flex-col justify-center overflow-hidden">
         {/* 卡片展示区域 - 水平滚动容器 */}

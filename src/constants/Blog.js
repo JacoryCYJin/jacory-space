@@ -311,5 +311,32 @@ export const blogTags = [
       en: "Digital Wellness"
     },
     color: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300"
+  },
+  {
+    id: "background",
+    name: {
+      "zh-cn": "背景设计",
+      "zh-tw": "背景設計", 
+      en: "Background Design"
+    },
+    color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300"
+  },
+  {
+    id: "grid",
+    name: {
+      "zh-cn": "网格系统",
+      "zh-tw": "網格系統", 
+      en: "Grid System"
+    },
+    color: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300"
+  },
+  {
+    id: "tetris",
+    name: {
+      "zh-cn": "俄罗斯方块",
+      "zh-tw": "俄羅斯方塊", 
+      en: "Tetris"
+    },
+    color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
   }
 ];
