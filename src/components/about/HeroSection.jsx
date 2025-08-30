@@ -165,6 +165,7 @@ const HeroSection = ({ texts }) => {
               scale: 1.05,
               duration: 0.4,
               ease: "power2.out",
+              rotate: 10,
             });
           });
 
@@ -173,11 +174,10 @@ const HeroSection = ({ texts }) => {
               scale: 1,
               duration: 0.4,
               ease: "power2.out",
+              rotate: 0,
             });
           });
         }
-
-
       };
 
       // 延迟设置悬停动画，确保进入动画完成
@@ -272,12 +272,12 @@ const HeroSection = ({ texts }) => {
                 {/* 主头像 */}
                 <div
                   ref={avatarRef}
-                  className="w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border-4 border-primary/20 hover:border-primary/40 transition-colors"
+                  className="w-68 h-68 sm:w-84 sm:h-84 lg:w-100 lg:h-100 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border-4 border-primary/20 hover:border-primary/40 transition-colors overflow-hidden"
                 >
                   <img
                     src="/images/avatar/avatar.jpg"
                     alt={texts.nickname}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-fill"
                   />
                 </div>
               </div>
