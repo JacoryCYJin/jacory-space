@@ -14,64 +14,66 @@ const HeroSection = ({ texts }) => {
   const bgDecorRef = useRef(null);
 
   useEffect(() => {
-    const hero = heroRef.current;
-    const avatar = avatarRef.current;
-    const title = titleRef.current;
-    const aspiration = aspirationRef.current;
-    const subtitle = subtitleRef.current;
-    const bio = bioRef.current;
-    const decorLine = decorLineRef.current;
-    const bgDecor = bgDecorRef.current;
+    const elements = {
+      hero: heroRef.current,
+      avatar: avatarRef.current,
+      title: titleRef.current,
+      aspiration: aspirationRef.current,
+      subtitle: subtitleRef.current,
+      bio: bioRef.current,
+      decorLine: decorLineRef.current,
+      bgDecor: bgDecorRef.current,
+    };
 
-    if (!hero) return;
+    if (!elements.hero) return;
+
+    // 后备方案函数
+    const ensureElementsVisible = () => {
+      Object.values(elements)
+        .filter(Boolean)
+        .forEach((el) => {
+          el.style.opacity = "1";
+          el.style.transform = "none";
+        });
+    };
 
     // 防止GSAP未加载的后备方案
     if (typeof gsap === "undefined") {
       console.warn("GSAP not loaded, ensuring all elements are visible");
-      // 确保所有元素都可见
-      [title, aspiration, subtitle, bio, decorLine, avatar, bgDecor].forEach(
-        (el) => {
-          if (el) {
-            el.style.opacity = "1";
-            el.style.transform = "none";
-          }
-        }
-      );
+      ensureElementsVisible();
       return;
     }
 
-    try {
-      // 创建 GSAP 时间线 - 适中的动画速度
-      const tl = gsap.timeline({
-        defaults: {
-          ease: "power2.out",
-          duration: 0.8, // 适中的动画速度
+    // 使用GSAP Context API进行更好的内存管理
+    const ctx = gsap.context(() => {
+      // 动画配置常量
+      const ANIMATION_CONFIG = {
+        defaults: { ease: "power2.out", duration: 0.8 },
+        textElements: { y: 30, opacity: 0 },
+        decorLine: {
+          y: 20,
+          opacity: 0,
+          scaleX: 0,
+          transformOrigin: "left center",
         },
-      });
+        avatar: { scale: 0.95, opacity: 0.9 },
+        bgDecor: { scale: 0.8, opacity: 0 },
+      };
 
-      // 设置初始状态 - 标题完全隐藏等待动画
-      gsap.set([title, aspiration, subtitle, bio], {
-        y: 30,
-        opacity: 0, // 完全隐藏等待动画
-      });
+      // 创建时间线
+      const tl = gsap.timeline({ defaults: ANIMATION_CONFIG.defaults });
 
-      // 装饰线条设置初始状态
-      gsap.set(decorLine, {
-        y: 20,
-        opacity: 0,
-        scaleX: 0, // 从0宽度开始
-        transformOrigin: "left center", // 从左侧开始展开
-      });
+      // 批量设置初始状态
+      const { title, aspiration, subtitle, bio, decorLine, avatar, bgDecor } =
+        elements;
 
-      gsap.set(avatar, {
-        scale: 0.95,
-        opacity: 0.9, // 保持部分可见
-      });
-
-      gsap.set(bgDecor, {
-        scale: 0.8,
-        opacity: 0,
-      });
+      gsap.set(
+        [title, aspiration, subtitle, bio],
+        ANIMATION_CONFIG.textElements
+      );
+      gsap.set(decorLine, ANIMATION_CONFIG.decorLine);
+      gsap.set(avatar, ANIMATION_CONFIG.avatar);
+      gsap.set(bgDecor, ANIMATION_CONFIG.bgDecor);
 
       // 动画序列
       tl
@@ -89,6 +91,7 @@ const HeroSection = ({ texts }) => {
             scale: 1,
             opacity: 1,
             duration: 1.0,
+            rotate: 10,
             ease: "back.out(1.2)",
           },
           "-=0.7"
@@ -156,101 +159,54 @@ const HeroSection = ({ texts }) => {
           "-=0.4"
         );
 
-      // 悬停交互动画
-      const setupHoverAnimations = () => {
-        // 头像悬停效果
-        if (avatar) {
-          avatar.addEventListener("mouseenter", () => {
-            gsap.to(avatar, {
-              scale: 1.05,
-              duration: 0.4,
-              ease: "power2.out",
-              rotate: 10,
-            });
-          });
+      // 头像悬停效果 - 使用GSAP Context管理
+      if (avatar) {
+        const hoverConfig = { duration: 0.4, ease: "power2.out" };
 
-          avatar.addEventListener("mouseleave", () => {
-            gsap.to(avatar, {
-              scale: 1,
-              duration: 0.4,
-              ease: "power2.out",
-              rotate: 0,
-            });
-          });
-        }
-      };
+        avatar.addEventListener("mouseenter", () => {
+          gsap.to(avatar, { ...hoverConfig, scale: 1.05, rotate: 0});
+        });
 
-      // 延迟设置悬停动画，确保进入动画完成
-      setTimeout(setupHoverAnimations, 800);
+        avatar.addEventListener("mouseleave", () => {
+          gsap.to(avatar, { ...hoverConfig, scale: 1, rotate: 10 });
+        });
+      }
 
       // 背景装饰的持续动画
-      gsap.to(bgDecor?.children[0], {
-        rotation: 360,
-        duration: 60,
-        ease: "none",
-        repeat: -1,
-      });
+      if (bgDecor?.children) {
+        const bgChildren = Array.from(bgDecor.children);
+        bgChildren.forEach((child, index) => {
+          gsap.to(child, {
+            rotation: index % 2 === 0 ? 360 : -360,
+            duration: index % 2 === 0 ? 60 : 80,
+            ease: "none",
+            repeat: -1,
+          });
+        });
+      }
 
-      gsap.to(bgDecor?.children[1], {
-        rotation: -360,
-        duration: 80,
-        ease: "none",
-        repeat: -1,
-      });
+      // 装饰线条的闪烁效果
+      if (decorLine) {
+        gsap.delayedCall(3, () => {
+          gsap.fromTo(
+            decorLine,
+            { backgroundPosition: "-200px 0" },
+            {
+              backgroundPosition: "200px 0",
+              duration: 2,
+              ease: "power2.inOut",
+              repeat: -1,
+              repeatDelay: 6, // 每8秒重复一次 (2秒动画 + 6秒间隔)
+            }
+          );
+        });
+      }
+    }, elements.hero); // GSAP Context范围
 
-      // 清理函数
-      return () => {
-        tl.kill();
-        gsap.killTweensOf([avatar, bgDecor?.children]);
-      };
-    } catch (error) {
-      console.error("GSAP animation error:", error);
-      // 如果动画失败，确保所有元素都可见
-      const allElements = [
-        title,
-        aspiration,
-        subtitle,
-        bio,
-        decorLine,
-        avatar,
-        bgDecor,
-      ];
-      allElements.forEach((el) => {
-        if (el) {
-          el.style.opacity = "1";
-          el.style.transform = "none";
-        }
-      });
-    }
+    return () => ctx.revert(); // 自动清理所有动画
   }, []);
 
-  // 装饰线条的闪烁效果
-  useEffect(() => {
-    const decorLine = decorLineRef.current;
-    if (!decorLine || typeof gsap === "undefined") return;
-
-    try {
-      const shimmer = () => {
-        gsap.fromTo(
-          decorLine,
-          {
-            backgroundPosition: "-200px 0",
-          },
-          {
-            backgroundPosition: "200px 0",
-            duration: 2,
-            ease: "power2.inOut",
-            delay: 3,
-          }
-        );
-      };
-
-      const interval = setInterval(shimmer, 8000);
-      return () => clearInterval(interval);
-    } catch (error) {
-      console.error("GSAP shimmer animation error:", error);
-    }
-  }, []);
+  // 装饰线条的闪烁效果 - 移到主useEffect中避免重复逻辑
   return (
     <section
       ref={heroRef}
