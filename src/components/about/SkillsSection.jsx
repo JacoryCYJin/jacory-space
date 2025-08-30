@@ -4,260 +4,190 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useApp } from "@/lib/context";
+import FullStackCard from "./FullStackCard";
+import AnimationCard from "./AnimationCard";
+import DesignCard from "./DesignCard";
+import VideoCard from "./VideoCard";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const SkillsSection = ({ texts }) => {
   const { language } = useApp();
   const sectionRef = useRef(null);
-  const titleRef = useRef(null);
-  const categoriesRef = useRef([]);
+  const cardsWrapperRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 标题动画
+      // 卡片水平滚动动画 - 使用绝对位置控制
       gsap.fromTo(
-        titleRef.current,
+        cardsWrapperRef.current,
         {
-          y: 50,
-          opacity: 0,
-          scale: 0.8,
+          x: "0vw", // 起始位置：第一个卡片（标题）刚好在屏幕左侧
         },
         {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 1,
-          ease: "back.out(1.7)",
+          x: "-189vw", // 移动距离：总宽度289vw - 屏幕宽度100vw = 189vw，确保最后一个卡片完全显示
+          ease: "none",
           scrollTrigger: {
-            trigger: titleRef.current,
-            start: "top 80%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
+            trigger: sectionRef.current,
+            start: "top top", // 当section顶部到达视窗顶部时开始
+            end: "bottom top", // 当section底部到达视窗顶部时结束
+            scrub: 1,
+            pin: true, // 固定section，阻止垂直滚动
+            anticipatePin: 1,
           },
         }
       );
-
-      // 技能分类动画
-      categoriesRef.current.forEach((category, index) => {
-        if (category) {
-          gsap.fromTo(
-            category,
-            {
-              x: index % 2 === 0 ? -100 : 100,
-              opacity: 0,
-              rotationY: index % 2 === 0 ? -45 : 45,
-            },
-            {
-              x: 0,
-              opacity: 1,
-              rotationY: 0,
-              duration: 1.2,
-              ease: "power3.out",
-              delay: index * 0.2,
-              scrollTrigger: {
-                trigger: category,
-                start: "top 85%",
-                end: "bottom 15%",
-                toggleActions: "play none none reverse",
-              },
-            }
-          );
-
-          // 技能标签动画
-          const skillTags = category.querySelectorAll('.skill-tag');
-          skillTags.forEach((tag, tagIndex) => {
-            gsap.fromTo(
-              tag,
-              {
-                scale: 0,
-                rotation: 180,
-                opacity: 0,
-              },
-              {
-                scale: 1,
-                rotation: 0,
-                opacity: 1,
-                duration: 0.6,
-                ease: "back.out(1.7)",
-                delay: index * 0.2 + tagIndex * 0.1,
-                scrollTrigger: {
-                  trigger: category,
-                  start: "top 80%",
-                  end: "bottom 20%",
-                  toggleActions: "play none none reverse",
-                },
-              }
-            );
-          });
-        }
-      });
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  const SkillTag = ({ skill, index, category }) => {
-    const getTagStyles = () => {
-      switch (category) {
-        case 'fullstack':
-          return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-900/50';
-        case 'animation':
-          return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 hover:bg-purple-200 dark:hover:bg-purple-900/50';
-        case 'design':
-          return 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-200 hover:bg-pink-200 dark:hover:bg-pink-900/50';
-        case 'video':
-          return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 hover:bg-orange-200 dark:hover:bg-orange-900/50';
-        default:
-          return 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-900/50';
-      }
-    };
-
-    return (
-      <span
-        className={`skill-tag px-4 py-2 rounded-full text-sm font-medium cursor-pointer
-          transition-all duration-300 hover:scale-110 hover:shadow-lg
-          ${getTagStyles()}
-          hover:rotate-2 group relative overflow-hidden`}
-        style={{
-          animationDelay: `${index * 0.1}s`,
-        }}
-      >
-        <span className="relative z-10">{skill}</span>
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-      </span>
-    );
-  };
-
-  const SkillCategory = ({ title, skills, icon, category, index }) => (
-    <div
-      ref={(el) => (categoriesRef.current[index] = el)}
-      className="bg-card/50 backdrop-blur-sm rounded-2xl p-8 border border-border/50 hover:border-primary/30 transition-all duration-500 hover:shadow-2xl group relative overflow-hidden"
-    >
-      {/* 背景装饰 */}
-      <div className="absolute -top-20 -right-20 w-40 h-40 bg-primary/5 rounded-full blur-3xl group-hover:bg-primary/10 transition-colors duration-500" />
-      
-      <div className="relative z-10">
-        <div className="flex items-center space-x-3 mb-6">
-          <div className="p-3 bg-primary/10 rounded-full group-hover:bg-primary/20 transition-colors duration-300">
-            <span className="text-2xl">{icon}</span>
-          </div>
-          <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
-            {title}
-          </h3>
-        </div>
-        
-        <div className="flex flex-wrap gap-3">
-          {skills.map((skill, skillIndex) => (
-            <SkillTag 
-              key={skillIndex} 
-              skill={skill} 
-              index={skillIndex}
-              category={category}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* 悬停效果装饰线 */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-primary/50 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left" />
-    </div>
-  );
-
-  // 根据语言获取分类标题
-  const getCategoryTitles = () => {
-    const titles = {
-      "zh-cn": {
-        fullstack: "全栈开发",
-        animation: "动画交互", 
-        design: "设计创作",
-        video: "视频制作"
-      },
-      "zh-tw": {
-        fullstack: "全端開發",
-        animation: "動畫互動",
-        design: "設計創作", 
-        video: "影片製作"
-      },
-      en: {
-        fullstack: "Full-Stack Dev",
-        animation: "Animation & Interactive",
-        design: "Design & Creative",
-        video: "Video Production"
-      }
-    };
-    return titles[language] || titles["zh-cn"];
-  };
-
-  const categoryTitles = getCategoryTitles();
-
-  const skillCategories = [
+  // 技能卡片数据
+  const skillCards = [
     {
-      title: categoryTitles.fullstack,
+      component: FullStackCard,
       skills: texts.skills.fullstack,
-      icon: "🚀",
       category: "fullstack",
+      cardData: texts.skillCards.fullstack,
     },
     {
-      title: categoryTitles.animation,
+      component: AnimationCard,
       skills: texts.skills.animation,
-      icon: "🎭",
       category: "animation",
+      cardData: texts.skillCards.animation,
     },
     {
-      title: categoryTitles.design,
+      component: DesignCard,
       skills: texts.skills.design,
-      icon: "🎨", 
       category: "design",
+      cardData: texts.skillCards.design,
     },
     {
-      title: categoryTitles.video,
+      component: VideoCard,
       skills: texts.skills.video,
-      icon: "🎬",
       category: "video",
+      cardData: texts.skillCards.video,
     },
   ];
 
-  return (
-    <section ref={sectionRef} className="py-20 relative overflow-hidden">
-      {/* 背景装饰 */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background" />
-      
-      <div className="relative z-10 max-w-7xl mx-auto px-4">
-        <div
-          ref={titleRef}
-          className="text-center mb-16"
-        >
-          
-          <h2 className="text-5xl lg:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
-              {texts.sections.skills}
-            </span>
-          </h2>
-          
-          <div className="w-24 h-1 bg-gradient-to-r from-primary to-primary/50 mx-auto rounded-full" />
-          
-          <p className="text-lg text-muted-foreground mt-6 max-w-2xl mx-auto">
-            {language === 'en' 
-              ? 'Mastering full-stack development with focus on modern tools and creative technologies'
-              : language === 'zh-tw'
-              ? '掌握全端開發技術，專注於現代化工具和創意科技'  
-              : '掌握全栈开发技术，专注于现代化工具和创意科技'
-            }
-          </p>
-        </div>
+  // 蜂窝背景组件
+  const HexagonBackground = () => (
+    <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 opacity-20 transition-opacity duration-500 group-hover:opacity-40 overflow-hidden">
+        <div 
+          className="absolute inset-0 overflow-hidden" 
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 25% 25%, #6b8a5a 2px, transparent 2px),
+              radial-gradient(circle at 75% 75%, #6b8a5a 2px, transparent 2px),
+              radial-gradient(circle at 50% 50%, #6b8a5a 1px, transparent 1px)
+            `,
+            backgroundSize: '60px 60px, 60px 60px, 30px 30px',
+            backgroundPosition: '0 0, 30px 30px, 0 0'
+          }} 
+        />
+      </div>
+    </div>
+  );
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {skillCategories.map((category, index) => (
-            <SkillCategory
-              key={index}
-              title={category.title}
-              skills={category.skills}
-              icon={category.icon}
-              category={category.category}
-              index={index}
-            />
-          ))}
+  // 标题卡片组件
+  const TitleCard = () => (
+    <div className="w-full h-full flex flex-col justify-center items-center px-6 pt-12 relative group">
+      {/* 发光效果 */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      <div className="relative z-10">
+        <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-center">
+          <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
+            {texts.sections.skills}
+          </span>
+        </h2>
+        
+        <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary/50 mx-auto rounded-full mb-4" />
+        
+        <p className="text-sm lg:text-base text-muted-foreground text-center max-w-lg">
+          {language === 'en' 
+            ? 'Mastering full-stack development with focus on modern tools and creative technologies'
+            : language === 'zh-tw'
+            ? '掌握全端開發技術，專注於現代化工具和創意科技'  
+            : '掌握全栈开发技术，专注于现代化工具和创意科技'
+          }
+        </p>
+        
+        {/* 引导箭头 */}
+        <div className="mt-6 flex items-center justify-center space-x-2 text-primary/60">
+          <span className="text-xs">
+            {language === 'en' ? 'Scroll to explore' : language === 'zh-tw' ? '滾動探索' : '滚动探索'}
+          </span>
+          <div className="w-3 h-3 border-r-2 border-b-2 border-current transform rotate-45 animate-pulse" />
+        </div>
+      </div>
+    </div>
+  );
+
+  // 技能卡片包装器组件
+  const SkillCardWrapper = ({ children, index }) => (
+    <div className="w-full h-full flex items-center justify-center p-4 relative group">
+      {/* 发光效果 */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      {/* 卡片容器 - 移除最大宽度限制，充分利用60vw宽度 */}
+      <div className="relative z-10 w-full h-[60vh] bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl shadow-xl shadow-primary/10 overflow-hidden group-hover:shadow-primary/20 group-hover:border-primary/30 transition-all duration-500">
+        {children}
+      </div>
+    </div>
+  );
+
+  return (
+    <section ref={sectionRef} className="relative overflow-hidden min-h-screen group">
+      {/* 背景装饰 */}
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background overflow-hidden" />
+      
+      {/* 蜂窝背景 - 移到整个section级别 */}
+      <HexagonBackground />
+      
+      <div className="relative z-10 h-full flex flex-col justify-center overflow-hidden">
+        {/* 卡片展示区域 - 水平滚动容器 */}
+        <div className="relative overflow-hidden w-screen h-full">
+          {/* 卡片包装器 - 用于水平滚动 */}
+          <div 
+            ref={cardsWrapperRef}
+            className="flex h-full"
+            style={{ width: `${(40 + 60 + 3 + 60 + 3 + 60 + 3 + 60)}vw` }} // 标题卡片40vw + 4个技能卡片各60vw + 3个间距各3vw = 289vw
+          >
+            {/* 标题卡片 - 调整为与其他卡片相同大小 */}
+            <div className="w-screen flex-shrink-0 h-full" style={{ width: '40vw' }}>
+              <TitleCard />
+            </div>
+            
+            {/* 渲染所有技能卡片 */}
+            {skillCards.map((card, index) => {
+              const CardComponent = card.component;
+              return (
+                <React.Fragment key={index}>
+                  <div 
+                    className="w-screen flex-shrink-0 h-full"
+                    style={{ 
+                      width: '60vw', // 所有技能卡片统一宽度为60vw
+                    }}
+                  >
+                    <SkillCardWrapper index={index}>
+                      <CardComponent 
+                        skills={card.skills}
+                        language={language}
+                        cardData={card.cardData}
+                      />
+                    </SkillCardWrapper>
+                  </div>
+                  
+                  {/* 卡片之间的间距 */}
+                  {index < skillCards.length - 1 && (
+                    <div className="w-screen flex-shrink-0 h-full" style={{ width: '3vw' }} />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

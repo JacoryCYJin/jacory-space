@@ -199,6 +199,29 @@ export const blogTags = [
     color: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300"
   },
   {
+    id: "gsap",
+    name: "GSAP",
+    color: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300"
+  },
+  {
+    id: "animation",
+    name: {
+      "zh-cn": "动画",
+      "zh-tw": "動畫", 
+      en: "Animation"
+    },
+    color: "bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-300"
+  },
+  {
+    id: "ui-design",
+    name: {
+      "zh-cn": "UI设计",
+      "zh-tw": "UI設計", 
+      en: "UI Design"
+    },
+    color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
+  },
+  {
     id: "nodejs",
     name: "Node.js", 
     color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"

@@ -24,6 +24,64 @@ export const aboutTexts = {
       design: ["Figma", "UI设计", "SVG制作", "图标设计"],
       video: ["视频剪辑", "PR"],
     },
+    skillCards: {
+      fullstack: {
+        title: "全栈开发",
+        description: "掌握前后端技术，能够独立完成完整的Web应用开发",
+        projects: [
+          {
+            title: "电商平台",
+            description: "采用现代技术栈的全栈电商解决方案"
+          },
+          {
+            title: "实时聊天应用",
+            description: "基于WebSocket的实时聊天应用"
+          }
+        ]
+      },
+      animation: {
+        title: "动画交互",
+        description: "专注于创建流畅的动画效果和交互体验",
+        projects: [
+          {
+            title: "交互式仪表板",
+            description: "具有流畅动画效果的实时数据可视化"
+          },
+          {
+            title: "游戏界面动画",
+            description: "具有吸引人微交互的移动游戏界面"
+          }
+        ]
+      },
+      design: {
+        title: "设计创作",
+        description: "专注于视觉设计和创意表达，打造独特的品牌形象",
+        projects: [
+          {
+            title: "品牌形象设计",
+            description: "完整的品牌形象包，包括标志、色彩和设计规范"
+          },
+          {
+            title: "UI/UX设计系统",
+            description: "面向移动端和网页应用的全面设计系统"
+          }
+        ]
+      },
+      video: {
+        title: "视频制作",
+        description: "专注于视频制作和后期处理，创造引人入胜的视觉内容",
+        projects: [
+          {
+            title: "产品宣传视频",
+            description: "具有动态图形和特效的高质量宣传视频"
+          },
+          {
+            title: "活动拍摄",
+            description: "专业的多机位活动拍摄和后期制作"
+          }
+        ]
+      }
+    },
     experiences: [
       {
         title: "全栈开发工程师",
@@ -78,6 +136,64 @@ export const aboutTexts = {
       design: ["Figma", "UI設計", "SVG製作", "圖標設計"],
       video: ["影片剪輯", "PR"],
     },
+    skillCards: {
+      fullstack: {
+        title: "全端開發",
+        description: "掌握前後端技術，能夠獨立完成完整的Web應用開發",
+        projects: [
+          {
+            title: "電商平台",
+            description: "採用現代技術棧的全端電商解決方案"
+          },
+          {
+            title: "即時聊天應用",
+            description: "基於WebSocket的即時聊天應用"
+          }
+        ]
+      },
+      animation: {
+        title: "動畫互動",
+        description: "專注於創建流暢的動畫效果和交互體驗",
+        projects: [
+          {
+            title: "互動式儀表板",
+            description: "具有流暢動畫效果的即時數據可視化"
+          },
+          {
+            title: "遊戲界面動畫",
+            description: "具有吸引人微互動的移動遊戲界面"
+          }
+        ]
+      },
+      design: {
+        title: "設計創作",
+        description: "專注於視覺設計和創意表達，打造獨特的品牌形象",
+        projects: [
+          {
+            title: "品牌形象設計",
+            description: "完整的品牌形象包，包括標誌、色彩和設計規範"
+          },
+          {
+            title: "UI/UX設計系統",
+            description: "面向移動端和網頁應用的全面設計系統"
+          }
+        ]
+      },
+      video: {
+        title: "影片製作",
+        description: "專注於影片製作和後期處理，創造引人入勝的視覺內容",
+        projects: [
+          {
+            title: "產品宣傳影片",
+            description: "具有動態圖形和特效的高品質宣傳影片"
+          },
+          {
+            title: "活動拍攝",
+            description: "專業的多機位活動拍攝和後期製作"
+          }
+        ]
+      }
+    },
     experiences: [
       {
         title: "全端開發工程師",
@@ -131,6 +247,64 @@ export const aboutTexts = {
       animation: ["GSAP", "Three.js", "Lenis", "Framer Motion"],
       design: ["Figma", "UI Design", "SVG Creation", "Icon Design"],
       video: ["Video Editing", "Premiere Pro"],
+    },
+    skillCards: {
+      fullstack: {
+        title: "Full-Stack Development",
+        description: "Mastering frontend and backend technologies to independently complete full Web application development",
+        projects: [
+          {
+            title: "E-commerce Platform",
+            description: "Full-stack e-commerce solution using modern technology stacks"
+          },
+          {
+            title: "Real-time Chat Application",
+            description: "Real-time chat application based on WebSocket"
+          }
+        ]
+      },
+      animation: {
+        title: "Animation & Interaction",
+        description: "Focused on creating smooth animation effects and interactive experiences",
+        projects: [
+          {
+            title: "Interactive Dashboard",
+            description: "Real-time data visualization with smooth animation effects"
+          },
+          {
+            title: "Game Interface Animation",
+            description: "Mobile game interface with engaging micro-interactions"
+          }
+        ]
+      },
+      design: {
+        title: "Design & Creativity",
+        description: "Focused on visual design and creative expression, creating unique brand identities",
+        projects: [
+          {
+            title: "Brand Identity Design",
+            description: "Complete brand identity package, including logo, color, and design specifications"
+          },
+          {
+            title: "UI/UX Design System",
+            description: "Comprehensive design system for mobile and web applications"
+          }
+        ]
+      },
+      video: {
+        title: "Video Production",
+        description: "Focused on video production and post-processing, creating engaging visual content",
+        projects: [
+          {
+            title: "Product Promotion Video",
+            description: "High-quality promotional video with dynamic graphics and effects"
+          },
+          {
+            title: "Event Shoot",
+            description: "Professional multi-camera event shoot and post-production"
+          }
+        ]
+      }
     },
     experiences: [
       {
