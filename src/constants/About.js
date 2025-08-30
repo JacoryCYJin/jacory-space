@@ -6,6 +6,7 @@ export const aboutTexts = {
     bio: "我是一名热爱技术的全栈开发者，专注于现代Web开发技术。喜欢探索新技术，分享技术见解，用代码创造价值。",
     sections: {
       skills: "技能专长",
+      skillsSubtitle: "掌握全栈开发技术，专注于现代化工具和创意科技",
       experience: "工作经历",
       education: "教育背景",
       interests: "兴趣爱好",
@@ -118,6 +119,7 @@ export const aboutTexts = {
     bio: "我是一名熱愛技術的全端開發者，專注於現代Web開發技術。喜歡探索新技術，分享技術見解，用程式碼創造價值。",
     sections: {
       skills: "技能專長",
+      skillsSubtitle: "掌握全端開發技術，專注於現代化工具和創意科技",
       experience: "工作經歷",
       education: "教育背景",
       interests: "興趣愛好",
@@ -230,6 +232,7 @@ export const aboutTexts = {
     bio: "I'm a passionate full-stack developer focused on modern web development technologies. I love exploring new tech, sharing insights, and creating value through code.",
     sections: {
       skills: "Skills & Expertise",
+      skillsSubtitle: "Mastering full-stack development with focus on modern tools and creative technologies",
       experience: "Work Experience",
       education: "Education",
       interests: "Interests",
