@@ -100,14 +100,14 @@ const SkillsSection = ({ texts }) => {
   const SkillTag = ({ skill, index, category }) => {
     const getTagStyles = () => {
       switch (category) {
-        case 'frontend':
+        case 'fullstack':
           return 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-900/50';
-        case 'backend':
-          return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-900/50';
         case 'animation':
           return 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200 hover:bg-purple-200 dark:hover:bg-purple-900/50';
         case 'design':
           return 'bg-pink-100 dark:bg-pink-900/30 text-pink-800 dark:text-pink-200 hover:bg-pink-200 dark:hover:bg-pink-900/50';
+        case 'video':
+          return 'bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-200 hover:bg-orange-200 dark:hover:bg-orange-900/50';
         default:
           return 'bg-gray-100 dark:bg-gray-900/30 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-900/50';
       }
@@ -168,22 +168,22 @@ const SkillsSection = ({ texts }) => {
   const getCategoryTitles = () => {
     const titles = {
       "zh-cn": {
-        frontend: "前端开发",
-        backend: "后端开发", 
-        animation: "动画视效",
-        design: "设计创作"
+        fullstack: "全栈开发",
+        animation: "动画交互", 
+        design: "设计创作",
+        video: "视频制作"
       },
       "zh-tw": {
-        frontend: "前端開發",
-        backend: "後端開發",
-        animation: "動畫視效", 
-        design: "設計創作"
+        fullstack: "全端開發",
+        animation: "動畫互動",
+        design: "設計創作", 
+        video: "影片製作"
       },
       en: {
-        frontend: "Frontend Dev",
-        backend: "Backend Dev",
-        animation: "Animation & VFX",
-        design: "Design & Creative"
+        fullstack: "Full-Stack Dev",
+        animation: "Animation & Interactive",
+        design: "Design & Creative",
+        video: "Video Production"
       }
     };
     return titles[language] || titles["zh-cn"];
@@ -193,16 +193,10 @@ const SkillsSection = ({ texts }) => {
 
   const skillCategories = [
     {
-      title: categoryTitles.frontend,
-      skills: texts.skills.frontend,
-      icon: "🎨",
-      category: "frontend",
-    },
-    {
-      title: categoryTitles.backend, 
-      skills: texts.skills.backend,
-      icon: "⚙️",
-      category: "backend",
+      title: categoryTitles.fullstack,
+      skills: texts.skills.fullstack,
+      icon: "🚀",
+      category: "fullstack",
     },
     {
       title: categoryTitles.animation,
@@ -213,8 +207,14 @@ const SkillsSection = ({ texts }) => {
     {
       title: categoryTitles.design,
       skills: texts.skills.design,
-      icon: "🎯", 
+      icon: "🎨", 
       category: "design",
+    },
+    {
+      title: categoryTitles.video,
+      skills: texts.skills.video,
+      icon: "🎬",
+      category: "video",
     },
   ];
 
