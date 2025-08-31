@@ -26,13 +26,13 @@ const SkillsSection = ({ texts }) => {
           x: "0vw", // 起始位置：第一个卡片（标题）刚好在屏幕左侧
         },
         {
-          x: "-190vw", // 移动距离：总宽度289vw - 屏幕宽度100vw = 189vw，确保最后一个卡片完全显示
+          x: "-200vw", // 移动距离：确保最后一个卡片完全显示
           ease: "none",
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top top", // 当section顶部到达视窗顶部时开始
             end: "bottom top", // 当section底部到达视窗顶部时结束
-            scrub: 1,
+            scrub: 1.5,
             pin: true, // 固定section，阻止垂直滚动
             anticipatePin: 1,
           },
@@ -122,7 +122,6 @@ const SkillsSection = ({ texts }) => {
           <div
             ref={cardsWrapperRef}
             className="flex h-full"
-            style={{ width: `${40 + 60 + 3 + 60 + 3 + 60 + 3 + 60}vw` }} // 标题卡片40vw + 4个技能卡片各60vw + 3个间距各3vw = 289vw
           >
             {/* 标题卡片 - 调整为与其他卡片相同大小 */}
             <div
