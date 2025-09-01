@@ -28,7 +28,7 @@ export const aboutTexts = {
     skillCards: {
       fullstack: {
         title: "全栈开发",
-        description: "掌握前后端技术，能够独立完成完整的Web应用开发",
+        description: "企业级应用与现代化架构",
         projects: [
           {
             title: "电商平台",
@@ -141,7 +141,7 @@ export const aboutTexts = {
     skillCards: {
       fullstack: {
         title: "全端開發",
-        description: "掌握前後端技術，能夠獨立完成完整的Web應用開發",
+        description: "企業級應用與現代化架構",
         projects: [
           {
             title: "電商平台",
@@ -254,7 +254,7 @@ export const aboutTexts = {
     skillCards: {
       fullstack: {
         title: "Full-Stack Development",
-        description: "Mastering frontend and backend technologies to independently complete full Web application development",
+        description: "Enterprise applications with modern architecture",
         projects: [
           {
             title: "E-commerce Platform",

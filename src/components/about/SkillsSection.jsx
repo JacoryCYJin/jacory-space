@@ -32,7 +32,7 @@ const SkillsSection = ({ texts }) => {
             trigger: sectionRef.current,
             start: "top top", // 当section顶部到达视窗顶部时开始
             end: "bottom top", // 当section底部到达视窗顶部时结束
-            scrub: 2,
+            scrub: 3,
             pin: true, // 固定section，阻止垂直滚动
             anticipatePin: 1,
           },
