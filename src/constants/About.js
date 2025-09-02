@@ -6,7 +6,7 @@ export const aboutTexts = {
     bio: "我是一名热爱技术的全栈开发者，专注于现代Web开发技术。喜欢探索新技术，分享技术见解，用代码创造价值。",
     sections: {
       skills: "技能专长",
-      skillsSubtitle: "掌握全栈开发技术，专注于现代化工具和创意科技",
+      skillsSubtitle: "掌握多种技术栈，从开发到设计到动画",
       experience: "工作经历",
       education: "教育背景",
       interests: "兴趣爱好",
@@ -20,6 +20,13 @@ export const aboutTexts = {
         "Springboot",
         "MySQL",
         "Tailwind CSS",
+        "Figma",
+        "PR",
+        "Three.js",
+        "GSAP",
+        "Lenis",
+        "Framer Motion",
+        "Magic UI",
       ],
       animation: ["GSAP", "Three.js", "Lenis", "Framer Motion"],
       design: ["Figma", "UI设计", "SVG制作", "图标设计"],
@@ -27,16 +34,20 @@ export const aboutTexts = {
     },
     skillCards: {
       fullstack: {
-        title: "全栈开发",
-        description: "企业级应用与现代化架构",
+        title: "技能库",
+        description: "掌握多种技术栈，从开发到设计到动画",
         projects: [
           {
-            title: "电商平台",
-            description: "采用现代技术栈的全栈电商解决方案"
+            title: "全栈开发",
+            description: "React、Vue.js、TypeScript、Spring Boot、MySQL"
           },
           {
-            title: "实时聊天应用",
-            description: "基于WebSocket的实时聊天应用"
+            title: "设计工具",
+            description: "Figma、UI设计、SVG制作、图标设计"
+          },
+          {
+            title: "动画技术",
+            description: "GSAP、Three.js、Lenis、Framer Motion、Magic UI"
           }
         ]
       },
@@ -119,7 +130,7 @@ export const aboutTexts = {
     bio: "我是一名熱愛技術的全端開發者，專注於現代Web開發技術。喜歡探索新技術，分享技術見解，用程式碼創造價值。",
     sections: {
       skills: "技能專長",
-      skillsSubtitle: "掌握全端開發技術，專注於現代化工具和創意科技",
+      skillsSubtitle: "掌握多種技術棧，從開發到設計到動畫",
       experience: "工作經歷",
       education: "教育背景",
       interests: "興趣愛好",
@@ -133,6 +144,13 @@ export const aboutTexts = {
         "Springboot",
         "MySQL",
         "Tailwind CSS",
+        "Figma",
+        "PR",
+        "Three.js",
+        "GSAP",
+        "Lenis",
+        "Framer Motion",
+        "Magic UI",
       ],
       animation: ["GSAP", "Three.js", "Lenis", "Framer Motion"],
       design: ["Figma", "UI設計", "SVG製作", "圖標設計"],
@@ -140,16 +158,20 @@ export const aboutTexts = {
     },
     skillCards: {
       fullstack: {
-        title: "全端開發",
-        description: "企業級應用與現代化架構",
+        title: "技能庫",
+        description: "掌握多種技術棧，從開發到設計到動畫",
         projects: [
           {
-            title: "電商平台",
-            description: "採用現代技術棧的全端電商解決方案"
+            title: "全端開發",
+            description: "React、Vue.js、TypeScript、Spring Boot、MySQL"
           },
           {
-            title: "即時聊天應用",
-            description: "基於WebSocket的即時聊天應用"
+            title: "設計工具",
+            description: "Figma、UI設計、SVG製作、圖標設計"
+          },
+          {
+            title: "動畫技術",
+            description: "GSAP、Three.js、Lenis、Framer Motion、Magic UI"
           }
         ]
       },
@@ -232,7 +254,7 @@ export const aboutTexts = {
     bio: "I'm a passionate full-stack developer focused on modern web development technologies. I love exploring new tech, sharing insights, and creating value through code.",
     sections: {
       skills: "Skills & Expertise",
-      skillsSubtitle: "Mastering full-stack development with focus on modern tools and creative technologies",
+      skillsSubtitle: "Mastering multiple technology stacks from development to design to animation",
       experience: "Work Experience",
       education: "Education",
       interests: "Interests",
@@ -246,6 +268,13 @@ export const aboutTexts = {
         "Spring Boot",
         "MySQL",
         "Tailwind CSS",
+        "Figma",
+        "Premiere Pro",
+        "Three.js",
+        "GSAP",
+        "Lenis",
+        "Framer Motion",
+        "Magic UI",
       ],
       animation: ["GSAP", "Three.js", "Lenis", "Framer Motion"],
       design: ["Figma", "UI Design", "SVG Creation", "Icon Design"],
@@ -253,16 +282,20 @@ export const aboutTexts = {
     },
     skillCards: {
       fullstack: {
-        title: "Full-Stack Development",
-        description: "Enterprise applications with modern architecture",
+        title: "Skills Library",
+        description: "Mastering multiple technology stacks from development to design to animation",
         projects: [
           {
-            title: "E-commerce Platform",
-            description: "Full-stack e-commerce solution using modern technology stacks"
+            title: "Full-Stack Development",
+            description: "React、Vue.js、TypeScript、Spring Boot、MySQL"
           },
           {
-            title: "Real-time Chat Application",
-            description: "Real-time chat application based on WebSocket"
+            title: "Design Tools",
+            description: "Figma、UI Design、SVG Creation、Icon Design"
+          },
+          {
+            title: "Animation Technology",
+            description: "GSAP、Three.js、Lenis、Framer Motion、Magic UI"
           }
         ]
       },

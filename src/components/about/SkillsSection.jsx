@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useApp } from "@/lib/context";
-import FullStackCard from "./FullStackCard";
+import SkillLibraryCard from "./SkillLibraryCard";
 import AnimationCard from "./AnimationCard";
 import DesignCard from "./DesignCard";
 import VideoCard from "./VideoCard";
@@ -46,7 +46,7 @@ const SkillsSection = ({ texts }) => {
   // 技能卡片数据
   const skillCards = [
     {
-      component: FullStackCard,
+      component: SkillLibraryCard,
       skills: texts.skills.fullstack,
       category: "fullstack",
       cardData: texts.skillCards.fullstack,

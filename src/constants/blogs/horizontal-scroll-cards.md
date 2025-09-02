@@ -31,7 +31,7 @@ src/
 ├── components/
 │   └── about/
 │       ├── SkillsSection.jsx      # 主组件
-│       ├── FullStackCard.jsx      # 全栈卡片
+│       ├── SkillLibraryCard.jsx      # 全栈卡片
 │       ├── AnimationCard.jsx      # 动画卡片
 │       ├── DesignCard.jsx         # 设计卡片
 │       └── VideoCard.jsx          # 视频卡片
@@ -137,7 +137,7 @@ const SkillsSection = ({ texts }) => {
   // 技能卡片数据配置
   const skillCards = [
     {
-      component: FullStackCard,
+      component: SkillLibraryCard,
       skills: texts.skills.fullstack,
       category: "fullstack",
       cardData: texts.skillCards.fullstack,
