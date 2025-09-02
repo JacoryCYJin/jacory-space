@@ -9,6 +9,7 @@ import AnimationCard from "./AnimationCard";
 import DesignCard from "./DesignCard";
 import VideoCard from "./VideoCard";
 import TetrisGridBackground from "../magicui/TetrisGridBackground";
+import { skillCardsData } from "../../constants/about/SkillLibrary";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -49,25 +50,25 @@ const SkillsSection = ({ texts }) => {
       component: SkillLibraryCard,
       skills: texts.skills.fullstack,
       category: "fullstack",
-      cardData: texts.skillCards.fullstack,
+      cardData: skillCardsData[language]?.fullstack || skillCardsData["zh-cn"].fullstack,
     },
     {
       component: AnimationCard,
       skills: texts.skills.animation,
       category: "animation",
-      cardData: texts.skillCards.animation,
+      cardData: skillCardsData[language]?.animation || skillCardsData["zh-cn"].animation,
     },
     {
       component: DesignCard,
       skills: texts.skills.design,
       category: "design",
-      cardData: texts.skillCards.design,
+      cardData: skillCardsData[language]?.design || skillCardsData["zh-cn"].design,
     },
     {
       component: VideoCard,
       skills: texts.skills.video,
       category: "video",
-      cardData: texts.skillCards.video,
+      cardData: skillCardsData[language]?.video || skillCardsData["zh-cn"].video,
     },
   ];
 
