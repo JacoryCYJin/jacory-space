@@ -10,21 +10,21 @@ export const skillCardsData = {
   "zh-cn": {
     fullstack: {
       title: "技能库",
-      description: "掌握多种技术栈，从开发到设计到动画",
+      description: "涵盖视频剪辑、设计开发、前后端开发及动画设计",
       projects: [
         {
           title: "全栈开发",
-          description: "React、Vue、TypeScript、Spring Boot、MySQL",
+          description: "React、Vue、TypeScript、Spring Boot、MySQL"
         },
         {
           title: "设计工具",
-          description: "Figma、UI设计、SVG制作、图标设计",
+          description: "Figma、UI设计、SVG制作、图标设计"
         },
         {
           title: "动画技术",
-          description: "GSAP、Three.js、Lenis、Framer Motion、Magic UI",
-        },
-      ],
+          description: "GSAP、Three.js、Lenis、Framer Motion、Magic UI"
+        }
+      ]
     },
     animation: {
       title: "动画交互",
@@ -32,13 +32,13 @@ export const skillCardsData = {
       projects: [
         {
           title: "交互式仪表板",
-          description: "具有流畅动画效果的实时数据可视化",
+          description: "具有流畅动画效果的实时数据可视化"
         },
         {
           title: "游戏界面动画",
-          description: "具有吸引人微交互的移动游戏界面",
-        },
-      ],
+          description: "具有吸引人微交互的移动游戏界面"
+        }
+      ]
     },
     design: {
       title: "设计创作",
@@ -46,13 +46,13 @@ export const skillCardsData = {
       projects: [
         {
           title: "品牌形象设计",
-          description: "完整的品牌形象包，包括标志、色彩和设计规范",
+          description: "完整的品牌形象包，包括标志、色彩和设计规范"
         },
         {
           title: "UI/UX设计系统",
-          description: "面向移动端和网页应用的全面设计系统",
-        },
-      ],
+          description: "面向移动端和网页应用的全面设计系统"
+        }
+      ]
     },
     video: {
       title: "视频制作",
@@ -60,33 +60,33 @@ export const skillCardsData = {
       projects: [
         {
           title: "产品宣传视频",
-          description: "具有动态图形和特效的高质量宣传视频",
+          description: "具有动态图形和特效的高质量宣传视频"
         },
         {
           title: "活动拍摄",
-          description: "专业的多机位活动拍摄和后期制作",
-        },
-      ],
-    },
+          description: "专业的多机位活动拍摄和后期制作"
+        }
+      ]
+    }
   },
   "zh-tw": {
     fullstack: {
       title: "技能庫",
-      description: "掌握多種技術棧，從開發到設計到動畫",
+      description: "涵蓋影片剪輯、設計開發、前後端開發及動畫設計",
       projects: [
         {
           title: "全端開發",
-          description: "React、Vue、TypeScript、Spring Boot、MySQL",
+          description: "React、Vue、TypeScript、Spring Boot、MySQL"
         },
         {
           title: "設計工具",
-          description: "Figma、UI設計、SVG製作、圖標設計",
+          description: "Figma、UI設計、SVG製作、圖標設計"
         },
         {
           title: "動畫技術",
-          description: "GSAP、Three.js、Lenis、Framer Motion、Magic UI",
-        },
-      ],
+          description: "GSAP、Three.js、Lenis、Framer Motion、Magic UI"
+        }
+      ]
     },
     animation: {
       title: "動畫互動",
@@ -94,13 +94,13 @@ export const skillCardsData = {
       projects: [
         {
           title: "互動式儀表板",
-          description: "具有流暢動畫效果的即時數據可視化",
+          description: "具有流暢動畫效果的即時數據可視化"
         },
         {
           title: "遊戲界面動畫",
-          description: "具有吸引人微互動的移動遊戲界面",
-        },
-      ],
+          description: "具有吸引人微互動的移動遊戲界面"
+        }
+      ]
     },
     design: {
       title: "設計創作",
@@ -108,13 +108,13 @@ export const skillCardsData = {
       projects: [
         {
           title: "品牌形象設計",
-          description: "完整的品牌形象包，包括標誌、色彩和設計規範",
+          description: "完整的品牌形象包，包括標誌、色彩和設計規範"
         },
         {
           title: "UI/UX設計系統",
-          description: "面向移動端和網頁應用的全面設計系統",
-        },
-      ],
+          description: "面向移動端和網頁應用的全面設計系統"
+        }
+      ]
     },
     video: {
       title: "影片製作",
@@ -122,86 +122,77 @@ export const skillCardsData = {
       projects: [
         {
           title: "產品宣傳影片",
-          description: "具有動態圖形和特效的高品質宣傳影片",
+          description: "具有動態圖形和特效的高品質宣傳影片"
         },
         {
           title: "活動拍攝",
-          description: "專業的多機位活動拍攝和後期製作",
-        },
-      ],
-    },
+          description: "專業的多機位活動拍攝和後期製作"
+        }
+      ]
+    }
   },
-  en: {
+  "en": {
     fullstack: {
       title: "Skills Library",
-      description:
-        "Mastering multiple technology stacks from development to design to animation",
+      description: "Covering video editing, design development, frontend & backend development, and animation design",
       projects: [
         {
           title: "Full-Stack Development",
-          description: "React、Vue、TypeScript、Spring Boot、MySQL",
+          description: "React、Vue、TypeScript、Spring Boot、MySQL"
         },
         {
           title: "Design Tools",
-          description: "Figma、UI Design、SVG Creation、Icon Design",
+          description: "Figma、UI Design、SVG Creation、Icon Design"
         },
         {
           title: "Animation Technology",
-          description: "GSAP、Three.js、Lenis、Framer Motion、Magic UI",
-        },
-      ],
+          description: "GSAP、Three.js、Lenis、Framer Motion、Magic UI"
+        }
+      ]
     },
     animation: {
       title: "Animation & Interaction",
-      description:
-        "Focused on creating smooth animation effects and interactive experiences",
+      description: "Focused on creating smooth animation effects and interactive experiences",
       projects: [
         {
           title: "Interactive Dashboard",
-          description:
-            "Real-time data visualization with smooth animation effects",
+          description: "Real-time data visualization with smooth animation effects"
         },
         {
           title: "Game Interface Animation",
-          description: "Mobile game interface with engaging micro-interactions",
-        },
-      ],
+          description: "Mobile game interface with engaging micro-interactions"
+        }
+      ]
     },
     design: {
       title: "Design & Creativity",
-      description:
-        "Focused on visual design and creative expression, creating unique brand identities",
+      description: "Focused on visual design and creative expression, creating unique brand identities",
       projects: [
         {
           title: "Brand Identity Design",
-          description:
-            "Complete brand identity package, including logo, color, and design specifications",
+          description: "Complete brand identity package, including logo, color, and design specifications"
         },
         {
           title: "UI/UX Design System",
-          description:
-            "Comprehensive design system for mobile and web applications",
-        },
-      ],
+          description: "Comprehensive design system for mobile and web applications"
+        }
+      ]
     },
     video: {
       title: "Video Production",
-      description:
-        "Focused on video production and post-processing, creating engaging visual content",
+      description: "Focused on video production and post-processing, creating engaging visual content",
       projects: [
         {
           title: "Product Promotion Video",
-          description:
-            "High-quality promotional video with dynamic graphics and effects",
+          description: "High-quality promotional video with dynamic graphics and effects"
         },
         {
           title: "Event Shoot",
-          description:
-            "Professional multi-camera event shoot and post-production",
-        },
-      ],
-    },
-  },
+          description: "Professional multi-camera event shoot and post-production"
+        }
+      ]
+    }
+  }
 };
 
 // 技术图标映射

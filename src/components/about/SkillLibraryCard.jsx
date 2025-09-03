@@ -2,7 +2,11 @@
 
 import { motion } from "framer-motion";
 import { OrbitingCircles } from "../magicui/orbiting-circles";
-import { techIcons, skillsStackLabels, skillCardsData } from "../../constants/about/SkillLibrary";
+import {
+  techIcons,
+  skillsStackLabels,
+  skillCardsData,
+} from "../../constants/about/SkillLibrary";
 
 const SkillLibraryCard = ({ skills, language, cardData }) => {
   // 获取当前语言的技能栈标签
@@ -36,7 +40,7 @@ const SkillLibraryCard = ({ skills, language, cardData }) => {
   };
 
   return (
-    <div className="w-full h-full grid grid-cols-5 gap-6 lg:gap-8 p-6 lg:p-8">
+    <div className="w-full h-full grid grid-cols-5 gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8">
       {/* 左侧技能图标展示区域 - 占据3列 */}
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -45,7 +49,7 @@ const SkillLibraryCard = ({ skills, language, cardData }) => {
         className="col-span-3 flex items-center justify-center relative"
       >
         {/* 技能图标轨道 */}
-        <div className="relative w-80 h-80 lg:w-96 lg:h-96 flex items-center justify-center">
+        <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 flex items-center justify-center">
           {/* 内圈轨道 */}
           <OrbitingCircles
             radius={60}
@@ -116,12 +120,12 @@ const SkillLibraryCard = ({ skills, language, cardData }) => {
         className="col-span-2 flex flex-col justify-center lg:pl-6"
       >
         {/* 标题和描述 - 现代简约设计 */}
-        <div className="mb-8">
+        <div className="mb-9">
           <motion.h2
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="text-2xl lg:text-3xl font-light text-foreground mb-3 tracking-wide"
+            className="text-2xl lg:text-3xl font-bold text-foreground mb-4 tracking-wide"
           >
             {cardData?.title}
           </motion.h2>
@@ -135,11 +139,11 @@ const SkillLibraryCard = ({ skills, language, cardData }) => {
           </motion.p>
         </div>
 
-        {/* 技能标签展示 - 现代网格布局 */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
+        {/* 技能标签展示 - 现代美观样式 */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
           className="space-y-3"
         >
           {/* 技能分组标题 */}
@@ -150,26 +154,28 @@ const SkillLibraryCard = ({ skills, language, cardData }) => {
             className="flex items-center gap-2 mb-4"
           >
             <div className="w-1 h-4 bg-gradient-to-b from-primary/60 to-primary/30 rounded-full"></div>
-            <span className="text-xs font-medium text-muted-foreground tracking-wider uppercase">
+            <span className="text-sm font-medium text-muted-foreground tracking-wider uppercase">
               {skillsStackLabel}
             </span>
           </motion.div>
 
-          {/* 技能标签网格 */}
-          <div className="grid grid-cols-2 gap-2">
-        {skills.map((skill, index) => (
-              <motion.div
-            key={index}
-                initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.8 + index * 0.03 }}
-                className="group"
-          >
-                <span className="block px-3 py-2.5 bg-background/50 text-foreground/80 text-sm font-normal rounded-xl border border-border/30 hover:bg-background/80 hover:border-primary/40 hover:text-primary transition-all duration-300 cursor-pointer backdrop-blur-sm">
-            {skill}
-                </span>
-              </motion.div>
-        ))}
+          {/* 技能标签 - 现代美观样式，自然排列 */}
+          <div className="flex flex-wrap gap-2 lg:gap-3">
+            {skills.map((skill, index) => (
+              <motion.span
+                key={index}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  delay: (index - 1) * 0.05,
+                  type: "spring",
+                  stiffness: 200,
+                }}
+                className="px-3 lg:px-4 py-2 lg:py-2.5 bg-primary/10 text-primary border border-primary/20 rounded-full text-xs font-medium hover:bg-primary/20 hover:border-primary/30 transition-all duration-300 cursor-pointer"
+              >
+                {skill}
+              </motion.span>
+            ))}
           </div>
         </motion.div>
       </motion.div>

@@ -91,9 +91,6 @@ const About = () => {
         {/* Skills Section */}
         <SkillsSection texts={currentTexts} />
 
-        {/* Experience Section */}
-        {/* <ExperienceSection texts={currentTexts} /> */}
-
         {/* Education Section */}
         <EducationSection texts={currentTexts} />
 
