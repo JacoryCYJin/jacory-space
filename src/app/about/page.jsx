@@ -11,7 +11,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HeroSection from "@/components/about/HeroSection";
 import SkillsSection from "@/components/about/SkillsSection";
 import EducationSection from "@/components/about/EducationSection";
-import ExperienceSection from "@/components/about/ExperienceSection";
 import InterestsSection from "@/components/about/InterestsSection";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -35,18 +34,12 @@ const About = () => {
       infinite: false,
     });
 
-    function raf(time) {
-      lenisRef.current?.raf(time);
-      requestAnimationFrame(raf);
-    }
-
-    requestAnimationFrame(raf);
-
     // 将 Lenis 滚动与 GSAP ScrollTrigger 同步
     lenisRef.current.on("scroll", ScrollTrigger.update);
 
+    // 使用 GSAP ticker 处理 Lenis 动画帧
     gsap.ticker.add((time) => {
-      lenisRef.current.raf(time * 1000);
+      lenisRef.current?.raf(time * 1000);
     });
 
     gsap.ticker.lagSmoothing(0);

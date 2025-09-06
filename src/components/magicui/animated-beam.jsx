@@ -10,7 +10,7 @@ export const AnimatedBeam = ({
   fromRef,
   toRef,
   curvature = 0,
-  reverse = false, // Include the reverse prop
+  reverse = false, // 包含反向属性
   duration = Math.random() * 3 + 4,
   delay = 0,
   pathColor = "gray",
@@ -27,7 +27,7 @@ export const AnimatedBeam = ({
   const [pathD, setPathD] = useState("");
   const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
 
-  // Calculate the gradient coordinates based on the reverse prop
+  // 根据反向属性计算渐变坐标
   const gradientCoordinates = reverse
     ? {
         x1: ["90%", "-10%"],
@@ -70,23 +70,23 @@ export const AnimatedBeam = ({
       }
     };
 
-    // Initialize ResizeObserver
+    // 初始化 ResizeObserver
     const resizeObserver = new ResizeObserver((entries) => {
-      // For all entries, recalculate the path
+      // 对所有条目重新计算路径
       for (let entry of entries) {
         updatePath();
       }
     });
 
-    // Observe the container element
+    // 观察容器元素
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
     }
 
-    // Call the updatePath initially to set the initial path
+    // 初始调用 updatePath 设置初始路径
     updatePath();
 
-    // Clean up the observer on component unmount
+    // 组件卸载时清理观察器
     return () => {
       resizeObserver.disconnect();
     };
@@ -144,7 +144,7 @@ export const AnimatedBeam = ({
           transition={{
             delay,
             duration,
-            ease: [0.16, 1, 0.3, 1], // https://easings.net/#easeOutExpo
+            ease: [0.16, 1, 0.3, 1], // 缓动函数：https://easings.net/#easeOutExpo
             repeat: Infinity,
             repeatDelay: 0,
           }}>

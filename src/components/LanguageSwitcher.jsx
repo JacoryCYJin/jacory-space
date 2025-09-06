@@ -4,12 +4,21 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApp } from "@/lib/context";
 
+/**
+ * 语言切换器组件
+ * 提供多语言切换功能，支持下拉菜单选择
+ */
 const LanguageSwitcher = () => {
   const { language, changeLanguage, languages } = useApp();
   const [isOpen, setIsOpen] = useState(false);
 
+  // 获取当前选中的语言信息
   const currentLang = languages.find(lang => lang.code === language);
 
+  /**
+   * 处理语言切换
+   * @param {string} langCode - 语言代码
+   */
   const handleLanguageChange = (langCode) => {
     changeLanguage(langCode);
     setIsOpen(false);
@@ -60,7 +69,7 @@ const LanguageSwitcher = () => {
         )}
       </AnimatePresence>
 
-      {/* 点击外部关闭下拉菜单 */}
+      {/* 点击外部区域关闭下拉菜单 */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40"

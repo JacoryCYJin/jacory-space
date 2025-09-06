@@ -29,7 +29,7 @@ export function AnimatedGridPattern({
     ];
   }
 
-  // Adjust the generateSquares function to return objects with an id, x, and y
+  // 调整 generateSquares 函数返回包含 id、x 和 y 的对象
   function generateSquares(count) {
     return Array.from({ length: count }, (_, i) => ({
       id: i,
@@ -37,7 +37,7 @@ export function AnimatedGridPattern({
     }));
   }
 
-  // Function to update a single square's position
+  // 更新单个方块位置的函数
   const updateSquarePosition = (id) => {
     setSquares((currentSquares) =>
       currentSquares.map((sq) =>
@@ -49,14 +49,14 @@ export function AnimatedGridPattern({
           : sq));
   };
 
-  // Update squares to animate in
+  // 更新方块以动画进入
   useEffect(() => {
     if (dimensions.width && dimensions.height) {
       setSquares(generateSquares(numSquares));
     }
   }, [dimensions, numSquares]);
 
-  // Resize observer to update container dimensions
+  // 调整大小观察器以更新容器尺寸
   useEffect(() => {
     const resizeObserver = new ResizeObserver((entries) => {
       for (let entry of entries) {

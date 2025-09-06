@@ -3,6 +3,10 @@
 import { motion } from "framer-motion";
 import { useApp } from "@/lib/context";
 
+/**
+ * 主题切换器组件
+ * 在亮色模式和暗色模式之间切换
+ */
 const ThemeSwitcher = () => {
   const { theme, toggleTheme } = useApp();
 
@@ -22,7 +26,7 @@ const ThemeSwitcher = () => {
         transition={{ duration: 0.5, ease: "easeInOut" }}
       >
         {theme === "light" ? (
-          // 月亮图标 (切换到暗色)
+          /* 月亮图标 - 点击切换到暗色模式 */
           <svg
             className="w-5 h-5 text-gray-700 dark:text-gray-300"
             fill="none"
@@ -37,7 +41,7 @@ const ThemeSwitcher = () => {
             />
           </svg>
         ) : (
-          // 太阳图标 (切换到亮色)
+          /* 太阳图标 - 点击切换到亮色模式 */
           <svg
             className="w-5 h-5 text-gray-700 dark:text-gray-300"
             fill="none"

@@ -6,6 +6,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/**
+ * 教育经历展示组件
+ * 以时间线形式展示教育背景，包含动画效果
+ * @param {Object} texts - 本地化文本内容
+ */
 const EducationSection = ({ texts }) => {
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
@@ -14,7 +19,7 @@ const EducationSection = ({ texts }) => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 标题动画
+      // 标题区域入场动画
       gsap.fromTo(
         titleRef.current,
         {
@@ -36,7 +41,7 @@ const EducationSection = ({ texts }) => {
         }
       );
 
-      // 时间线动画
+      // 时间线连接线动画
       gsap.fromTo(
         timelineRef.current,
         {
@@ -57,9 +62,10 @@ const EducationSection = ({ texts }) => {
         }
       );
 
-      // 教育卡片动画
+      // 教育经历卡片动画
       cardsRef.current.forEach((card, index) => {
         if (card) {
+          // 卡片入场动画（左右交替进入）
           gsap.fromTo(
             card,
             {
@@ -84,7 +90,7 @@ const EducationSection = ({ texts }) => {
             }
           );
 
-          // 悬停动画
+          // 鼠标悬停交互效果
           const handleMouseEnter = () => {
             gsap.to(card, {
               y: -10,
@@ -117,16 +123,22 @@ const EducationSection = ({ texts }) => {
     return () => ctx.revert();
   }, []);
 
+  /**
+   * 教育经历卡片组件
+   * @param {Object} education - 教育经历数据
+   * @param {number} index - 卡片索引
+   * @param {boolean} isLast - 是否为最后一个卡片
+   */
   const EducationCard = ({ education, index, isLast }) => (
     <div className="flex items-center group">
-      {/* 左侧内容（偶数索引）或右侧占位（奇数索引） */}
+      {/* 左侧内容区域（偶数索引显示卡片，奇数索引占位） */}
       <div className={`flex-1 ${index % 2 === 0 ? 'pr-8' : 'pl-8 order-3'}`}>
         {index % 2 === 0 && (
           <div
             ref={(el) => (cardsRef.current[index] = el)}
             className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 border border-border/50 hover:border-primary/50 transition-all duration-500 shadow-lg hover:shadow-2xl relative overflow-hidden group-hover:bg-card"
           >
-            {/* 背景装饰 */}
+            {/* 背景装饰光效 */}
             <div className="absolute -top-10 -right-10 w-20 h-20 bg-primary/10 rounded-full blur-xl group-hover:bg-primary/20 transition-colors duration-500" />
             
             <div className="relative z-10">
@@ -144,41 +156,41 @@ const EducationSection = ({ texts }) => {
                 </span>
               </div>
               
-              {/* 装饰图标 */}
+              {/* 学位标识图标 */}
               <div className="flex items-center space-x-2 text-muted-foreground">
                 <span className="text-lg">🎓</span>
                 <span className="text-sm">学位证书</span>
               </div>
             </div>
 
-            {/* 悬停效果边框 */}
+            {/* 悬停时的边框高亮效果 */}
             <div className="absolute inset-0 border-2 border-primary/0 group-hover:border-primary/30 rounded-2xl transition-colors duration-500" />
           </div>
         )}
       </div>
 
-      {/* 中央时间线 */}
+      {/* 中央时间线节点 */}
       <div className="flex flex-col items-center z-10">
-        {/* 时间节点 */}
+        {/* 时间节点圆点 */}
         <div className="relative">
           <div className="w-4 h-4 bg-primary rounded-full border-4 border-background shadow-lg animate-pulse" />
           <div className="absolute -inset-2 bg-primary/20 rounded-full animate-ping" />
         </div>
         
-        {/* 连接线 */}
+        {/* 时间线连接线 */}
         {!isLast && (
           <div className="w-0.5 h-24 bg-gradient-to-b from-primary to-primary/30 mt-2" />
         )}
       </div>
 
-      {/* 右侧内容（奇数索引）或左侧占位（偶数索引） */}
+      {/* 右侧内容区域（奇数索引显示卡片，偶数索引占位） */}
       <div className={`flex-1 ${index % 2 === 1 ? 'pl-8' : 'pr-8'}`}>
         {index % 2 === 1 && (
           <div
             ref={(el) => (cardsRef.current[index] = el)}
             className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 border border-border/50 hover:border-primary/50 transition-all duration-500 shadow-lg hover:shadow-2xl relative overflow-hidden group-hover:bg-card"
           >
-            {/* 背景装饰 */}
+            {/* 背景装饰光效 */}
             <div className="absolute -top-10 -left-10 w-20 h-20 bg-primary/10 rounded-full blur-xl group-hover:bg-primary/20 transition-colors duration-500" />
             
             <div className="relative z-10">
@@ -196,14 +208,14 @@ const EducationSection = ({ texts }) => {
                 </span>
               </div>
               
-              {/* 装饰图标 */}
+              {/* 学位标识图标 */}
               <div className="flex items-center space-x-2 text-muted-foreground">
                 <span className="text-lg">🎓</span>
                 <span className="text-sm">学位证书</span>
               </div>
             </div>
 
-            {/* 悬停效果边框 */}
+            {/* 悬停时的边框高亮效果 */}
             <div className="absolute inset-0 border-2 border-primary/0 group-hover:border-primary/30 rounded-2xl transition-colors duration-500" />
           </div>
         )}
@@ -220,7 +232,7 @@ const EducationSection = ({ texts }) => {
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4">
-        {/* 标题部分 */}
+        {/* 页面标题区域 */}
         <div ref={titleRef} className="text-center mb-16">
           <h2 className="text-5xl lg:text-6xl font-bold mb-6">
             <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
@@ -235,9 +247,9 @@ const EducationSection = ({ texts }) => {
           </p>
         </div>
 
-        {/* 教育时间线 */}
+        {/* 教育经历时间线容器 */}
         <div className="relative">
-          {/* 主时间线（隐藏，用于动画参考） */}
+          {/* 主时间线连接线（用于动画参考） */}
           <div 
             ref={timelineRef}
             className="absolute left-1/2 transform -translate-x-1/2 w-0.5 h-full bg-gradient-to-b from-primary to-primary/30 opacity-0"
@@ -255,7 +267,7 @@ const EducationSection = ({ texts }) => {
           </div>
         </div>
 
-        {/* 底部装饰 */}
+        {/* 底部装饰性标语 */}
         <div className="text-center mt-16">
           <div className="inline-flex items-center space-x-2 text-muted-foreground">
             <span className="text-2xl">📚</span>

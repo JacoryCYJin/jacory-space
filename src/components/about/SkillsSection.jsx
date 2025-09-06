@@ -13,6 +13,11 @@ import { skillCardsData } from "../../constants/about/SkillLibrary";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/**
+ * 技能展示区域组件
+ * 采用水平滚动卡片布局展示各项技能
+ * @param {Object} texts - 本地化文本内容
+ */
 const SkillsSection = ({ texts }) => {
   const { language } = useApp();
   const sectionRef = useRef(null);
@@ -20,21 +25,19 @@ const SkillsSection = ({ texts }) => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 卡片水平滚动动画 - 使用绝对位置控制
+      // 水平滚动动画，固定区域
       gsap.fromTo(
         cardsWrapperRef.current,
+        { x: "0vw" },
         {
-          x: "0vw", // 起始位置：第一个卡片（标题）刚好在屏幕左侧
-        },
-        {
-          x: "-200vw", // 移动距离：确保最后一个卡片完全显示
+          x: "-200vw",
           ease: "none",
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top top", // 当section顶部到达视窗顶部时开始
-            end: "bottom top", // 当section底部到达视窗顶部时结束
+            start: "top top",
+            end: "bottom top",
             scrub: 3,
-            pin: true, // 固定section，阻止垂直滚动
+            pin: true,
             anticipatePin: 1,
           },
         }
@@ -44,7 +47,6 @@ const SkillsSection = ({ texts }) => {
     return () => ctx.revert();
   }, []);
 
-  // 技能卡片数据
   const skillCards = [
     {
       component: SkillLibraryCard,
@@ -72,19 +74,15 @@ const SkillsSection = ({ texts }) => {
     },
   ];
 
-  // 标题卡片组件
   const TitleCard = () => (
     <div className="w-full h-full flex flex-col justify-center items-center px-10 relative">
       <div className="text-center space-y-8">
-        {/* 主标题 */}
         <h2 className="text-5xl lg:text-7xl font-black text-background tracking-wide">
           {texts.sections.skills}
         </h2>
         
-        {/* 简约装饰线 */}
         <div className="w-24 h-px bg-background/30 mx-auto" />
         
-        {/* 副标题 */}
         <p className="text-base lg:text-lg text-background/70 font-normal max-w-sm mx-auto leading-relaxed">
           {texts.sections.skillsSubtitle}
         </p>
@@ -92,13 +90,10 @@ const SkillsSection = ({ texts }) => {
     </div>
   );
 
-  // 技能卡片包装器组件
   const SkillCardWrapper = ({ children, index }) => (
     <div className="w-full h-full flex items-center justify-center p-4 relative group">
-      {/* 发光效果 */}
       <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      {/* 卡片容器 - 移除最大宽度限制，充分利用60vw宽度 */}
       <div className="relative z-10 w-full max-w-4xl h-[60vh] bg-card/80 backdrop-blur-sm border border-border/50 rounded-2xl shadow-xl shadow-primary/10 overflow-hidden group-hover:shadow-primary/20 group-hover:border-primary/30 transition-all duration-500">
         {children}
       </div>
@@ -110,21 +105,16 @@ const SkillsSection = ({ texts }) => {
       ref={sectionRef}
       className="relative overflow-hidden min-h-screen group"
     >
-      {/* 背景装饰 */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-primary/5 to-background overflow-hidden" />
 
-      {/* 俄罗斯方块网格背景 */}
       <TetrisGridBackground />
 
       <div className="relative z-10 h-full flex flex-col justify-center overflow-hidden">
-        {/* 卡片展示区域 - 水平滚动容器 */}
         <div className="relative overflow-hidden w-screen h-full">
-          {/* 卡片包装器 - 用于水平滚动 */}
           <div
             ref={cardsWrapperRef}
             className="flex h-full"
           >
-            {/* 标题卡片 - 调整为与其他卡片相同大小 */}
             <div
               className="w-screen flex-shrink-0 h-full"
               style={{ width: "40vw" }}
@@ -132,16 +122,13 @@ const SkillsSection = ({ texts }) => {
               <TitleCard />
             </div>
 
-            {/* 渲染所有技能卡片 */}
             {skillCards.map((card, index) => {
               const CardComponent = card.component;
               return (
                 <React.Fragment key={index}>
                   <div
                     className="w-screen flex-shrink-0 h-full"
-                    style={{
-                      width: "60vw", // 所有技能卡片统一宽度为60vw
-                    }}
+                    style={{ width: "60vw" }}
                   >
                     <SkillCardWrapper index={index}>
                       <CardComponent
@@ -152,7 +139,6 @@ const SkillsSection = ({ texts }) => {
                     </SkillCardWrapper>
                   </div>
 
-                  {/* 卡片之间的间距 */}
                   {index < skillCards.length - 1 && (
                     <div
                       className="w-screen flex-shrink-0 h-full"

@@ -6,6 +6,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/**
+ * 兴趣爱好和联系方式展示组件
+ * 展示个人兴趣爱好标签和联系方式链接
+ * @param {Object} texts - 本地化文本内容
+ */
 const InterestsSection = ({ texts }) => {
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
@@ -14,7 +19,7 @@ const InterestsSection = ({ texts }) => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 标题动画
+      // 标题区域弹性入场动画
       gsap.fromTo(
         titleRef.current,
         {
@@ -36,7 +41,7 @@ const InterestsSection = ({ texts }) => {
         }
       );
 
-      // 兴趣标签动画
+      // 兴趣爱好标签旋转入场动画
       interestsRef.current.forEach((interest, index) => {
         if (interest) {
           gsap.fromTo(
@@ -63,7 +68,7 @@ const InterestsSection = ({ texts }) => {
         }
       });
 
-      // 联系方式动画
+      // 联系方式区域入场动画
       gsap.fromTo(
         contactRef.current,
         {
@@ -87,6 +92,11 @@ const InterestsSection = ({ texts }) => {
     return () => ctx.revert();
   }, []);
 
+  /**
+   * 兴趣爱好标签组件
+   * @param {string} interest - 兴趣爱好名称
+   * @param {number} index - 标签索引
+   */
   const InterestTag = ({ interest, index }) => (
     <span
       ref={(el) => (interestsRef.current[index] = el)}
@@ -98,6 +108,13 @@ const InterestsSection = ({ texts }) => {
     </span>
   );
 
+  /**
+   * 联系方式链接组件
+   * @param {string} href - 链接地址
+   * @param {string} icon - 图标表情
+   * @param {string} label - 链接标签
+   * @param {number} index - 链接索引
+   */
   const ContactLink = ({ href, icon, label, index }) => (
     <a
       href={href}
@@ -128,7 +145,7 @@ const InterestsSection = ({ texts }) => {
 
       <div className="relative z-10 max-w-6xl mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
-          {/* 兴趣爱好部分 */}
+          {/* 兴趣爱好展示区域 */}
           <div>
             <div ref={titleRef} className="mb-12">
               <div className="inline-flex items-center space-x-3 mb-4">
@@ -152,6 +169,7 @@ const InterestsSection = ({ texts }) => {
               </p>
             </div>
 
+            {/* 兴趣爱好标签列表 */}
             <div className="flex flex-wrap gap-4">
               {texts.interests.map((interest, index) => (
                 <InterestTag key={index} interest={interest} index={index} />
@@ -159,7 +177,7 @@ const InterestsSection = ({ texts }) => {
             </div>
           </div>
 
-          {/* 联系方式部分 */}
+          {/* 联系方式展示区域 */}
           <div ref={contactRef}>
             <div className="mb-8">
               <h3 className="text-3xl font-bold mb-4">
@@ -173,6 +191,7 @@ const InterestsSection = ({ texts }) => {
               </p>
             </div>
 
+            {/* 联系方式链接列表 */}
             <div className="space-y-4">
               <ContactLink
                 href={`mailto:${texts.contact.email}`}
@@ -200,7 +219,7 @@ const InterestsSection = ({ texts }) => {
               />
             </div>
 
-            {/* CTA按钮 */}
+            {/* 行动号召按钮区域 */}
             <div className="mt-8 p-6 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl border border-primary/20">
               <h4 className="text-lg font-semibold text-primary mb-2">
                 让我们开始对话

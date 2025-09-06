@@ -4,6 +4,14 @@ import { useState } from "react";
 import { useApp } from "@/lib/context";
 import { paginationTexts } from "@/constants/Blog";
 
+/**
+ * 分页组件
+ * 提供页码导航和手动跳转功能
+ * @param {number} currentPage - 当前页码
+ * @param {number} totalPages - 总页数
+ * @param {Function} onPageChange - 页码变化回调函数
+ * @param {number} totalItems - 总项目数
+ */
 const Pagination = ({ 
   currentPage, 
   totalPages, 
@@ -14,20 +22,24 @@ const Pagination = ({
   const [inputPage, setInputPage] = useState("");
   const currentTexts = paginationTexts[language];
 
-  // 生成页码数组
+  /**
+   * 智能生成页码数组
+   * 根据当前页和总页数智能显示页码，避免页码过多
+   * @returns {Array} 页码数组，包含数字和省略号
+   */
   const getPageNumbers = () => {
     const pages = [];
     const maxVisiblePages = 5;
     
     if (totalPages <= maxVisiblePages) {
-      // 如果总页数少于等于5页，显示所有页码
+      // 总页数较少时，显示所有页码
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     } else {
-      // 如果总页数大于5页，智能显示页码
+      // 总页数较多时，智能显示页码
       if (currentPage <= 3) {
-        // 当前页在前3页，显示1-5页
+        // 当前页在前3页，显示前5页
         for (let i = 1; i <= 5; i++) {
           pages.push(i);
         }
@@ -36,7 +48,7 @@ const Pagination = ({
           pages.push(totalPages);
         }
       } else if (currentPage >= totalPages - 2) {
-        // 当前页在后3页，显示最后5页
+        // 当前页在后3页，显示后5页
         pages.push(1);
         pages.push("...");
         for (let i = totalPages - 4; i <= totalPages; i++) {
@@ -57,7 +69,10 @@ const Pagination = ({
     return pages;
   };
 
-  // 处理手动输入页码
+  /**
+   * 处理手动输入页码变化
+   * @param {Event} e - 输入事件
+   */
   const handleInputPageChange = (e) => {
     const value = e.target.value;
     if (value === "" || (/^\d+$/.test(value) && parseInt(value) >= 1 && parseInt(value) <= totalPages)) {
@@ -65,6 +80,10 @@ const Pagination = ({
     }
   };
 
+  /**
+   * 处理手动输入页码提交
+   * @param {Event} e - 表单提交事件
+   */
   const handleInputPageSubmit = (e) => {
     e.preventDefault();
     if (inputPage && parseInt(inputPage) >= 1 && parseInt(inputPage) <= totalPages) {
@@ -73,7 +92,10 @@ const Pagination = ({
     }
   };
 
-  // 处理键盘事件
+  /**
+   * 处理键盘事件（回车键提交）
+   * @param {Event} e - 键盘事件
+   */
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
       handleInputPageSubmit(e);
@@ -84,9 +106,9 @@ const Pagination = ({
 
   return (
     <div className="flex flex-col items-center space-y-6">
-      {/* 页码导航和手动输入页码 - 放在同一行 */}
+      {/* 页码导航和手动输入区域 */}
       <div className="flex items-center space-x-6">
-        {/* 页码导航 - 现代简约风格 */}
+        {/* 页码导航按钮组 */}
         <div className="flex items-center space-x-1">
           {/* 上一页按钮 */}
           <button
@@ -100,7 +122,7 @@ const Pagination = ({
             </svg>
           </button>
 
-          {/* 页码按钮 */}
+          {/* 页码按钮列表 */}
           {getPageNumbers().map((page, index) => (
             <button
               key={index}
@@ -131,7 +153,7 @@ const Pagination = ({
           </button>
         </div>
 
-        {/* 手动输入页码 - 简约设计 */}
+        {/* 手动跳转页码输入框 */}
         <div className="flex items-center space-x-3">
           <span className="text-sm text-gray-500 dark:text-gray-400">
             {currentTexts.goToPage}
@@ -155,7 +177,7 @@ const Pagination = ({
         </div>
       </div>
 
-      {/* 分页信息 - 放在页码和选择页码的下面 */}
+      {/* 分页统计信息 */}
       <div className="text-sm text-gray-500 dark:text-gray-400 text-center">
         <span className="font-medium text-gray-900 dark:text-white">{currentPage}</span>
         <span className="mx-2">/</span>

@@ -1,6 +1,12 @@
 import BlogCard from "./BlogCard";
 
+/**
+ * 博客文章列表组件
+ * @param {Array} filteredPosts - 过滤后的文章列表
+ * @param {string} noResultsText - 无结果时的提示文本
+ */
 const BlogList = ({ filteredPosts, noResultsText }) => {
+  // 如果没有文章数据，显示空状态
   if (filteredPosts.length === 0) {
     return (
       <div className="text-center py-12">
@@ -19,6 +25,7 @@ const BlogList = ({ filteredPosts, noResultsText }) => {
     );
   }
 
+  // 渲染文章网格布局
   return (
     <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr">
       {filteredPosts.map((post) => (

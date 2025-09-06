@@ -6,6 +6,11 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/**
+ * 工作经历展示组件
+ * 以卡片网格形式展示职业经历，包含丰富的动画效果
+ * @param {Object} texts - 本地化文本内容
+ */
 const ExperienceSection = ({ texts }) => {
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
@@ -13,7 +18,7 @@ const ExperienceSection = ({ texts }) => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 标题动画
+      // 标题区域弹性入场动画
       gsap.fromTo(
         titleRef.current,
         {
@@ -35,10 +40,10 @@ const ExperienceSection = ({ texts }) => {
         }
       );
 
-      // 经历卡片动画
+      // 工作经历卡片动画
       cardsRef.current.forEach((card, index) => {
         if (card) {
-          // 入场动画
+          // 卡片3D翻转入场动画
           gsap.fromTo(
             card,
             {
@@ -62,7 +67,7 @@ const ExperienceSection = ({ texts }) => {
             }
           );
 
-          // 悬停动画
+          // 鼠标悬停3D效果
           const handleMouseEnter = () => {
             gsap.to(card, {
               y: -15,
@@ -72,7 +77,7 @@ const ExperienceSection = ({ texts }) => {
               ease: "power2.out",
             });
 
-            // 卡片内容动画
+            // 卡片内容微动画
             const content = card.querySelector(".card-content");
             gsap.to(content, {
               y: -5,
@@ -112,13 +117,18 @@ const ExperienceSection = ({ texts }) => {
     return () => ctx.revert();
   }, []);
 
+  /**
+   * 工作经历卡片组件
+   * @param {Object} experience - 工作经历数据
+   * @param {number} index - 卡片索引
+   */
   const ExperienceCard = ({ experience, index }) => (
     <div
       ref={(el) => (cardsRef.current[index] = el)}
       className="group relative"
     >
       <div className="bg-card/80 backdrop-blur-sm rounded-3xl p-8 border border-border/50 hover:border-primary/50 transition-all duration-500 shadow-xl hover:shadow-2xl relative overflow-hidden">
-        {/* 背景装饰 */}
+        {/* 背景装饰光效 */}
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-3xl group-hover:from-primary/30 transition-colors duration-500" />
         <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-gradient-to-tr from-primary/10 to-transparent rounded-full blur-2xl group-hover:from-primary/20 transition-colors duration-500" />
 
@@ -126,7 +136,7 @@ const ExperienceSection = ({ texts }) => {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-primary/50 to-transparent" />
 
         <div className="card-content relative z-10">
-          {/* 头部信息 */}
+          {/* 职位和公司信息头部 */}
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-center space-x-4">
               <div className="p-3 bg-primary/10 rounded-xl group-hover:bg-primary/20 transition-colors duration-300 group-hover:scale-110 transform transition-transform">
@@ -151,22 +161,22 @@ const ExperienceSection = ({ texts }) => {
             </div>
           </div>
 
-          {/* 描述 */}
+          {/* 工作描述内容 */}
           <div className="relative">
             <p className="text-muted-foreground leading-relaxed text-lg group-hover:text-foreground transition-colors duration-300">
               {experience.description}
             </p>
 
-            {/* 引用装饰 */}
+            {/* 装饰性引用符号 */}
             <div className="absolute -left-4 -top-2 text-6xl text-primary/20 font-serif leading-none">
               "
             </div>
           </div>
 
-          {/* 底部技能标签（如果有的话） */}
+          {/* 相关技能标签区域 */}
           <div className="mt-6 pt-6 border-t border-border/30">
             <div className="flex flex-wrap gap-2">
-              {/* 示例技能标签，你可以根据实际数据调整 */}
+              {/* 示例技能标签，可根据实际数据调整 */}
               {["React", "Node.js", "TypeScript"].map((skill, skillIndex) => (
                 <span
                   key={skillIndex}
@@ -179,10 +189,10 @@ const ExperienceSection = ({ texts }) => {
           </div>
         </div>
 
-        {/* 悬停时的装饰效果 */}
+        {/* 悬停时的背景渐变效果 */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl" />
 
-        {/* 边框光效 */}
+        {/* 悬停时的边框光效 */}
         <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/50 to-primary/20 opacity-0 group-hover:opacity-20 transition-opacity duration-500 blur-sm" />
       </div>
     </div>
@@ -206,19 +216,8 @@ const ExperienceSection = ({ texts }) => {
       </div>
 
       <div className="relative z-10 max-w-6xl mx-auto px-4">
-        {/* 标题部分 */}
+        {/* 页面标题区域 */}
         <div ref={titleRef} className="text-center mb-20">
-          {/* <div className="inline-flex items-center space-x-3 mb-6">
-            <div className="w-2 h-2 bg-primary rounded-full animate-ping" />
-            <span className="text-primary font-medium tracking-wider uppercase text-sm">
-              职业历程
-            </span>
-            <div
-              className="w-2 h-2 bg-primary rounded-full animate-ping"
-              style={{ animationDelay: "0.5s" }}
-            />
-          </div> */}
-
           <h2 className="text-5xl lg:text-7xl font-bold mb-8">
             <span className="bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent">
               {texts.sections.experience}
@@ -232,14 +231,14 @@ const ExperienceSection = ({ texts }) => {
           </p>
         </div>
 
-        {/* 经历卡片网格 */}
+        {/* 工作经历卡片网格布局 */}
         <div className="grid lg:grid-cols-2 gap-8">
           {texts.experiences.map((experience, index) => (
             <ExperienceCard key={index} experience={experience} index={index} />
           ))}
         </div>
 
-        {/* 底部统计信息 */}
+        {/* 职业统计信息展示 */}
         <div className="mt-20 text-center">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
             {[

@@ -3,6 +3,10 @@
 import { useApp } from "@/lib/context";
 import { footerTexts } from "@/constants/Footer";
 
+/**
+ * 网站页脚组件
+ * 包含品牌信息、导航链接、社交媒体链接和版权信息
+ */
 const Footer = () => {
   const { language } = useApp();
   const currentTexts = footerTexts[language];
@@ -32,8 +36,9 @@ const Footer = () => {
               </p>
             </div>
 
+            {/* 社交媒体链接区域 */}
             <div className="flex items-center gap-3 mt-6 pt-4">
-              {/* 哔哩哔哩 */}
+              {/* 哔哩哔哩链接 */}
               <a
                 href="https://space.bilibili.com/3546642829543497"
                 target="_blank"
@@ -64,7 +69,7 @@ const Footer = () => {
                 </svg>
               </a>
 
-              {/* 小红书 */}
+              {/* 小红书链接 */}
               <a
                 href="https://www.xiaohongshu.com"
                 target="_blank"
@@ -95,7 +100,7 @@ const Footer = () => {
                 </svg>
               </a>
 
-              {/* 微博 */}
+              {/* 微博链接 */}
               <a
                 href="https://weibo.com"
                 target="_blank"
@@ -121,7 +126,7 @@ const Footer = () => {
                 </svg>
               </a>
 
-              {/* 站酷 */}
+              {/* 站酷链接 */}
               <a
                 href="https://www.zcool.com.cn"
                 target="_blank"
@@ -147,7 +152,7 @@ const Footer = () => {
                 </svg>
               </a>
 
-              {/* GitHub */}
+              {/* GitHub链接 */}
               <a
                 href="https://github.com"
                 target="_blank"
@@ -168,6 +173,7 @@ const Footer = () => {
 
           <div className="hidden lg:block"></div>
 
+          {/* 网站导航链接区域 */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground mb-4">
               {currentTexts.navigation}
@@ -205,6 +211,7 @@ const Footer = () => {
             </div>
           </div>
 
+          {/* 项目分类区域 */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground mb-4">
               {currentTexts.projects}
@@ -217,6 +224,7 @@ const Footer = () => {
             </div>
           </div>
 
+          {/* 法律条款区域 */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground mb-4">
               {currentTexts.legal}
@@ -250,6 +258,7 @@ const Footer = () => {
           </div>
         </div>
 
+        {/* 版权信息区域 */}
         <div className="mt-12 pt-8 border-t border-border">
           <div className="text-sm text-muted-foreground text-center">
             © {currentYear} {currentTexts.companyName}.{" "}

@@ -3,6 +3,11 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
+/**
+ * 个人介绍英雄区域组件
+ * 展示个人头像、姓名、标语和简介，包含丰富的入场动画
+ * @param {Object} texts - 本地化文本内容
+ */
 const HeroSection = ({ texts }) => {
   const heroRef = useRef(null);
   const avatarRef = useRef(null);
@@ -27,7 +32,7 @@ const HeroSection = ({ texts }) => {
 
     if (!elements.hero) return;
 
-    // 后备方案函数
+    // GSAP加载失败时的后备方案
     const ensureElementsVisible = () => {
       Object.values(elements)
         .filter(Boolean)
@@ -37,7 +42,7 @@ const HeroSection = ({ texts }) => {
         });
     };
 
-    // 防止GSAP未加载的后备方案
+    // 检查GSAP是否加载，未加载时使用后备方案
     if (typeof gsap === "undefined") {
       console.warn("GSAP not loaded, ensuring all elements are visible");
       ensureElementsVisible();
@@ -60,13 +65,14 @@ const HeroSection = ({ texts }) => {
         bgDecor: { scale: 0.8, opacity: 0 },
       };
 
-      // 创建时间线
+      // 创建主动画时间线
       const tl = gsap.timeline({ defaults: ANIMATION_CONFIG.defaults });
 
-      // 批量设置初始状态
+      // 解构元素引用
       const { title, aspiration, subtitle, bio, decorLine, avatar, bgDecor } =
         elements;
 
+      // 批量设置元素初始状态
       gsap.set(
         [title, aspiration, subtitle, bio],
         ANIMATION_CONFIG.textElements
@@ -75,16 +81,16 @@ const HeroSection = ({ texts }) => {
       gsap.set(avatar, ANIMATION_CONFIG.avatar);
       gsap.set(bgDecor, ANIMATION_CONFIG.bgDecor);
 
-      // 动画序列
+      // 主动画序列
       tl
-        // 背景装饰先入场
+        // 背景装饰光效入场
         .to(bgDecor, {
           scale: 1,
           opacity: 0.2,
           duration: 1.0,
           ease: "power2.out",
         })
-        // 头像动画
+        // 头像弹性入场动画
         .to(
           avatar,
           {
@@ -96,7 +102,7 @@ const HeroSection = ({ texts }) => {
           },
           "-=0.7"
         )
-        // 标题动画 - 整体进入
+        // 主标题文字入场
         .to(
           title,
           {
@@ -107,7 +113,7 @@ const HeroSection = ({ texts }) => {
           },
           "-=0.5"
         )
-        // 理想标签
+        // 理想标签入场
         .to(
           aspiration,
           {
@@ -118,7 +124,7 @@ const HeroSection = ({ texts }) => {
           },
           "-=0.3"
         )
-        // Slogan
+        // 标语文字入场
         .to(
           subtitle,
           {
@@ -128,7 +134,7 @@ const HeroSection = ({ texts }) => {
           },
           "-=0.4"
         )
-        // 个人简介
+        // 个人简介入场
         .to(
           bio,
           {
@@ -138,7 +144,7 @@ const HeroSection = ({ texts }) => {
           },
           "-=0.4"
         )
-        // 装饰线条优雅入场动画
+        // 装饰线条入场动画
         .to(
           decorLine,
           {
@@ -149,6 +155,7 @@ const HeroSection = ({ texts }) => {
           },
           "-=0.3"
         )
+        // 装饰线条展开动画
         .to(
           decorLine,
           {
@@ -159,7 +166,7 @@ const HeroSection = ({ texts }) => {
           "-=0.4"
         );
 
-      // 头像悬停效果 - 使用GSAP Context管理
+      // 头像悬停交互效果
       if (avatar) {
         const hoverConfig = { duration: 0.4, ease: "power2.out" };
 
@@ -172,7 +179,7 @@ const HeroSection = ({ texts }) => {
         });
       }
 
-      // 背景装饰的持续动画
+      // 背景装饰元素的持续旋转动画
       if (bgDecor?.children) {
         const bgChildren = Array.from(bgDecor.children);
         bgChildren.forEach((child, index) => {
@@ -185,7 +192,7 @@ const HeroSection = ({ texts }) => {
         });
       }
 
-      // 装饰线条的闪烁效果
+      // 装饰线条的流光效果
       if (decorLine) {
         gsap.delayedCall(3, () => {
           gsap.fromTo(
@@ -196,7 +203,7 @@ const HeroSection = ({ texts }) => {
               duration: 2,
               ease: "power2.inOut",
               repeat: -1,
-              repeatDelay: 6, // 每8秒重复一次 (2秒动画 + 6秒间隔)
+              repeatDelay: 6, // 每8秒重复一次（2秒动画 + 6秒间隔）
             }
           );
         });
@@ -206,13 +213,12 @@ const HeroSection = ({ texts }) => {
     return () => ctx.revert(); // 自动清理所有动画
   }, []);
 
-  // 装饰线条的闪烁效果 - 移到主useEffect中避免重复逻辑
   return (
     <section
       ref={heroRef}
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* 极简背景装饰 */}
+      {/* 背景装饰光效 */}
       <div ref={bgDecorRef} className="absolute inset-0 opacity-20">
         <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
         <div className="absolute bottom-1/3 right-1/3 w-64 h-64 bg-primary/5 rounded-full blur-2xl"></div>
@@ -222,10 +228,10 @@ const HeroSection = ({ texts }) => {
         <div className="max-w-7xl mx-auto w-full">
           {/* 左右分栏布局 */}
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-            {/* 左侧 - 头像和视觉元素 */}
+            {/* 左侧头像展示区域 */}
             <div className="order-2 lg:order-1 flex justify-center lg:justify-end w-full">
               <div className="relative">
-                {/* 主头像 */}
+                {/* 个人头像 */}
                 <div
                   ref={avatarRef}
                   className="w-68 h-68 sm:w-84 sm:h-84 lg:w-100 lg:h-100 rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border-4 border-primary/20 hover:border-primary/40 transition-colors overflow-hidden"
@@ -239,9 +245,9 @@ const HeroSection = ({ texts }) => {
               </div>
             </div>
 
-            {/* 右侧 - 文字内容 */}
+            {/* 右侧文字内容区域 */}
             <div className="order-1 lg:order-2 space-y-8 text-center lg:text-left w-full">
-              {/* 标题 */}
+              {/* 主标题 */}
               <div>
                 <h1
                   ref={titleRef}
@@ -254,7 +260,7 @@ const HeroSection = ({ texts }) => {
                 </h1>
               </div>
 
-              {/* 理想标签 - 放在标题下方 */}
+              {/* 理想标签 */}
               <div className="flex justify-center lg:justify-start">
                 <p
                   ref={aspirationRef}
@@ -264,7 +270,7 @@ const HeroSection = ({ texts }) => {
                 </p>
               </div>
 
-              {/* Slogan */}
+              {/* 个人标语 */}
               <div>
                 <p
                   ref={subtitleRef}

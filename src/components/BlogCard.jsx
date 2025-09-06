@@ -4,18 +4,33 @@ import Link from "next/link";
 import { useApp } from "@/lib/context";
 import { blogCategories, blogTags } from "@/constants/Blog";
 
+/**
+ * 博客文章卡片组件
+ * @param {Object} article - 文章数据对象
+ * @param {string} article.title - 文章标题
+ * @param {string} article.excerpt - 文章摘要
+ * @param {string} article.cover - 文章封面图URL
+ * @param {string} article.date - 发布日期
+ * @param {string} article.slug - 文章链接标识
+ * @param {string} article.category - 分类ID
+ * @param {Array} article.tags - 标签ID数组
+ */
 const BlogCard = ({ article }) => {
   const { language } = useApp();
   
-  // 获取分类信息
+  // 根据分类ID查找分类信息
   const category = blogCategories.find(cat => cat.id === article.category);
   
-  // 获取标签信息
+  // 根据标签ID数组获取标签信息
   const articleTags = article.tags?.map(tagId => 
     blogTags.find(tag => tag.id === tagId)
   ).filter(Boolean) || [];
 
-  // 格式化日期
+  /**
+   * 根据语言设置格式化日期
+   * @param {string} dateString - 日期字符串
+   * @returns {string} 格式化后的日期
+   */
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     if (language === 'en') {
@@ -32,11 +47,21 @@ const BlogCard = ({ article }) => {
     });
   };
 
+  /**
+   * 获取分类名称（支持多语言）
+   * @param {Object} category - 分类对象
+   * @returns {string} 分类名称
+   */
   const getCategoryName = (category) => {
     if (!category) return '';
     return typeof category.name === 'object' ? category.name[language] : category.name;
   };
 
+  /**
+   * 获取标签名称（支持多语言）
+   * @param {Object} tag - 标签对象
+   * @returns {string} 标签名称
+   */
   const getTagName = (tag) => {
     if (!tag) return '';
     return typeof tag.name === 'object' ? tag.name[language] : tag.name;
@@ -45,7 +70,7 @@ const BlogCard = ({ article }) => {
   return (
     <Link href={`/blog/${article.slug}`} className="block group h-full">
       <article className="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer group-hover:scale-[1.02] group-hover:shadow-xl h-full flex flex-col">
-        {/* 文章封面图 */}
+        {/* 文章封面图片区域 */}
         <div className="aspect-video w-full overflow-hidden flex-shrink-0">
           {article.cover ? (
             <img 
@@ -63,7 +88,7 @@ const BlogCard = ({ article }) => {
         </div>
         
         <div className="p-6 flex flex-col flex-grow">
-          {/* 分类和日期 */}
+          {/* 文章元信息：分类标签和发布日期 */}
           <div className="flex items-center justify-between mb-3 flex-shrink-0">
             {category && (
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${category.color}`}>
@@ -80,7 +105,7 @@ const BlogCard = ({ article }) => {
             {article.title}
           </h2>
 
-          {/* 文章摘要 */}
+          {/* 文章摘要内容 */}
           <div className="flex-grow mb-4">
             {article.excerpt && (
               <p className="text-gray-600 dark:text-gray-300 line-clamp-3">
@@ -89,7 +114,7 @@ const BlogCard = ({ article }) => {
             )}
           </div>
 
-          {/* 标签 */}
+          {/* 文章标签列表 */}
           <div className="flex-shrink-0">
             {articleTags.length > 0 && (
               <div className="flex flex-wrap gap-2">
