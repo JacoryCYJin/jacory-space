@@ -3,11 +3,11 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { OrbitingCircles } from "../magicui/orbiting-circles";
+import { OrbitingCircles } from "@/components/magicui/orbiting-circles";
 import {
   techIcons,
   skillsStackLabels,
-} from "../../constants/about/SkillLibrary";
+} from "@/constants/about/SkillLibrary";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -20,80 +20,101 @@ gsap.registerPlugin(ScrollTrigger);
  */
 const SkillLibraryCard = ({ skills, language, cardData }) => {
   const cardRef = useRef(null);
-  
+
   // 获取当前语言的技能栈标签
   const skillsStackLabel = skillsStackLabels[language || "zh-cn"] || "技术栈";
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 初始化动画状态
-      gsap.set(".skill-card-left", { opacity: 0, x: -20 });
-      gsap.set(".skill-card-right", { opacity: 0, x: 20 });
-      gsap.set(".skill-title", { opacity: 0, y: 10 });
-      gsap.set(".skill-description", { opacity: 0, y: 10 });
-      gsap.set(".skill-label", { opacity: 0 });
-      gsap.set(".skill-tag", { opacity: 0, y: 12, scale: 0.95 });
-
       // 创建滚动触发动画时间线
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: cardRef.current,
           start: "top 80%",
           end: "bottom 20%",
-          toggleActions: "play none none reverse"
-        }
+          toggleActions: "play none none reverse",
+        },
       });
 
       // 左侧图标轨道区域动画
-      tl.to(".skill-card-left", {
-        opacity: 1,
-        x: 0,
-        duration: 0.8,
-        ease: "power2.out"
-      }, 0.4);
+      tl.fromTo(
+        ".skill-card-left",
+        { opacity: 0, x: -20 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+        0.4
+      );
 
       // 右侧内容区域动画
-      tl.to(".skill-card-right", {
-        opacity: 1,
-        x: 0,
-        duration: 0.8,
-        ease: "power2.out"
-      }, 0.2);
+      tl.fromTo(
+        ".skill-card-right",
+        { opacity: 0, x: 20 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.8,
+          ease: "power2.out",
+        },
+        0.2
+      );
 
       // 标题文字动画
-      tl.to(".skill-title", {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power2.out"
-      }, 0.3);
+      tl.fromTo(
+        ".skill-title",
+        { opacity: 0, y: 10 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+        },
+        0.3
+      );
 
       // 描述文字动画
-      tl.to(".skill-description", {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        ease: "power2.out"
-      }, 0.4);
+      tl.fromTo(
+        ".skill-description",
+        { opacity: 0, y: 10 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          ease: "power2.out",
+        },
+        0.4
+      );
 
       // 技能标签标题动画
-      tl.to(".skill-label", {
-        opacity: 1,
-        duration: 0.6,
-        ease: "power2.out"
-      }, 0.7);
+      tl.fromTo(
+        ".skill-label",
+        { opacity: 0 },
+        {
+          opacity: 1,
+          duration: 0.6,
+          ease: "power2.out",
+        },
+        0.7
+      );
 
       // 技能标签逐个出现动画
       skills.forEach((_, index) => {
-        tl.to(`.skill-tag:nth-child(${index + 1})`, {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.6,
-          ease: [0.25, 0.46, 0.45, 0.94]
-        }, 0.8 + index * 0.08);
+        tl.fromTo(
+          `.skill-tag:nth-child(${index + 1})`,
+          { opacity: 0, y: 12, scale: 0.95 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.6,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          },
+          0.8 + index * 0.08
+        );
       });
-
     }, cardRef);
 
     return () => ctx.revert();
@@ -130,7 +151,10 @@ const SkillLibraryCard = ({ skills, language, cardData }) => {
   };
 
   return (
-    <div ref={cardRef} className="w-full h-full grid grid-cols-5 gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8">
+    <div
+      ref={cardRef}
+      className="w-full h-full grid grid-cols-5 gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8"
+    >
       {/* 左侧技能图标轨道展示区域（占3列） */}
       <div className="skill-card-left col-span-3 flex items-center justify-center relative">
         {/* 多层技能图标轨道容器 */}

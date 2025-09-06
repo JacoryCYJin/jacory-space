@@ -8,8 +8,8 @@ import SkillLibraryCard from "./SkillLibraryCard";
 import AnimationCard from "./AnimationCard";
 import DesignCard from "./DesignCard";
 import VideoCard from "./VideoCard";
-import TetrisGridBackground from "../magicui/TetrisGridBackground";
-import { skillCardsData } from "../../constants/about/SkillLibrary";
+import TetrisGridBackground from "@/components/magicui/TetrisGridBackground";
+import { skillCardsData } from "@/constants/about/SkillLibrary";
 
 gsap.registerPlugin(ScrollTrigger);
 
