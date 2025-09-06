@@ -112,7 +112,7 @@ const SkillLibraryCard = ({ skills, language, cardData }) => {
             duration: 0.6,
             ease: [0.25, 0.46, 0.45, 0.94],
           },
-          0.8 + index * 0.08
+          0.5 + index * 0.08
         );
       });
     }, cardRef);
