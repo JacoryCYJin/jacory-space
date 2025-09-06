@@ -208,6 +208,14 @@ const Footer = () => {
                   {currentTexts.about}
                 </a>
               </p>
+              <p>
+                <a
+                  href="/contact"
+                  className="hover:text-foreground transition-colors"
+                >
+                  {currentTexts.contact}
+                </a>
+              </p>
             </div>
           </div>
 
