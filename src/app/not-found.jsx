@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useApp } from "@/lib/context";
 import { gsap } from "gsap";
@@ -8,7 +8,7 @@ import { notFoundContent } from "@/constants/not-found";
 
 /**
  * 404错误页面
- * 现代简约炫酷的设计，适配主题色
+ * 现代炫酷的设计，具有动态效果和粒子动画
  */
 const NotFoundPage = () => {
   const { language } = useApp();
@@ -17,43 +17,67 @@ const NotFoundPage = () => {
   const textRef = useRef(null);
   const buttonRef = useRef(null);
   const particlesRef = useRef([]);
+  const [isClient, setIsClient] = useState(false);
 
   const currentContent = notFoundContent[language] || notFoundContent["zh-cn"];
 
+  // 生成背景粒子位置
+  const generateParticlePositions = () => {
+    const positions = [];
+    for (let i = 0; i < 30; i++) {
+      const seed = i * 0.1;
+      const left = Math.round((Math.sin(seed) * 0.5 + 0.5) * 100 * 100) / 100;
+      const top = Math.round((Math.cos(seed * 1.3) * 0.5 + 0.5) * 100 * 100) / 100;
+      const size = Math.round(((Math.sin(seed * 0.3) * 0.5 + 0.5) * 3 + 1) * 100) / 100;
+      positions.push({
+        left,
+        top,
+        size,
+      });
+    }
+    return positions;
+  };
+
+  const particlePositions = generateParticlePositions();
+
   useEffect(() => {
-    if (typeof gsap === "undefined") return;
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof gsap === "undefined" || !isClient) return;
 
     const ctx = gsap.context(() => {
-      // 创建时间线
+      // 创建主时间线
       const tl = gsap.timeline();
 
-      // 404数字动画
+      // 404数字动画 - 更炫酷的效果
       tl.fromTo(numberRef.current,
         { 
           scale: 0,
-          rotation: -180,
-          opacity: 0
+          opacity: 0,
+          rotation: -180
         },
         { 
           scale: 1,
-          rotation: 0,
           opacity: 1,
+          rotation: 0,
           duration: 1.2,
           ease: "back.out(1.7)"
         }
       );
 
-      // 文字动画
+      // 文字内容动画
       tl.fromTo(textRef.current,
         { 
-          y: 50,
+          y: 60,
           opacity: 0
         },
         { 
           y: 0,
           opacity: 1,
           duration: 0.8,
-          ease: "power2.out"
+          ease: "power3.out"
         },
         "-=0.6"
       );
@@ -61,114 +85,156 @@ const NotFoundPage = () => {
       // 按钮动画
       tl.fromTo(buttonRef.current,
         { 
-          y: 30,
-          opacity: 0
+          y: 40,
+          opacity: 0,
+          scale: 0.8
         },
         { 
           y: 0,
           opacity: 1,
+          scale: 1,
           duration: 0.6,
-          ease: "power2.out"
+          ease: "back.out(1.7)"
         },
         "-=0.4"
       );
 
-      // 粒子动画
+      // 背景粒子动画 - 更流畅的浮动效果
       particlesRef.current.forEach((particle, index) => {
-        gsap.fromTo(particle,
-          {
-            scale: 0,
-            opacity: 0,
-            x: Math.random() * 200 - 100,
-            y: Math.random() * 200 - 100
-          },
-          {
-            scale: Math.random() * 0.5 + 0.5,
-            opacity: Math.random() * 0.3 + 0.1,
-            x: Math.random() * 400 - 200,
-            y: Math.random() * 400 - 200,
-            duration: Math.random() * 3 + 2,
-            repeat: -1,
-            yoyo: true,
-            ease: "power2.inOut",
-            delay: index * 0.1
-          }
-        );
+        if (particle) {
+          gsap.fromTo(particle,
+            {
+              scale: 0,
+              opacity: 0,
+              x: 0,
+              y: 0
+            },
+            {
+              scale: 1,
+              opacity: 0.3,
+              x: (Math.sin(index * 0.5) * 30),
+              y: (Math.cos(index * 0.7) * 30),
+              duration: 3 + (index * 0.1),
+              repeat: -1,
+              yoyo: true,
+              ease: "sine.inOut",
+              delay: index * 0.05
+            }
+          );
+        }
       });
+
+      // 添加鼠标跟随效果
+      const handleMouseMove = (e) => {
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+        
+        const xPos = (clientX / innerWidth - 0.5) * 20;
+        const yPos = (clientY / innerHeight - 0.5) * 20;
+        
+        gsap.to(numberRef.current, {
+          x: xPos,
+          y: yPos,
+          duration: 0.5,
+          ease: "power2.out"
+        });
+      };
+
+      window.addEventListener('mousemove', handleMouseMove);
+
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+      };
 
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [isClient]);
 
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen bg-gradient-to-br from-background via-muted/20 to-background flex items-center justify-center relative overflow-hidden"
+      className="min-h-screen bg-gradient-to-br from-background via-muted/10 to-background flex items-center justify-center relative overflow-hidden"
     >
       {/* 背景粒子 */}
       <div className="absolute inset-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
+        {particlePositions.map((position, i) => (
           <div
             key={i}
             ref={(el) => (particlesRef.current[i] = el)}
-            className="absolute w-2 h-2 bg-primary/20 rounded-full"
+            className="absolute bg-primary/30 dark:bg-primary/40 rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${position.left}%`,
+              top: `${position.top}%`,
+              width: `${position.size}px`,
+              height: `${position.size}px`,
             }}
           />
         ))}
       </div>
 
+      {/* 装饰性几何图形 */}
+      <div className="absolute top-20 left-20 w-32 h-32 border border-primary/10 rounded-full animate-pulse"></div>
+      <div className="absolute bottom-20 right-20 w-24 h-24 bg-primary/5 rounded-lg rotate-45 animate-pulse"></div>
+      <div className="absolute top-1/3 right-10 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-full animate-pulse"></div>
+
       {/* 主要内容 */}
-      <div className="text-center px-4 max-w-2xl mx-auto relative z-10">
-        {/* 404数字 */}
+      <div className="text-center px-4 max-w-4xl mx-auto relative z-10">
+        {/* 404数字 - 大而炫酷 */}
         <div 
           ref={numberRef}
-          className="mb-8"
+          className="mb-12 relative"
         >
-          <h1 className="text-8xl sm:text-9xl font-black text-primary/20 dark:text-primary/30 select-none">
-            404
-          </h1>
+          <div className="relative">
+            <h1 className="text-8xl sm:text-9xl md:text-[12rem] font-black text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/80 to-primary/60 leading-none">
+              404
+            </h1>
+            {/* 发光效果 */}
+            <div className="absolute inset-0 text-8xl sm:text-9xl md:text-[12rem] font-black text-primary/20 blur-sm leading-none">
+              404
+            </div>
+          </div>
         </div>
 
         {/* 文字内容 */}
         <div ref={textRef} className="mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
+          <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-6">
             {currentContent.title}
           </h2>
-          <p className="text-lg text-muted-foreground mb-6">
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
             {currentContent.subtitle}
           </p>
-          <p className="text-sm text-muted-foreground/80 max-w-md mx-auto">
+          <p className="text-base text-muted-foreground/80 max-w-xl mx-auto">
             {currentContent.description}
           </p>
         </div>
 
-        {/* 建议列表 */}
+        {/* 建议列表 - 更现代的设计 */}
         <div className="mb-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
             {currentContent.suggestions.map((suggestion, index) => (
               <div
                 key={index}
-                className="flex items-center text-sm text-muted-foreground bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg px-4 py-3"
+                className="group flex items-center text-sm text-muted-foreground bg-card/60 backdrop-blur-sm border border-border/50 rounded-xl px-6 py-4 hover:bg-card/80 hover:border-primary/30 transition-all duration-300 hover:scale-105"
               >
-                <div className="w-1.5 h-1.5 bg-primary rounded-full mr-3 flex-shrink-0"></div>
-                <span>{suggestion}</span>
+                <div className="w-2 h-2 bg-primary rounded-full mr-4 flex-shrink-0 group-hover:scale-125 transition-transform duration-300"></div>
+                <span className="group-hover:text-foreground transition-colors duration-300">{suggestion}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* 返回按钮 */}
+        {/* 返回按钮 - 更炫酷的设计 */}
         <div ref={buttonRef}>
           <Link
             href="/"
-            className="inline-flex items-center px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-full hover:bg-primary/90 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/25"
+            className="group inline-flex items-center px-10 py-5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-semibold rounded-2xl hover:from-primary/90 hover:to-primary/70 transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-primary/30 relative overflow-hidden"
           >
+            {/* 按钮背景动画 */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
             <svg
-              className="w-5 h-5 mr-2"
+              className="w-6 h-6 mr-3 group-hover:-translate-x-1 transition-transform duration-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -180,16 +246,10 @@ const NotFoundPage = () => {
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            {currentContent.button}
+            <span className="relative z-10">{currentContent.button}</span>
           </Link>
         </div>
       </div>
-
-      {/* 装饰性几何图形 */}
-      <div className="absolute top-20 left-20 w-32 h-32 border border-primary/10 rounded-full animate-pulse"></div>
-      <div className="absolute bottom-20 right-20 w-24 h-24 bg-primary/5 rounded-lg rotate-45 animate-pulse"></div>
-      <div className="absolute top-1/2 left-10 w-16 h-16 border-2 border-primary/20 rounded-full animate-bounce"></div>
-      <div className="absolute top-1/3 right-10 w-20 h-20 bg-gradient-to-br from-primary/10 to-transparent rounded-full animate-pulse"></div>
     </div>
   );
 };
