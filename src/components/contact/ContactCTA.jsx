@@ -46,23 +46,6 @@ const ContactCTA = ({ texts }) => {
 
     // 使用GSAP Context API进行更好的内存管理
     const ctx = gsap.context(() => {
-      // 设置初始状态
-      gsap.set([elements.title, elements.subtitle], {
-        y: 50,
-        opacity: 0,
-      });
-
-      gsap.set(elements.button, {
-        y: 30,
-        opacity: 0,
-        scale: 0.95,
-      });
-
-      gsap.set(elements.decor, {
-        scale: 0.8,
-        opacity: 0,
-      });
-
       // 创建时间线
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -74,42 +57,28 @@ const ContactCTA = ({ texts }) => {
       });
 
       // 装饰元素动画
-      tl.to(elements.decor, {
-        scale: 1,
-        opacity: 0.1,
-        duration: 1.0,
-        ease: "power2.out",
-      });
+      tl.fromTo(elements.decor,
+        { scale: 0.8, opacity: 0 },
+        { scale: 1, opacity: 0.1, duration: 0.6, ease: "power2.out" }
+      );
 
       // 标题动画
-      tl.to(
-        [elements.title, elements.subtitle],
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power2.out",
-          stagger: 0.2,
-        },
-        "-=0.7"
+      tl.fromTo([elements.title, elements.subtitle],
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", stagger: 0.1 },
+        "-=0.4"
       );
 
       // 按钮动画
-      tl.to(
-        elements.button,
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          ease: "back.out(1.2)",
-        },
-        "-=0.4"
+      tl.fromTo(elements.button,
+        { y: 30, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
+        "-=0.2"
       );
 
       // 按钮悬停效果
       if (elements.button) {
-        const hoverConfig = { duration: 0.3, ease: "power2.out" };
+        const hoverConfig = { duration: 0.2, ease: "power2.out" };
 
         elements.button.addEventListener("mouseenter", () => {
           gsap.to(elements.button, {
@@ -130,8 +99,7 @@ const ContactCTA = ({ texts }) => {
 
       // 装饰元素的持续动画
       if (elements.decor?.children) {
-        const decorChildren = Array.from(elements.decor.children);
-        decorChildren.forEach((child, index) => {
+        Array.from(elements.decor.children).forEach((child, index) => {
           gsap.to(child, {
             rotation: index % 2 === 0 ? 360 : -360,
             duration: index % 2 === 0 ? 40 : 60,
@@ -155,7 +123,7 @@ const ContactCTA = ({ texts }) => {
       });
     } else {
       // 如果没有找到联系方式区域，则打开邮箱
-      window.location.href = 'mailto:hello@jacory.space';
+      window.location.href = 'mailto:chengyue.jin@outlook.com';
     }
   };
 
@@ -192,13 +160,13 @@ const ContactCTA = ({ texts }) => {
         <button
           ref={buttonRef}
           onClick={handleContactClick}
-          className="group relative inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden"
+          className="group relative inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground text-lg font-semibold rounded-2xl shadow-lg transition-all duration-300 overflow-hidden border-2 border-primary"
         >
-          {/* 按钮背景装饰 */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary to-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          {/* 悬停时的圆形遮光罩从左到右填充 */}
+          <div className="absolute top-0 left-0 w-full h-full bg-background rounded-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out origin-left"></div>
           
           {/* 按钮内容 */}
-          <span className="relative z-10 flex items-center gap-3">
+          <span className="relative z-10 flex items-center gap-3 group-hover:text-primary transition-colors duration-300">
             {texts.cta.button}
             <svg
               className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300"
@@ -214,9 +182,6 @@ const ContactCTA = ({ texts }) => {
               />
             </svg>
           </span>
-
-          {/* 悬停时的装饰线 */}
-          <div className="absolute bottom-0 left-0 w-0 h-1 bg-primary-foreground group-hover:w-full transition-all duration-500 ease-out"></div>
         </button>
 
         {/* 底部文字 */}

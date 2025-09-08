@@ -54,18 +54,6 @@ const ContactMethods = ({ texts }) => {
 
     // 使用GSAP Context API进行更好的内存管理
     const ctx = gsap.context(() => {
-      // 设置初始状态
-      gsap.set([elements.title, elements.subtitle], {
-        y: 50,
-        opacity: 0,
-      });
-
-      gsap.set(elements.methods, {
-        y: 60,
-        opacity: 0,
-        scale: 0.95,
-      });
-
       // 创建时间线
       const tl = gsap.timeline({
         scrollTrigger: {
@@ -77,32 +65,22 @@ const ContactMethods = ({ texts }) => {
       });
 
       // 标题动画
-      tl.to([elements.title, elements.subtitle], {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        ease: "power2.out",
-        stagger: 0.2,
-      });
+      tl.fromTo([elements.title, elements.subtitle],
+        { y: 50, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", stagger: 0.1 }
+      );
 
       // 联系方式卡片动画
-      tl.to(
-        elements.methods,
-        {
-          y: 0,
-          opacity: 1,
-          scale: 1,
-          duration: 0.8,
-          ease: "back.out(1.2)",
-          stagger: 0.1,
-        },
-        "-=0.4"
+      tl.fromTo(elements.methods,
+        { y: 60, opacity: 0, scale: 0.95 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.2)", stagger: 0.08 },
+        "-=0.3"
       );
 
       // 卡片悬停效果
       elements.methods.forEach((method) => {
         if (method) {
-          const hoverConfig = { duration: 0.3, ease: "power2.out" };
+          const hoverConfig = { duration: 0.2, ease: "power2.out" };
 
           method.addEventListener("mouseenter", () => {
             gsap.to(method, {

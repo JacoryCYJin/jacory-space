@@ -47,97 +47,46 @@ const ContactHero = ({ texts }) => {
 
     // 使用GSAP Context API进行更好的内存管理
     const ctx = gsap.context(() => {
-      // 动画配置常量
-      const ANIMATION_CONFIG = {
-        defaults: { ease: "power2.out", duration: 0.8 },
-        textElements: { y: 30, opacity: 0 },
-        decorLine: {
-          y: 20,
-          opacity: 0,
-          scaleX: 0,
-          transformOrigin: "left center",
-        },
-        bgDecor: { scale: 0.8, opacity: 0 },
-      };
-
-      // 创建主动画时间线
-      const tl = gsap.timeline({ defaults: ANIMATION_CONFIG.defaults });
-
-      // 解构元素引用
       const { title, subtitle, description, decorLine, bgDecor } = elements;
 
-      // 批量设置元素初始状态
-      gsap.set([title, subtitle, description], ANIMATION_CONFIG.textElements);
-      gsap.set(decorLine, ANIMATION_CONFIG.decorLine);
-      gsap.set(bgDecor, ANIMATION_CONFIG.bgDecor);
+      // 创建主动画时间线
+      const tl = gsap.timeline({ defaults: { ease: "power2.out", duration: 0.6 } });
 
-      // 主动画序列
+      // 主动画序列 - 使用 fromTo 替代 set + to
       tl
         // 背景装饰光效入场
-        .to(bgDecor, {
-          scale: 1,
-          opacity: 0.15,
-          duration: 1.0,
-          ease: "power2.out",
-        })
+        .fromTo(bgDecor, 
+          { scale: 0.8, opacity: 0 },
+          { scale: 1, opacity: 0.15, duration: 0.6 }
+        )
         // 主标题文字入场
-        .to(
-          title,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            ease: "power2.out",
-          },
-          "-=0.7"
+        .fromTo(title,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5 },
+          "-=0.4"
         )
         // 副标题入场
-        .to(
-          subtitle,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            ease: "power2.out",
-          },
-          "-=0.4"
-        )
-        // 描述文字入场
-        .to(
-          description,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-          },
-          "-=0.4"
-        )
-        // 装饰线条入场动画
-        .to(
-          decorLine,
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            ease: "power2.out",
-          },
+        .fromTo(subtitle,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5 },
           "-=0.3"
         )
-        // 装饰线条展开动画
-        .to(
-          decorLine,
-          {
-            scaleX: 1,
-            duration: 0.8,
-            ease: "power2.out",
-          },
-          "-=0.4"
+        // 描述文字入场
+        .fromTo(description,
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5 },
+          "-=0.3"
+        )
+        // 装饰线条入场和展开动画
+        .fromTo(decorLine,
+          { y: 20, opacity: 0, scaleX: 0, transformOrigin: "left center" },
+          { y: 0, opacity: 1, scaleX: 1, duration: 0.6 },
+          "-=0.2"
         );
 
       // 背景装饰元素的持续旋转动画
       if (bgDecor?.children) {
-        const bgChildren = Array.from(bgDecor.children);
-        bgChildren.forEach((child, index) => {
+        Array.from(bgDecor.children).forEach((child, index) => {
           gsap.to(child, {
             rotation: index % 2 === 0 ? 360 : -360,
             duration: index % 2 === 0 ? 60 : 80,
@@ -150,8 +99,7 @@ const ContactHero = ({ texts }) => {
       // 装饰线条的流光效果
       if (decorLine) {
         gsap.delayedCall(3, () => {
-          gsap.fromTo(
-            decorLine,
+          gsap.fromTo(decorLine,
             { backgroundPosition: "-200px 0" },
             {
               backgroundPosition: "200px 0",
