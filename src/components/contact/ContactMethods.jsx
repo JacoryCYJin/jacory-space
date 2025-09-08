@@ -153,7 +153,7 @@ const ContactMethods = ({ texts }) => {
               <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-12 translate-x-12 group-hover:scale-110 transition-transform duration-500"></div>
               
               {/* 图标 */}
-              <div className="text-3xl mb-4 group-hover:scale-110 transition-transform duration-300 transform-gpu origin-center inline-block w-fit flex items-center justify-center">
+              <div className="text-3xl text-primary mb-4 group-hover:scale-110 transition-transform duration-300 transform-gpu origin-center inline-block w-fit flex items-center justify-center">
                 {ContactIcons[method.iconName]}
               </div>
 
