@@ -180,6 +180,23 @@
   .max-w-9xl {
     max-width: 112rem; /* 1792px */
   }
+
+  /* Footer SVG hover effects */
+  .footer-social-icon {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .footer-social-icon:hover {
+    @apply bg-primary text-primary-foreground;
+  }
+  
+  .footer-social-icon:hover svg {
+    @apply text-primary-foreground;
+  }
+  
+  .footer-social-icon:hover svg path {
+    fill: currentColor;
+  }
 }
 
 ::view-transition-old(root), ::view-transition-new(root) {

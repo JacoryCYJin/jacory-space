@@ -17,8 +17,13 @@ export const AppProvider = ({ children }) => {
   const [language, setLanguage] = useState("zh-cn");
   const [theme, setTheme] = useState("light");
 
-  // 初始化主题，检查本地存储或系统偏好
+  // 初始化语言和主题，检查本地存储或系统偏好
   useEffect(() => {
+    const savedLanguage = localStorage.getItem("language");
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
+
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       setTheme(savedTheme);
@@ -37,6 +42,7 @@ export const AppProvider = ({ children }) => {
 
   const changeLanguage = (langCode) => {
     setLanguage(langCode);
+    localStorage.setItem("language", langCode);
   };
 
   const toggleTheme = () => {

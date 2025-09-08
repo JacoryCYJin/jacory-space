@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useApp } from "@/lib/context";
 import { footerTexts } from "@/constants/Footer";
 
@@ -43,7 +44,7 @@ const Footer = () => {
                 href="https://space.bilibili.com/3546642829543497"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-muted hover:bg-accent rounded-full flex items-center justify-center transition-colors"
+                className="footer-social-icon w-8 h-8 bg-muted rounded-full flex items-center justify-center"
                 aria-label="哔哩哔哩"
               >
                 <svg
@@ -74,7 +75,7 @@ const Footer = () => {
                 href="https://www.xiaohongshu.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-muted hover:bg-accent rounded-full flex items-center justify-center transition-colors"
+                className="footer-social-icon w-8 h-8 bg-muted rounded-full flex items-center justify-center"
                 aria-label="小红书"
               >
                 <svg
@@ -105,7 +106,7 @@ const Footer = () => {
                 href="https://weibo.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-muted hover:bg-accent rounded-full flex items-center justify-center transition-colors"
+                className="footer-social-icon w-8 h-8 bg-muted rounded-full flex items-center justify-center"
                 aria-label="微博"
               >
                 <svg
@@ -131,7 +132,7 @@ const Footer = () => {
                 href="https://www.zcool.com.cn"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-muted hover:bg-accent rounded-full flex items-center justify-center transition-colors"
+                className="footer-social-icon w-8 h-8 bg-muted rounded-full flex items-center justify-center"
                 aria-label="站酷"
               >
                 <svg
@@ -154,10 +155,10 @@ const Footer = () => {
 
               {/* GitHub链接 */}
               <a
-                href="https://github.com"
+                href="https://github.com/JacoryCYJin"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 bg-muted hover:bg-accent rounded-full flex items-center justify-center transition-colors"
+                className="footer-social-icon w-8 h-8 bg-muted rounded-full flex items-center justify-center"
                 aria-label="GitHub"
               >
                 <svg
@@ -180,55 +181,74 @@ const Footer = () => {
             </h3>
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>
-                <a href="/" className="hover:text-foreground transition-colors">
+                <Link href="/" className="hover:text-primary transition-colors">
                   {currentTexts.home}
-                </a>
+                </Link>
               </p>
               <p>
-                <a
+                <Link
                   href="/portfolio"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   {currentTexts.portfolio}
-                </a>
+                </Link>
               </p>
               <p>
-                <a
+                <Link
                   href="/blog"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   {currentTexts.blog}
-                </a>
+                </Link>
               </p>
               <p>
-                <a
+                <Link
                   href="/about"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   {currentTexts.about}
-                </a>
+                </Link>
               </p>
               <p>
-                <a
+                <Link
                   href="/contact"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   {currentTexts.contact}
-                </a>
+                </Link>
               </p>
             </div>
           </div>
 
-          {/* 项目分类区域 */}
+          {/* 服务项目区域 */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground mb-4">
               {currentTexts.projects}
             </h3>
             <div className="space-y-2 text-sm text-muted-foreground">
-              <p>{currentTexts.featuredProjects}</p>
-              <p>{currentTexts.webDevelopment}</p>
-              <p>{currentTexts.mobileApps}</p>
-              <p>{currentTexts.uiuxDesign}</p>
+              <p>
+                <span className="hover:text-primary transition-colors cursor-pointer">
+                  {currentTexts.enterpriseWebDev}
+                </span>
+              </p>
+
+              <p>
+                <span className="hover:text-primary transition-colors cursor-pointer">
+                  {currentTexts.frontendAnimation}
+                </span>
+              </p>
+
+              <p>
+                <span className="hover:text-primary transition-colors cursor-pointer">
+                  {currentTexts.commercialVideo}
+                </span>
+              </p>
+
+              <p>
+                <span className="hover:text-primary transition-colors cursor-pointer">
+                  {currentTexts.brandDesign}
+                </span>
+              </p>
             </div>
           </div>
 
@@ -239,28 +259,28 @@ const Footer = () => {
             </h3>
             <div className="space-y-2 text-sm text-muted-foreground">
               <p>
-                <a
+                <Link
                   href="/imprint"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   {currentTexts.imprint}
-                </a>
+                </Link>
               </p>
               <p>
-                <a
+                <Link
                   href="/privacy"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   {currentTexts.privacyPolicy}
-                </a>
+                </Link>
               </p>
               <p>
-                <a
+                <Link
                   href="/terms"
-                  className="hover:text-foreground transition-colors"
+                  className="hover:text-primary transition-colors"
                 >
                   {currentTexts.termsOfService}
-                </a>
+                </Link>
               </p>
             </div>
           </div>

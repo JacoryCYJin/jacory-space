@@ -20,7 +20,11 @@ export const footerTexts = {
     privacyPolicy: "隐私政策",
     termsOfService: "服务条款",
     copyright: "版权所有",
-    allRightsReserved: "保留所有权利"
+    allRightsReserved: "保留所有权利",
+    enterpriseWebDev: "企业级Web应用开发",
+    frontendAnimation: "高端前端动画定制",
+    commercialVideo: "商业视频制作",
+    brandDesign: "品牌视觉设计"
   },
   "zh-tw": {
     companyName: "JSpace",
@@ -42,7 +46,11 @@ export const footerTexts = {
     privacyPolicy: "隱私政策",
     termsOfService: "服務條款",
     copyright: "版權所有",
-    allRightsReserved: "保留所有權利"
+    allRightsReserved: "保留所有權利",
+    enterpriseWebDev: "企業級Web應用開發",
+    frontendAnimation: "高端前端動畫定制",
+    commercialVideo: "商業視頻製作",
+    brandDesign: "品牌視覺設計"
   },
   en: {
     companyName: "JSpace",
@@ -64,6 +72,10 @@ export const footerTexts = {
     privacyPolicy: "Privacy Policy",
     termsOfService: "Terms of Service",
     copyright: "Copyright",
-    allRightsReserved: "All rights reserved"
+    allRightsReserved: "All rights reserved",
+    enterpriseWebDev: "Enterprise Web Development",
+    frontendAnimation: "Premium Frontend Animation",
+    commercialVideo: "Commercial Video Production",
+    brandDesign: "Brand Visual Design"
   }
 };
