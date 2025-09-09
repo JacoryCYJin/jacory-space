@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 /**
  * 联系页面行动号召区域组件
@@ -163,7 +162,7 @@ const ContactCTA = ({ texts }) => {
           className="group relative inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground text-lg font-semibold rounded-2xl shadow-lg transition-all duration-300 overflow-hidden border-2 border-primary"
         >
           {/* 悬停时的圆形遮光罩从左到右填充 */}
-          <div className="absolute top-0 left-0 w-full h-full bg-background rounded-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out origin-left"></div>
+          <div className="absolute top-0 left-0 w-[110%] h-full bg-background rounded-r-4xl transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 ease-out origin-left"></div>
           
           {/* 按钮内容 */}
           <span className="relative z-10 flex items-center gap-3 group-hover:text-primary transition-colors duration-300">
