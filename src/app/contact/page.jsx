@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from "react";
 import { useApp } from "@/lib/context";
 import { contactTexts } from "@/constants/Contact";
-import Lenis from "@studio-freight/lenis";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -18,31 +17,8 @@ gsap.registerPlugin(ScrollTrigger);
 const Contact = () => {
   const { language } = useApp();
   const currentTexts = contactTexts[language];
-  const lenisRef = useRef(null);
 
   useEffect(() => {
-    // 初始化 Lenis 平滑滚动
-    lenisRef.current = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: "vertical",
-      gestureDirection: "vertical",
-      smooth: true,
-      mouseMultiplier: 1,
-      smoothTouch: false,
-      touchMultiplier: 2,
-      infinite: false,
-    });
-
-    // 将 Lenis 滚动与 GSAP ScrollTrigger 同步
-    lenisRef.current.on("scroll", ScrollTrigger.update);
-
-    // 使用 GSAP ticker 处理 Lenis 动画帧
-    gsap.ticker.add((time) => {
-      lenisRef.current?.raf(time * 1000);
-    });
-
-    gsap.ticker.lagSmoothing(0);
 
     // 页面加载动画
     gsap.set("body", { overflow: "hidden" });
@@ -60,10 +36,7 @@ const Contact = () => {
     }).set(".loading-overlay", { display: "none" });
 
     return () => {
-      lenisRef.current?.destroy();
-      gsap.ticker.remove((time) => {
-        lenisRef.current?.raf(time * 1000);
-      });
+      // 清理函数
     };
   }, []);
 
