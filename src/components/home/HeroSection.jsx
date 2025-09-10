@@ -210,7 +210,7 @@ export default function HeroSection() {
       {/* Main brand title */}
       <div className="absolute inset-0 flex z-10 mt-14">
         <h1
-          className="text-[10vw] md:text-[15vw] lg:text-[20vw] xl:text-[25vw] font-black leading-none tracking-tight text-center"
+          className="text-[10vw] md:text-[15vw] lg:text-[20vw] xl:text-[25vw] font-black leading-none text-center"
           style={{
             fontFamily: "system-ui, -apple-system, sans-serif",
             textShadow: "0 0 40px rgba(94, 116, 86, 0.3)",
@@ -219,8 +219,8 @@ export default function HeroSection() {
             maxWidth: "100%",
           }}
         >
-          <span ref={jRef} className="italic text-primary">J</span>
-          <span ref={spaceRef} className="text-black dark:text-white">SPACE</span>
+          <span ref={jRef} className="italic text-primary mr-[0.1em]">J</span>
+          <span ref={spaceRef} className="text-black dark:text-white tracking-tighter">SPACE</span>
         </h1>
       </div>
 
