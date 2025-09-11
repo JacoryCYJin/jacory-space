@@ -2,11 +2,20 @@ import BlogCard from "./BlogCard";
 
 /**
  * 博客文章列表组件
- * @param {Array} filteredPosts - 过滤后的文章列表
- * @param {string} noResultsText - 无结果时的提示文本
+ * 
+ * 这是博客页面的文章列表展示组件，负责渲染文章卡片网格。
+ * 主要功能包括：
+ * - 响应式网格布局
+ * - 空状态处理
+ * - 文章卡片渲染
+ * 
+ * @param {Object} props - 组件属性
+ * @param {Array} props.filteredPosts - 过滤后的文章列表
+ * @param {string} props.noResultsText - 无结果时的提示文本
+ * @returns {JSX.Element} 渲染的博客文章列表组件
  */
 const BlogList = ({ filteredPosts, noResultsText }) => {
-  // 如果没有文章数据，显示空状态
+  // 如果没有文章数据，显示空状态提示
   if (filteredPosts.length === 0) {
     return (
       <div className="text-center py-12">

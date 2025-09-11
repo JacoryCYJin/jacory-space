@@ -6,11 +6,20 @@ import { paginationTexts } from "@/constants/Blog";
 
 /**
  * 分页组件
- * 提供页码导航和手动跳转功能
- * @param {number} currentPage - 当前页码
- * @param {number} totalPages - 总页数
- * @param {Function} onPageChange - 页码变化回调函数
- * @param {number} totalItems - 总项目数
+ * 
+ * 这是博客页面的分页导航组件，提供智能的页码显示和跳转功能。
+ * 主要功能包括：
+ * - 智能页码显示（避免页码过多）
+ * - 手动页码跳转
+ * - 多语言支持
+ * - 响应式设计
+ * 
+ * @param {Object} props - 组件属性
+ * @param {number} props.currentPage - 当前页码
+ * @param {number} props.totalPages - 总页数
+ * @param {Function} props.onPageChange - 页码变化回调函数
+ * @param {number} props.totalItems - 总项目数
+ * @returns {JSX.Element} 渲染的分页组件
  */
 const Pagination = ({ 
   currentPage, 
@@ -24,7 +33,14 @@ const Pagination = ({
 
   /**
    * 智能生成页码数组
-   * 根据当前页和总页数智能显示页码，避免页码过多
+   * 
+   * 根据当前页和总页数智能显示页码，避免页码过多影响用户体验。
+   * 实现逻辑：
+   * - 总页数≤5时显示所有页码
+   * - 当前页在前3页时显示前5页+省略号+最后一页
+   * - 当前页在后3页时显示第一页+省略号+后5页
+   * - 当前页在中间时显示第一页+省略号+当前页前后各2页+省略号+最后一页
+   * 
    * @returns {Array} 页码数组，包含数字和省略号
    */
   const getPageNumbers = () => {
@@ -71,7 +87,8 @@ const Pagination = ({
 
   /**
    * 处理手动输入页码变化
-   * @param {Event} e - 输入事件
+   * 
+   * @param {Event} e - 输入事件对象
    */
   const handleInputPageChange = (e) => {
     const value = e.target.value;

@@ -9,7 +9,17 @@ import { navTexts } from "@/constants/NavBar";
 
 /**
  * 网站导航栏组件
- * 包含品牌标识、导航菜单、主题切换器和语言切换器
+ * 
+ * 这是网站的顶部导航组件，提供主要的导航功能和用户交互工具。
+ * 主要功能包括：
+ * - 品牌标识展示
+ * - 主要页面导航菜单
+ * - 主题切换功能（明暗模式）
+ * - 多语言切换功能
+ * - 响应式布局适配
+ * - 当前页面高亮显示
+ * 
+ * @returns {JSX.Element} 渲染的导航栏组件
  */
 const NavBar = () => {
   const { language } = useApp();
@@ -17,7 +27,7 @@ const NavBar = () => {
   
   const currentTexts = navTexts[language];
   
-  // 导航菜单项配置
+  // 导航菜单项配置数组
   const navItems = [
     { href: "/", label: currentTexts.home },
     { href: "/portfolio", label: currentTexts.portfolio },
@@ -27,8 +37,9 @@ const NavBar = () => {
   ];
   
   /**
-   * 判断当前路径是否为激活状态
-   * @param {string} href - 链接地址
+   * 判断导航链接是否为当前激活状态
+   * 
+   * @param {string} href - 导航链接地址
    * @returns {boolean} 是否为激活状态
    */
   const isActive = (href) => {
@@ -39,7 +50,7 @@ const NavBar = () => {
   };
   
   return (
-    <nav className="flex flex-row justify-between items-center px-8 py-2 fixed w-screen z-100 backdrop-blur-sm">
+    <nav className="flex flex-row justify-between items-center px-8 py-2 fixed w-screen backdrop-blur-sm" style={{ zIndex: 100 }}>
       {/* 品牌标识区域 */}
       <div>
         <div className="flex items-baseline">
