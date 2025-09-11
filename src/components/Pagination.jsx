@@ -5,14 +5,8 @@ import { useApp } from "@/lib/context";
 import { paginationTexts } from "@/constants/Blog";
 
 /**
- * 分页组件
- * 
- * 这是博客页面的分页导航组件，提供智能的页码显示和跳转功能。
- * 主要功能包括：
- * - 智能页码显示（避免页码过多）
- * - 手动页码跳转
- * - 多语言支持
- * - 响应式设计
+ * 分页组件 - 智能页码显示和跳转
+ * 作者：JacoryJin
  * 
  * @param {Object} props - 组件属性
  * @param {number} props.currentPage - 当前页码

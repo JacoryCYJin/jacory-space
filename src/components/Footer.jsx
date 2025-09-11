@@ -5,17 +5,8 @@ import { useApp } from "@/lib/context";
 import { footerTexts } from "@/constants/Footer";
 
 /**
- * 网站页脚组件
- * 
- * 这是网站的底部页脚组件，提供完整的网站信息和导航功能。
- * 主要功能包括：
- * - 品牌标识和联系信息展示
- * - 社交媒体链接集成
- * - 网站导航链接
- * - 服务项目展示
- * - 法律条款链接
- * - 版权信息显示
- * - 多语言支持
+ * 网站页脚组件 - 网站信息和导航
+ * 作者：JacoryJin
  * 
  * @returns {JSX.Element} 渲染的页脚组件
  */

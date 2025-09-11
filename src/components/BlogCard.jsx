@@ -5,26 +5,11 @@ import { useApp } from "@/lib/context";
 import { blogCategories, blogTags } from "@/constants/Blog";
 
 /**
- * 博客文章卡片组件
- * 
- * 这是博客文章列表中的单个文章卡片，提供文章预览和导航功能。
- * 主要功能包括：
- * - 文章封面图片展示
- * - 文章元信息显示（分类、日期）
- * - 文章标题和摘要预览
- * - 标签展示
- * - 悬停交互效果
- * - 多语言支持
+ * 博客文章卡片组件 - 文章预览和导航
+ * 作者：JacoryJin
  * 
  * @param {Object} props - 组件属性
  * @param {Object} props.article - 文章数据对象
- * @param {string} props.article.title - 文章标题
- * @param {string} props.article.excerpt - 文章摘要
- * @param {string} props.article.cover - 文章封面图URL
- * @param {string} props.article.date - 发布日期
- * @param {string} props.article.slug - 文章链接标识
- * @param {string} props.article.category - 分类ID
- * @param {Array} props.article.tags - 标签ID数组
  * @returns {JSX.Element} 渲染的博客文章卡片组件
  */
 const BlogCard = ({ article }) => {

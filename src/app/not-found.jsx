@@ -7,8 +7,8 @@ import { gsap } from "gsap";
 import { notFoundContent } from "@/constants/not-found";
 
 /**
- * 404错误页面
- * 现代炫酷的设计，具有动态效果和粒子动画
+ * 404错误页面 - 动态效果和粒子动画
+ * 作者：JacoryJin
  */
 const NotFoundPage = () => {
   const { language } = useApp();

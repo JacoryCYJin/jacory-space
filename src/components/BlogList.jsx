@@ -1,13 +1,8 @@
 import BlogCard from "./BlogCard";
 
 /**
- * 博客文章列表组件
- * 
- * 这是博客页面的文章列表展示组件，负责渲染文章卡片网格。
- * 主要功能包括：
- * - 响应式网格布局
- * - 空状态处理
- * - 文章卡片渲染
+ * 博客文章列表组件 - 文章卡片网格展示
+ * 作者：JacoryJin
  * 
  * @param {Object} props - 组件属性
  * @param {Array} props.filteredPosts - 过滤后的文章列表

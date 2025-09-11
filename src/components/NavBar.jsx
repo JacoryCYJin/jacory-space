@@ -8,16 +8,8 @@ import { useApp } from "@/lib/context";
 import { navTexts } from "@/constants/NavBar";
 
 /**
- * 网站导航栏组件
- * 
- * 这是网站的顶部导航组件，提供主要的导航功能和用户交互工具。
- * 主要功能包括：
- * - 品牌标识展示
- * - 主要页面导航菜单
- * - 主题切换功能（明暗模式）
- * - 多语言切换功能
- * - 响应式布局适配
- * - 当前页面高亮显示
+ * 网站导航栏组件 - 顶部导航和用户交互
+ * 作者：JacoryJin
  * 
  * @returns {JSX.Element} 渲染的导航栏组件
  */

@@ -5,8 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useApp } from "@/lib/context";
 
 /**
- * 语言切换器组件
- * 提供多语言切换功能，支持下拉菜单选择
+ * 语言切换器组件 - 多语言切换功能
+ * 作者：JacoryJin
  */
 const LanguageSwitcher = () => {
   const { language, changeLanguage, languages } = useApp();

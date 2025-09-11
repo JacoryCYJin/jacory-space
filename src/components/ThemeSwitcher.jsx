@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 import { useApp } from "@/lib/context";
 
 /**
- * 主题切换器组件
- * 在亮色模式和暗色模式之间切换
+ * 主题切换器组件 - 明暗模式切换
+ * 作者：JacoryJin
  */
 const ThemeSwitcher = () => {
   const { theme, toggleTheme } = useApp();

@@ -8,6 +8,11 @@ import Pagination from "@/components/Pagination";
 import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern";
 import { cn } from "@/lib/utils";
 
+/**
+ * 博客页面组件 - 文章列表和筛选功能
+ * 作者：JacoryJin
+ */
+
 const BlogPage = () => {
   const { language } = useApp();
   const [posts, setPosts] = useState([]);

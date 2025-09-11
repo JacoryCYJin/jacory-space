@@ -9,6 +9,11 @@ import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+/**
+ * 博客文章详情页面 - Markdown内容渲染
+ * 作者：JacoryJin
+ */
+
 const BlogPostPage = () => {
   const params = useParams();
   const router = useRouter();

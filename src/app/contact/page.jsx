@@ -14,6 +14,11 @@ import ContactCTA from "@/components/contact/ContactCTA";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/**
+ * 联系页面组件 - 联系方式和服务展示
+ * 作者：JacoryJin
+ */
+
 const Contact = () => {
   const { language } = useApp();
   const currentTexts = contactTexts[language];

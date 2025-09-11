@@ -14,6 +14,11 @@ import InterestsSection from "@/components/about/InterestsSection";
 
 gsap.registerPlugin(ScrollTrigger);
 
+/**
+ * 关于页面组件 - 个人介绍和技能展示
+ * 作者：JacoryJin
+ */
+
 const About = () => {
   const { language } = useApp();
   const currentTexts = aboutTexts[language];

@@ -2,11 +2,8 @@ import HeroSection from "@/components/home/HeroSection";
 import IntroductionSection from "@/components/home/IntroductionSection";
 
 /**
- * 首页组件
- *
- * 这是网站的主页，包含两个主要区域：
- * - HeroSection: 英雄区域，展示品牌标识和核心交互
- * - IntroductionSection: 介绍区域，展示网站功能特性
+ * 首页组件 - 网站主页
+ * 作者：JacoryJin
  *
  * @returns {JSX.Element} 渲染的首页组件
  */
