@@ -9,7 +9,7 @@ import { heroTexts } from "@/constants/home/HeroSection";
 /**
  * 可复用的操作链接组件
  * 提供统一的链接样式和交互效果，支持GitHub和爱心图标
- * 
+ *
  * @param {Object} props - 组件属性
  * @param {string} props.href - 链接目标地址
  * @param {'github' | 'heart'} props.icon - 图标类型，支持GitHub和爱心图标
@@ -17,11 +17,17 @@ import { heroTexts } from "@/constants/home/HeroSection";
  * @returns {JSX.Element} 渲染的操作链接组件
  */
 const ActionLink = ({ href, icon, text }) => {
-  const iconSvg = icon === 'github' ? (
-    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-  ) : (
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-  );
+  const iconSvg =
+    icon === "github" ? (
+      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+    ) : (
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+      />
+    );
 
   return (
     <a
@@ -31,20 +37,29 @@ const ActionLink = ({ href, icon, text }) => {
       className="group flex items-center bg-primary/10 dark:bg-primary/15 transition-all duration-300 rounded-xl overflow-hidden shadow-lg hover:shadow-xl min-w-[280px] border border-primary/20 hover:border-primary/30 relative hover:bg-primary/20 dark:hover:bg-primary/25"
       style={{ zIndex: 10 }}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/40 to-primary/60 dark:from-primary/45 dark:to-primary/65 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out opacity-0 group-hover:opacity-100" style={{ zIndex: 0 }}></div>
-      <div className="w-16 h-14 bg-primary hover:bg-primary/90 transition-all duration-300 flex items-center justify-center relative" style={{ zIndex: 10 }}>
+      <div
+        className="absolute inset-0 bg-gradient-to-r from-primary/40 to-primary/60 dark:from-primary/45 dark:to-primary/65 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out opacity-0 group-hover:opacity-100"
+        style={{ zIndex: 0 }}
+      ></div>
+      <div
+        className="w-16 h-14 bg-primary hover:bg-primary/90 transition-all duration-300 flex items-center justify-center relative"
+        style={{ zIndex: 10 }}
+      >
         <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center hover:scale-110 transition-transform duration-300">
           <svg
             className="w-6 h-6 text-primary hover:text-primary/80 transition-colors duration-300"
-            fill={icon === 'github' ? 'currentColor' : 'none'}
-            stroke={icon === 'heart' ? 'currentColor' : 'none'}
+            fill={icon === "github" ? "currentColor" : "none"}
+            stroke={icon === "heart" ? "currentColor" : "none"}
             viewBox="0 0 24 24"
           >
             {iconSvg}
           </svg>
         </div>
       </div>
-      <div className="flex-1 px-6 py-4 flex items-center justify-between relative" style={{ zIndex: 10 }}>
+      <div
+        className="flex-1 px-6 py-4 flex items-center justify-between relative"
+        style={{ zIndex: 10 }}
+      >
         <span className="text-primary font-bold text-sm uppercase tracking-wider hover:text-primary/90 transition-colors duration-300">
           {text}
         </span>
@@ -74,7 +89,7 @@ if (typeof window !== "undefined") {
 
 /**
  * 首页英雄区域组件
- * 
+ *
  * 这是网站的核心视觉组件，负责展示品牌标识和引导用户交互。
  * 主要功能包括：
  * - 品牌标题动画展示（J SPACE）
@@ -82,7 +97,7 @@ if (typeof window !== "undefined") {
  * - 滚动交互效果（J元素放大过渡）
  * - 鼠标视差效果
  * - 多语言支持
- * 
+ *
  * @returns {JSX.Element} 渲染的英雄区域组件
  */
 export default function HeroSection() {
@@ -110,23 +125,39 @@ export default function HeroSection() {
       };
 
       // 品牌标题动画序列 - J元素先出现，然后SPACE元素
-      gsap.fromTo(jRef.current, {
-        opacity: 0, y: 30, scale: 0.8
-      }, {
-        opacity: 1, y: 0, scale: 1,
-        duration: 1.5,
-        ease: animationConfig.ease,
-        delay: 0.2,
-      });
+      gsap.fromTo(
+        jRef.current,
+        {
+          opacity: 0,
+          y: 30,
+          scale: 0.8,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 1.5,
+          ease: animationConfig.ease,
+          delay: 0.2,
+        }
+      );
 
-      gsap.fromTo(spaceRef.current, {
-        opacity: 0, y: 20, x: 20
-      }, {
-        opacity: 1, y: 0, x: 0,
-        duration: 1.2,
-        ease: animationConfig.ease,
-        delay: 0.8,
-      });
+      gsap.fromTo(
+        spaceRef.current,
+        {
+          opacity: 0,
+          y: 20,
+          x: 20,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          x: 0,
+          duration: 1.2,
+          ease: animationConfig.ease,
+          delay: 0.8,
+        }
+      );
 
       // 副标题和UI元素的渐入动画序列
       const uiElements = [
@@ -137,14 +168,17 @@ export default function HeroSection() {
       ];
 
       uiElements.forEach(({ ref, delay, y }) => {
-        gsap.fromTo(ref.current, {
-          opacity: 0, y: y
-        }, {
-          opacity: 1, y: 0,
-          duration: 0.8,
-          ease: animationConfig.ease,
-          delay,
-        });
+        gsap.fromTo(
+          ref.current,
+          { opacity: 0, y },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: animationConfig.ease,
+            delay,
+          }
+        );
       });
 
       /**
@@ -157,63 +191,72 @@ export default function HeroSection() {
           id: "hero-scroll",
           trigger: heroRef.current,
           start: "top top",
-          end: "+=200vh", // 设置滚动距离为3个视口高度，控制J元素放大速度
+          end: "+=400",
           scrub: 1,
-          pin: true, // 固定HeroSection位置，实现滚动时的视觉停留效果
+          pin: true,
           onUpdate: (self) => {
             const progress = self.progress;
-            
+
             // 计算J元素的缩放比例，使用缓动函数控制缩放速度
             const baseScale = 1;
             const maxScale = 50; // 设置最大缩放值，确保J元素能覆盖整个屏幕
             // 使用幂函数创建平缓的缩放曲线，控制J元素放大速度
             const scaleProgress = Math.pow(progress, 0.6); // 幂函数参数0.6用于减缓缩放速度
-            const scale = baseScale + (scaleProgress * (maxScale - baseScale));
-            
+            const scale = baseScale + scaleProgress * (maxScale - baseScale);
+
             // 应用缩放变换到J元素
             gsap.set(jRef.current, {
               scale: scale,
-              transformOrigin: "center center"
+              transformOrigin: "64% 60%", // 使用百分比精确控制原点：x轴25%匹配J的左侧位置，y轴50%保持垂直居中
             });
-            
+
             // 隐藏背景层，让J元素本身实现屏幕覆盖效果
             gsap.set(jBackgroundRef.current, {
-              opacity: 0 // 隐藏背景层
+              opacity: 0, // 隐藏背景层
             });
-            
+
             // 当J元素开始放大时，开始隐藏其他UI元素
             if (progress > 0.05) {
               // 副标题和底部按钮快速消失
-              const fastHideProgress = Math.min((progress - 0.05) / 0.15, 1); // 快速隐藏进度计算
-              gsap.set(subtitleRef.current, { opacity: 1 - fastHideProgress });
-              gsap.set(bottomLinksRef.current, { opacity: 1 - fastHideProgress });
-              
+              const fastHideProgress = Math.min((progress - 0.05) / 0.15, 1);
+              const fastHideOpacity = 1 - fastHideProgress;
+              gsap.set([subtitleRef.current, bottomLinksRef.current], {
+                opacity: fastHideOpacity,
+              });
+
               // 其他元素缓慢消失
-              const slowHideProgress = Math.min((progress - 0.05) / 0.3, 1); // 缓慢隐藏进度计算
-              gsap.set(spaceRef.current, { opacity: 1 - slowHideProgress });
-              gsap.set(scrollIndicatorRef.current, { opacity: 1 - slowHideProgress });
-              gsap.set(bottomDescriptionRef.current, { opacity: 1 - slowHideProgress });
-              
+              const slowHideProgress = Math.min((progress - 0.05) / 0.3, 1);
+              const slowHideOpacity = 1 - slowHideProgress;
+              gsap.set(
+                [
+                  spaceRef.current,
+                  scrollIndicatorRef.current,
+                  bottomDescriptionRef.current,
+                ],
+                { opacity: slowHideOpacity }
+              );
             }
-            
+
             // 当滚动接近完成时，准备显示IntroductionSection
-            if (progress > 0.8) {
-              // 开始显示IntroductionSection内容
-              const nextSection = document.querySelector('[data-section="introduction"]');
+            if (progress > 0.1) {
+              const nextSection = document.querySelector(
+                '[data-section="introduction"]'
+              );
               if (nextSection) {
-                gsap.set(nextSection, { zIndex: 60 }); // 设置z-index层级，确保在J元素之上
-                const showProgress = (progress - 0.8) / 0.2; // 计算显示进度
+                gsap.set(nextSection, { zIndex: 60 });
+                const showProgress = (progress - 0.1) / 0.9;
                 gsap.set(nextSection, { opacity: showProgress });
               }
             }
           },
           onComplete: () => {
-            // 滚动完成，完全显示IntroductionSection
-            const nextSection = document.querySelector('[data-section="introduction"]');
+            const nextSection = document.querySelector(
+              '[data-section="introduction"]'
+            );
             if (nextSection) {
-              gsap.set(nextSection, { zIndex: 60, opacity: 1 }); // 设置最终显示状态
+              gsap.set(nextSection, { zIndex: 60, opacity: 1 });
             }
-          }
+          },
         });
       };
 
@@ -228,10 +271,21 @@ export default function HeroSection() {
         const yPos = (clientY / innerHeight - 0.5) * 8;
 
         // 仅在滚动进度小于0.1时应用鼠标视差效果
-        const scrollProgress = ScrollTrigger.getById("hero-scroll")?.progress || 0;
+        const scrollProgress =
+          ScrollTrigger.getById("hero-scroll")?.progress || 0;
         if (scrollProgress < 0.1) {
-          gsap.to(jRef.current, { x: xPos, y: yPos, duration: 0.8, ease: "power1.out" });
-          gsap.to(spaceRef.current, { x: xPos * 0.8, y: yPos * 0.8, duration: 0.8, ease: "power1.out" });
+          gsap.to(jRef.current, {
+            x: xPos,
+            y: yPos,
+            duration: 0.8,
+            ease: "power1.out",
+          });
+          gsap.to(spaceRef.current, {
+            x: xPos * 0.8,
+            y: yPos * 0.8,
+            duration: 0.8,
+            ease: "power1.out",
+          });
         }
       };
 
@@ -258,14 +312,14 @@ export default function HeroSection() {
         <div className="absolute top-1/3 left-1/3 w-72 h-72 bg-primary/8 rounded-full blur-3xl opacity-60" />
         <div className="absolute bottom-1/3 right-1/3 w-64 h-64 bg-primary/4 rounded-full blur-3xl opacity-40" />
       </div>
-      
+
       {/* J元素的扩展背景层 */}
-      <div 
+      <div
         ref={jBackgroundRef}
         className="absolute inset-0 bg-primary opacity-0 pointer-events-none"
         style={{
           transformOrigin: "center center",
-          willChange: "transform, opacity"
+          willChange: "transform, opacity",
         }}
       />
 
@@ -281,20 +335,25 @@ export default function HeroSection() {
             maxWidth: "100%",
           }}
         >
-          <span 
-            ref={jRef} 
+          <span
+            ref={jRef}
             className="italic text-primary mr-[0.1em] relative"
             style={{
               display: "inline-block",
               willChange: "transform",
               // 确保J元素在放大时能够覆盖副标题和按钮，但不覆盖导航栏
               position: "relative",
-              zIndex: 50 // 设置z-index层级，确保在副标题和按钮之上
+              zIndex: 50, // 设置z-index层级，确保在副标题和按钮之上
             }}
           >
             J
           </span>
-          <span ref={spaceRef} className="text-black dark:text-white tracking-tighter">SPACE</span>
+          <span
+            ref={spaceRef}
+            className="text-black dark:text-white tracking-tighter"
+          >
+            SPACE
+          </span>
         </h1>
       </div>
 
@@ -306,7 +365,7 @@ export default function HeroSection() {
           style={{
             fontFamily: "system-ui, -apple-system, sans-serif",
             textShadow: "0 0 20px rgba(94, 116, 86, 0.2)",
-            zIndex: 10 // 确保低于J元素的层级
+            zIndex: 10, // 确保低于J元素的层级
           }}
         >
           {currentTexts.subtitle}
@@ -314,7 +373,10 @@ export default function HeroSection() {
       </div>
 
       {/* 带动画线条的滚动指示器 */}
-      <div ref={scrollIndicatorRef} className="absolute bottom-14 left-14 flex items-center space-x-4 h-14">
+      <div
+        ref={scrollIndicatorRef}
+        className="absolute bottom-14 left-14 flex items-center space-x-4 h-14"
+      >
         <div className="relative">
           <div className="w-0.5 h-12 bg-foreground/20" />
           <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0.5 h-6 bg-foreground/60 animate-pulse" />
@@ -326,14 +388,21 @@ export default function HeroSection() {
       </div>
 
       {/* 底部描述文本 */}
-      <div ref={bottomDescriptionRef} className="absolute bottom-14 left-80 max-w-2xl px-8 flex items-center h-14">
+      <div
+        ref={bottomDescriptionRef}
+        className="absolute bottom-14 left-80 max-w-2xl px-8 flex items-center h-14"
+      >
         <p className="text-foreground/60 text-sm md:text-base font-light leading-relaxed text-left">
           {currentTexts.description}
         </p>
       </div>
 
       {/* 底部操作链接 */}
-      <div ref={bottomLinksRef} className="absolute bottom-14 right-14 flex flex-row space-x-4 items-center h-14" style={{ zIndex: 10 }}>
+      <div
+        ref={bottomLinksRef}
+        className="absolute bottom-14 right-14 flex flex-row space-x-4 items-center h-14"
+        style={{ zIndex: 10 }}
+      >
         {/* GitHub链接 */}
         <ActionLink
           href="https://github.com/your-username"
@@ -351,4 +420,3 @@ export default function HeroSection() {
     </section>
   );
 }
-

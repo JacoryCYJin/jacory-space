@@ -15,7 +15,7 @@ export const metadata = {
 
 /**
  * 根布局组件
- * 
+ *
  * 这是整个应用的根布局组件，定义了页面的基本结构。
  * 主要功能包括：
  * - 提供HTML文档结构
@@ -24,7 +24,7 @@ export const metadata = {
  * - 包含顶部导航栏（NavBar）
  * - 包含页面主要内容区域
  * - 包含底部页脚（Footer）
- * 
+ *
  * @param {Object} props - 组件属性
  * @param {React.ReactNode} props.children - 子组件内容
  * @returns {JSX.Element} 渲染的根布局组件
@@ -36,9 +36,7 @@ export default function RootLayout({ children }) {
         <LenisProvider>
           <AppProvider>
             <NavBar />
-            <main>
-              {children}
-            </main>
+            <main>{children}</main>
             <Footer />
           </AppProvider>
         </LenisProvider>

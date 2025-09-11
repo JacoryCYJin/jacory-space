@@ -14,7 +14,7 @@ if (typeof window !== "undefined") {
 
 /**
  * 介绍区域组件
- * 
+ *
  * 这是首页的第二个主要区域，与HeroSection配合实现流畅的滚动过渡效果。
  * 主要功能包括：
  * - 与HeroSection的滚动交互协调
@@ -22,7 +22,7 @@ if (typeof window !== "undefined") {
  * - 提供行动号召按钮
  * - 响应式布局设计
  * - 多语言内容支持
- * 
+ *
  * @returns {JSX.Element} 渲染的介绍区域组件
  */
 export default function IntroductionSection() {
@@ -42,55 +42,37 @@ export default function IntroductionSection() {
 
     const ctx = gsap.context(() => {
       // 设置初始状态：整个section隐藏，所有子元素隐藏
-      gsap.set(sectionRef.current, { 
+      gsap.set(sectionRef.current, {
         opacity: 0,
-        zIndex: 60 // 设置z-index层级，确保在J元素之上
+        zIndex: 60, // 设置z-index层级，确保在J元素之上
       });
-      
-      gsap.set([titleRef.current, subtitleRef.current, descriptionRef.current, featuresRef.current, ctaRef.current], {
+
+      gsap.set([
+        titleRef.current,
+        subtitleRef.current,
+        descriptionRef.current,
+        featuresRef.current,
+        ctaRef.current,
+      ], {
         opacity: 0,
-        y: 50
+        y: 50,
       });
 
       // 等待HeroSection的滚动触发器完成后再显示内容
       let contentShown = false;
       const checkHeroProgress = () => {
         const heroTrigger = ScrollTrigger.getById("hero-scroll");
-        if (heroTrigger && heroTrigger.progress > 0.9 && !contentShown) {
+        if (heroTrigger && heroTrigger.progress >= 0.9 && !contentShown) {
           contentShown = true;
           // HeroSection滚动接近完成，开始显示IntroductionSection内容
           const tl = gsap.timeline();
-          
-          tl.to(titleRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 1.2,
-            ease: "power2.out"
-          })
-          .to(subtitleRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power2.out"
-          }, "-=0.6")
-          .to(descriptionRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power2.out"
-          }, "-=0.4")
-          .to(featuresRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 1,
-            ease: "power2.out"
-          }, "-=0.4")
-          .to(ctaRef.current, {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out"
-          }, "-=0.3");
+          const fadeInConfig = { opacity: 1, y: 0, ease: "power2.out" };
+
+          tl.to(titleRef.current, { ...fadeInConfig, duration: 1.2 })
+            .to(subtitleRef.current, { ...fadeInConfig, duration: 1 }, "-=0.6")
+            .to(descriptionRef.current, { ...fadeInConfig, duration: 1 }, "-=0.4")
+            .to(featuresRef.current, { ...fadeInConfig, duration: 1 }, "-=0.4")
+            .to(ctaRef.current, { ...fadeInConfig, duration: 0.8 }, "-=0.3");
         }
       };
 
@@ -125,7 +107,7 @@ export default function IntroductionSection() {
           className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight"
           style={{
             fontFamily: "system-ui, -apple-system, sans-serif",
-            textShadow: "0 0 30px rgba(255, 255, 255, 0.3)"
+            textShadow: "0 0 30px rgba(255, 255, 255, 0.3)",
           }}
         >
           {currentTexts.title}
@@ -136,7 +118,7 @@ export default function IntroductionSection() {
           ref={subtitleRef}
           className="text-xl md:text-2xl lg:text-3xl font-medium mb-8 text-primary-foreground/90"
           style={{
-            fontFamily: "system-ui, -apple-system, sans-serif"
+            fontFamily: "system-ui, -apple-system, sans-serif",
           }}
         >
           {currentTexts.subtitle}
