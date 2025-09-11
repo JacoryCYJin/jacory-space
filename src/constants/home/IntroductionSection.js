@@ -24,7 +24,8 @@ const commonFeatures = [
     titleEn: "UI/UX Design",
     description: "用户体验设计、界面美学与交互逻辑",
     descriptionTw: "用戶體驗設計、界面美學與交互邏輯",
-    descriptionEn: "User experience design, interface aesthetics and interaction logic",
+    descriptionEn:
+      "User experience design, interface aesthetics and interaction logic",
     icon: "🎨",
   },
   {
@@ -44,44 +45,32 @@ export const introductionTexts = {
     subtitle: "探索技术与设计的无限可能",
     description:
       "这里是我分享编程心得、设计理念和技术见解的地方。通过前后端开发实践，我不断探索技术与艺术的完美结合。",
-    features: commonFeatures.map(f => ({
+    features: commonFeatures.map((f) => ({
       title: f.title,
       description: f.description,
       icon: f.icon,
     })),
-    cta: {
-      text: "开始探索",
-      action: "了解更多",
-    },
   },
   "zh-tw": {
     title: "歡迎來到我的創意空間",
     subtitle: "探索技術與設計的無限可能",
     description:
       "這裡是我分享編程心得、設計理念和技術見解的地方。通過前後端開發實踐，我不斷探索技術與藝術的完美結合。",
-    features: commonFeatures.map(f => ({
+    features: commonFeatures.map((f) => ({
       title: f.titleTw,
       description: f.descriptionTw,
       icon: f.icon,
     })),
-    cta: {
-      text: "開始探索",
-      action: "了解更多",
-    },
   },
   en: {
     title: "Welcome to My Creative Space",
     subtitle: "Exploring the Infinite Possibilities of Technology & Design",
     description:
       "This is where I share programming insights, design philosophies, and technical perspectives. Through full-stack development practices, I continuously explore the perfect fusion of technology and art.",
-    features: commonFeatures.map(f => ({
+    features: commonFeatures.map((f) => ({
       title: f.titleEn,
       description: f.descriptionEn,
       icon: f.icon,
     })),
-    cta: {
-      text: "Start Exploring",
-      action: "Learn More",
-    },
   },
 };
