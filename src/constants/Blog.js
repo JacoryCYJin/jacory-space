@@ -102,15 +102,6 @@ export const paginationTexts = {
 // 博客分类配置
 export const blogCategories = [
   {
-    id: "tech",
-    name: {
-      "zh-cn": "技术",
-      "zh-tw": "技術", 
-      en: "Technology"
-    },
-    color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-  },
-  {
     id: "frontend",
     name: {
       "zh-cn": "前端开发",
@@ -120,49 +111,31 @@ export const blogCategories = [
     color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
   },
   {
-    id: "backend", 
+    id: "ui-design",
     name: {
-      "zh-cn": "后端开发",
-      "zh-tw": "後端開發",
-      en: "Backend"
+      "zh-cn": "UI设计",
+      "zh-tw": "UI設計",
+      en: "UI Design"
     },
-    color: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300"
+    color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
   },
   {
-    id: "ai",
+    id: "animation",
     name: {
-      "zh-cn": "人工智能",
-      "zh-tw": "人工智能",
-      en: "AI & ML"
+      "zh-cn": "动画设计",
+      "zh-tw": "動畫設計",
+      en: "Animation"
     },
-    color: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300"
+    color: "bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-300"
   },
   {
-    id: "life",
+    id: "tutorial",
     name: {
-      "zh-cn": "生活感悟",
-      "zh-tw": "生活感悟", 
-      en: "Life & Thoughts"
+      "zh-cn": "教程指南",
+      "zh-tw": "教程指南",
+      en: "Tutorial"
     },
-    color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-  },
-  {
-    id: "learning",
-    name: {
-      "zh-cn": "学习笔记",
-      "zh-tw": "學習筆記", 
-      en: "Learning Notes"
-    },
-    color: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300"
-  },
-  {
-    id: "coffee",
-    name: {
-      "zh-cn": "咖啡时光",
-      "zh-tw": "咖啡時光", 
-      en: "Coffee Time"
-    },
-    color: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300"
+    color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
   }
 ];
 
@@ -222,14 +195,9 @@ export const blogTags = [
     color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
   },
   {
-    id: "nodejs",
-    name: "Node.js", 
-    color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-  },
-  {
-    id: "python",
-    name: "Python",
-    color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
+    id: "scrolltrigger",
+    name: "ScrollTrigger",
+    color: "bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-300"
   },
   {
     id: "tutorial",
@@ -239,78 +207,6 @@ export const blogTags = [
       en: "Tutorial"
     },
     color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
-  },
-    {
-    id: "experience",
-    name: {
-      "zh-cn": "经验分享",
-      "zh-tw": "經驗分享", 
-      en: "Experience"
-    },
-    color: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300"
-  },
-  {
-    id: "coffee",
-    name: {
-      "zh-cn": "咖啡",
-      "zh-tw": "咖啡", 
-      en: "Coffee"
-    },
-    color: "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300"
-  },
-  {
-    id: "mindset",
-    name: {
-      "zh-cn": "思维模式",
-      "zh-tw": "思維模式", 
-      en: "Mindset"
-    },
-    color: "bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-300"
-  },
-  {
-    id: "growth",
-    name: {
-      "zh-cn": "个人成长",
-      "zh-tw": "個人成長", 
-      en: "Personal Growth"
-    },
-    color: "bg-rose-100 text-rose-800 dark:bg-rose-900 dark:text-rose-300"
-  },
-  {
-    id: "lifestyle",
-    name: {
-      "zh-cn": "生活方式",
-      "zh-tw": "生活方式", 
-      en: "Lifestyle"
-    },
-    color: "bg-lime-100 text-lime-800 dark:bg-lime-900 dark:text-lime-300"
-  },
-  {
-    id: "minimalism",
-    name: {
-      "zh-cn": "极简主义",
-      "zh-tw": "極簡主義", 
-      en: "Minimalism"
-    },
-    color: "bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-300"
-  },
-  {
-    id: "reading",
-    name: {
-      "zh-cn": "阅读",
-      "zh-tw": "閱讀", 
-      en: "Reading"
-    },
-    color: "bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-300"
-  },
-  {
-    id: "digital-wellness",
-    name: {
-      "zh-cn": "数字健康",
-      "zh-tw": "數字健康", 
-      en: "Digital Wellness"
-    },
-    color: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300"
   },
   {
     id: "background",

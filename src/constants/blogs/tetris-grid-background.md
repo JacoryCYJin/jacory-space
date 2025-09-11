@@ -1,7 +1,7 @@
 ---
 title: "俄罗斯方块网格背景设计指南"
 slug: "tetris-grid-background"
-date: "2025-01-15"
+date: "2025-08-30"
 category: "frontend"
 tags: ["react", "css", "animation", "ui-design", "background", "grid", "tetris"]
 excerpt: "学习如何创建独特的俄罗斯方块网格背景效果，为网站添加复古游戏风格的视觉元素。"

@@ -191,7 +191,7 @@ export default function HeroSection() {
           id: "hero-scroll",
           trigger: heroRef.current,
           start: "top top",
-          end: "+=400",
+          end: "+=500",
           scrub: 1,
           pin: true,
           onUpdate: (self) => {

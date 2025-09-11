@@ -244,7 +244,7 @@ const BlogPostPage = () => {
   }
 
   return (
-    <div className="min-h-screen pt-20 px-8 dark:bg-gray-900">
+    <div className="min-h-screen py-20 px-8 dark:bg-gray-900">
       <div className="max-w-6xl mx-auto">
         {/* 返回按钮 */}
         <button
