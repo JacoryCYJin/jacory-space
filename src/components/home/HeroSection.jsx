@@ -136,7 +136,7 @@ export default function HeroSection() {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 1.5,
+          duration: 1.2,
           ease: animationConfig.ease,
           delay: 0.2,
         }
@@ -161,10 +161,10 @@ export default function HeroSection() {
 
       // 副标题和UI元素的渐入动画序列
       const uiElements = [
-        { ref: subtitleRef, delay: 1.4, y: 15 },
-        { ref: scrollIndicatorRef, delay: 2.0, y: 0 },
-        { ref: bottomDescriptionRef, delay: 2.2, y: 0 },
-        { ref: bottomLinksRef, delay: 2.4, y: 0 },
+        { ref: subtitleRef, delay: 1.2, y: 10 },
+        { ref: scrollIndicatorRef, delay: 1.3, y: 0 },
+        { ref: bottomDescriptionRef, delay: 1.4, y: 0 },
+        { ref: bottomLinksRef, delay: 1.5, y: 0 },
       ];
 
       uiElements.forEach(({ ref, delay, y }) => {
@@ -174,7 +174,7 @@ export default function HeroSection() {
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
+            duration: 0.6,
             ease: animationConfig.ease,
             delay,
           }
