@@ -9,7 +9,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useApp } from "@/lib/context";
 import { introductionTexts } from "@/constants/home/IntroductionSection";
-import { introductionCards } from "@/constants/home/IntroductionCard/cards";
+import { introductionCards } from "@/constants/home/IntroductionCard";
 import IntroductionCard from "@/components/home/IntroductionCard";
 
 // 确保ScrollTrigger插件在客户端正确注册
@@ -32,13 +32,11 @@ export default function IntroductionSection() {
   const currentTexts = introductionTexts[language];
   const currentCards = introductionCards[language];
 
-  // 所有需要动画的元素引用
+  // 动画元素引用
   const sectionRef = useRef(null);
-  const leftContentRef = useRef(null);
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);
   const descriptionRef = useRef(null);
-  const ctaRef = useRef(null);
   const cardsContainerRef = useRef(null);
   const cardRefs = useRef([]);
 
@@ -54,16 +52,8 @@ export default function IntroductionSection() {
 
       // 左侧文字内容初始隐藏状态
       gsap.set(
-        [
-          titleRef.current,
-          subtitleRef.current,
-          descriptionRef.current,
-          ctaRef.current,
-        ],
-        {
-          opacity: 0,
-          x: -100,
-        }
+        [titleRef.current, subtitleRef.current, descriptionRef.current],
+        { opacity: 0, x: -100 }
       );
 
       // 卡片初始状态：隐藏在右下角，准备依次滑入
@@ -71,10 +61,10 @@ export default function IntroductionSection() {
         if (cardRef) {
           gsap.set(cardRef, {
             opacity: 0,
-            x: 400 + index * 40, // 每个卡片稍微错开位置
+            x: 400 + index * 40,
             y: 300 + index * 15,
             scale: 0.7,
-            rotation: 10 + index * 3, // 每个卡片不同的旋转角度
+            rotation: 10 + index * 3,
             zIndex: index + 1,
           });
         }
@@ -118,16 +108,6 @@ export default function IntroductionSection() {
           },
           "-=0.6"
         )
-        .to(
-          ctaRef.current,
-          {
-            opacity: 1,
-            x: 0,
-            duration: 0.8,
-            ease: "power3.out",
-          },
-          "-=0.4"
-        );
 
       // 第二阶段：固定Section，执行卡片序列动画
       const cardAnimationDistance = window.innerHeight * 3;
@@ -170,50 +150,26 @@ export default function IntroductionSection() {
                 }
               }
 
-              // 响应式层叠位置计算
-              const getStackOffset = () => {
-                if (window.innerWidth < 640) return index * 70; // sm: 小屏
-                if (window.innerWidth < 768) return index * 87; // md: 中屏
-                if (window.innerWidth < 1024) return index * 105; // lg: 大屏
-                if (window.innerWidth < 1280) return index * 122; // xl: 超大屏
-                return index * 140; // 2xl: 更大屏幕
+              // 响应式位置计算
+              const getResponsiveValues = () => {
+                const width = window.innerWidth;
+                if (width < 640) return { stackOffset: index * 70, startX: 260 + index * 18, startY: 130 + index * 13 };
+                if (width < 768) return { stackOffset: index * 87, startX: 350 + index * 22, startY: 157 + index * 16 };
+                if (width < 1024) return { stackOffset: index * 105, startX: 395 + index * 26, startY: 175 + index * 17 };
+                if (width < 1280) return { stackOffset: index * 122, startX: 435 + index * 26, startY: 175 + index * 17 };
+                return { stackOffset: index * 140, startX: 525 + index * 30, startY: 192 + index * 19 };
               };
-              const stackOffset = getStackOffset();
+              
+              const { stackOffset, startX, startY } = getResponsiveValues();
               const finalX = stackOffset;
               const finalY = stackOffset * 0.9;
 
-              // 从右下角滑动到最终层叠位置的插值计算
+              // 插值计算
               const currentOpacity = gsap.utils.interpolate(0, 1, cardProgress);
-              const getStartX = () => {
-                if (window.innerWidth < 640) return 260 + index * 18; // sm: 小屏
-                if (window.innerWidth < 768) return 350 + index * 22; // md: 中屏
-                if (window.innerWidth < 1024) return 395 + index * 26; // lg: 大屏
-                if (window.innerWidth < 1280) return 435 + index * 26; // xl: 超大屏
-                return 525 + index * 30; // 2xl: 更大屏幕
-              };
-              const currentX = gsap.utils.interpolate(
-                getStartX(),
-                finalX,
-                cardProgress
-              );
-              const getStartY = () => {
-                if (window.innerWidth < 640) return 130 + index * 13; // sm: 小屏
-                if (window.innerWidth < 768) return 157 + index * 16; // md: 中屏
-                if (window.innerWidth < 1024) return 175 + index * 17; // lg: 大屏
-                if (window.innerWidth < 1280) return 175 + index * 17; // xl: 超大屏
-                return 192 + index * 19; // 2xl: 更大屏幕
-              };
-              const currentY = gsap.utils.interpolate(
-                getStartY(),
-                finalY,
-                cardProgress
-              );
+              const currentX = gsap.utils.interpolate(startX, finalX, cardProgress);
+              const currentY = gsap.utils.interpolate(startY, finalY, cardProgress);
               const currentScale = gsap.utils.interpolate(0.8, 1, cardProgress);
-              const currentRotation = gsap.utils.interpolate(
-                -15 + index * 3,
-                0,
-                cardProgress
-              );
+              const currentRotation = gsap.utils.interpolate(-15 + index * 3, 0, cardProgress);
 
               gsap.set(cardRef, {
                 opacity: currentOpacity,
@@ -232,15 +188,10 @@ export default function IntroductionSection() {
               if (cardRef && !cardRef.hasFloatingAnimation) {
                 cardRef.hasFloatingAnimation = true;
 
-                // 每个卡片独立的悬浮参数
-                const floatY = gsap.utils.random(-4, 4);
-                const floatRotation = gsap.utils.random(-1, 1);
-                const duration = gsap.utils.random(4, 6);
-
                 gsap.to(cardRef, {
-                  y: `+=${floatY}`,
-                  rotation: `+=${floatRotation}`,
-                  duration: duration,
+                  y: `+=${gsap.utils.random(-4, 4)}`,
+                  rotation: `+=${gsap.utils.random(-1, 1)}`,
+                  duration: gsap.utils.random(4, 6),
                   ease: "sine.inOut",
                   repeat: -1,
                   yoyo: true,
@@ -249,10 +200,6 @@ export default function IntroductionSection() {
               }
             });
           }
-        },
-        onComplete: () => {
-          // 卡片动画完成，Section解除固定状态
-          console.log("卡片动画序列完成，Section解除固定");
         },
       });
 
@@ -285,10 +232,7 @@ export default function IntroductionSection() {
       {/* 主要内容容器：左2右4网格布局 */}
       <div className="relative z-10 min-h-screen grid grid-cols-6 gap-8 max-w-7.5xl mx-auto pt-14">
         {/* 左侧文字内容区域 */}
-        <div
-          ref={leftContentRef}
-          className="col-span-2 flex flex-col justify-center space-y-8"
-        >
+        <div className="col-span-2 flex flex-col justify-center space-y-8">
           {/* 博客主标题 */}
           <h1
             ref={titleRef}
@@ -330,7 +274,6 @@ export default function IntroductionSection() {
               number={card.number}
               title={card.title}
               subtitle={card.subtitle}
-              color={card.color}
               index={index}
             />
           ))}

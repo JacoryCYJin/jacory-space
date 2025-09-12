@@ -15,14 +15,9 @@ import { forwardRef } from "react";
  * @param {string} props.number - 卡片编号（01-04）
  * @param {string} props.title - 卡片标题
  * @param {string} props.subtitle - 卡片副标题
- * @param {number} props.index - 卡片索引，用于动画延迟计算
  * @returns {JSX.Element} 渲染的介绍卡片
  */
-const IntroductionCard = forwardRef(
-  (
-    { number, title, subtitle, index = 0 },
-    ref
-  ) => {
+const IntroductionCard = forwardRef(({ number, title, subtitle }, ref) => {
     return (
       <div
         ref={ref}
@@ -67,8 +62,6 @@ const IntroductionCard = forwardRef(
           </div>
         </div>
 
-        {/* 鼠标悬浮时的光晕效果 */}
-        <div className="absolute -inset-1 bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-0 blur-xl" />
       </div>
     );
   }
