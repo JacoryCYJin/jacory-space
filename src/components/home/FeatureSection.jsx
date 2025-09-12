@@ -19,12 +19,12 @@ if (typeof window !== "undefined") {
 
 /**
  * 介绍区域组件
- * 
+ *
  * 左2右4网格布局，配合GSAP滚动动画：
  * - 左侧：博客介绍文字内容
- * - 右侧：卡片从右下角依次滑入并层叠排列
+ * - 右侧：卡片从右下角出现，最终排列从左上角01到右下角04
  * - 支持多语言切换
- * 
+ *
  * @returns {JSX.Element} 渲染的介绍区域
  */
 export default function IntroductionSection() {
@@ -36,7 +36,6 @@ export default function IntroductionSection() {
   const sectionRef = useRef(null);
   const titleRef = useRef(null);
   const subtitleRef = useRef(null);
-  const descriptionRef = useRef(null);
   const cardsContainerRef = useRef(null);
   const cardRefs = useRef([]);
 
@@ -50,22 +49,26 @@ export default function IntroductionSection() {
         zIndex: 60,
       });
 
-      // 左侧文字内容初始隐藏状态
+      // 右上角文字内容初始隐藏状态
       gsap.set(
-        [titleRef.current, subtitleRef.current, descriptionRef.current],
-        { opacity: 0, x: -100 }
+        [titleRef.current, subtitleRef.current],
+        { opacity: 0, x: 100, y: -50 }
       );
 
-      // 卡片初始状态：隐藏在右下角，准备依次滑入
+      // 卡片初始状态：隐藏在右下角，准备向左上角到右下角的最终位置展开
       cardRefs.current.forEach((cardRef, index) => {
         if (cardRef) {
+          // 计算每张卡片的初始位置（从右下角开始出现）
+          const baseX = window.innerWidth + 100; // 从右侧屏幕外开始
+          const baseY = window.innerHeight + 100; // 从底部屏幕外开始
+
           gsap.set(cardRef, {
             opacity: 0,
-            x: 400 + index * 40,
-            y: 300 + index * 15,
-            scale: 0.7,
-            rotation: 10 + index * 3,
-            zIndex: index + 1,
+            x: baseX + index * 20, // 向右偏移
+            y: baseY + index * 20, // 向下偏移
+            scale: 0.6,
+            rotation: 0, // 移除旋转
+            zIndex: 10 - index, // 层级递减，第一张在最上层
           });
         }
       });
@@ -80,11 +83,12 @@ export default function IntroductionSection() {
         },
       });
 
-      // 左侧文字依次显示
+      // 右上角文字依次显示
       initialTl
         .to(titleRef.current, {
           opacity: 1,
           x: 0,
+          y: 0,
           duration: 1.2,
           ease: "power3.out",
         })
@@ -93,21 +97,13 @@ export default function IntroductionSection() {
           {
             opacity: 1,
             x: 0,
+            y: 0,
             duration: 1,
             ease: "power3.out",
           },
           "-=0.8"
         )
-        .to(
-          descriptionRef.current,
-          {
-            opacity: 1,
-            x: 0,
-            duration: 1,
-            ease: "power3.out",
-          },
-          "-=0.6"
-        )
+;
 
       // 第二阶段：固定Section，执行卡片序列动画
       const cardAnimationDistance = window.innerHeight * 3;
@@ -150,26 +146,59 @@ export default function IntroductionSection() {
                 }
               }
 
-              // 响应式位置计算
+              // 响应式位置计算 - 从右下角出现，最终排列从左上角到右下角
               const getResponsiveValues = () => {
                 const width = window.innerWidth;
-                if (width < 640) return { stackOffset: index * 70, startX: 260 + index * 18, startY: 130 + index * 13 };
-                if (width < 768) return { stackOffset: index * 87, startX: 350 + index * 22, startY: 157 + index * 16 };
-                if (width < 1024) return { stackOffset: index * 105, startX: 395 + index * 26, startY: 175 + index * 17 };
-                if (width < 1280) return { stackOffset: index * 122, startX: 435 + index * 26, startY: 175 + index * 17 };
-                return { stackOffset: index * 140, startX: 525 + index * 30, startY: 192 + index * 19 };
+                const height = window.innerHeight;
+
+                // 初始位置（右下角屏幕外）
+                const startX = width + 100 + index * 20;
+                const startY = height + 100 + index * 20;
+
+                // 最终位置（从左上角01到右下角04的排列）
+                let finalX, finalY;
+
+                if (width < 640) {
+                  // 手机屏：紧凑排列
+                  finalX = index * 120;
+                  finalY = index * 70;
+                } else if (width < 768) {
+                  // 平板屏
+                  finalX = index * 150;
+                  finalY = index * 80;
+                } else if (width < 1024) {
+                  // 小桌面
+                  finalX = index * 180;
+                  finalY = index * 90;
+                } else if (width < 1280) {
+                  // 中桌面
+                  finalX = index * 220;
+                  finalY = index * 100;
+                } else {
+                  // 大桌面
+                  finalX = index * 250;
+                  finalY = index * 110;
+                }
+
+                return { startX, startY, finalX, finalY };
               };
-              
-              const { stackOffset, startX, startY } = getResponsiveValues();
-              const finalX = stackOffset;
-              const finalY = stackOffset * 0.9;
+
+              const { startX, startY, finalX, finalY } = getResponsiveValues();
 
               // 插值计算
               const currentOpacity = gsap.utils.interpolate(0, 1, cardProgress);
-              const currentX = gsap.utils.interpolate(startX, finalX, cardProgress);
-              const currentY = gsap.utils.interpolate(startY, finalY, cardProgress);
-              const currentScale = gsap.utils.interpolate(0.8, 1, cardProgress);
-              const currentRotation = gsap.utils.interpolate(-15 + index * 3, 0, cardProgress);
+              const currentX = gsap.utils.interpolate(
+                startX,
+                finalX,
+                cardProgress
+              );
+              const currentY = gsap.utils.interpolate(
+                startY,
+                finalY,
+                cardProgress
+              );
+              const currentScale = gsap.utils.interpolate(0.6, 1, cardProgress);
+              const currentRotation = 0; // 移除所有旋转效果
 
               gsap.set(cardRef, {
                 opacity: currentOpacity,
@@ -177,29 +206,10 @@ export default function IntroductionSection() {
                 y: currentY,
                 scale: currentScale,
                 rotation: currentRotation,
-                zIndex: index + 1,
+                zIndex: index + 1, // 后面的卡片在上层
               });
             }
           });
-
-          // 所有卡片入场完成后，添加微妙的悬浮动画
-          if (progress > 0.85) {
-            cardRefs.current.forEach((cardRef, index) => {
-              if (cardRef && !cardRef.hasFloatingAnimation) {
-                cardRef.hasFloatingAnimation = true;
-
-                gsap.to(cardRef, {
-                  y: `+=${gsap.utils.random(-4, 4)}`,
-                  rotation: `+=${gsap.utils.random(-1, 1)}`,
-                  duration: gsap.utils.random(4, 6),
-                  ease: "sine.inOut",
-                  repeat: -1,
-                  yoyo: true,
-                  delay: index * 0.2,
-                });
-              }
-            });
-          }
         },
       });
 
@@ -208,12 +218,6 @@ export default function IntroductionSection() {
 
     return () => {
       ctx.revert();
-      // 清理动画状态标记
-      cardRefs.current.forEach((cardRef) => {
-        if (cardRef) {
-          cardRef.hasFloatingAnimation = false;
-        }
-      });
     };
   }, []);
 
@@ -229,14 +233,14 @@ export default function IntroductionSection() {
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-white/3 rounded-full blur-3xl" />
       </div>
 
-      {/* 主要内容容器：左2右4网格布局 */}
-      <div className="relative z-10 min-h-screen grid grid-cols-6 gap-8 max-w-7.5xl mx-auto pt-14">
-        {/* 左侧文字内容区域 */}
-        <div className="col-span-2 flex flex-col justify-center space-y-8">
+      {/* 主要内容容器：全屏布局 */}
+      <div className="relative z-10 min-h-screen mx-auto pt-14">
+        {/* 右上角标题区域 */}
+        <div className="absolute top-32 right-14 z-20 text-right">
           {/* 博客主标题 */}
           <h1
             ref={titleRef}
-            className="text-3xl md:text-4xl lg:text-5xl font-black leading-tight"
+            className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight mb-4 text-right whitespace-nowrap"
             style={{
               fontFamily: "system-ui, -apple-system, sans-serif",
               textShadow: "0 0 30px rgba(255, 255, 255, 0.3)",
@@ -248,7 +252,7 @@ export default function IntroductionSection() {
           {/* 博客副标题 */}
           <h2
             ref={subtitleRef}
-            className="text-lg md:text-xl lg:text-2xl font-medium text-primary-foreground/90"
+            className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-medium text-primary-foreground/60 mb-6 text-right leading-relaxed"
             style={{
               fontFamily: "system-ui, -apple-system, sans-serif",
             }}
@@ -256,17 +260,10 @@ export default function IntroductionSection() {
             {currentTexts.subtitle}
           </h2>
 
-          {/* 博客描述 */}
-          <p
-            ref={descriptionRef}
-            className="text-base md:text-lg leading-relaxed text-primary-foreground/80"
-          >
-            {currentTexts.description}
-          </p>
         </div>
 
-        {/* 右侧卡片展示区域 */}
-        <div ref={cardsContainerRef} className="col-span-4 relative">
+        {/* 卡片展示区域 - 从右下角出现，最终排列从左上角01到右下角04 */}
+        <div ref={cardsContainerRef} className="relative w-full h-screen">
           {currentCards.map((card, index) => (
             <FeatureCard
               key={card.id}

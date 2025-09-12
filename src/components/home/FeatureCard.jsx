@@ -21,7 +21,7 @@ const IntroductionCard = forwardRef(({ number, title, subtitle }, ref) => {
     return (
       <div
         ref={ref}
-        className="absolute bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 overflow-hidden
+        className="absolute bg-white/10 backdrop-blur-md border border-white/20 overflow-hidden
                    w-[280px] h-[280px] p-4
                    sm:w-[320px] sm:h-[320px] sm:p-5
                    md:w-[380px] md:h-[380px] md:p-6
@@ -30,7 +30,7 @@ const IntroductionCard = forwardRef(({ number, title, subtitle }, ref) => {
         style={{
           willChange: "transform, opacity",
           top: "30%",
-          left: "30%",
+          left: "20%",
           transform: "translate(-50%, -50%)",
         }}
       >

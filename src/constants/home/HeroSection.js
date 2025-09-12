@@ -16,6 +16,7 @@ export const heroTexts = {
       ...commonLinks,
       support: "支持我",
     },
+    hoverText: "芥子",
   },
   "zh-tw": {
     subtitle: "創意空間 · 思想分享",
@@ -29,6 +30,7 @@ export const heroTexts = {
       ...commonLinks,
       support: "支持我",
     },
+    hoverText: "芥子",
   },
   en: {
     subtitle: "Creative Space · Thought Sharing",
@@ -42,5 +44,6 @@ export const heroTexts = {
       ...commonLinks,
       support: "Support Me",
     },
+    hoverText: "Jacory",
   },
 };
