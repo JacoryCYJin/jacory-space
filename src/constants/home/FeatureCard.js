@@ -1,5 +1,5 @@
 // 介绍卡片数据配置 - 个人博客特色
-export const introductionCards = {
+export const featureCards = {
   "zh-cn": [
     {
       id: "learning-journey",

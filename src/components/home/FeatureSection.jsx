@@ -8,9 +8,9 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useApp } from "@/lib/context";
-import { introductionTexts } from "@/constants/home/IntroductionSection";
-import { introductionCards } from "@/constants/home/IntroductionCard";
-import IntroductionCard from "@/components/home/IntroductionCard";
+import { featureTexts } from "@/constants/home/FeatureSection";
+import { featureCards } from "@/constants/home/FeatureCard";
+import FeatureCard from "@/components/home/FeatureCard";
 
 // 确保ScrollTrigger插件在客户端正确注册
 if (typeof window !== "undefined") {
@@ -29,8 +29,8 @@ if (typeof window !== "undefined") {
  */
 export default function IntroductionSection() {
   const { language } = useApp();
-  const currentTexts = introductionTexts[language];
-  const currentCards = introductionCards[language];
+  const currentTexts = featureTexts[language];
+  const currentCards = featureCards[language];
 
   // 动画元素引用
   const sectionRef = useRef(null);
@@ -268,7 +268,7 @@ export default function IntroductionSection() {
         {/* 右侧卡片展示区域 */}
         <div ref={cardsContainerRef} className="col-span-4 relative">
           {currentCards.map((card, index) => (
-            <IntroductionCard
+            <FeatureCard
               key={card.id}
               ref={(el) => (cardRefs.current[index] = el)}
               number={card.number}

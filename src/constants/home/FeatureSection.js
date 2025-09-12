@@ -1,4 +1,4 @@
-export const introductionTexts = {
+export const featureTexts = {
   "zh-cn": {
     title: "欢迎来到我的创意空间",
     subtitle: "探索技术与设计的无限可能",
