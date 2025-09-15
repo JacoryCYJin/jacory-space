@@ -9,11 +9,14 @@
 
 import { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import { useApp } from "@/lib/context";
 import { blogTexts } from "@/constants/Blog";
 import { shareTexts } from "@/constants/home/ShareSection";
 import SectionHeader from "@/components/common/SectionHeader";
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
  * 博客预览组件
@@ -28,6 +31,9 @@ const BlogPreview = ({ onEnter, onLeave }) => {
   const currentTexts = blogTexts[language];
   const shareCurrentTexts = shareTexts[language];
   const cardRef = useRef(null);
+  const titleRef = useRef(null);
+  const contentRef = useRef(null);
+  const metaRef = useRef(null);
   const [featuredBlog, setFeaturedBlog] = useState(null);
 
   // 从 API 获取精选博客数据，失败时使用备用数据
@@ -87,55 +93,106 @@ const BlogPreview = ({ onEnter, onLeave }) => {
 
   useEffect(() => {
     if (featuredBlog && cardRef.current) {
-      // 博客卡片初始化动画：从下方滑入并伴随缩放效果
-      gsap.fromTo(
-        cardRef.current,
-        {
-          y: 60,
+      const ctx = gsap.context(() => {
+        // 设置初始状态：稍微向下和缩小，带有轻微的旋转
+        gsap.set(cardRef.current, {
+          y: 80,
           opacity: 0,
-          scale: 0.9,
-        },
-        {
+          scale: 0.95,
+          rotationX: 5,
+        });
+
+        // 设置内容区域的初始状态
+        if (metaRef.current) {
+          gsap.set(metaRef.current, { y: 20, opacity: 0 });
+        }
+        if (titleRef.current) {
+          gsap.set(titleRef.current, { y: 30, opacity: 0 });
+        }
+        if (contentRef.current) {
+          gsap.set(contentRef.current, { y: 20, opacity: 0 });
+        }
+
+        // 使用 ScrollTrigger 控制动画时机
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: cardRef.current,
+            start: "top 70%",
+            toggleActions: "play none none reverse",
+          },
+        });
+
+        // 主要入场动画：更平滑的弹性效果
+        tl.to(cardRef.current, {
           y: 0,
           opacity: 1,
           scale: 1,
-          duration: 1.2,
-          ease: "power3.out",
-          delay: 0.3,
-        }
-      );
-
-      // 鼠标悬停效果：3D 变换 + 发光阴影
-      const handleMouseEnter = () => {
-        gsap.to(cardRef.current, {
-          scale: 1.03,
-          y: -12,
-          rotationY: 2,
-          duration: 0.5,
-          ease: "power2.out",
+          rotationX: 0,
+          duration: 1.0,
+          ease: "power3.out"
         });
-      };
 
-      const handleMouseLeave = () => {
-        gsap.to(cardRef.current, {
-          scale: 1,
-          y: 0,
-          rotationY: 0,
-          boxShadow: "none",
-          duration: 0.5,
-          ease: "power2.out",
-        });
-      };
-
-      cardRef.current.addEventListener("mouseenter", handleMouseEnter);
-      cardRef.current.addEventListener("mouseleave", handleMouseLeave);
-
-      return () => {
-        if (cardRef.current) {
-          cardRef.current.removeEventListener("mouseenter", handleMouseEnter);
-          cardRef.current.removeEventListener("mouseleave", handleMouseLeave);
+        // 内容区域的细节动画
+        if (metaRef.current) {
+          tl.to(metaRef.current, {
+            y: 0,
+            opacity: 1,
+            duration: 0.6,
+            ease: "power2.out"
+          }, "-=0.7");
         }
-      };
+
+        if (titleRef.current) {
+          tl.to(titleRef.current, {
+            y: 0,
+            opacity: 1,
+            duration: 0.8,
+            ease: "power2.out"
+          }, "-=0.5");
+        }
+
+        if (contentRef.current) {
+          tl.to(contentRef.current, {
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            ease: "power2.out"
+          }, "-=0.3");
+        }
+
+        // 鼠标悬停效果：更自然的微动画
+        const handleMouseEnter = () => {
+          gsap.to(cardRef.current, {
+            scale: 1.02,
+            y: -8,
+            rotationX: -1,
+            duration: 0.6,
+            ease: "power2.out",
+          });
+        };
+
+        const handleMouseLeave = () => {
+          gsap.to(cardRef.current, {
+            scale: 1,
+            y: 0,
+            rotationX: 0,
+            duration: 0.6,
+            ease: "power2.out",
+          });
+        };
+
+        cardRef.current.addEventListener("mouseenter", handleMouseEnter);
+        cardRef.current.addEventListener("mouseleave", handleMouseLeave);
+
+        return () => {
+          if (cardRef.current) {
+            cardRef.current.removeEventListener("mouseenter", handleMouseEnter);
+            cardRef.current.removeEventListener("mouseleave", handleMouseLeave);
+          }
+        };
+      }, cardRef);
+
+      return () => ctx.revert();
     }
   }, [featuredBlog]);
 
@@ -188,7 +245,7 @@ const BlogPreview = ({ onEnter, onLeave }) => {
   if (!featuredBlog) {
     return (
       <div
-        className="w-full h-screen flex items-center justify-center"
+        className="w-full h-screen flex flex-col justify-center pt-14"
         onMouseEnter={onEnter}
         onMouseLeave={onLeave}
       >
@@ -226,7 +283,10 @@ const BlogPreview = ({ onEnter, onLeave }) => {
             <div className="relative transition-all duration-700 border-t border-l border-r border-primary group-hover:border-primary/70 rounded-t-3xl overflow-hidden shadow-[0_-8px_16px_rgba(0,0,0,0.1)]">
               <div className="relative p-12 space-y-8 z-20">
                 {/* 文章元信息：标签、发布日期、阅读时长 */}
-                <div className="flex items-center justify-between">
+                <div 
+                  ref={metaRef}
+                  className="flex items-center justify-between"
+                >
                   <div className="flex items-center space-x-4">
                     <span className="text-sm font-mono text-primary/80 px-4 py-2">
                       FEATURED
@@ -257,18 +317,26 @@ const BlogPreview = ({ onEnter, onLeave }) => {
 
                 {/* 文章标题和内容预览区域 */}
                 <div className="space-y-6">
-                  <h4 className="text-4xl font-bold text-foreground group-hover:text-primary transition-colors duration-500 leading-tight">
+                  <h4 
+                    ref={titleRef}
+                    className="text-4xl font-bold text-foreground group-hover:text-primary transition-colors duration-500 leading-tight"
+                  >
                     {featuredBlog.title}
                   </h4>
 
-                  {/* 文章摘要 */}
-                  <p className="text-muted-foreground/90 text-lg leading-relaxed line-clamp-2 max-w-3xl">
-                    {featuredBlog.excerpt}
-                  </p>
+                  {/* 文章摘要和正文内容预览 */}
+                  <div 
+                    ref={contentRef}
+                    className="space-y-4"
+                  >
+                    <p className="text-muted-foreground/90 text-lg leading-relaxed line-clamp-2 max-w-3xl">
+                      {featuredBlog.excerpt}
+                    </p>
 
-                  {/* 正文内容预览：经过 Markdown 清理的纯文本 */}
-                  <div className="text-muted-foreground/80 text-base leading-relaxed whitespace-pre-line max-w-4xl">
-                    {getContentPreview(featuredBlog.content)}
+                    {/* 正文内容预览：经过 Markdown 清理的纯文本 */}
+                    <div className="text-muted-foreground/80 text-base leading-relaxed whitespace-pre-line max-w-4xl">
+                      {getContentPreview(featuredBlog.content)}
+                    </div>
                   </div>
                 </div>
               </div>

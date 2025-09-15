@@ -232,7 +232,7 @@ const ShareSection = () => {
           {/* 右侧滚动内容区域：作品集、博客、媒体预览 */}
           <div
             ref={rightContentRef}
-            className="py-8 overflow-y-auto h-full scrollbar-hide"
+            className="overflow-y-auto h-full scrollbar-hide"
           >
             <div className="space-y-0 pr-4">
               {/* 作品集预览区块 */}

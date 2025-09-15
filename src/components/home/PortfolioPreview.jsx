@@ -53,30 +53,39 @@ const PortfolioPreview = ({ onEnter, onLeave }) => {
   // 获取技术标签的颜色样式
   const getTagColor = (tag) => {
     const tagColors = {
-      "React": "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
-      "Next.js": "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300", 
-      "Tailwind": "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300",
-      "GSAP": "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
-      "TypeScript": "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-      "MDX": "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
-      "Storybook": "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300",
-      "CSS": "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300",
-      "JavaScript": "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
+      React: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300",
+      "Next.js":
+        "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300",
+      Tailwind: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300",
+      GSAP: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+      TypeScript:
+        "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+      MDX: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
+      Storybook:
+        "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300",
+      CSS: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300",
+      JavaScript:
+        "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
     };
-    return tagColors[tag] || "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+    return (
+      tagColors[tag] ||
+      "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
+    );
   };
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="w-full h-screen space-y-8 flex flex-col justify-center"
+      className="w-full h-screen flex flex-col justify-center pt-14"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
     >
       {/* 标题区域 */}
-      <SectionHeader 
+      <SectionHeader
         title={currentTexts.portfolioTitle || "Featured Works"}
-        description={currentTexts.portfolioDescription || "Featured Works Showcase"}
+        description={
+          currentTexts.portfolioDescription || "Featured Works Showcase"
+        }
         size="large"
       />
 
@@ -94,8 +103,18 @@ const PortfolioPreview = ({ onEnter, onLeave }) => {
                 <div className="aspect-video w-full overflow-hidden">
                   <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
                     {/* 占位图标 */}
-                    <svg className="w-12 h-12 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                    <svg
+                      className="w-12 h-12 text-muted-foreground"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -115,9 +134,11 @@ const PortfolioPreview = ({ onEnter, onLeave }) => {
                   {/* 技术标签 */}
                   <div className="flex flex-wrap gap-1">
                     {project.tags.slice(0, 2).map((tag) => (
-                      <span 
+                      <span
                         key={tag}
-                        className={`px-2 py-1 rounded text-xs font-medium ${getTagColor(tag)}`}
+                        className={`px-2 py-1 rounded text-xs font-medium ${getTagColor(
+                          tag
+                        )}`}
                       >
                         {tag}
                       </span>

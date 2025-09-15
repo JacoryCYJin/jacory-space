@@ -2,9 +2,12 @@
 
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useApp } from "@/lib/context";
 import { mediaContent, shareTexts } from "@/constants/home/ShareSection";
 import SectionHeader from "@/components/common/SectionHeader";
+
+gsap.registerPlugin(ScrollTrigger);
 
 /**
  * 媒体预览组件
@@ -120,40 +123,95 @@ const MediaPreview = ({ onEnter, onLeave }) => {
   };
 
   useEffect(() => {
-    // 为每个媒体项添加 hover 效果
-    itemRefs.current.forEach((itemRef) => {
-      if (itemRef) {
-        const handleMouseEnter = () => {
-          gsap.to(itemRef, {
-            scale: 1.03,
-            duration: 0.3,
-            ease: "power2.out",
+    const ctx = gsap.context(() => {
+      // 设置所有卡片的初始状态
+      itemRefs.current.forEach((itemRef) => {
+        if (itemRef) {
+          gsap.set(itemRef, { 
+            y: 60, 
+            opacity: 0, 
+            scale: 0.9,
+            rotationY: 5
           });
-        };
+        }
+      });
 
-        const handleMouseLeave = () => {
-          gsap.to(itemRef, {
+      // 错落动画序列：每个卡片都从下方出现，带有不同的延迟
+      const animationConfig = [
+        { index: 0, delay: 0 },      // 左侧大卡片
+        { index: 1, delay: 0.1 },    // 右上小卡片
+        { index: 2, delay: 0.2 },    // 中间视频卡片
+        { index: 3, delay: 0.15 },   // 右上小卡片
+        { index: 4, delay: 0.25 },   // 右下大卡片
+        { index: 5, delay: 0.3 },    // 右下小卡片
+        { index: 6, delay: 0.35 },   // 底部左卡片
+        { index: 7, delay: 0.4 }     // 底部右卡片
+      ];
+
+      // 使用 ScrollTrigger 控制动画时机
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "top 70%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      animationConfig.forEach(({ index, delay }) => {
+        const itemRef = itemRefs.current[index];
+        if (itemRef) {
+          // 统一设置为从下方出现
+          gsap.set(itemRef, { y: 60, opacity: 0, scale: 0.9 });
+          
+          tl.to(itemRef, {
+            y: 0,
+            opacity: 1,
             scale: 1,
-            duration: 0.3,
-            ease: "power2.out",
-          });
-        };
+            duration: 0.8,
+            ease: "power3.out"
+          }, delay);
+        }
+      });
 
-        itemRef.addEventListener("mouseenter", handleMouseEnter);
-        itemRef.addEventListener("mouseleave", handleMouseLeave);
+      // 为每个媒体项添加 hover 效果
+      itemRefs.current.forEach((itemRef) => {
+        if (itemRef) {
+          const handleMouseEnter = () => {
+            gsap.to(itemRef, {
+              scale: 1.03,
+              y: -5,
+              duration: 0.4,
+              ease: "power2.out",
+            });
+          };
 
-        return () => {
-          itemRef.removeEventListener("mouseenter", handleMouseEnter);
-          itemRef.removeEventListener("mouseleave", handleMouseLeave);
-        };
-      }
-    });
+          const handleMouseLeave = () => {
+            gsap.to(itemRef, {
+              scale: 1,
+              y: 0,
+              duration: 0.4,
+              ease: "power2.out",
+            });
+          };
+
+          itemRef.addEventListener("mouseenter", handleMouseEnter);
+          itemRef.addEventListener("mouseleave", handleMouseLeave);
+
+          return () => {
+            itemRef.removeEventListener("mouseenter", handleMouseEnter);
+            itemRef.removeEventListener("mouseleave", handleMouseLeave);
+          };
+        }
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
     <div
       ref={containerRef}
-      className="w-full h-screen flex flex-col justify-center"
+      className="w-full h-screen flex flex-col justify-center pt-14"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
     >
