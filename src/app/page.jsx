@@ -1,5 +1,6 @@
 import HeroSection from "@/components/home/HeroSection";
 import FeatureSection from "@/components/home/FeatureSection";
+import ShareSection from "@/components/home/ShareSection";
 
 /**
  * 首页组件 - 网站主页
@@ -12,6 +13,7 @@ export default function Home() {
     <div className="font-sans">
       <HeroSection />
       <FeatureSection />
+      <ShareSection />
     </div>
   );
 }

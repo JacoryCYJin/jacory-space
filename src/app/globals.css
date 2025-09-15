@@ -197,6 +197,16 @@
   .footer-social-icon:hover svg path {
     fill: currentColor;
   }
+
+  /* 隐藏滚动条 */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
 }
 
 ::view-transition-old(root), ::view-transition-new(root) {

@@ -430,7 +430,7 @@ export default function HeroSection() {
       >
         {/* GitHub链接 */}
         <ActionLink
-          href="https://github.com/your-username"
+          href="https://github.com/JacoryCYJin"
           icon="github"
           text={currentTexts.links.github}
           hoverText={currentTexts.hoverText}

@@ -35,13 +35,17 @@ const BlogPage = () => {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/blog");
+        const response = await fetch("/api/blogs");
         if (!response.ok) {
           throw new Error("Failed to fetch posts");
         }
-        const postsData = await response.json();
-        setPosts(postsData);
-        setFilteredPosts(postsData);
+        const result = await response.json();
+        if (result.success && result.data) {
+          setPosts(result.data);
+          setFilteredPosts(result.data);
+        } else {
+          throw new Error(result.error || "Failed to fetch posts");
+        }
       } catch (error) {
         console.error("Error fetching posts:", error);
         setPosts([]);

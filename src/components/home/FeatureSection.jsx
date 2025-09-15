@@ -50,10 +50,11 @@ export default function IntroductionSection() {
       });
 
       // 右上角文字内容初始隐藏状态
-      gsap.set(
-        [titleRef.current, subtitleRef.current],
-        { opacity: 0, x: 100, y: -50 }
-      );
+      gsap.set([titleRef.current, subtitleRef.current], {
+        opacity: 0,
+        x: 100,
+        y: -50,
+      });
 
       // 卡片初始状态：隐藏在右下角，准备向左上角到右下角的最终位置展开
       cardRefs.current.forEach((cardRef, index) => {
@@ -102,8 +103,7 @@ export default function IntroductionSection() {
             ease: "power3.out",
           },
           "-=0.8"
-        )
-;
+        );
 
       // 第二阶段：固定Section，执行卡片序列动画
       const cardAnimationDistance = window.innerHeight * 3;
@@ -243,7 +243,6 @@ export default function IntroductionSection() {
             className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight mb-4 text-right whitespace-nowrap"
             style={{
               fontFamily: "system-ui, -apple-system, sans-serif",
-              textShadow: "0 0 30px rgba(255, 255, 255, 0.3)",
             }}
           >
             {currentTexts.title}
@@ -259,7 +258,6 @@ export default function IntroductionSection() {
           >
             {currentTexts.subtitle}
           </h2>
-
         </div>
 
         {/* 卡片展示区域 - 从右下角出现，最终排列从左上角01到右下角04 */}
