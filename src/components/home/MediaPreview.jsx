@@ -21,7 +21,11 @@ const MediaPreview = ({ onEnter, onLeave }) => {
   const itemRefs = useRef([]);
 
   // 统一的卡片内容渲染方法
-  const renderCardContent = (mediaItem, isVideo = false, iconSize = "w-7 h-7") => {
+  const renderCardContent = (
+    mediaItem,
+    isVideo = false,
+    iconSize = "w-7 h-7"
+  ) => {
     // 如果标记为空白，返回完全透明的内容
     if (mediaItem?.isEmpty) {
       return (
@@ -40,7 +44,7 @@ const MediaPreview = ({ onEnter, onLeave }) => {
             alt={mediaItem.title}
             className="w-full h-full object-cover"
           />
-          
+
           {/* 如果是视频，显示播放按钮 */}
           {isVideo && (
             <div className="absolute inset-0 flex items-center justify-center">
@@ -60,12 +64,8 @@ const MediaPreview = ({ onEnter, onLeave }) => {
           {/* Hover 覆盖层 */}
           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
             <div className="p-3 text-white">
-              <h4 className="text-sm font-medium">
-                {mediaItem?.title}
-              </h4>
-              <p className="text-xs text-white/80">
-                {mediaItem?.date}
-              </p>
+              <h4 className="text-sm font-medium">{mediaItem?.title}</h4>
+              <p className="text-xs text-white/80">{mediaItem?.date}</p>
             </div>
           </div>
         </div>
@@ -109,12 +109,13 @@ const MediaPreview = ({ onEnter, onLeave }) => {
 
   // 统一的卡片容器样式方法
   const getCardClassName = (mediaItem, baseClassName) => {
-    const baseStyles = "group cursor-pointer relative overflow-hidden rounded-xl transition-all duration-300";
-    
+    const baseStyles =
+      "group cursor-pointer relative overflow-hidden rounded-xl transition-all duration-300";
+
     if (mediaItem?.isEmpty) {
       return `${baseClassName} ${baseStyles} bg-transparent border-transparent pointer-events-none`;
     }
-    
+
     return `${baseClassName} ${baseStyles} bg-card/80 backdrop-blur-md border border-border/50 hover:bg-card/90`;
   };
 
@@ -152,7 +153,7 @@ const MediaPreview = ({ onEnter, onLeave }) => {
   return (
     <div
       ref={containerRef}
-      className="w-full h-screen space-y-8 flex flex-col justify-center"
+      className="w-full h-screen flex flex-col justify-center"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
     >
@@ -160,7 +161,7 @@ const MediaPreview = ({ onEnter, onLeave }) => {
       <SectionHeader
         title={currentTexts.mediaTitle || "Visual Stories"}
         description={currentTexts.mediaDescription || "Visual Story Records"}
-        size="medium"
+        size="large"
       />
 
       {/* 错落网格布局 - 4x3网格，左侧大卡片，右侧混合布局 */}
@@ -219,7 +220,10 @@ const MediaPreview = ({ onEnter, onLeave }) => {
           <div
             key={index}
             ref={(el) => (itemRefs.current[index] = el)}
-            className={getCardClassName(currentMedia[index], "col-span-1 row-span-1")}
+            className={getCardClassName(
+              currentMedia[index],
+              "col-span-1 row-span-1"
+            )}
           >
             {renderCardContent(currentMedia[index])}
           </div>

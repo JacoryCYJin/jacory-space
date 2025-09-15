@@ -77,7 +77,7 @@ const PortfolioPreview = ({ onEnter, onLeave }) => {
       <SectionHeader 
         title={currentTexts.portfolioTitle || "Featured Works"}
         description={currentTexts.portfolioDescription || "Featured Works Showcase"}
-        size="medium"
+        size="large"
       />
 
       {/* 网格布局容器 */}
