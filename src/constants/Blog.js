@@ -20,7 +20,9 @@ export const blogTexts = {
     pageInfo: "第",
     of: "页，共",
     pages: "页",
-    total: "共"
+    total: "共",
+    author: "作者",
+    viewMoreArticles: "查看更多文章"
   },
   "zh-tw": {
     title: "芥子博客",
@@ -42,7 +44,9 @@ export const blogTexts = {
     pageInfo: "第",
     of: "頁，共",
     pages: "頁",
-    total: "共"
+    total: "共",
+    author: "作者",
+    viewMoreArticles: "查看更多文章"
   },
   en: {
     title: "Jacory Blog",
@@ -64,7 +68,9 @@ export const blogTexts = {
     pageInfo: "Page",
     of: "of",
     pages: "pages",
-    total: "Total"
+    total: "Total",
+    author: "Author",
+    viewMoreArticles: "View More Articles"
   }
 };
 

@@ -127,25 +127,25 @@ const MediaPreview = ({ onEnter, onLeave }) => {
       // 设置所有卡片的初始状态
       itemRefs.current.forEach((itemRef) => {
         if (itemRef) {
-          gsap.set(itemRef, { 
-            y: 60, 
-            opacity: 0, 
+          gsap.set(itemRef, {
+            y: 60,
+            opacity: 0,
             scale: 0.9,
-            rotationY: 5
+            rotationY: 5,
           });
         }
       });
 
       // 错落动画序列：每个卡片都从下方出现，带有不同的延迟
       const animationConfig = [
-        { index: 0, delay: 0 },      // 左侧大卡片
-        { index: 1, delay: 0.1 },    // 右上小卡片
-        { index: 2, delay: 0.2 },    // 中间视频卡片
-        { index: 3, delay: 0.15 },   // 右上小卡片
-        { index: 4, delay: 0.25 },   // 右下大卡片
-        { index: 5, delay: 0.3 },    // 右下小卡片
-        { index: 6, delay: 0.35 },   // 底部左卡片
-        { index: 7, delay: 0.4 }     // 底部右卡片
+        { index: 0, delay: 0 }, // 左侧大卡片
+        { index: 1, delay: 0.1 }, // 右上小卡片
+        { index: 2, delay: 0.2 }, // 中间视频卡片
+        { index: 3, delay: 0.15 }, // 右上小卡片
+        { index: 4, delay: 0.25 }, // 右下大卡片
+        { index: 5, delay: 0.3 }, // 右下小卡片
+        { index: 6, delay: 0.35 }, // 底部左卡片
+        { index: 7, delay: 0.4 }, // 底部右卡片
       ];
 
       // 使用 ScrollTrigger 控制动画时机
@@ -162,14 +162,18 @@ const MediaPreview = ({ onEnter, onLeave }) => {
         if (itemRef) {
           // 统一设置为从下方出现
           gsap.set(itemRef, { y: 60, opacity: 0, scale: 0.9 });
-          
-          tl.to(itemRef, {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 0.8,
-            ease: "power3.out"
-          }, delay);
+
+          tl.to(
+            itemRef,
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.8,
+              ease: "power3.out",
+            },
+            delay
+          );
         }
       });
 
