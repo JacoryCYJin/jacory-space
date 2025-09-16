@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ContactIcons } from "../../constants/Contact";
 
 /**
@@ -32,7 +31,7 @@ const ContactMethods = ({ texts }) => {
         .filter(Boolean)
         .forEach((el) => {
           if (Array.isArray(el)) {
-            el.forEach(method => {
+            el.forEach((method) => {
               if (method) {
                 method.style.opacity = "1";
                 method.style.transform = "none";
@@ -65,15 +64,24 @@ const ContactMethods = ({ texts }) => {
       });
 
       // 标题动画
-      tl.fromTo([elements.title, elements.subtitle],
+      tl.fromTo(
+        [elements.title, elements.subtitle],
         { y: 50, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.6, ease: "power2.out", stagger: 0.1 }
       );
 
       // 联系方式卡片动画
-      tl.fromTo(elements.methods,
+      tl.fromTo(
+        elements.methods,
         { y: 60, opacity: 0, scale: 0.95 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.2)", stagger: 0.08 },
+        {
+          y: 0,
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          ease: "back.out(1.2)",
+          stagger: 0.08,
+        },
         "-=0.3"
       );
 
@@ -107,13 +115,13 @@ const ContactMethods = ({ texts }) => {
   }, []);
 
   const handleContactClick = (action) => {
-    if (action.startsWith('mailto:')) {
+    if (action.startsWith("mailto:")) {
       window.location.href = action;
-    } else if (action.startsWith('weixin://')) {
+    } else if (action.startsWith("weixin://")) {
       // 微信联系的处理逻辑
-      alert('请添加微信：jacory_space');
+      alert("请添加微信：jacory_space");
     } else {
-      window.open(action, '_blank', 'noopener,noreferrer');
+      window.open(action, "_blank", "noopener,noreferrer");
     }
   };
 
@@ -151,7 +159,7 @@ const ContactMethods = ({ texts }) => {
             >
               {/* 背景装饰 */}
               <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -translate-y-12 translate-x-12 group-hover:scale-110 transition-transform duration-500"></div>
-              
+
               {/* 图标 */}
               <div className="text-3xl text-primary mb-4 group-hover:scale-110 transition-transform duration-300 transform-gpu origin-center inline-block w-fit flex items-center justify-center">
                 {ContactIcons[method.iconName]}
@@ -174,20 +182,13 @@ const ContactMethods = ({ texts }) => {
 
               {/* 悬停时的装饰线 */}
               <div className="absolute bottom-0 left-0 w-0 h-1 bg-primary group-hover:w-full transition-all duration-500 ease-out"></div>
-
-              {/* 点击提示 */}
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-              </div>
             </div>
           ))}
         </div>
 
         {/* 底部提示 */}
         <div className="text-center mt-12">
-          <p className="text-muted-foreground">
-            💡 {texts.contact.hint}
-          </p>
+          <p className="text-muted-foreground">💡 {texts.contact.hint}</p>
         </div>
       </div>
     </section>

@@ -115,33 +115,6 @@ export const blogCategories = [
       en: "Frontend"
     },
     color: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300"
-  },
-  {
-    id: "ui-design",
-    name: {
-      "zh-cn": "UI设计",
-      "zh-tw": "UI設計",
-      en: "UI Design"
-    },
-    color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
-  },
-  {
-    id: "animation",
-    name: {
-      "zh-cn": "动画设计",
-      "zh-tw": "動畫設計",
-      en: "Animation"
-    },
-    color: "bg-fuchsia-100 text-fuchsia-800 dark:bg-fuchsia-900 dark:text-fuchsia-300"
-  },
-  {
-    id: "tutorial",
-    name: {
-      "zh-cn": "教程指南",
-      "zh-tw": "教程指南",
-      en: "Tutorial"
-    },
-    color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
   }
 ];
 
@@ -153,27 +126,12 @@ export const blogTags = [
     color: "bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-300"
   },
   {
-    id: "nextjs", 
-    name: "Next.js",
-    color: "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300"
-  },
-  {
-    id: "javascript",
-    name: "JavaScript", 
-    color: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300"
-  },
-  {
-    id: "typescript",
-    name: "TypeScript",
-    color: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300"
-  },
-  {
     id: "css",
     name: "CSS",
     color: "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-300"
   },
   {
-    id: "tailwind",
+    id: "tailwind-css",
     name: "Tailwind CSS",
     color: "bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300"
   },
@@ -204,15 +162,6 @@ export const blogTags = [
     id: "scrolltrigger",
     name: "ScrollTrigger",
     color: "bg-violet-100 text-violet-800 dark:bg-violet-900 dark:text-violet-300"
-  },
-  {
-    id: "tutorial",
-    name: {
-      "zh-cn": "教程",
-      "zh-tw": "教程", 
-      en: "Tutorial"
-    },
-    color: "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300"
   },
   {
     id: "background",

@@ -128,36 +128,48 @@ const BlogPreview = ({ onEnter, onLeave }) => {
           opacity: 1,
           scale: 1,
           rotationX: 0,
-          duration: 1.0,
-          ease: "power3.out"
+          duration: 0.8,
+          ease: "power3.out",
         });
 
         // 内容区域的细节动画
         if (metaRef.current) {
-          tl.to(metaRef.current, {
-            y: 0,
-            opacity: 1,
-            duration: 0.6,
-            ease: "power2.out"
-          }, "-=0.7");
+          tl.to(
+            metaRef.current,
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.5,
+              ease: "power2.out",
+            },
+            "-=0.7"
+          );
         }
 
         if (titleRef.current) {
-          tl.to(titleRef.current, {
-            y: 0,
-            opacity: 1,
-            duration: 0.8,
-            ease: "power2.out"
-          }, "-=0.5");
+          tl.to(
+            titleRef.current,
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.7,
+              ease: "power2.out",
+            },
+            "-=0.5"
+          );
         }
 
         if (contentRef.current) {
-          tl.to(contentRef.current, {
-            y: 0,
-            opacity: 1,
-            duration: 0.7,
-            ease: "power2.out"
-          }, "-=0.3");
+          tl.to(
+            contentRef.current,
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.7,
+              ease: "power2.out",
+            },
+            "-=0.3"
+          );
         }
 
         // 鼠标悬停效果：更自然的微动画
@@ -283,7 +295,7 @@ const BlogPreview = ({ onEnter, onLeave }) => {
             <div className="relative transition-all duration-700 border-t border-l border-r border-primary group-hover:border-primary/70 rounded-t-3xl overflow-hidden shadow-[0_-8px_16px_rgba(0,0,0,0.1)]">
               <div className="relative p-12 space-y-8 z-20">
                 {/* 文章元信息：标签、发布日期、阅读时长 */}
-                <div 
+                <div
                   ref={metaRef}
                   className="flex items-center justify-between"
                 >
@@ -317,7 +329,7 @@ const BlogPreview = ({ onEnter, onLeave }) => {
 
                 {/* 文章标题和内容预览区域 */}
                 <div className="space-y-6">
-                  <h4 
+                  <h4
                     ref={titleRef}
                     className="text-4xl font-bold text-foreground group-hover:text-primary transition-colors duration-500 leading-tight"
                   >
@@ -325,10 +337,7 @@ const BlogPreview = ({ onEnter, onLeave }) => {
                   </h4>
 
                   {/* 文章摘要和正文内容预览 */}
-                  <div 
-                    ref={contentRef}
-                    className="space-y-4"
-                  >
+                  <div ref={contentRef} className="space-y-4">
                     <p className="text-muted-foreground/90 text-lg leading-relaxed line-clamp-2 max-w-3xl">
                       {featuredBlog.excerpt}
                     </p>

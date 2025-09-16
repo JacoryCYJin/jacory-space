@@ -94,17 +94,6 @@ export function getAllPostSlugs() {
   }
 }
 
-// 根据分类筛选文章
-export function getPostsByCategory(category) {
-  const allPosts = getAllPosts();
-  return allPosts.filter(post => post.category === category);
-}
-
-// 根据标签筛选文章
-export function getPostsByTag(tag) {
-  const allPosts = getAllPosts();
-  return allPosts.filter(post => post.tags && post.tags.includes(tag));
-}
 
 // 搜索文章
 export function searchPosts(query) {

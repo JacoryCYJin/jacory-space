@@ -24,7 +24,6 @@ const About = () => {
   const currentTexts = aboutTexts[language];
 
   useEffect(() => {
-
     // 页面加载动画
     gsap.set("body", { overflow: "hidden" });
 
@@ -63,7 +62,7 @@ const About = () => {
         <SkillsSection texts={currentTexts} />
 
         {/* Education Section */}
-        <EducationSection texts={currentTexts} />
+        {/* <EducationSection texts={currentTexts} /> */}
 
         {/* Interests & Contact Section */}
         <InterestsSection texts={currentTexts} />
