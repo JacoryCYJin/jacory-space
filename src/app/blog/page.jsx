@@ -1,12 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useApp } from "@/lib/context";
 import { blogTexts, blogCategories, blogTags } from "@/constants/Blog";
 import BlogList from "@/components/BlogList";
 import Pagination from "@/components/Pagination";
 import { AnimatedGridPattern } from "@/components/magicui/animated-grid-pattern";
 import { cn } from "@/lib/utils";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// 注册GSAP插件
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 /**
  * 博客页面组件 - 文章列表和筛选功能
@@ -23,10 +30,19 @@ const BlogPage = () => {
   const [loading, setLoading] = useState(true);
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [showAllTags, setShowAllTags] = useState(false);
-  
+
   // 分页状态 - 固定每页12篇文章
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 12;
+
+  // GSAP refs
+  const pageRef = useRef(null);
+  const titleRef = useRef(null);
+  const subtitleRef = useRef(null);
+  const filterSectionRef = useRef(null);
+  const blogListRef = useRef(null);
+  const paginationRef = useRef(null);
+  const tl = useRef(null);
 
   const currentTexts = blogTexts[language];
 
@@ -57,6 +73,147 @@ const BlogPage = () => {
 
     fetchPosts();
   }, []);
+
+  // 页面入场动画
+  useEffect(() => {
+    if (!loading && pageRef.current) {
+      // 创建主时间线
+      tl.current = gsap.timeline();
+
+      // 设置初始状态
+      gsap.set([titleRef.current, subtitleRef.current], {
+        y: 50,
+        opacity: 0,
+      });
+
+      gsap.set(filterSectionRef.current, {
+        y: 30,
+        opacity: 0,
+      });
+
+      gsap.set(blogListRef.current, {
+        y: 40,
+        opacity: 0,
+      });
+
+      gsap.set(paginationRef.current, {
+        y: 30,
+        opacity: 0,
+      });
+
+      // 执行入场动画
+      tl.current
+        .to(titleRef.current, {
+          duration: 0.8,
+          y: 0,
+          opacity: 1,
+          ease: "power3.out",
+        })
+        .to(
+          subtitleRef.current,
+          {
+            duration: 0.6,
+            y: 0,
+            opacity: 1,
+            ease: "power2.out",
+          },
+          "-=0.4"
+        )
+        .to(
+          filterSectionRef.current,
+          {
+            duration: 0.7,
+            y: 0,
+            opacity: 1,
+            ease: "power2.out",
+          },
+          "-=0.3"
+        )
+        .to(
+          blogListRef.current,
+          {
+            duration: 0.8,
+            y: 0,
+            opacity: 1,
+            ease: "power2.out",
+          },
+          "-=0.4"
+        )
+        .to(
+          paginationRef.current,
+          {
+            duration: 0.6,
+            y: 0,
+            opacity: 1,
+            ease: "power2.out",
+          },
+          "-=0.4"
+        );
+
+      // 添加博客卡片的stagger动画
+      const blogCards =
+        blogListRef.current?.querySelectorAll("[data-blog-card]");
+      if (blogCards && blogCards.length > 0) {
+        gsap.fromTo(
+          blogCards,
+          {
+            y: 60,
+            opacity: 0,
+            scale: 0.95,
+          },
+          {
+            duration: 0.6,
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            ease: "power2.out",
+            stagger: {
+              amount: 0.4,
+              from: "start",
+            },
+            delay: 0.8,
+          }
+        );
+      }
+
+    }
+
+    return () => {
+      if (tl.current) {
+        tl.current.kill();
+      }
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, [loading]);
+
+  // 筛选变化时的动画
+  useEffect(() => {
+    if (!loading && blogListRef.current) {
+      const blogCards =
+        blogListRef.current.querySelectorAll("[data-blog-card]");
+      if (blogCards && blogCards.length > 0) {
+        gsap.fromTo(
+          blogCards,
+          {
+            y: 30,
+            opacity: 0,
+            scale: 0.98,
+          },
+          {
+            duration: 0.5,
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            ease: "power2.out",
+            stagger: {
+              amount: 0.3,
+              from: "start",
+            },
+          }
+        );
+      }
+    }
+  }, [filteredPosts, loading]);
 
   // 筛选文章
   useEffect(() => {
@@ -98,9 +255,65 @@ const BlogPage = () => {
 
   // 分页处理函数
   const handlePageChange = (page) => {
-    setCurrentPage(page);
-    // 滚动到页面顶部
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // 页面切换动画
+    if (blogListRef.current) {
+      const blogCards =
+        blogListRef.current.querySelectorAll("[data-blog-card]");
+      gsap.to(blogCards, {
+        duration: 0.3,
+        y: -20,
+        opacity: 0,
+        scale: 0.98,
+        ease: "power2.in",
+        stagger: 0.02,
+        onComplete: () => {
+          setCurrentPage(page);
+          // 滚动到页面顶部
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        },
+      });
+    } else {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  // 按钮hover动画
+  const handleButtonHover = (e, isEntering = true) => {
+    const button = e.currentTarget;
+    if (isEntering) {
+      gsap.to(button, {
+        duration: 0.3,
+        scale: 1.05,
+        y: -2,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(button, {
+        duration: 0.3,
+        scale: 1,
+        y: 0,
+        ease: "power2.out",
+      });
+    }
+  };
+
+  // 搜索框focus动画
+  const handleSearchFocus = (e, isFocused = true) => {
+    const searchContainer = e.currentTarget.parentElement;
+    if (isFocused) {
+      gsap.to(searchContainer, {
+        duration: 0.3,
+        scale: 1.02,
+        ease: "power2.out",
+      });
+    } else {
+      gsap.to(searchContainer, {
+        duration: 0.3,
+        scale: 1,
+        ease: "power2.out",
+      });
+    }
   };
 
   const getCategoryName = (category) => {
@@ -132,7 +345,7 @@ const BlogPage = () => {
   }
 
   return (
-    <div className="min-h-screen pb-12 pt-14">
+    <div ref={pageRef} className="min-h-screen pb-12 pt-14">
       {/* 页面标题部分 - 带背景 */}
       <div className="relative pb-8">
         <AnimatedGridPattern
@@ -152,12 +365,15 @@ const BlogPage = () => {
         <div className="max-w-7.5xl mx-auto relative z-10 px-4">
           {/* 页面标题 */}
           <div className="text-center pt-12 pb-8">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1
+              ref={titleRef}
+              className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-4"
+            >
               {currentTexts.title}
             </h1>
             <p
-              className="text-xl text-gray-600 dark:text
-            -gray-300"
+              ref={subtitleRef}
+              className="text-xl text-gray-600 dark:text-gray-300"
             >
               {currentTexts.subtitle}
             </p>
@@ -167,7 +383,10 @@ const BlogPage = () => {
 
       {/* 筛选和搜索区域 */}
       <div className="max-w-7.5xl mx-auto mb-8 relative z-10 px-4">
-        <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 backdrop-blur-sm">
+        <div
+          ref={filterSectionRef}
+          className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 backdrop-blur-sm"
+        >
           {/* 搜索框和状态栏 */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
             {/* 搜索框 */}
@@ -177,6 +396,8 @@ const BlogPage = () => {
                 placeholder={currentTexts.searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={(e) => handleSearchFocus(e, true)}
+                onBlur={(e) => handleSearchFocus(e, false)}
                 className="w-full px-4 py-3 pl-12 border border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500"
               />
               <svg
@@ -200,19 +421,33 @@ const BlogPage = () => {
               <div className="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">
                 {filteredPosts.length} {currentTexts.articlesCount}
               </div>
-              
+
               {/* 清除筛选按钮 */}
-              {(selectedCategory !== "all" || selectedTag !== "all" || searchQuery) && (
+              {(selectedCategory !== "all" ||
+                selectedTag !== "all" ||
+                searchQuery) && (
                 <button
                   onClick={() => {
                     setSelectedCategory("all");
                     setSelectedTag("all");
                     setSearchQuery("");
                   }}
+                  onMouseEnter={(e) => handleButtonHover(e, true)}
+                  onMouseLeave={(e) => handleButtonHover(e, false)}
                   className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200 flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-600"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                   {currentTexts.clearFilters}
                 </button>
@@ -238,7 +473,10 @@ const BlogPage = () => {
               >
                 {currentTexts.allCategories}
               </button>
-              {(showAllCategories ? blogCategories : blogCategories.slice(0, 4)).map((category) => (
+              {(showAllCategories
+                ? blogCategories
+                : blogCategories.slice(0, 4)
+              ).map((category) => (
                 <button
                   key={category.id}
                   onClick={() => setSelectedCategory(category.id)}
@@ -257,14 +495,29 @@ const BlogPage = () => {
                   className="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center gap-1"
                 >
                   {showAllCategories ? (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <circle cx="5" cy="12" r="1"/>
-                      <circle cx="12" cy="12" r="1"/>
-                      <circle cx="19" cy="12" r="1"/>
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle cx="5" cy="12" r="1" />
+                      <circle cx="12" cy="12" r="1" />
+                      <circle cx="19" cy="12" r="1" />
                     </svg>
                   )}
                 </button>
@@ -309,14 +562,29 @@ const BlogPage = () => {
                   className="px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center gap-1"
                 >
                   {showAllTags ? (
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
                     </svg>
                   ) : (
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <circle cx="5" cy="12" r="1"/>
-                      <circle cx="12" cy="12" r="1"/>
-                      <circle cx="19" cy="12" r="1"/>
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle cx="5" cy="12" r="1" />
+                      <circle cx="12" cy="12" r="1" />
+                      <circle cx="19" cy="12" r="1" />
                     </svg>
                   )}
                 </button>
@@ -327,7 +595,7 @@ const BlogPage = () => {
       </div>
 
       {/* 文章列表 */}
-      <div className="max-w-7.5xl mx-auto px-4 pb-8">
+      <div ref={blogListRef} className="max-w-7.5xl mx-auto px-4 pb-8">
         <BlogList
           filteredPosts={currentPosts}
           noResultsText={currentTexts.noResults}
@@ -336,7 +604,7 @@ const BlogPage = () => {
 
       {/* 分页组件 */}
       {filteredPosts.length > 0 && (
-        <div className="max-w-7.5xl mx-auto px-4">
+        <div ref={paginationRef} className="max-w-7.5xl mx-auto px-4">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

@@ -33,7 +33,9 @@ const BlogList = ({ filteredPosts, noResultsText }) => {
   return (
     <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 auto-rows-fr">
       {filteredPosts.map((post) => (
-        <BlogCard key={post.slug} article={post} />
+        <div key={post.slug} data-blog-card>
+          <BlogCard article={post} />
+        </div>
       ))}
     </div>
   );
