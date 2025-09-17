@@ -205,6 +205,13 @@ export default function HeroSection() {
           scrub: 1,
           pin: true,
           onUpdate: (self) => {
+            // 检查组件是否已卸载，如果已卸载则直接返回
+            if (!jRef.current || !jBackgroundRef.current || !subtitleRef.current || 
+                !bottomLinksRef.current || !spaceRef.current || !scrollIndicatorRef.current || 
+                !bottomDescriptionRef.current) {
+              return;
+            }
+
             const progress = self.progress;
 
             // 计算J元素的缩放比例，使用缓动函数控制缩放速度
@@ -271,6 +278,11 @@ export default function HeroSection() {
             }
           },
           onComplete: () => {
+            // 检查组件是否已卸载
+            if (!jRef.current) {
+              return;
+            }
+            
             const nextSection = document.querySelector(
               '[data-section="introduction"]'
             );
@@ -286,6 +298,11 @@ export default function HeroSection() {
        * 仅在滚动进度较小时生效，避免与滚动动画冲突
        */
       const handleMouseMove = (e) => {
+        // 检查组件是否已卸载
+        if (!jRef.current || !spaceRef.current) {
+          return;
+        }
+
         const { clientX, clientY } = e;
         const { innerWidth, innerHeight } = window;
         const xPos = (clientX / innerWidth - 0.5) * 8;
@@ -311,8 +328,10 @@ export default function HeroSection() {
       };
 
       // 设置初始z-index状态，确保按钮在页面加载时可以正常hover
-      gsap.set(bottomLinksRef.current, { zIndex: 60 });
-      gsap.set(jRef.current, { zIndex: 50 });
+      if (bottomLinksRef.current && jRef.current) {
+        gsap.set(bottomLinksRef.current, { zIndex: 60 });
+        gsap.set(jRef.current, { zIndex: 50 });
+      }
 
       // 初始化滚动动画和鼠标事件监听
       setupScrollAnimations();
@@ -320,10 +339,16 @@ export default function HeroSection() {
 
       return () => {
         window.removeEventListener("mousemove", handleMouseMove);
+        // 清理特定的 ScrollTrigger 实例
+        ScrollTrigger.getById("hero-scroll")?.kill();
       };
     }, heroRef);
 
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      // 确保所有 ScrollTrigger 实例都被清理
+      ScrollTrigger.killAll();
+    };
   }, []);
 
   return (

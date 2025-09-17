@@ -124,67 +124,64 @@ const MediaPreview = ({ onEnter, onLeave }) => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // 设置所有卡片的初始状态
+      // 设置所有卡片的初始状态 - 更大的位移以确保流畅的从下方出现效果
       itemRefs.current.forEach((itemRef) => {
         if (itemRef) {
           gsap.set(itemRef, {
             y: 60,
             opacity: 0,
-            scale: 0.9,
-            rotationY: 5,
+            transformOrigin: "center bottom",
           });
         }
       });
 
-      // 错落动画序列：每个卡片都从下方出现，带有不同的延迟
+      // 优化的错落动画序列：从左到右，从上到下的自然顺序
       const animationConfig = [
-        { index: 0, delay: 0 }, // 左侧大卡片
-        { index: 1, delay: 0.1 }, // 右上小卡片
-        { index: 2, delay: 0.2 }, // 中间视频卡片
-        { index: 3, delay: 0.15 }, // 右上小卡片
-        { index: 4, delay: 0.25 }, // 右下大卡片
-        { index: 5, delay: 0.3 }, // 右下小卡片
-        { index: 6, delay: 0.35 }, // 底部左卡片
-        { index: 7, delay: 0.4 }, // 底部右卡片
+        { index: 0, delay: 0 }, // 左侧大卡片（第一个）
+        { index: 1, delay: 0.12 }, // 右上小卡片
+        { index: 3, delay: 0.24 }, // 右上第二个小卡片
+        { index: 2, delay: 0.36 }, // 中间大视频卡片
+        { index: 4, delay: 0.48 }, // 右下大图片卡片
+        { index: 5, delay: 0.6 }, // 右下小卡片
+        { index: 6, delay: 0.72 }, // 底部左卡片
+        { index: 7, delay: 0.84 }, // 底部右卡片
       ];
 
-      // 使用 ScrollTrigger 控制动画时机
+      // 使用 ScrollTrigger 控制动画时机 - 更早触发以确保流畅性
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: containerRef.current,
-          start: "top 70%",
+          start: "top 80%",
+          end: "bottom 20%",
           toggleActions: "play none none reverse",
         },
       });
 
+      // 为每个卡片创建独立的丝滑动画
       animationConfig.forEach(({ index, delay }) => {
         const itemRef = itemRefs.current[index];
         if (itemRef) {
-          // 统一设置为从下方出现
-          gsap.set(itemRef, { y: 60, opacity: 0, scale: 0.9 });
-
           tl.to(
             itemRef,
             {
               y: 0,
               opacity: 1,
-              scale: 1,
-              duration: 0.8,
-              ease: "power3.out",
+              duration: 1.2,
+              ease: "power4.out", // 更流畅的缓动函数
             },
             delay
           );
         }
       });
 
-      // 为每个媒体项添加 hover 效果
+      // 为每个媒体项添加微妙的 hover 效果
       itemRefs.current.forEach((itemRef) => {
         if (itemRef) {
           const handleMouseEnter = () => {
             gsap.to(itemRef, {
-              scale: 1.03,
-              y: -5,
-              duration: 0.4,
+              scale: 1.02,
+              y: -3,
+              duration: 0.6,
               ease: "power2.out",
             });
           };
@@ -193,20 +190,25 @@ const MediaPreview = ({ onEnter, onLeave }) => {
             gsap.to(itemRef, {
               scale: 1,
               y: 0,
-              duration: 0.4,
+              duration: 0.6,
               ease: "power2.out",
             });
           };
 
           itemRef.addEventListener("mouseenter", handleMouseEnter);
           itemRef.addEventListener("mouseleave", handleMouseLeave);
-
-          return () => {
-            itemRef.removeEventListener("mouseenter", handleMouseEnter);
-            itemRef.removeEventListener("mouseleave", handleMouseLeave);
-          };
         }
       });
+
+      // 清理函数
+      return () => {
+        itemRefs.current.forEach((itemRef) => {
+          if (itemRef) {
+            itemRef.removeEventListener("mouseenter", () => {});
+            itemRef.removeEventListener("mouseleave", () => {});
+          }
+        });
+      };
     }, containerRef);
 
     return () => ctx.revert();

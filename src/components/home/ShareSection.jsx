@@ -37,9 +37,9 @@ const ShareSection = () => {
   useEffect(() => {
     const ctx = gsap.context(() => {
       // 获取标题内容区域的子元素
-      const titleContent = leftContentRef.current.querySelector('.space-y-6');
-      const mainTitle = titleContent?.querySelector('h2');
-      const subtitle = titleContent?.querySelector('p');
+      const titleContent = leftContentRef.current.querySelector(".space-y-6");
+      const mainTitle = titleContent?.querySelector("h2");
+      const subtitle = titleContent?.querySelector("p");
 
       // 创建协调的入场动画时间线
       const tl = gsap.timeline({
@@ -134,15 +134,15 @@ const ShareSection = () => {
           const maxScrollDistance =
             rightContentScrollHeight - rightContentClientHeight;
 
-          // 调试信息：输出滚动区域的尺寸参数
-          console.log(
-            "ScrollHeight:",
-            rightContentScrollHeight,
-            "ClientHeight:",
-            rightContentClientHeight,
-            "MaxScroll:",
-            maxScrollDistance
-          );
+          // // 调试信息：输出滚动区域的尺寸参数
+          // console.log(
+          //   "ScrollHeight:",
+          //   rightContentScrollHeight,
+          //   "ClientHeight:",
+          //   rightContentClientHeight,
+          //   "MaxScroll:",
+          //   maxScrollDistance
+          // );
 
           if (maxScrollDistance <= 0) {
             console.warn("No scroll distance available");
@@ -165,13 +165,14 @@ const ShareSection = () => {
               const scrollAmount = progress * maxScrollDistance;
               if (rightContentRef.current) {
                 rightContentRef.current.scrollTop = scrollAmount;
-                // 调试信息：输出滚动进度和滚动量
-                console.log(
-                  "Scroll progress:",
-                  progress,
-                  "Scroll amount:",
-                  scrollAmount
-                );
+                
+                // // 调试信息：输出滚动进度和滚动量
+                // console.log(
+                //   "Scroll progress:",
+                //   progress,
+                //   "Scroll amount:",
+                //   scrollAmount
+                // );
               }
 
               setRightScrollProgress(progress);
@@ -210,9 +211,9 @@ const ShareSection = () => {
                   ref={decorLineRef}
                   className="w-1.5 h-40 bg-gradient-to-b from-primary via-primary to-primary/60 rounded-full shadow-lg shadow-primary/20"
                   style={{
-                    transformOrigin: 'top center',
-                    transform: 'scaleY(0)',
-                    opacity: 0
+                    transformOrigin: "top center",
+                    transform: "scaleY(0)",
+                    opacity: 0,
                   }}
                 ></div>
               </div>

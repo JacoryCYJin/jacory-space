@@ -15,7 +15,7 @@ export const aboutTexts = {
     skills: {
       fullstack: [
         "React",
-        "Vue", 
+        "Vue",
         "TypeScript",
         "Springboot",
         "MySQL",
@@ -53,7 +53,7 @@ export const aboutTexts = {
         period: "2017 - 2021",
       },
     ],
-    interests: ["阅读", "摄影", "旅行", "开源贡献", "技术写作"],
+    interests: ["阅读", "摄影", "咖啡", "旅行", "开源贡献", "技术写作"],
     contact: {
       email: "hello@jacory.space",
       github: "https://github.com/jacory",
@@ -77,7 +77,7 @@ export const aboutTexts = {
     skills: {
       fullstack: [
         "React",
-        "Vue", 
+        "Vue",
         "TypeScript",
         "Springboot",
         "MySQL",
@@ -115,7 +115,7 @@ export const aboutTexts = {
         period: "2017 - 2021",
       },
     ],
-    interests: ["閱讀", "攝影", "旅行", "開源貢獻", "技術寫作"],
+    interests: ["閱讀", "攝影", "咖啡", "旅行", "開源貢獻", "技術寫作"],
     contact: {
       email: "hello@jacory.space",
       github: "https://github.com/jacory",
@@ -130,7 +130,8 @@ export const aboutTexts = {
     bio: "I'm a passionate full-stack developer focused on modern web development technologies. I love exploring new tech, sharing insights, and creating value through code.",
     sections: {
       skills: "Skills & Expertise",
-      skillsSubtitle: "Covering video editing, design development, frontend & backend development, and animation design",
+      skillsSubtitle:
+        "Covering video editing, design development, frontend & backend development, and animation design",
       experience: "Work Experience",
       education: "Education",
       interests: "Interests",
@@ -139,7 +140,7 @@ export const aboutTexts = {
     skills: {
       fullstack: [
         "React",
-        "Vue", 
+        "Vue",
         "TypeScript",
         "Spring Boot",
         "MySQL",
@@ -182,6 +183,7 @@ export const aboutTexts = {
     interests: [
       "Reading",
       "Photography",
+      "Coffee",
       "Travel",
       "Open Source",
       "Tech Writing",
