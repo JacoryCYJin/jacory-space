@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --olive: #6b7a2e;
+  --olive-dark: #556123;
+  --paper: #f3e9d2;
+  --paper-soft: #efe2c3;
+  --accent-orange: #b75e22;
+  --accent-orange-dark: #964a19;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #2f2a1f;
+}
