@@ -4,7 +4,7 @@
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-gray-900 mb-2">🎬 视频解析下载工具</h1>
         <p class="text-gray-600">支持 Bilibili、YouTube 等多平台视频解析</p>
-        <p class="text-gray-500 text-sm mt-2">💡 提示：Bilibili 支持最佳，YouTube 可能受限</p>
+        <p class="text-gray-500 text-sm mt-2">💡 提示：支持 Bilibili、YouTube 等多平台视频解析与下载</p>
       </div>
 
       <div class="text-center mb-4 flex justify-center gap-2">
@@ -56,9 +56,11 @@
         <div v-if="videoInfo" class="mt-6">
           <div class="flex gap-6 mb-6 pb-6 border-b-2 border-gray-100">
             <img
-              v-if="videoInfo.thumbnail"
-              :src="videoInfo.thumbnail"
+              v-if="videoInfo.thumbnail_proxy || videoInfo.thumbnail"
+              :src="videoInfo.thumbnail_proxy || videoInfo.thumbnail"
               alt="视频缩略图"
+              referrerpolicy="no-referrer"
+              crossorigin="anonymous"
               class="w-64 h-auto rounded-lg shadow-md"
             />
             <div class="flex-1">
@@ -83,7 +85,7 @@
                   <span class="text-gray-600 text-sm">大小: {{ format.filesize_mb }} MB</span>
                 </div>
                 <button
-                  @click="downloadVideo(format.resolution)"
+                  @click="downloadVideo(format)"
                   :disabled="downloading[format.resolution]"
                   class="px-5 py-2 bg-[#6b7a2e] text-white rounded-lg font-medium hover:bg-[#556123] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                 >
@@ -269,6 +271,7 @@ const parseVideo = async () => {
   try {
     const response = await axios.post('/api/parse', { url })
     videoInfo.value = response.data
+    videoUrl.value = response.data?.source_url || url
   } catch (err) {
     error.value = err.response?.data?.error || '解析失败: ' + err.message
   } finally {
@@ -276,7 +279,8 @@ const parseVideo = async () => {
   }
 }
 
-const downloadVideo = async (resolution) => {
+const downloadVideo = async (format) => {
+  const resolution = format?.resolution || ''
   downloading[resolution] = true
   error.value = ''
   success.value = `正在下载 ${resolution} 版本...`
@@ -284,6 +288,7 @@ const downloadVideo = async (resolution) => {
     const response = await axios.post('/api/download', {
       url: videoUrl.value,
       resolution,
+      format_id: format?.format_id || '',
       output_dir: downloadDirOverride.value.trim() || undefined
     })
     success.value = `下载完成！文件保存在: ${response.data.path}`
@@ -349,9 +354,10 @@ const chooseFolderForOnce = async () => {
 }
 
 const formatDuration = (seconds) => {
-  const h = Math.floor(seconds / 3600)
-  const m = Math.floor((seconds % 3600) / 60)
-  const s = seconds % 60
+  const total = Math.max(0, Math.round(Number(seconds) || 0))
+  const h = Math.floor(total / 3600)
+  const m = Math.floor((total % 3600) / 60)
+  const s = total % 60
   if (h > 0) return `${h}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`
   return `${m}:${s.toString().padStart(2, '0')}`
 }
