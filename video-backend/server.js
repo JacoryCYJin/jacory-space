@@ -16,6 +16,13 @@ const dataDir = path.join(__dirname, 'data')
 const usersDir = path.join(dataDir, 'users')
 const downloadsRootDir = path.join(__dirname, 'downloads')
 const systemDownloadsDir = path.join(os.homedir(), 'Downloads')
+const preferredYtDlpBins = [
+  process.env.YTDLP_BIN,
+  '/opt/homebrew/bin/yt-dlp',
+  '/usr/local/bin/yt-dlp',
+  'yt-dlp'
+].filter(Boolean)
+const ytDlpBin = preferredYtDlpBins.find((bin) => bin === 'yt-dlp' || fs.existsSync(bin))
 
 fs.mkdirSync(usersDir, { recursive: true })
 fs.mkdirSync(downloadsRootDir, { recursive: true })
@@ -47,6 +54,23 @@ const detectPlatform = (url) => {
   } catch {
     return 'default'
   }
+}
+
+const normalizeVideoInput = (input) => {
+  const raw = String(input || '').trim()
+  if (!raw) return ''
+
+  const bvMatch = raw.match(/^(BV[0-9A-Za-z]{10})$/i)
+  if (bvMatch) {
+    return `https://www.bilibili.com/video/${bvMatch[1]}`
+  }
+
+  const avMatch = raw.match(/^(av\d+)$/i)
+  if (avMatch) {
+    return `https://www.bilibili.com/video/${avMatch[1].toLowerCase()}`
+  }
+
+  return raw
 }
 
 const userHomeDir = (clientId) => path.join(usersDir, clientId)
@@ -108,6 +132,11 @@ const saveUserSettings = (clientId, settings) => {
 }
 
 app.use((req, res, next) => {
+  // Image tags cannot send custom headers like x-client-id.
+  if (req.path === '/api/thumbnail') {
+    return next()
+  }
+
   const clientId = sanitizeClientId(req.header('x-client-id'))
   if (!clientId) {
     return res.status(400).json({ error: '缺少或无效的 x-client-id 请求头' })
@@ -118,12 +147,26 @@ app.use((req, res, next) => {
   next()
 })
 
-const getYtDlpArgs = (clientId, url, extraArgs = []) => {
+const getYtDlpArgs = (clientId, url, extraArgs = [], options = {}) => {
   const platform = detectPlatform(url)
   const cookiePath = cookiesPathFor(clientId, platform)
+  const hasCookies = fs.existsSync(cookiePath)
+  const useCookies = options.useCookies !== false
+  const cookiesFromBrowser = String(options.cookiesFromBrowser || '').trim()
   const args = [...extraArgs]
 
-  if (fs.existsSync(cookiePath)) {
+  // YouTube client selection must match cookie capability.
+  if (platform === 'youtube') {
+    const willUseAnyCookies = (useCookies && hasCookies) || !!cookiesFromBrowser
+    if (!willUseAnyCookies) {
+      args.push('--extractor-args', 'youtube:player_client=android,web')
+    }
+    args.push('--add-header', 'Referer:https://www.youtube.com/')
+  }
+
+  if (cookiesFromBrowser) {
+    args.push('--cookies-from-browser', cookiesFromBrowser)
+  } else if (useCookies && hasCookies) {
     args.push('--cookies', cookiePath)
   }
 
@@ -131,9 +174,33 @@ const getYtDlpArgs = (clientId, url, extraArgs = []) => {
   return args
 }
 
+const normalizeThumbnail = (info) => {
+  if (info?.thumbnail && String(info.thumbnail).trim()) {
+    const raw = String(info.thumbnail).trim()
+    if (raw.startsWith('http://')) return raw.replace('http://', 'https://')
+    if (raw.startsWith('//')) return `https:${raw}`
+    return raw
+  }
+  if (Array.isArray(info?.thumbnails) && info.thumbnails.length > 0) {
+    const last = info.thumbnails[info.thumbnails.length - 1]
+    const raw = String(last?.url || '').trim()
+    if (!raw) return ''
+    if (raw.startsWith('http://')) return raw.replace('http://', 'https://')
+    if (raw.startsWith('//')) return `https:${raw}`
+    return raw
+  }
+  return ''
+}
+
+const buildThumbnailProxyUrl = (thumbnailUrl) => {
+  const raw = String(thumbnailUrl || '').trim()
+  if (!raw) return ''
+  return `/api/thumbnail?url=${encodeURIComponent(raw)}`
+}
+
 const runYtDlp = (args) => {
   return new Promise((resolve, reject) => {
-    const child = spawn('yt-dlp', args)
+    const child = spawn(ytDlpBin, args)
     let stdout = ''
     let stderr = ''
 
@@ -159,16 +226,41 @@ const runYtDlp = (args) => {
   })
 }
 
-const toUniqueFormats = (formats = []) => {
+const estimateSizeBytes = (format, duration) => {
+  const explicitSize = Number(format?.filesize || format?.filesize_approx || 0)
+  if (explicitSize > 0) return { bytes: explicitSize, estimated: false }
+
+  const bitrateKbps = Number(format?.tbr || 0)
+  const durationSeconds = Number(duration || 0)
+  if (bitrateKbps > 0 && durationSeconds > 0) {
+    return { bytes: (bitrateKbps * 1000 * durationSeconds) / 8, estimated: true }
+  }
+
+  return { bytes: 0, estimated: false }
+}
+
+const formatSizeMb = ({ bytes, estimated }) => {
+  if (!bytes || bytes <= 0) return '未知'
+  const sizeMb = (bytes / 1024 / 1024).toFixed(2)
+  return estimated ? `约 ${sizeMb}` : sizeMb
+}
+
+const toUniqueFormats = (formats = [], duration = 0) => {
   const byResolution = new Map()
+  const allowedExt = new Set(['mp4', 'webm', 'mkv'])
 
   for (const f of formats) {
     if (!f || !f.height) continue
-    if (!f.ext) continue
+    if (!f.ext || !allowedExt.has(String(f.ext).toLowerCase())) continue
+    if (Number(f.height) < 144) continue
+    if (String(f.format_note || '').toLowerCase().includes('storyboard')) continue
+    if (!f.vcodec || f.vcodec === 'none') continue
 
     const resolution = `${f.height}p`
     const existing = byResolution.get(resolution)
     const score = Number(f.tbr || 0)
+
+    const size = estimateSizeBytes(f, duration)
 
     if (!existing || score > existing.score) {
       byResolution.set(resolution, {
@@ -178,7 +270,9 @@ const toUniqueFormats = (formats = []) => {
           resolution,
           format_note: f.format_note || '',
           ext: f.ext,
-          filesize_mb: f.filesize ? (f.filesize / 1024 / 1024).toFixed(2) : '未知'
+          filesize_mb: formatSizeMb(size),
+          has_audio: f.acodec && f.acodec !== 'none',
+          has_video: f.vcodec && f.vcodec !== 'none'
         }
       })
     }
@@ -247,34 +341,114 @@ app.post('/api/folder-dialog', async (_req, res) => {
 
 app.post('/api/parse', async (req, res) => {
   try {
-    const url = req.body?.url?.trim()
+    const url = normalizeVideoInput(req.body?.url)
     if (!url) {
       return res.status(400).json({ error: '缺少 url 参数' })
     }
 
-    const { stdout } = await runYtDlp(getYtDlpArgs(req.clientId, url, ['-J']))
+    const isYoutube = detectPlatform(url) === 'youtube'
+    let stdout = ''
+    try {
+      const result = await runYtDlp(getYtDlpArgs(req.clientId, url, ['-J']))
+      stdout = result.stdout
+    } catch (firstError) {
+      const msg = String(firstError?.message || '')
+      const blocked = msg.includes('Sign in to confirm you’re not a bot') || msg.includes('HTTP Error 403')
+      if (!(isYoutube && blocked)) throw firstError
+
+      try {
+        const retryNoCookies = await runYtDlp(
+          getYtDlpArgs(req.clientId, url, ['-J'], { useCookies: false })
+        )
+        stdout = retryNoCookies.stdout
+      } catch (_secondError) {
+        try {
+          const retrySafari = await runYtDlp(
+            getYtDlpArgs(req.clientId, url, ['-J'], { useCookies: false, cookiesFromBrowser: 'safari' })
+          )
+          stdout = retrySafari.stdout
+        } catch (_safariError) {
+          const retryChrome = await runYtDlp(
+            getYtDlpArgs(req.clientId, url, ['-J'], { useCookies: false, cookiesFromBrowser: 'chrome' })
+          )
+          stdout = retryChrome.stdout
+        }
+      }
+    }
+
     const info = JSON.parse(stdout)
-    const formats = toUniqueFormats(info.formats)
+    const formats = toUniqueFormats(info.formats, info.duration)
 
     if (!formats.length) {
       return res.status(400).json({ error: '未获取到可下载分辨率，请尝试设置对应平台 Cookies' })
     }
 
+    const thumbnail = normalizeThumbnail(info)
     res.json({
       title: info.title,
-      thumbnail: info.thumbnail,
+      thumbnail,
+      thumbnail_proxy: buildThumbnailProxyUrl(thumbnail),
       duration: info.duration,
+      source_url: url,
       formats
     })
   } catch (error) {
-    res.status(500).json({ error: `解析失败: ${error.message}` })
+    const msg = String(error?.message || '')
+    if (msg.includes('Sign in to confirm you’re not a bot')) {
+      return res.status(500).json({
+        error: '解析失败: YouTube 触发了机器人校验，请在 Cookies 设置里更新 YouTube cookies 后重试。'
+      })
+    }
+    res.status(500).json({ error: `解析失败: ${msg}` })
+  }
+})
+
+app.get('/api/thumbnail', async (req, res) => {
+  try {
+    const raw = String(req.query?.url || '').trim()
+    if (!raw) return res.status(400).json({ error: '缺少封面 url 参数' })
+
+    let target = raw
+    if (target.startsWith('//')) target = `https:${target}`
+    if (!/^https?:\/\//i.test(target)) {
+      return res.status(400).json({ error: '无效的封面 url' })
+    }
+
+    const host = new URL(target).hostname.toLowerCase()
+    let referer = 'https://www.youtube.com/'
+    if (host.includes('bilibili.com') || host.includes('hdslb.com')) {
+      referer = 'https://www.bilibili.com/'
+    }
+
+    const response = await fetch(target, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+        Referer: referer,
+        Accept: 'image/avif,image/webp,image/apng,image/*,*/*;q=0.8'
+      }
+    })
+
+    if (!response.ok) {
+      return res.status(502).json({ error: `封面获取失败: HTTP ${response.status}` })
+    }
+
+    const contentType = response.headers.get('content-type') || 'image/jpeg'
+    const arr = await response.arrayBuffer()
+    const buf = Buffer.from(arr)
+
+    res.setHeader('Content-Type', contentType)
+    res.setHeader('Cache-Control', 'public, max-age=3600')
+    res.send(buf)
+  } catch (error) {
+    res.status(500).json({ error: `封面获取失败: ${error.message}` })
   }
 })
 
 app.post('/api/download', async (req, res) => {
   try {
-    const url = req.body?.url?.trim()
+    const url = normalizeVideoInput(req.body?.url)
     const resolution = req.body?.resolution?.trim()
+    const formatId = String(req.body?.format_id || '').trim()
 
     if (!url || !resolution) {
       return res.status(400).json({ error: '缺少 url 或 resolution 参数' })
@@ -289,21 +463,60 @@ app.post('/api/download', async (req, res) => {
     const targetDir = normalizeOutputDir(req.body?.output_dir || userSettings.default_download_dir, req.clientId)
     fs.mkdirSync(targetDir, { recursive: true })
 
-    const formatSelector = `bestvideo[height<=${height}]+bestaudio/best[height<=${height}]`
+    const formatSelector = formatId
+      ? `${formatId}/best[height<=${height}][vcodec!=none][acodec!=none]/best[height<=${height}]/best`
+      : `best[height<=${height}][vcodec!=none][acodec!=none]/bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`
     const outputTemplate = path.join(targetDir, '%(title).140B-%(id)s.%(ext)s')
 
-    const { stdout } = await runYtDlp(
-      getYtDlpArgs(req.clientId, url, [
-        '-f',
-        formatSelector,
-        '--merge-output-format',
-        'mp4',
-        '-o',
-        outputTemplate,
-        '--print',
-        'after_move:filepath'
-      ])
-    )
+    const baseArgs = [
+      '-f',
+      formatSelector,
+      '--merge-output-format',
+      'mp4',
+      '-o',
+      outputTemplate,
+      '--print',
+      'after_move:filepath'
+    ]
+
+    let stdout = ''
+    const isYoutube = detectPlatform(url) === 'youtube'
+    try {
+      const result = await runYtDlp(getYtDlpArgs(req.clientId, url, baseArgs))
+      stdout = result.stdout
+    } catch (firstError) {
+      const msg = String(firstError?.message || '')
+      const is403 = msg.includes('HTTP Error 403') || msg.includes('Forbidden')
+      const isBotGate = msg.includes('Sign in to confirm you’re not a bot')
+
+      if (!(isYoutube && (is403 || isBotGate))) {
+        throw firstError
+      }
+
+      try {
+        const retryNoCookies = await runYtDlp(
+          getYtDlpArgs(req.clientId, url, baseArgs, { useCookies: false })
+        )
+        stdout = retryNoCookies.stdout
+      } catch (secondError) {
+        const secondMsg = String(secondError?.message || '')
+        const stillBlocked = secondMsg.includes('Sign in to confirm you’re not a bot') || secondMsg.includes('HTTP Error 403')
+        if (!stillBlocked) throw secondError
+
+        // On macOS, try browser cookie extraction as final fallback.
+        try {
+          const retrySafari = await runYtDlp(
+            getYtDlpArgs(req.clientId, url, baseArgs, { useCookies: false, cookiesFromBrowser: 'safari' })
+          )
+          stdout = retrySafari.stdout
+        } catch (_safariError) {
+          const retryChrome = await runYtDlp(
+            getYtDlpArgs(req.clientId, url, baseArgs, { useCookies: false, cookiesFromBrowser: 'chrome' })
+          )
+          stdout = retryChrome.stdout
+        }
+      }
+    }
 
     const savedPath = stdout
       .split('\n')
@@ -317,7 +530,13 @@ app.post('/api/download', async (req, res) => {
       output_dir: targetDir
     })
   } catch (error) {
-    res.status(500).json({ error: `下载失败: ${error.message}` })
+    const msg = String(error?.message || '')
+    if (msg.includes('Sign in to confirm you’re not a bot')) {
+      return res.status(500).json({
+        error: '下载失败: YouTube 触发了机器人校验，请先在 Cookies 设置里更新 YouTube cookies（建议重新导出）后重试。'
+      })
+    }
+    res.status(500).json({ error: `下载失败: ${msg}` })
   }
 })
 
