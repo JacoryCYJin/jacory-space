@@ -2,12 +2,18 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
 import VideoParser from '../views/VideoParser.vue'
 import About from '../views/About.vue'
+import ColorPalette from '../views/ColorPalette.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/colors',
+    name: 'ColorPalette',
+    component: ColorPalette
   },
   {
     path: '/video-parser',

@@ -12,6 +12,7 @@
         <div class="hidden md:flex items-center space-x-8">
           <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">首页</router-link>
           <router-link to="/video-parser" class="nav-link" :class="{ active: $route.path === '/video-parser' }">视频解析</router-link>
+          <router-link to="/colors" class="nav-link" :class="{ active: $route.path === '/colors' }">配色</router-link>
           <router-link to="/about" class="nav-link" :class="{ active: $route.path === '/about' }">关于我</router-link>
         </div>
 
@@ -30,6 +31,7 @@
       <div class="px-2 pt-2 pb-3 space-y-1">
         <router-link to="/" class="mobile-nav-link" @click="mobileMenuOpen = false">首页</router-link>
         <router-link to="/video-parser" class="mobile-nav-link" @click="mobileMenuOpen = false">视频解析</router-link>
+        <router-link to="/colors" class="mobile-nav-link" @click="mobileMenuOpen = false">配色</router-link>
         <router-link to="/about" class="mobile-nav-link" @click="mobileMenuOpen = false">关于我</router-link>
       </div>
     </div>
