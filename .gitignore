@@ -43,5 +43,6 @@ video-backend/data/cookies/
 __pycache__/
 *.pyc
 
-# Local cursor rules
-.cursor/rule/
+# Cursor project config
+!.cursor/
+!.cursor/**
