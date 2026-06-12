@@ -28,21 +28,26 @@
       <!-- 工具展示 -->
       <div class="mt-20 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         <div class="bg-white rounded-xl border border-gray-200 p-6 hover:border-[#d6ddbe] transition-colors">
-          <div class="text-4xl mb-4">🎬</div>
+          <div class="mb-4 text-[#b75e22]">
+            <Clapperboard class="h-10 w-10" />
+          </div>
           <h3 class="text-xl font-bold text-gray-800 mb-2">视频解析工具</h3>
           <p class="text-gray-600 mb-4">
             支持多平台视频解析，提供多种分辨率下载选项
           </p>
           <router-link
             to="/video-parser"
-            class="text-[#6b7a2e] font-medium hover:text-[#556123]"
+            class="inline-flex items-center gap-1 text-[#6b7a2e] font-medium hover:text-[#556123]"
           >
-            立即使用 →
+            <span>立即使用</span>
+            <ArrowRight class="h-4 w-4" />
           </router-link>
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 p-6 hover:border-[#d6ddbe] transition-colors opacity-80">
-          <div class="text-4xl mb-4">📝</div>
+          <div class="mb-4 text-[#6b7a2e]">
+            <FileText class="h-10 w-10" />
+          </div>
           <h3 class="text-xl font-bold text-gray-800 mb-2">博客文章</h3>
           <p class="text-gray-600 mb-4">
             技术分享、学习笔记、生活感悟
@@ -51,7 +56,9 @@
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 p-6 hover:border-[#d6ddbe] transition-colors opacity-80">
-          <div class="text-4xl mb-4">🛠️</div>
+          <div class="mb-4 text-[#6b7a2e]">
+            <Wrench class="h-10 w-10" />
+          </div>
           <h3 class="text-xl font-bold text-gray-800 mb-2">更多工具</h3>
           <p class="text-gray-600 mb-4">
             持续开发中，敬请期待
@@ -64,4 +71,5 @@
 </template>
 
 <script setup>
+import { ArrowRight, Clapperboard, FileText, Wrench } from 'lucide-vue-next'
 </script>

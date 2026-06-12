@@ -15,11 +15,11 @@ alwaysApply: false
 - 按钮、导航、卡片装饰、状态提示等，一律走 icon
 
 ```vue
-<!-- ❌ BAD -->
+<!-- BAD -->
 <button>🔑 Cookies 设置</button>
 <span class="text-2xl">📺</span>
 
-<!-- ✅ GOOD -->
+<!-- GOOD -->
 <button>
   <KeyIcon class="w-4 h-4" />
   Cookies 设置
