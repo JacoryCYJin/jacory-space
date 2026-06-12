@@ -1,0 +1,38 @@
+---
+description: Jacory Space Git 分支、提交和 PR 规范
+alwaysApply: true
+---
+
+# git-rule
+
+## Branch Naming
+
+- 不在 `main` 上直接提交代码改动；先创建任务分支。
+- 分支格式：`<type>/<short-kebab-desc>`。
+- 常用前缀：
+  - `feature/`：新增功能或明显能力增强
+  - `fix/`：修复 bug、异常、回归问题
+  - `chore/`：脚本、配置、依赖、工具维护
+  - `docs/`：只改文档或说明
+- 示例：
+  - `feature/browser-cookie-mode`
+  - `fix/bilibili-parse-timeout`
+  - `chore/dev-script`
+  - `docs/agent-rules`
+
+## Commit Message
+
+- 使用一行提交信息。
+- 格式：`<type>: 中文描述`。
+- 常用类型：`feat`、`fix`、`chore`、`docs`。
+- 示例：
+  - `feat: 支持浏览器 Cookie 模式`
+  - `fix: 修复哔哩哔哩解析失败`
+  - `chore: 新增开发服务脚本`
+  - `docs: 补充 Agent 协作规范`
+
+## Workflow
+
+- 提交前先看 `git status`，不要把本地运行时数据、下载文件、个人文档提交进仓库。
+- 创建 PR 时总结主要改动和验证方式。
+- 合并后切回 `main` 并 `git pull origin main`。
