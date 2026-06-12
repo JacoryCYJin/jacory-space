@@ -35,4 +35,6 @@ alwaysApply: true
 
 - 提交前先看 `git status`，不要把本地运行时数据、下载文件、个人文档提交进仓库。
 - 创建 PR 时总结主要改动和验证方式。
-- 合并后切回 `main` 并 `git pull origin main`。
+- 提交后如需提 PR：先 `git push -u origin HEAD`，再创建 PR，并把 PR 链接返回给用户手动检查。
+- **禁止自动合并 PR**：Agent 不得自行执行 `gh pr merge`；只有用户明确发出“现在合并”指令后才可执行。
+- PR 合并完成后切回 `main` 并 `git pull origin main`。

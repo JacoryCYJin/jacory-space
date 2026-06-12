@@ -2,23 +2,31 @@
   <div class="min-h-screen bg-white py-10 px-4">
     <div class="max-w-4xl mx-auto">
       <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">🎬 视频解析下载工具</h1>
+        <h1 class="text-4xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-3">
+          <Clapperboard class="h-10 w-10 text-[#b75e22]" />
+          <span>视频解析下载工具</span>
+        </h1>
         <p class="text-gray-600">支持 Bilibili、YouTube 等多平台视频解析</p>
-        <p class="text-gray-500 text-sm mt-2">💡 提示：支持 Bilibili、YouTube 等多平台视频解析与下载</p>
+        <p class="text-gray-500 text-sm mt-2 inline-flex items-center gap-1">
+          <Lightbulb class="h-4 w-4" />
+          <span>提示：支持 Bilibili、YouTube 等多平台视频解析与下载</span>
+        </p>
       </div>
 
       <div class="text-center mb-4 flex justify-center gap-2">
         <button
           @click="openCookiesModal"
-          class="px-4 py-2 bg-[#f7f8f3] hover:bg-[#eef2e2] text-[#445122] rounded-lg border border-[#d8dfc0] transition-colors text-sm font-medium"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-[#f7f8f3] hover:bg-[#eef2e2] text-[#445122] rounded-lg border border-[#d8dfc0] transition-colors text-sm font-medium"
         >
-          🔑 Cookies 设置
+          <Key class="h-4 w-4" />
+          <span>Cookies 设置</span>
         </button>
         <button
           @click="openDownloadSettingsModal"
-          class="px-4 py-2 bg-[#f7f8f3] hover:bg-[#eef2e2] text-[#445122] rounded-lg border border-[#d8dfc0] transition-colors text-sm font-medium"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-[#f7f8f3] hover:bg-[#eef2e2] text-[#445122] rounded-lg border border-[#d8dfc0] transition-colors text-sm font-medium"
         >
-          📁 下载目录设置
+          <FolderOpen class="h-4 w-4" />
+          <span>下载目录设置</span>
         </button>
       </div>
 
@@ -106,7 +114,9 @@
       <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full p-6 max-h-[90vh] overflow-y-auto">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-2xl font-bold text-gray-800">Cookies 管理</h3>
-          <button @click="showCookiesModal = false" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+          <button @click="showCookiesModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <X class="h-6 w-6" />
+          </button>
         </div>
 
         <div class="p-4 rounded-lg border border-[#d8dfc0] bg-[#f7f8f3] mb-6">
@@ -152,8 +162,14 @@
         <div class="grid md:grid-cols-2 gap-4 mb-6">
           <div class="border-2 rounded-lg p-4" :class="cookiesInfo.youtube?.has_cookies ? 'border-green-500 bg-green-50' : 'border-gray-200'">
             <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2"><span class="text-2xl">📺</span><span class="font-bold text-gray-800">YouTube</span></div>
-              <span v-if="cookiesInfo.youtube?.has_cookies" class="text-green-600 text-sm">✓ 已设置</span>
+              <div class="flex items-center gap-2">
+                <Youtube class="h-6 w-6 text-[#b75e22]" />
+                <span class="font-bold text-gray-800">YouTube</span>
+              </div>
+              <span v-if="cookiesInfo.youtube?.has_cookies" class="inline-flex items-center gap-1 text-green-600 text-sm">
+                <Check class="h-4 w-4" />
+                <span>已设置</span>
+              </span>
               <span v-else class="text-gray-400 text-sm">未设置</span>
             </div>
             <div class="flex gap-2">
@@ -166,8 +182,14 @@
 
           <div class="border-2 rounded-lg p-4" :class="cookiesInfo.bilibili?.has_cookies ? 'border-green-500 bg-green-50' : 'border-gray-200'">
             <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2"><span class="text-2xl">📱</span><span class="font-bold text-gray-800">Bilibili</span></div>
-              <span v-if="cookiesInfo.bilibili?.has_cookies" class="text-green-600 text-sm">✓ 已设置</span>
+              <div class="flex items-center gap-2">
+                <MonitorPlay class="h-6 w-6 text-[#b75e22]" />
+                <span class="font-bold text-gray-800">Bilibili</span>
+              </div>
+              <span v-if="cookiesInfo.bilibili?.has_cookies" class="inline-flex items-center gap-1 text-green-600 text-sm">
+                <Check class="h-4 w-4" />
+                <span>已设置</span>
+              </span>
               <span v-else class="text-gray-400 text-sm">未设置</span>
             </div>
             <div class="flex gap-2">
@@ -180,8 +202,14 @@
 
           <div v-for="platform in customPlatforms" :key="platform" class="border-2 rounded-lg p-4" :class="cookiesInfo[platform]?.has_cookies ? 'border-green-500 bg-green-50' : 'border-gray-200'">
             <div class="flex items-center justify-between mb-3">
-              <div class="flex items-center gap-2"><span class="text-2xl">🌐</span><span class="font-bold text-gray-800">{{ platform }}</span></div>
-              <span v-if="cookiesInfo[platform]?.has_cookies" class="text-green-600 text-sm">✓ 已设置</span>
+              <div class="flex items-center gap-2">
+                <Globe class="h-6 w-6 text-[#b75e22]" />
+                <span class="font-bold text-gray-800">{{ platform }}</span>
+              </div>
+              <span v-if="cookiesInfo[platform]?.has_cookies" class="inline-flex items-center gap-1 text-green-600 text-sm">
+                <Check class="h-4 w-4" />
+                <span>已设置</span>
+              </span>
               <span v-else class="text-gray-400 text-sm">未设置</span>
             </div>
             <div class="flex gap-2">
@@ -193,8 +221,8 @@
           </div>
 
           <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center">
-            <button @click="showAddPlatform = true" class="text-gray-500 hover:text-gray-700 transition-colors">
-              <span class="text-3xl">+</span>
+            <button @click="showAddPlatform = true" class="inline-flex flex-col items-center text-gray-500 hover:text-gray-700 transition-colors">
+              <Plus class="h-8 w-8" />
               <p class="text-sm mt-1">添加自定义平台</p>
             </button>
           </div>
@@ -210,7 +238,9 @@
       <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-2xl font-bold text-gray-800">下载目录设置</h3>
-          <button @click="showDownloadSettingsModal = false" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+          <button @click="showDownloadSettingsModal = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <X class="h-6 w-6" />
+          </button>
         </div>
         <div class="space-y-4">
           <div class="p-4 rounded-lg border border-gray-200 bg-gray-50">
@@ -247,9 +277,16 @@
       <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6">
         <div class="flex justify-between items-center mb-4">
           <h3 class="text-xl font-bold text-gray-800">设置 {{ editingPlatform }} Cookies</h3>
-          <button @click="showEditCookies = false" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
+          <button @click="showEditCookies = false" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <X class="h-6 w-6" />
+          </button>
         </div>
-        <div class="mb-3 p-3 bg-[#f6f2e8] rounded-lg text-sm text-gray-700"><p>💡 提示：Cookies 已保存在服务器，刷新页面不会丢失</p></div>
+        <div class="mb-3 p-3 bg-[#f6f2e8] rounded-lg text-sm text-gray-700">
+          <p class="inline-flex items-center gap-1">
+            <Lightbulb class="h-4 w-4" />
+            <span>提示：Cookies 已保存在服务器，刷新页面不会丢失</span>
+          </p>
+        </div>
         <textarea v-model="cookiesText" :placeholder="`粘贴 ${editingPlatform} cookies.txt 内容到这里...`" class="w-full h-64 px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#6b7a2e] font-mono text-sm mb-4"></textarea>
         <div class="flex gap-3">
           <button @click="saveCookies" :disabled="!cookiesText.trim() || savingCookies" class="flex-1 px-6 py-3 bg-[#6b7a2e] text-white rounded-lg font-semibold hover:bg-[#556123] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">{{ savingCookies ? '保存中...' : '保存' }}</button>
@@ -264,6 +301,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import axios from 'axios'
+import { Check, Clapperboard, FolderOpen, Globe, Key, Lightbulb, MonitorPlay, Plus, X, Youtube } from 'lucide-vue-next'
 
 const getClientId = () => {
   const key = 'jacory_client_id'
