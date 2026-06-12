@@ -78,6 +78,8 @@ const userCookiesDir = (clientId) => path.join(userHomeDir(clientId), 'cookies')
 const userSettingsPath = (clientId) => path.join(userHomeDir(clientId), 'settings.json')
 const userDefaultDownloadsDir = (_clientId) => systemDownloadsDir
 const cookiesPathFor = (clientId, platform) => path.join(userCookiesDir(clientId), `${platform}.txt`)
+const cookieModes = new Set(['manual', 'browser', 'none'])
+const browserCookieSources = new Set(['chrome', 'safari', 'firefox', 'edge'])
 
 const ensureUserDirs = (clientId) => {
   fs.mkdirSync(userHomeDir(clientId), { recursive: true })
@@ -107,22 +109,42 @@ const isPathUnder = (targetPath, rootPath) => {
   return rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel))
 }
 
+const normalizeCookieMode = (mode) => {
+  const normalized = String(mode || '').trim().toLowerCase()
+  return cookieModes.has(normalized) ? normalized : 'manual'
+}
+
+const normalizeBrowserCookieSource = (source) => {
+  const normalized = String(source || '').trim().toLowerCase()
+  return browserCookieSources.has(normalized) ? normalized : 'chrome'
+}
+
 const getUserSettings = (clientId) => {
   ensureUserDirs(clientId)
   const settingsFile = userSettingsPath(clientId)
 
   if (!fs.existsSync(settingsFile)) {
-    return { default_download_dir: userDefaultDownloadsDir(clientId) }
+    return {
+      default_download_dir: userDefaultDownloadsDir(clientId),
+      cookie_mode: 'manual',
+      browser_cookie_source: 'chrome'
+    }
   }
 
   try {
     const raw = fs.readFileSync(settingsFile, 'utf8')
     const parsed = JSON.parse(raw)
     return {
-      default_download_dir: normalizeOutputDir(parsed.default_download_dir, clientId)
+      default_download_dir: normalizeOutputDir(parsed.default_download_dir, clientId),
+      cookie_mode: normalizeCookieMode(parsed.cookie_mode),
+      browser_cookie_source: normalizeBrowserCookieSource(parsed.browser_cookie_source)
     }
   } catch {
-    return { default_download_dir: userDefaultDownloadsDir(clientId) }
+    return {
+      default_download_dir: userDefaultDownloadsDir(clientId),
+      cookie_mode: 'manual',
+      browser_cookie_source: 'chrome'
+    }
   }
 }
 
@@ -151,13 +173,18 @@ const getYtDlpArgs = (clientId, url, extraArgs = [], options = {}) => {
   const platform = detectPlatform(url)
   const cookiePath = cookiesPathFor(clientId, platform)
   const hasCookies = fs.existsSync(cookiePath)
+  const settings = getUserSettings(clientId)
+  const cookieMode = normalizeCookieMode(options.cookieMode || settings.cookie_mode)
   const useCookies = options.useCookies !== false
-  const cookiesFromBrowser = String(options.cookiesFromBrowser || '').trim()
+  const cookiesFromBrowser = options.cookiesFromBrowser
+    ? normalizeBrowserCookieSource(options.cookiesFromBrowser)
+    : (useCookies && cookieMode === 'browser' ? settings.browser_cookie_source : '')
+  const shouldUseManualCookies = useCookies && cookieMode === 'manual' && hasCookies
   const args = [...extraArgs]
 
   // YouTube client selection must match cookie capability.
   if (platform === 'youtube') {
-    const willUseAnyCookies = (useCookies && hasCookies) || !!cookiesFromBrowser
+    const willUseAnyCookies = shouldUseManualCookies || !!cookiesFromBrowser
     if (!willUseAnyCookies) {
       args.push('--extractor-args', 'youtube:player_client=android,web')
     }
@@ -166,7 +193,7 @@ const getYtDlpArgs = (clientId, url, extraArgs = [], options = {}) => {
 
   if (cookiesFromBrowser) {
     args.push('--cookies-from-browser', cookiesFromBrowser)
-  } else if (useCookies && hasCookies) {
+  } else if (shouldUseManualCookies) {
     args.push('--cookies', cookiePath)
   }
 
@@ -293,10 +320,15 @@ app.get('/api/settings', (req, res) => {
 })
 
 app.post('/api/settings', (req, res) => {
-  const defaultDir = normalizeOutputDir(req.body?.default_download_dir, req.clientId)
+  const currentSettings = getUserSettings(req.clientId)
+  const defaultDir = normalizeOutputDir(req.body?.default_download_dir ?? currentSettings.default_download_dir, req.clientId)
   fs.mkdirSync(defaultDir, { recursive: true })
 
-  const settings = { default_download_dir: defaultDir }
+  const settings = {
+    default_download_dir: defaultDir,
+    cookie_mode: normalizeCookieMode(req.body?.cookie_mode ?? currentSettings.cookie_mode),
+    browser_cookie_source: normalizeBrowserCookieSource(req.body?.browser_cookie_source ?? currentSettings.browser_cookie_source)
+  }
   saveUserSettings(req.clientId, settings)
   res.json({ message: '默认下载目录保存成功', ...settings })
 })
