@@ -32,6 +32,9 @@ node_modules/
 # Frontend (Vite)
 jacory-space-frontend/dist/
 
+# Local dev runtime
+.dev/
+
 # Backend runtime data
 video-backend/downloads/
 video-backend/data/users/

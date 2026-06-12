@@ -109,6 +109,46 @@
           <button @click="showCookiesModal = false" class="text-gray-400 hover:text-gray-600 text-2xl">×</button>
         </div>
 
+        <div class="p-4 rounded-lg border border-[#d8dfc0] bg-[#f7f8f3] mb-6">
+          <p class="text-sm font-semibold text-gray-700 mb-3">Cookie 使用方式</p>
+          <div class="grid md:grid-cols-3 gap-3">
+            <select v-model="cookieMode" class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#6b7a2e] bg-white">
+              <option value="manual">手动保存 Cookies</option>
+              <option value="browser">自动读取浏览器</option>
+              <option value="none">不使用 Cookies</option>
+            </select>
+            <select
+              v-model="browserCookieSource"
+              :disabled="cookieMode !== 'browser'"
+              class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#6b7a2e] bg-white disabled:bg-gray-100 disabled:text-gray-400"
+            >
+              <option value="chrome">Chrome</option>
+              <option value="safari">Safari</option>
+              <option value="firefox">Firefox</option>
+              <option value="edge">Edge</option>
+            </select>
+            <button
+              @click="saveCookieSettings"
+              :disabled="savingCookieSettings"
+              class="px-4 py-2 bg-[#6b7a2e] text-white rounded-lg text-sm font-medium hover:bg-[#556123] disabled:bg-gray-300"
+            >
+              {{ savingCookieSettings ? '保存中...' : '保存使用方式' }}
+            </button>
+          </div>
+          <p class="text-xs text-gray-600 mt-3">
+            <span v-if="cookieMode === 'browser'">会调用 yt-dlp 的 --cookies-from-browser {{ browserCookieSource }}，请先在对应浏览器登录视频平台。</span>
+            <span v-else-if="cookieMode === 'manual'">使用下方保存到服务器的 cookies.txt，适合无法读取浏览器 Cookie 的场景。</span>
+            <span v-else>公开视频可尝试不使用 Cookies；需要登录的视频可能无法解析。</span>
+          </p>
+          <div
+            v-if="cookieSettingsStatus"
+            class="mt-3 p-3 rounded-lg text-sm"
+            :class="cookieSettingsStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'"
+          >
+            {{ cookieSettingsStatus.message }}
+          </div>
+        </div>
+
         <div class="grid md:grid-cols-2 gap-4 mb-6">
           <div class="border-2 rounded-lg p-4" :class="cookiesInfo.youtube?.has_cookies ? 'border-green-500 bg-green-50' : 'border-gray-200'">
             <div class="flex items-center justify-between mb-3">
@@ -245,6 +285,10 @@ const downloading = reactive({})
 const defaultDownloadDir = ref('')
 const downloadDirOverride = ref('')
 const savingSettings = ref(false)
+const cookieMode = ref('manual')
+const browserCookieSource = ref('chrome')
+const savingCookieSettings = ref(false)
+const cookieSettingsStatus = ref(null)
 
 const showCookiesModal = ref(false)
 const showDownloadSettingsModal = ref(false)
@@ -304,6 +348,8 @@ const loadSettings = async () => {
   try {
     const response = await axios.get('/api/settings')
     defaultDownloadDir.value = response.data.default_download_dir || ''
+    cookieMode.value = response.data.cookie_mode || 'manual'
+    browserCookieSource.value = response.data.browser_cookie_source || 'chrome'
   } catch (err) {
     console.error('加载设置失败', err)
   }
@@ -323,6 +369,22 @@ const saveDefaultDownloadDir = async () => {
     error.value = err.response?.data?.error || '保存默认下载目录失败'
   } finally {
     savingSettings.value = false
+  }
+}
+
+const saveCookieSettings = async () => {
+  savingCookieSettings.value = true
+  cookieSettingsStatus.value = null
+  try {
+    await axios.post('/api/settings', {
+      cookie_mode: cookieMode.value,
+      browser_cookie_source: browserCookieSource.value
+    })
+    cookieSettingsStatus.value = { type: 'success', message: 'Cookie 使用方式已保存' }
+  } catch (err) {
+    cookieSettingsStatus.value = { type: 'error', message: err.response?.data?.error || '保存 Cookie 使用方式失败' }
+  } finally {
+    savingCookieSettings.value = false
   }
 }
 
@@ -435,7 +497,8 @@ const addCustomPlatform = () => {
 
 const openCookiesModal = async () => {
   showCookiesModal.value = true
-  await loadCookiesInfo()
+  cookieSettingsStatus.value = null
+  await Promise.all([loadCookiesInfo(), loadSettings()])
 }
 
 const openDownloadSettingsModal = async () => {

@@ -1,0 +1,30 @@
+---
+description: Jacory Space 前端规范：图标使用 icon，不用 emoji
+globs: jacory-space-frontend/**/*
+alwaysApply: false
+---
+
+# frontend-rule
+
+编辑 `jacory-space-frontend/` 时适用。
+
+## 图标
+
+- **禁止**在 UI 里用 emoji 充当图标（如 🎬 📺 🔑 📁 ✓）
+- **使用 icon**：SVG 组件或 icon 库（如 `@heroicons/vue`、`lucide-vue-next`）
+- 按钮、导航、卡片装饰、状态提示等，一律走 icon
+
+```vue
+<!-- ❌ BAD -->
+<button>🔑 Cookies 设置</button>
+<span class="text-2xl">📺</span>
+
+<!-- ✅ GOOD -->
+<button>
+  <KeyIcon class="w-4 h-4" />
+  Cookies 设置
+</button>
+<MonitorPlayIcon class="w-6 h-6" />
+```
+
+- 新增 icon 依赖时，优先选轻量、与 Tailwind 搭配好的库；不要为单个图标手写大段 SVG，除非项目已有统一 icon 组件
