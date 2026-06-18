@@ -10,9 +10,11 @@
         </div>
 
         <div class="hidden md:flex items-center space-x-8">
-          <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">首页</router-link>
-          <router-link to="/video-parser" class="nav-link" :class="{ active: $route.path === '/video-parser' }">视频解析</router-link>
-          <router-link to="/about" class="nav-link" :class="{ active: $route.path === '/about' }">关于我</router-link>
+          <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">{{ t('nav.home') }}</router-link>
+          <router-link to="/video-parser" class="nav-link" :class="{ active: $route.path === '/video-parser' }">{{ t('nav.videoParser') }}</router-link>
+          <router-link to="/blog" class="nav-link" :class="{ active: $route.path === '/blog' }">{{ t('nav.blog') }}</router-link>
+          <router-link to="/about" class="nav-link" :class="{ active: $route.path === '/about' }">{{ t('nav.about') }}</router-link>
+          <LanguageSwitcher />
         </div>
 
         <div class="md:hidden">
@@ -26,9 +28,13 @@
 
     <div v-if="mobileMenuOpen" class="md:hidden bg-white border-t border-gray-200">
       <div class="px-2 pt-2 pb-3 space-y-1">
-        <router-link to="/" class="mobile-nav-link" @click="mobileMenuOpen = false">首页</router-link>
-        <router-link to="/video-parser" class="mobile-nav-link" @click="mobileMenuOpen = false">视频解析</router-link>
-        <router-link to="/about" class="mobile-nav-link" @click="mobileMenuOpen = false">关于我</router-link>
+        <router-link to="/" class="mobile-nav-link" @click="mobileMenuOpen = false">{{ t('nav.home') }}</router-link>
+        <router-link to="/video-parser" class="mobile-nav-link" @click="mobileMenuOpen = false">{{ t('nav.videoParser') }}</router-link>
+        <router-link to="/blog" class="mobile-nav-link" @click="mobileMenuOpen = false">{{ t('nav.blog') }}</router-link>
+        <router-link to="/about" class="mobile-nav-link" @click="mobileMenuOpen = false">{{ t('nav.about') }}</router-link>
+        <div class="px-3 pt-2">
+          <LanguageSwitcher />
+        </div>
       </div>
     </div>
   </nav>
@@ -36,8 +42,12 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Clapperboard, Menu, X } from 'lucide-vue-next'
+import LanguageSwitcher from './LanguageSwitcher.vue'
+
 const mobileMenuOpen = ref(false)
+const { t } = useI18n()
 </script>
 
 <style scoped>
