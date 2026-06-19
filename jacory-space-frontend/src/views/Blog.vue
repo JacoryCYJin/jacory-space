@@ -1,132 +1,227 @@
 <template>
-  <div class="min-h-screen bg-white py-12 px-4">
-    <div class="max-w-6xl mx-auto">
-      <section class="text-center mb-12">
-        <div class="inline-flex items-center gap-2 px-4 py-2 bg-[#f7f8f3] text-[#556123] rounded-full text-sm font-medium mb-5">
-          <BookOpen class="h-4 w-4" />
-          <span>{{ t('blog.badge') }}</span>
+  <main ref="pageRoot" class="grain min-h-screen bg-background">
+    <section class="px-5 pt-28 md:px-8 md:pt-36">
+      <div class="mx-auto max-w-screen-xl">
+        <div class="reveal blog-reveal flex items-center justify-between border-b border-line pb-4">
+          <span class="font-mono text-xs tracking-[0.16em] text-blue">01 — Journal</span>
+          <span class="tech">14 entries / archive open</span>
         </div>
-        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">{{ t('blog.title') }}</h1>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          {{ t('blog.subtitle') }}
-        </p>
-      </section>
 
-      <section class="grid lg:grid-cols-[1fr_280px] gap-8">
-        <div class="space-y-5">
-          <article
-            v-for="post in posts"
-            :key="post.title"
-            class="bg-white rounded-2xl border border-gray-200 p-6 hover:border-[#d6ddbe] hover:shadow-sm transition-all"
+        <div class="reveal blog-reveal" style="transition-delay: 80ms">
+          <h1
+            class="mt-10 max-w-4xl text-balance font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-7xl"
           >
-            <div class="flex flex-wrap items-center gap-3 text-sm text-gray-500 mb-4">
-              <span class="inline-flex items-center gap-1">
-                <CalendarDays class="h-4 w-4" />
-                {{ post.date }}
-              </span>
-              <span class="inline-flex items-center gap-1">
-                <Clock3 class="h-4 w-4" />
-                {{ post.readingTime }}
-              </span>
-            </div>
+            Field<span class="italic text-blue"> Notes</span>
+          </h1>
+          <p class="mt-6 max-w-md text-pretty text-sm leading-relaxed text-muted-foreground">
+            关于界面、系统与时间的记录。不追求频率,只追求每一篇都值得被归档。
+          </p>
+        </div>
+      </div>
+    </section>
 
-            <h2 class="text-2xl font-bold text-gray-900 mb-3">{{ post.title }}</h2>
-            <p class="text-gray-600 leading-7 mb-5">{{ post.summary }}</p>
-
-            <div class="flex flex-wrap items-center justify-between gap-4">
-              <div class="flex flex-wrap gap-2">
-                <span
-                  v-for="tag in post.tags"
-                  :key="tag"
-                  class="inline-flex items-center gap-1 px-3 py-1 bg-[#f6f2e8] text-[#964a19] rounded-full text-xs font-medium"
-                >
-                  <Tags class="h-3.5 w-3.5" />
-                  {{ tag }}
-                </span>
+    <section class="px-5 py-20 md:px-8 md:py-28">
+      <div class="mx-auto max-w-screen-xl">
+        <div class="reveal blog-reveal">
+          <RouterLink
+            to="/blog"
+            class="group grid gap-8 border-y border-line py-10 lg:grid-cols-12 lg:gap-10"
+          >
+            <div class="flex items-start justify-between lg:col-span-4 lg:flex-col lg:gap-6">
+              <span class="font-mono text-xs text-blue">{{ lead.no }}</span>
+              <div class="text-right lg:text-left">
+                <span class="tech block">{{ lead.cat }}</span>
+                <span class="tech block">{{ lead.date }} / {{ lead.read }}</span>
               </div>
-              <span class="inline-flex items-center gap-1 text-[#6b7a2e] font-medium">
-                {{ t('blog.readMore') }}
-                <ArrowRight class="h-4 w-4" />
+            </div>
+
+            <div class="lg:col-span-8">
+              <h2
+                class="text-balance font-sans text-3xl font-medium leading-tight tracking-tight text-foreground transition-transform duration-500 ease-out group-hover:translate-x-1 md:text-4xl"
+              >
+                {{ lead.title }}
+              </h2>
+              <p class="mt-5 max-w-xl text-pretty text-sm leading-relaxed text-muted-foreground">
+                {{ lead.excerpt }}
+              </p>
+              <span
+                class="mt-6 inline-flex items-center gap-2 font-mono text-xs tracking-[0.14em] text-foreground transition-colors group-hover:text-blue"
+              >
+                Read entry
+                <span class="transition-transform duration-500 ease-out group-hover:translate-x-1">↗</span>
               </span>
             </div>
-          </article>
+          </RouterLink>
+        </div>
+      </div>
+    </section>
+
+    <section class="px-5 pb-28 md:px-8">
+      <div class="mx-auto max-w-screen-xl">
+        <div class="reveal blog-reveal mb-4 flex items-center justify-between">
+          <span class="tech">Archive — All Entries</span>
+          <span class="tech">↓ scroll</span>
         </div>
 
-        <aside class="space-y-5">
-          <div class="rounded-2xl border border-gray-200 p-6 bg-[#fbfaf7]">
-            <div class="flex items-center gap-2 text-gray-900 font-bold mb-4">
-              <Search class="h-5 w-5 text-[#6b7a2e]" />
-              <span>{{ t('blog.directionTitle') }}</span>
-            </div>
-            <div class="space-y-3">
-              <div
-                v-for="category in categories"
-                :key="category.name"
-                class="flex items-center justify-between text-sm"
+        <ul class="border-t border-line">
+          <li
+            v-for="(entry, index) in entries"
+            :key="entry.no"
+            class="reveal blog-reveal"
+            :style="{ transitionDelay: `${index * 60}ms` }"
+          >
+            <RouterLink
+              to="/blog"
+              class="group grid grid-cols-12 items-center gap-2 border-b border-line py-6 transition-colors duration-300 hover:bg-card"
+            >
+              <span class="col-span-3 font-mono text-xs text-blue md:col-span-2">
+                {{ entry.no }}
+              </span>
+              <span
+                class="col-span-9 text-balance text-base font-medium tracking-tight text-foreground transition-transform duration-300 group-hover:translate-x-1 md:col-span-6 md:text-lg"
               >
-                <span class="text-gray-600">{{ category.name }}</span>
-                <span class="text-[#b75e22] font-semibold">{{ category.count }}</span>
-              </div>
-            </div>
-          </div>
+                {{ entry.title }}
+              </span>
+              <span class="tech col-span-6 mt-1 md:col-span-2 md:mt-0">
+                {{ entry.cat }}
+              </span>
+              <span
+                class="col-span-5 mt-1 text-right font-mono text-[11px] tracking-[0.12em] text-muted-foreground md:col-span-1 md:mt-0"
+              >
+                {{ entry.date }}
+              </span>
+              <span
+                class="col-span-1 text-right font-mono text-sm text-muted-foreground transition-all duration-300 group-hover:translate-x-1 group-hover:text-blue"
+              >
+                ↗
+              </span>
+            </RouterLink>
+          </li>
+        </ul>
+      </div>
+    </section>
 
-          <div class="rounded-2xl border border-[#d8dfc0] p-6 bg-[#f7f8f3]">
-            <div class="flex items-center gap-2 text-[#445122] font-bold mb-3">
-              <FileText class="h-5 w-5" />
-              <span>{{ t('blog.writingPlanTitle') }}</span>
-            </div>
-            <p class="text-sm text-gray-600 leading-6">
-              {{ t('blog.writingPlanDescription') }}
+    <footer class="border-t border-line px-5 py-12 md:px-8">
+      <div class="mx-auto max-w-screen-xl">
+        <div class="reveal blog-reveal flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p class="font-sans text-3xl font-medium tracking-tight text-foreground md:text-4xl">
+              End of index<span class="text-blue">.</span>
+            </p>
+            <p class="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
+              这套系统就绪后,下一步才是具体的页面:写作、工具、作品集——都将活在这套冷白的语言里。
             </p>
           </div>
-        </aside>
-      </section>
-    </div>
-  </div>
+
+          <dl class="grid grid-cols-2 gap-x-10 gap-y-3 font-mono text-xs">
+            <div v-for="item in footerMeta" :key="item.key" class="flex flex-col gap-1">
+              <dt class="tracking-[0.14em] text-muted-foreground">{{ item.key }}</dt>
+              <dd class="text-foreground">{{ item.value }}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="mt-12 flex items-center justify-between border-t border-line pt-5">
+          <span class="tech">© MMXXVI</span>
+          <span class="tech">39.9°N — 116.4°E</span>
+        </div>
+      </div>
+    </footer>
+  </main>
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { ArrowRight, BookOpen, CalendarDays, Clock3, FileText, Search, Tags } from 'lucide-vue-next'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
-const { t, tm } = useI18n()
+const pageRoot = ref(null)
+let revealObserver
 
-const posts = computed(() => [
+const lead = {
+  no: '№ 014',
+  title: '关于冷白:为什么我把整个数字空间建立在留白之上',
+  excerpt:
+    '暖色让人放松,冷色让人专注。一个数字档案不需要被取悦,它需要被信任——于是我移除了所有米色、所有阴影、所有圆角,只留下细线与编号。',
+  cat: 'Essay',
+  date: '2026.06',
+  read: '8 min'
+}
+
+const entries = [
   {
-    title: t('blog.posts.site.title'),
-    date: '2026-06-12',
-    readingTime: t('blog.posts.site.readingTime'),
-    summary: t('blog.posts.site.summary'),
-    tags: tm('blog.posts.site.tags')
+    no: '№ 013',
+    title: '细线作为结构:hairline 是怎样取代卡片的',
+    cat: 'Method',
+    date: '2026.05',
+    read: '6 min'
   },
   {
-    title: t('blog.posts.parser.title'),
-    date: '2026-06-10',
-    readingTime: t('blog.posts.parser.readingTime'),
-    summary: t('blog.posts.parser.summary'),
-    tags: tm('blog.posts.parser.tags')
+    no: '№ 012',
+    title: '等宽字体里的秩序感——编号、坐标与索引',
+    cat: 'Type',
+    date: '2026.05',
+    read: '5 min'
   },
   {
-    title: t('blog.posts.workflow.title'),
-    date: '2026-06-08',
-    readingTime: t('blog.posts.workflow.readingTime'),
-    summary: t('blog.posts.workflow.summary'),
-    tags: tm('blog.posts.workflow.tags')
+    no: '№ 011',
+    title: '滚动揭示的节奏:600ms 与一条缓动曲线',
+    cat: 'Motion',
+    date: '2026.04',
+    read: '7 min'
   },
   {
-    title: t('blog.posts.writing.title'),
-    date: '2026-06-06',
-    readingTime: t('blog.posts.writing.readingTime'),
-    summary: t('blog.posts.writing.summary'),
-    tags: tm('blog.posts.writing.tags')
+    no: '№ 010',
+    title: '把个人网站当作操作系统来设计',
+    cat: 'Essay',
+    date: '2026.03',
+    read: '11 min'
+  },
+  {
+    no: '№ 009',
+    title: '蚀刻噪点:让纯净的界面有触感',
+    cat: 'Texture',
+    date: '2026.02',
+    read: '4 min'
+  },
+  {
+    no: '№ 008',
+    title: '隐藏层:悬停才出现的第二层信息',
+    cat: 'Interaction',
+    date: '2026.01',
+    read: '6 min'
   }
-])
+]
 
-const categories = computed(() => [
-  { name: t('blog.categories.project'), count: 2 },
-  { name: t('blog.categories.development'), count: 2 },
-  { name: t('blog.categories.workflow'), count: 1 },
-  { name: t('blog.categories.life'), count: 1 }
-])
+const footerMeta = [
+  { key: 'System', value: 'Personal OS / v.01' },
+  { key: 'Surface', value: 'Cool White' },
+  { key: 'Accent', value: 'Cool Blue' },
+  { key: 'Status', value: 'Foundation' }
+]
+
+onMounted(() => {
+  const revealItems = pageRoot.value?.querySelectorAll('.blog-reveal') ?? []
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+    revealItems.forEach((item) => item.classList.add('is-in'))
+    return
+  }
+
+  revealObserver = new IntersectionObserver(
+    (items) => {
+      items.forEach((item) => {
+        if (item.isIntersecting) {
+          item.target.classList.add('is-in')
+          revealObserver.unobserve(item.target)
+        }
+      })
+    },
+    { threshold: 0.14 }
+  )
+
+  revealItems.forEach((item) => revealObserver.observe(item))
+})
+
+onBeforeUnmount(() => {
+  revealObserver?.disconnect()
+})
 </script>

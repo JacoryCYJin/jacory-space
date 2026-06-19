@@ -1,6 +1,7 @@
 export default {
   nav: {
     home: 'Home',
+    tools: 'Tools',
     videoParser: 'Video Parser',
     blog: 'Blog',
     about: 'About'

@@ -1,6 +1,7 @@
 export default {
   nav: {
     home: '首页',
+    tools: '工具库',
     videoParser: '视频解析',
     blog: '博客',
     about: '关于我'
