@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import VideoParser from '../views/VideoParser.vue'
 import About from '../views/About.vue'
 import Blog from '../views/Blog.vue'
+import Tools from '../views/Tools.vue'
 
 const routes = [
   {
@@ -14,6 +15,11 @@ const routes = [
     path: '/video-parser',
     name: 'VideoParser',
     component: VideoParser
+  },
+  {
+    path: '/tools',
+    name: 'Tools',
+    component: Tools
   },
   {
     path: '/blog',

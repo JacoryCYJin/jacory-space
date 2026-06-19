@@ -59,6 +59,9 @@ npm run dev
 
 - 前端图标规范见 `.cursor/rules/frontend-rule.mdc`。
 - UI 图标不要使用 emoji，使用 SVG 组件或 icon 库。
+- 任何 UI、布局、页面、组件、样式、动画或 theme-token 工作，都必须遵循 Personal Operating System visual style。
+- 如果 skill 系统可用，在进行视觉改动前必须使用 `personal-operating-system-visual-style` skill。
+- 除非用户明确要求，不要把界面重新设计成偏离该视觉系统的风格。
 
 ## Local Runtime Notes
 

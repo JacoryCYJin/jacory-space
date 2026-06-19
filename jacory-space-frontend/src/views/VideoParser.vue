@@ -3,7 +3,7 @@
     <div class="max-w-4xl mx-auto">
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-3">
-          <Clapperboard class="h-10 w-10 text-[#b75e22]" />
+          <Clapperboard class="h-10 w-10 text-blue" />
           <span>{{ t('videoParser.title') }}</span>
         </h1>
         <p class="text-gray-600">{{ t('videoParser.subtitle') }}</p>
@@ -16,14 +16,14 @@
       <div class="text-center mb-4 flex justify-center gap-2">
         <button
           @click="openCookiesModal"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-[#f7f8f3] hover:bg-[#eef2e2] text-[#445122] rounded-lg border border-[#d8dfc0] transition-colors text-sm font-medium"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted text-foreground rounded-lg border border-border transition-colors text-sm font-medium"
         >
           <Key class="h-4 w-4" />
           <span>{{ t('videoParser.cookiesSettings') }}</span>
         </button>
         <button
           @click="openDownloadSettingsModal"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-[#f7f8f3] hover:bg-[#eef2e2] text-[#445122] rounded-lg border border-[#d8dfc0] transition-colors text-sm font-medium"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-muted hover:bg-muted text-foreground rounded-lg border border-border transition-colors text-sm font-medium"
         >
           <FolderOpen class="h-4 w-4" />
           <span>{{ t('videoParser.downloadSettings') }}</span>
@@ -37,19 +37,19 @@
             @keypress.enter="parseVideo"
             type="text"
             :placeholder="t('videoParser.inputPlaceholder')"
-            class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#6b7a2e] transition-colors"
+            class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue transition-colors"
           />
           <button
             @click="parseVideo"
             :disabled="loading || !videoUrl.trim()"
-            class="px-6 py-3 bg-[#6b7a2e] text-white rounded-lg font-semibold hover:bg-[#556123] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+            class="px-6 py-3 bg-blue text-white rounded-lg font-semibold hover:bg-blue-soft disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
           >
             {{ loading ? t('videoParser.parsing') : t('videoParser.parse') }}
           </button>
         </div>
 
         <div v-if="loading" class="text-center py-8">
-          <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[#b75e22] border-t-transparent"></div>
+          <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue border-t-transparent"></div>
           <p class="mt-4 text-gray-600">{{ t('videoParser.loading') }}</p>
         </div>
 
@@ -88,14 +88,14 @@
                 class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
               >
                 <div class="flex items-center gap-6">
-                  <span class="text-xl font-bold text-[#6b7a2e] min-w-[80px]">{{ format.resolution }}</span>
+                  <span class="text-xl font-bold text-blue min-w-[80px]">{{ format.resolution }}</span>
                   <span class="text-gray-600 text-sm">{{ format.format_note || format.ext }}</span>
                   <span class="text-gray-600 text-sm">{{ t('videoParser.size') }}: {{ format.filesize_mb }} MB</span>
                 </div>
                 <button
                   @click="downloadVideo(format)"
                   :disabled="downloading[format.resolution]"
-                  class="px-5 py-2 bg-[#6b7a2e] text-white rounded-lg font-medium hover:bg-[#556123] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  class="px-5 py-2 bg-blue text-white rounded-lg font-medium hover:bg-blue-soft disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                 >
                   {{ downloading[format.resolution] ? t('videoParser.downloading') : t('videoParser.download') }}
                 </button>
@@ -119,10 +119,10 @@
           </button>
         </div>
 
-        <div class="p-4 rounded-lg border border-[#d8dfc0] bg-[#f7f8f3] mb-6">
+        <div class="p-4 rounded-lg border border-border bg-muted mb-6">
           <p class="text-sm font-semibold text-gray-700 mb-3">{{ t('videoParser.cookieUsage') }}</p>
           <div class="grid md:grid-cols-3 gap-3">
-            <select v-model="cookieMode" class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#6b7a2e] bg-white">
+            <select v-model="cookieMode" class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue bg-white">
               <option value="manual">{{ t('videoParser.cookieModes.manual') }}</option>
               <option value="browser">{{ t('videoParser.cookieModes.browser') }}</option>
               <option value="none">{{ t('videoParser.cookieModes.none') }}</option>
@@ -130,7 +130,7 @@
             <select
               v-model="browserCookieSource"
               :disabled="cookieMode !== 'browser'"
-              class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#6b7a2e] bg-white disabled:bg-gray-100 disabled:text-gray-400"
+              class="px-3 py-2 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue bg-white disabled:bg-gray-100 disabled:text-gray-400"
             >
               <option value="chrome">Chrome</option>
               <option value="safari">Safari</option>
@@ -140,7 +140,7 @@
             <button
               @click="saveCookieSettings"
               :disabled="savingCookieSettings"
-              class="px-4 py-2 bg-[#6b7a2e] text-white rounded-lg text-sm font-medium hover:bg-[#556123] disabled:bg-gray-300"
+              class="px-4 py-2 bg-blue text-white rounded-lg text-sm font-medium hover:bg-blue-soft disabled:bg-gray-300"
             >
               {{ savingCookieSettings ? t('videoParser.saving') : t('videoParser.saveUsage') }}
             </button>
@@ -163,7 +163,7 @@
           <div class="border-2 rounded-lg p-4" :class="cookiesInfo.youtube?.has_cookies ? 'border-green-500 bg-green-50' : 'border-gray-200'">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
-                <Youtube class="h-6 w-6 text-[#b75e22]" />
+                <Youtube class="h-6 w-6 text-blue" />
                 <span class="font-bold text-gray-800">YouTube</span>
               </div>
               <span v-if="cookiesInfo.youtube?.has_cookies" class="inline-flex items-center gap-1 text-green-600 text-sm">
@@ -173,7 +173,7 @@
               <span v-else class="text-gray-400 text-sm">{{ t('videoParser.status.unset') }}</span>
             </div>
             <div class="flex gap-2">
-              <button @click="editPlatform('youtube')" class="flex-1 px-3 py-2 bg-[#b75e22] text-white rounded-lg text-sm hover:bg-[#964a19] transition-colors">
+              <button @click="editPlatform('youtube')" class="flex-1 px-3 py-2 bg-blue text-white rounded-lg text-sm hover:bg-blue-soft transition-colors">
                 {{ cookiesInfo.youtube?.has_cookies ? t('videoParser.actions.edit') : t('videoParser.actions.set') }}
               </button>
               <button v-if="cookiesInfo.youtube?.has_cookies" @click="deletePlatformCookies('youtube')" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 transition-colors">{{ t('videoParser.actions.delete') }}</button>
@@ -183,7 +183,7 @@
           <div class="border-2 rounded-lg p-4" :class="cookiesInfo.bilibili?.has_cookies ? 'border-green-500 bg-green-50' : 'border-gray-200'">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
-                <MonitorPlay class="h-6 w-6 text-[#b75e22]" />
+                <MonitorPlay class="h-6 w-6 text-blue" />
                 <span class="font-bold text-gray-800">Bilibili</span>
               </div>
               <span v-if="cookiesInfo.bilibili?.has_cookies" class="inline-flex items-center gap-1 text-green-600 text-sm">
@@ -193,7 +193,7 @@
               <span v-else class="text-gray-400 text-sm">{{ t('videoParser.status.unset') }}</span>
             </div>
             <div class="flex gap-2">
-              <button @click="editPlatform('bilibili')" class="flex-1 px-3 py-2 bg-[#b75e22] text-white rounded-lg text-sm hover:bg-[#964a19] transition-colors">
+              <button @click="editPlatform('bilibili')" class="flex-1 px-3 py-2 bg-blue text-white rounded-lg text-sm hover:bg-blue-soft transition-colors">
                 {{ cookiesInfo.bilibili?.has_cookies ? t('videoParser.actions.edit') : t('videoParser.actions.set') }}
               </button>
               <button v-if="cookiesInfo.bilibili?.has_cookies" @click="deletePlatformCookies('bilibili')" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 transition-colors">{{ t('videoParser.actions.delete') }}</button>
@@ -203,7 +203,7 @@
           <div v-for="platform in customPlatforms" :key="platform" class="border-2 rounded-lg p-4" :class="cookiesInfo[platform]?.has_cookies ? 'border-green-500 bg-green-50' : 'border-gray-200'">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center gap-2">
-                <Globe class="h-6 w-6 text-[#b75e22]" />
+                <Globe class="h-6 w-6 text-blue" />
                 <span class="font-bold text-gray-800">{{ platform }}</span>
               </div>
               <span v-if="cookiesInfo[platform]?.has_cookies" class="inline-flex items-center gap-1 text-green-600 text-sm">
@@ -213,7 +213,7 @@
               <span v-else class="text-gray-400 text-sm">{{ t('videoParser.status.unset') }}</span>
             </div>
             <div class="flex gap-2">
-              <button @click="editPlatform(platform)" class="flex-1 px-3 py-2 bg-[#b75e22] text-white rounded-lg text-sm hover:bg-[#964a19] transition-colors">
+              <button @click="editPlatform(platform)" class="flex-1 px-3 py-2 bg-blue text-white rounded-lg text-sm hover:bg-blue-soft transition-colors">
                 {{ cookiesInfo[platform]?.has_cookies ? t('videoParser.actions.edit') : t('videoParser.actions.set') }}
               </button>
               <button @click="deletePlatformCookies(platform)" class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 transition-colors">{{ t('videoParser.actions.delete') }}</button>
@@ -246,7 +246,7 @@
           <div class="p-4 rounded-lg border border-gray-200 bg-gray-50">
             <p class="text-sm font-semibold text-gray-700 mb-2">{{ t('videoParser.defaultDownloadDirectory') }}</p>
             <p class="text-sm text-gray-600 break-all mb-3">{{ defaultDownloadDir || t('videoParser.notSet') }}</p>
-            <button @click="chooseFolderAndSaveDefault" :disabled="savingSettings" class="px-4 py-2 bg-[#b75e22] text-white rounded-lg text-sm font-medium hover:bg-[#964a19] disabled:bg-gray-300">
+            <button @click="chooseFolderAndSaveDefault" :disabled="savingSettings" class="px-4 py-2 bg-blue text-white rounded-lg text-sm font-medium hover:bg-blue-soft disabled:bg-gray-300">
               {{ savingSettings ? t('videoParser.saving') : t('videoParser.chooseDefaultDirectory') }}
             </button>
           </div>
@@ -254,7 +254,7 @@
             <p class="text-sm font-semibold text-gray-700 mb-2">{{ t('videoParser.oneTimeDownloadDirectory') }}</p>
             <p class="text-sm text-gray-600 break-all mb-3">{{ downloadDirOverride || t('videoParser.oneTimeDirectoryFallback') }}</p>
             <div class="flex gap-2">
-              <button @click="chooseFolderForOnce" class="px-4 py-2 bg-[#6b7a2e] text-white rounded-lg text-sm font-medium hover:bg-[#556123]">{{ t('videoParser.chooseOneTimeDirectory') }}</button>
+              <button @click="chooseFolderForOnce" class="px-4 py-2 bg-blue text-white rounded-lg text-sm font-medium hover:bg-blue-soft">{{ t('videoParser.chooseOneTimeDirectory') }}</button>
               <button @click="downloadDirOverride = ''" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300">{{ t('videoParser.clearOneTimeDirectory') }}</button>
             </div>
           </div>
@@ -265,9 +265,9 @@
     <div v-if="showAddPlatform" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" @click.self="showAddPlatform = false">
       <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
         <h3 class="text-xl font-bold text-gray-800 mb-4">{{ t('videoParser.addPlatformTitle') }}</h3>
-        <input v-model="newPlatformName" type="text" :placeholder="t('videoParser.platformPlaceholder')" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#6b7a2e] mb-4" @keypress.enter="addCustomPlatform" />
+        <input v-model="newPlatformName" type="text" :placeholder="t('videoParser.platformPlaceholder')" class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue mb-4" @keypress.enter="addCustomPlatform" />
         <div class="flex gap-3">
-          <button @click="addCustomPlatform" :disabled="!newPlatformName.trim()" class="flex-1 px-6 py-3 bg-[#6b7a2e] text-white rounded-lg font-semibold hover:bg-[#556123] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">{{ t('videoParser.actions.add') }}</button>
+          <button @click="addCustomPlatform" :disabled="!newPlatformName.trim()" class="flex-1 px-6 py-3 bg-blue text-white rounded-lg font-semibold hover:bg-blue-soft disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">{{ t('videoParser.actions.add') }}</button>
           <button @click="showAddPlatform = false" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors">{{ t('videoParser.actions.cancel') }}</button>
         </div>
       </div>
@@ -281,15 +281,15 @@
             <X class="h-6 w-6" />
           </button>
         </div>
-        <div class="mb-3 p-3 bg-[#f6f2e8] rounded-lg text-sm text-gray-700">
+        <div class="mb-3 p-3 bg-muted rounded-lg text-sm text-gray-700">
           <p class="inline-flex items-center gap-1">
             <Lightbulb class="h-4 w-4" />
             <span>{{ t('videoParser.cookiesSavedTip') }}</span>
           </p>
         </div>
-        <textarea v-model="cookiesText" :placeholder="t('videoParser.cookiesPlaceholder', { platform: editingPlatform })" class="w-full h-64 px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#6b7a2e] font-mono text-sm mb-4"></textarea>
+        <textarea v-model="cookiesText" :placeholder="t('videoParser.cookiesPlaceholder', { platform: editingPlatform })" class="w-full h-64 px-4 py-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-blue font-mono text-sm mb-4"></textarea>
         <div class="flex gap-3">
-          <button @click="saveCookies" :disabled="!cookiesText.trim() || savingCookies" class="flex-1 px-6 py-3 bg-[#6b7a2e] text-white rounded-lg font-semibold hover:bg-[#556123] disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">{{ savingCookies ? t('videoParser.saving') : t('videoParser.actions.save') }}</button>
+          <button @click="saveCookies" :disabled="!cookiesText.trim() || savingCookies" class="flex-1 px-6 py-3 bg-blue text-white rounded-lg font-semibold hover:bg-blue-soft disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">{{ savingCookies ? t('videoParser.saving') : t('videoParser.actions.save') }}</button>
           <button @click="showEditCookies = false" class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-colors">{{ t('videoParser.actions.cancel') }}</button>
         </div>
         <div v-if="cookiesStatus" class="mt-4 p-3 rounded-lg" :class="cookiesStatus.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'">{{ cookiesStatus.message }}</div>

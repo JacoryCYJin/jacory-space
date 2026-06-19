@@ -31,6 +31,7 @@ node_modules/
 
 # Frontend (Vite)
 jacory-space-frontend/dist/
+jacory-space-frontend/design-reference/
 
 # Local dev runtime
 .dev/
