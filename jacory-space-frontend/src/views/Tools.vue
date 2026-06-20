@@ -2,12 +2,12 @@
   <main ref="pageRoot" class="grain min-h-screen bg-background">
     <section class="px-5 pt-28 md:px-8 md:pt-36">
       <div class="mx-auto max-w-screen-xl">
-        <div class="reveal tools-reveal flex items-center justify-between border-b border-line pb-4">
+        <div data-tools-reveal data-tools-meta class="flex items-center justify-between border-b border-line pb-4">
           <span class="font-mono text-xs tracking-[0.16em] text-blue">01 — Lab</span>
           <span class="tech">06 tools / 01 live</span>
         </div>
 
-        <div class="reveal tools-reveal" style="transition-delay: 80ms">
+        <div data-tools-reveal data-tools-heading>
           <h1
             class="mt-10 max-w-4xl text-balance font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-7xl"
           >
@@ -22,17 +22,17 @@
 
     <section class="px-5 py-20 md:px-8 md:py-28">
       <div class="mx-auto max-w-screen-xl">
-        <div class="reveal tools-reveal mb-4 flex items-center justify-between">
+        <div data-tools-reveal data-tools-registry class="mb-4 flex items-center justify-between">
           <span class="tech">Registry — All Tools</span>
           <span class="tech">grid / 12-col</span>
         </div>
 
         <div class="grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
           <div
-            v-for="(tool, index) in tools"
+            v-for="tool in tools"
             :key="tool.no"
-            class="reveal tools-reveal"
-            :style="{ transitionDelay: `${index * 70}ms` }"
+            data-tools-reveal
+            data-tools-item
           >
             <RouterLink
               :to="tool.href"
@@ -50,7 +50,7 @@
 
               <div class="mt-10">
                 <h2
-                  class="font-sans text-2xl font-medium tracking-tight text-foreground transition-transform duration-300 group-hover:translate-x-1"
+                  class="font-sans text-2xl font-medium tracking-tight text-foreground transition-colors duration-300 group-hover:text-blue"
                 >
                   {{ tool.name }}
                 </h2>
@@ -62,7 +62,7 @@
               <div class="mt-8 flex items-center justify-between border-t border-line pt-4">
                 <span class="tech">{{ tool.tag }}</span>
                 <span
-                  class="font-mono text-[11px] tracking-[0.12em] text-muted-foreground transition-all duration-300 group-hover:text-blue"
+                  class="font-mono text-[11px] tracking-[0.12em] text-muted-foreground transition-colors duration-300 group-hover:text-blue"
                 >
                   {{ tool.ver }} ↗
                 </span>
@@ -75,7 +75,7 @@
 
     <section class="px-5 pb-28 md:px-8">
       <div class="mx-auto max-w-screen-xl">
-        <div class="reveal tools-reveal flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line pt-6">
+        <div data-tools-reveal data-tools-legend class="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line pt-6">
           <span class="tech">Legend</span>
           <span
             v-for="legend in legends"
@@ -98,9 +98,13 @@
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { gsap } from 'gsap'
+import { CustomEase } from 'gsap/CustomEase'
+
+gsap.registerPlugin(CustomEase)
 
 const pageRoot = ref(null)
-let revealObserver
+let toolsContext
 
 const tools = [
   {
@@ -174,29 +178,66 @@ const statusClass = {
 }
 
 onMounted(() => {
-  const revealItems = pageRoot.value?.querySelectorAll('.tools-reveal') ?? []
+  const root = pageRoot.value
+  if (!root) return
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-    revealItems.forEach((item) => item.classList.add('is-in'))
-    return
-  }
+  const toolsEase = CustomEase.create('personal-os-tools', '0.16,1,0.3,1')
+  const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
-  revealObserver = new IntersectionObserver(
-    (items) => {
-      items.forEach((item) => {
-        if (item.isIntersecting) {
-          item.target.classList.add('is-in')
-          revealObserver.unobserve(item.target)
-        }
+  toolsContext = gsap.context(() => {
+    const meta = root.querySelector('[data-tools-meta]')
+    const heading = root.querySelector('[data-tools-heading]')
+    const registry = root.querySelector('[data-tools-registry]')
+    const items = gsap.utils.toArray('[data-tools-item]')
+    const legend = root.querySelector('[data-tools-legend]')
+    const revealTargets = [meta, heading, registry, ...items, legend].filter(Boolean)
+
+    if (reducedMotionQuery.matches) {
+      gsap.set(revealTargets, {
+        autoAlpha: 1,
+        y: 0
       })
-    },
-    { threshold: 0.14 }
-  )
+      return
+    }
 
-  revealItems.forEach((item) => revealObserver.observe(item))
+    gsap.set(revealTargets, {
+      autoAlpha: 0,
+      y: 12
+    })
+
+    const timeline = gsap.timeline({ defaults: { ease: toolsEase } })
+
+    timeline
+      .to(meta, { autoAlpha: 1, y: 0, duration: 0.75 })
+      .to(heading, { autoAlpha: 1, y: 0, duration: 0.85 }, 0.1)
+      .to(registry, { autoAlpha: 1, y: 0, duration: 0.7 }, 0.38)
+      .to(items, {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.78,
+        stagger: 0.08
+      }, 0.5)
+      .to(legend, { autoAlpha: 1, y: 0, duration: 0.7 }, 0.82)
+  }, root)
 })
 
 onBeforeUnmount(() => {
-  revealObserver?.disconnect()
+  toolsContext?.revert()
 })
 </script>
+
+<style scoped>
+[data-tools-reveal] {
+  opacity: 0;
+  visibility: hidden;
+  transform: translate3d(0, 12px, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tools-reveal] {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+}
+</style>
