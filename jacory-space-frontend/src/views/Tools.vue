@@ -27,7 +27,7 @@
           <span class="tech">grid / 12-col</span>
         </div>
 
-        <div class="grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-3">
           <div
             v-for="tool in tools"
             :key="tool.no"
