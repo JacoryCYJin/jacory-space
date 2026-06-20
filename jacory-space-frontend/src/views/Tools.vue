@@ -34,40 +34,11 @@
             data-tools-enter
             class="tools-registry-item"
           >
-            <RouterLink
-              :to="tool.href"
-              class="group flex h-full min-h-64 flex-col justify-between bg-background p-6 transition-colors duration-300 hover:bg-card"
-            >
-              <div class="flex items-start justify-between">
-                <span class="font-mono text-xs text-blue">№ {{ tool.no }}</span>
-                <span
-                  class="font-mono text-[11px] tracking-[0.16em]"
-                  :class="statusClass[tool.status]"
-                >
-                  ● {{ tool.status }}
-                </span>
-              </div>
-
-              <div class="mt-10">
-                <h2
-                  class="font-sans text-2xl font-medium tracking-tight text-foreground transition-transform duration-300 group-hover:translate-x-1"
-                >
-                  {{ tool.name }}
-                </h2>
-                <p class="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
-                  {{ tool.desc }}
-                </p>
-              </div>
-
-              <div class="mt-8 flex items-center justify-between border-t border-line pt-4">
-                <span class="tech">{{ tool.tag }}</span>
-                <span
-                  class="font-mono text-[11px] tracking-[0.12em] text-muted-foreground transition-all duration-300 group-hover:text-blue"
-                >
-                  {{ tool.ver }} ↗
-                </span>
-              </div>
-            </RouterLink>
+            <ToolCard
+              :tool="tool"
+              :status-class="statusClass[tool.status]"
+              :watermark-src="toolWatermarks[tool.no]"
+            />
           </div>
         </div>
       </div>
@@ -100,6 +71,10 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
+import ToolCard from '../components/tools/ToolCard.vue'
+import coolPaletteWatermark from '../assets/tools/cool-palete-watermark.png'
+import exampleWatermark from '../assets/tools/example-watermark.png'
+import videoParserWatermark from '../assets/tools/video-parser-watermark.png'
 
 gsap.registerPlugin(CustomEase)
 
@@ -175,6 +150,15 @@ const statusClass = {
   BETA: 'text-foreground',
   WIP: 'text-muted-foreground',
   ARCHIVED: 'text-muted-foreground/60'
+}
+
+const toolWatermarks = {
+  '001': videoParserWatermark,
+  '002': exampleWatermark,
+  '003': coolPaletteWatermark,
+  '004': exampleWatermark,
+  '005': exampleWatermark,
+  '006': exampleWatermark
 }
 
 onMounted(() => {
