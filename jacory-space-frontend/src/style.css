@@ -27,6 +27,8 @@
   --line-strong: oklch(0.82 0.012 252);
   --blue: oklch(0.52 0.17 256);
   --blue-soft: oklch(0.7 0.1 252);
+  --selection-yellow: oklch(0.88 0.16 95);
+  --selection-orange: oklch(0.88 0.16 58);
   --radius: 0.25rem;
   --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -51,8 +53,13 @@
   }
 
   ::selection {
-    background: var(--blue);
-    color: var(--background);
+    background: var(--selection-orange);
+    color: var(--ink);
+  }
+
+  ::-moz-selection {
+    background: var(--selection-orange);
+    color: var(--ink);
   }
 
   a {

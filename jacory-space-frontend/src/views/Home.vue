@@ -1,8 +1,8 @@
 <template>
-  <main ref="heroRoot" class="grain min-h-screen bg-background">
+  <main ref="heroRoot" class="grain bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
     <section
       id="top"
-      class="relative flex min-h-[calc(100svh-4rem)] flex-col justify-between px-5 pb-10 pt-24 md:px-8 md:pt-28"
+      class="relative flex min-h-[calc(100svh-var(--navbar-height))] flex-col justify-between px-5 pb-10 pt-8 md:px-8 md:pt-12"
     >
       <div
         aria-hidden="true"
@@ -22,7 +22,7 @@
         <div data-hero-meta class="col-span-12 max-w-sm md:col-span-4 md:col-start-2">
           <p class="tech mb-3">Fig. 00 — Cover</p>
           <p class="text-pretty text-sm leading-relaxed text-muted-foreground">
-            一个为个人创作、工具、笔记与档案建立的数字空间。
+            {{ heroDescription }}
           </p>
         </div>
 
@@ -45,7 +45,7 @@
             <span data-hero-title-line class="inline-block text-[clamp(5.4rem,17vw,10.5rem)] md:text-[clamp(5.4rem,12vw,11.875rem)]">
               operating
             </span>
-            <span class="align-top font-mono text-[clamp(1.25rem,3vw,2rem)] tracking-normal text-blue md:text-[clamp(1.25rem,1.5vw,1.75rem)]">
+            <span class="align-top font-mono text-[clamp(1.5rem,3.2vw,2.375rem)] tracking-normal text-blue md:text-[clamp(1.75rem,1.9vw,2.625rem)]">
               <span data-hero-os class="inline-block">/os</span>
             </span>
           </span>
@@ -67,7 +67,7 @@
         </RouterLink>
 
         <p class="hidden max-w-[16rem] text-right text-xs leading-relaxed text-muted-foreground md:block">
-          冷白 · 细线 · 编号 · 留白 · 冷蓝点缀
+          {{ heroKeywords }}
         </p>
       </div>
     </section>
@@ -75,13 +75,25 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 
 gsap.registerPlugin(CustomEase)
 
 const heroRoot = ref(null)
+const { locale } = useI18n()
+const heroDescription = computed(() => (
+  locale.value === 'en-US'
+    ? 'A digital space built for personal works, tools, notes, and archives.'
+    : '一个为个人创作、工具、笔记与档案建立的数字空间。'
+))
+const heroKeywords = computed(() => (
+  locale.value === 'en-US'
+    ? 'Works · Tools · Notes · Archive'
+    : '作品 · 工具 · 笔记 · 档案'
+))
 let heroContext
 let reducedMotionQuery
 
