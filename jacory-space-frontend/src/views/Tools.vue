@@ -2,12 +2,12 @@
   <main ref="pageRoot" class="grain min-h-screen bg-background">
     <section class="px-5 pt-28 md:px-8 md:pt-36">
       <div class="mx-auto max-w-screen-xl">
-        <div class="reveal tools-reveal flex items-center justify-between border-b border-line pb-4">
+        <div data-tools-enter class="flex items-center justify-between border-b border-line pb-4">
           <span class="font-mono text-xs tracking-[0.16em] text-blue">01 — Lab</span>
           <span class="tech">06 tools / 01 live</span>
         </div>
 
-        <div class="reveal tools-reveal" style="transition-delay: 80ms">
+        <div data-tools-enter>
           <h1
             class="mt-10 max-w-4xl text-balance font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-7xl"
           >
@@ -22,17 +22,17 @@
 
     <section class="px-5 py-20 md:px-8 md:py-28">
       <div class="mx-auto max-w-screen-xl">
-        <div class="reveal tools-reveal mb-4 flex items-center justify-between">
+        <div data-tools-enter class="mb-4 flex items-center justify-between">
           <span class="tech">Registry — All Tools</span>
           <span class="tech">grid / 12-col</span>
         </div>
 
-        <div class="grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+        <div class="tools-registry grid sm:grid-cols-2 lg:grid-cols-3">
           <div
-            v-for="(tool, index) in tools"
+            v-for="tool in tools"
             :key="tool.no"
-            class="reveal tools-reveal"
-            :style="{ transitionDelay: `${index * 70}ms` }"
+            data-tools-enter
+            class="tools-registry-item"
           >
             <RouterLink
               :to="tool.href"
@@ -75,7 +75,7 @@
 
     <section class="px-5 pb-28 md:px-8">
       <div class="mx-auto max-w-screen-xl">
-        <div class="reveal tools-reveal flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line pt-6">
+        <div data-tools-enter class="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line pt-6">
           <span class="tech">Legend</span>
           <span
             v-for="legend in legends"
@@ -98,9 +98,13 @@
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { gsap } from 'gsap'
+import { CustomEase } from 'gsap/CustomEase'
+
+gsap.registerPlugin(CustomEase)
 
 const pageRoot = ref(null)
-let revealObserver
+let toolsContext
 
 const tools = [
   {
@@ -174,29 +178,82 @@ const statusClass = {
 }
 
 onMounted(() => {
-  const revealItems = pageRoot.value?.querySelectorAll('.tools-reveal') ?? []
+  const root = pageRoot.value
+  if (!root) return
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-    revealItems.forEach((item) => item.classList.add('is-in'))
-    return
-  }
+  const enterEase = CustomEase.create('tools-enter', '0.16,1,0.3,1')
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
-  revealObserver = new IntersectionObserver(
-    (items) => {
-      items.forEach((item) => {
-        if (item.isIntersecting) {
-          item.target.classList.add('is-in')
-          revealObserver.unobserve(item.target)
-        }
+  toolsContext = gsap.context(() => {
+    const enterItems = gsap.utils.toArray('[data-tools-enter]', root)
+
+    if (reducedMotion.matches) {
+      gsap.set(enterItems, {
+        clearProps: 'all',
+        autoAlpha: 1,
+        y: 0
       })
-    },
-    { threshold: 0.14 }
-  )
+      return
+    }
 
-  revealItems.forEach((item) => revealObserver.observe(item))
+    gsap.set(enterItems, { autoAlpha: 0, y: 14 })
+    gsap.to(enterItems, {
+      autoAlpha: 1,
+      y: 0,
+      duration: 0.82,
+      ease: enterEase,
+      stagger: 0.055,
+      clearProps: 'opacity,visibility,transform'
+    })
+  }, root)
 })
 
 onBeforeUnmount(() => {
-  revealObserver?.disconnect()
+  toolsContext?.revert()
 })
 </script>
+
+<style scoped>
+.tools-registry-item {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.tools-registry-item:first-child {
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 640px) {
+  .tools-registry-item {
+    border-top: 0;
+    border-right: 0;
+  }
+
+  .tools-registry-item:nth-child(-n + 2) {
+    border-top: 1px solid var(--line);
+  }
+
+  .tools-registry-item:nth-child(2n) {
+    border-right: 1px solid var(--line);
+  }
+}
+
+@media (min-width: 1024px) {
+  .tools-registry-item {
+    border-right: 0;
+  }
+
+  .tools-registry-item:nth-child(-n + 3) {
+    border-top: 1px solid var(--line);
+  }
+
+  .tools-registry-item:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .tools-registry-item:nth-child(3n) {
+    border-right: 1px solid var(--line);
+  }
+}
+</style>
