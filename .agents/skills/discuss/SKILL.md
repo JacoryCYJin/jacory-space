@@ -1,15 +1,15 @@
 ---
-name: jacory-space-discuss
+name: discuss
 description: Jacory Space discussion, research, and read-only exploration workflow. Use when the user asks to 研讨, 梳理, 调研, 先看看, 走查, 登记发现, 探针走查, or when the task is exploration or documentation notes without code to land. Do not commit, push, or open PRs until the user explicitly says 提交.
 ---
 
-# jacory-space-discuss
+# discuss
 
 ## 适用
 
 用于梳理 overview、主题研究、架构取舍、问题全景、探针走查攒发现等任务。
 
-判别规则：这次只是读、整理、探查，没有要合并的代码产物时用本模式。有代码要落地时，切到 `jacory-space-dev-main`；用户点名并行时切到 `jacory-space-dev-worktree`。
+判别规则：这次只是读、整理、探查，没有要合并的代码产物时用本模式。有代码要落地时，切到 `dev-main`；用户点名并行时切到 `dev-worktree`。
 
 ## 在哪改
 

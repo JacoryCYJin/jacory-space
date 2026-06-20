@@ -1,15 +1,15 @@
 ---
-name: jacory-space-dev-main
+name: dev-main
 description: Jacory Space default development workflow in the main worktree. Use when the user asks to 开干, 修, 改, 实现, continue on this branch, normal development, or any code-change task without explicitly asking for parallel worktree isolation. Work on the current checkout, validate locally, and commit/push/PR only when requested or clearly part of the task.
 ---
 
-# jacory-space-dev-main
+# dev-main
 
 ## 适用
 
 有代码或「代码 + 文档」混合产物要落地，且未要求并行隔离时，默认使用本模式。不要自动开 linked worktree。
 
-用户点名并行、fork chat、主目录已被别的 PR 占用时，改用 `jacory-space-dev-worktree`。
+用户点名并行、fork chat、主目录已被别的 PR 占用时，改用 `dev-worktree`。
 
 ## 开工前
 

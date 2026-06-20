@@ -102,6 +102,129 @@ export default {
     title: '视频解析下载工具',
     subtitle: '支持 Bilibili、YouTube 等多平台视频解析',
     tip: '提示：支持 Bilibili、YouTube 等多平台视频解析与下载',
+    pageDescription: '解析 YouTube / Bilibili 视频链接，获取可下载的音视频格式并保存到本地。',
+    ui: {
+      settings: '设置',
+      cookiesDirectory: 'Cookie / 目录'
+    },
+    cookieEntry: {
+      label: 'Cookie 设置',
+      hint: '当前视频需要 Cookies，请打开右上角设置完成 Cookie 配置后重试。'
+    },
+    sections: {
+      command: '命令',
+      status: '状态',
+      videoInfo: '视频信息',
+      downloadRegistry: '下载列表',
+      outputPath: '输出路径',
+      outlineMap: '大纲图',
+      cookiesSettings: 'COOKIE 设置',
+      directorySettings: '目录设置'
+    },
+    statusRail: {
+      READY: '就绪',
+      PARSING: '解析中',
+      RESOLVED: '已解析',
+      DOWNLOADING: '下载中',
+      COMPLETE: '完成',
+      COOKIES_REQUIRED: '需要 Cookies',
+      FAILED: '失败'
+    },
+    info: {
+      awaitingUrl: '等待链接',
+      awaitingDescription: '粘贴视频链接并解析后，这里会显示封面、标题、来源、时长与视频信息。',
+      source: '来源',
+      duration: '时长',
+      uploader: '上传者',
+      pubDate: '发布时间',
+      formatsAvailable: 'FORMATS AVAILABLE'
+    },
+    registry: {
+      items: '{count} 项',
+      empty: '未找到可下载的 MP4 / 音频格式。',
+      resolution: '分辨率',
+      format: '格式',
+      size: '大小',
+      status: '状态',
+      action: '操作',
+      rowStatus: {
+        READY: '就绪',
+        DOWNLOADING: '下载中',
+        COMPLETE: '完成',
+        FAILED: '失败',
+        UNAVAILABLE: '不可用'
+      },
+      actions: {
+        download: '下载',
+        pause: '暂停',
+        retry: '重试',
+        reveal: '显示',
+        open: '打开'
+      }
+    },
+    output: {
+      pending: '下载完成后会显示本地保存路径。',
+      copyPath: '复制路径',
+      revealInFinder: '在 Finder 中显示',
+      copied: '路径已复制'
+    },
+    outline: {
+      copyOutline: '复制大纲',
+      root: '视频大纲 / Outline',
+      copied: '复制成功',
+      retry: '重试生成',
+      states: {
+        idle: {
+          title: '等待解析视频',
+          description: '解析视频后可生成大纲。后续接入大模型时，将根据当前语言生成中文大纲。'
+        },
+        noSubtitles: {
+          title: '暂无字幕',
+          description: '未检测到平台字幕，暂时无法生成大纲。'
+        },
+        subtitlesAvailable: {
+          title: '字幕可用',
+          description: '已检测到字幕信息，后续可接入硅基流动大模型生成中文大纲。'
+        },
+        generating: {
+          title: '正在生成大纲',
+          description: '正在根据字幕结构生成视频大纲。'
+        },
+        success: {
+          title: '大纲已生成',
+          description: '视频大纲已生成。'
+        },
+        failed: {
+          title: '生成失败',
+          description: '生成大纲时出现问题，可以重试生成。'
+        },
+        empty: {
+          title: '暂无大纲',
+          description: '当前视频暂无可展示的大纲。'
+        }
+      }
+    },
+    settings: {
+      mode: '模式',
+      cookieModes: {
+        manual: '手动',
+        browser: '浏览器',
+        none: '无'
+      },
+      browserSource: '浏览器来源',
+      platformCookies: '平台 Cookie',
+      set: '已设置',
+      notSet: '未设置',
+      edit: '编辑',
+      delete: '删除',
+      custom: '+ 自定义',
+      cookiesUsageNote: 'Cookies 仅用于访问需要登录的私密或受限视频。',
+      defaultDownloadDirectory: '默认下载目录',
+      temporaryDirectory: '临时目录（本次下载）',
+      useDefaultDirectory: '使用默认目录',
+      change: '更改',
+      temporaryDirectoryNote: '临时目录用于存放下载中临时文件，任务完成后可自动清理。'
+    },
     thumbnailAlt: '视频缩略图',
     cookiesSettings: 'Cookies 设置',
     downloadSettings: '下载目录设置',
@@ -156,6 +279,8 @@ export default {
     cookiesPlaceholder: '粘贴 {platform} cookies.txt 内容到这里...',
     errors: {
       emptyUrl: '请输入视频链接',
+      invalidUrl: '请输入有效的视频链接',
+      noVisibleFormats: '未找到可下载的 MP4 / 音频格式。',
       parseFailed: '解析失败: {message}',
       downloadFailed: '下载失败: {message}',
       loadSettingsFailed: '加载设置失败',
@@ -168,6 +293,7 @@ export default {
       platformExists: '平台已存在'
     },
     messages: {
+      readingMetadata: '正在读取视频元数据…',
       downloadingResolution: '正在下载 {resolution} 版本...',
       downloadComplete: '下载完成！文件保存在: {path}',
       defaultDirSaved: '默认下载目录已保存: {path}',

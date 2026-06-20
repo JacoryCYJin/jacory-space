@@ -272,22 +272,105 @@ const formatSizeMb = ({ bytes, estimated }) => {
   return estimated ? `约 ${sizeMb}` : sizeMb
 }
 
+const hasCaptionEntries = (captions = {}) => {
+  return Object.values(captions || {}).some((items) => Array.isArray(items) && items.length > 0)
+}
+
+const getCaptionLanguages = (captions = {}) => {
+  return Object.entries(captions || {})
+    .filter(([, items]) => Array.isArray(items) && items.length > 0)
+    .map(([lang]) => lang)
+}
+
+const getSubtitleInfo = (info = {}) => {
+  const subtitles = info.subtitles || {}
+  const automaticCaptions = info.automatic_captions || {}
+  const subtitleLanguages = getCaptionLanguages(subtitles)
+  const automaticCaptionLanguages = getCaptionLanguages(automaticCaptions)
+
+  return {
+    has_subtitles: hasCaptionEntries(subtitles),
+    has_automatic_captions: hasCaptionEntries(automaticCaptions),
+    subtitle_languages: subtitleLanguages,
+    automatic_caption_languages: automaticCaptionLanguages
+  }
+}
+
+const findDownloadableFormat = (formats = [], formatId = '') => {
+  const wanted = String(formatId || '').trim()
+  if (!wanted) return null
+  return formats.find((f) => String(f?.format_id || '') === wanted) || null
+}
+
+const assertAllowedDownloadFormat = async (clientId, url, formatId) => {
+  if (!formatId) return null
+  const result = await runYtDlp(getYtDlpArgs(clientId, url, ['-J']))
+  const info = JSON.parse(result.stdout)
+  const selected = findDownloadableFormat(info.formats, formatId)
+  const ext = String(selected?.ext || '').toLowerCase()
+  const hasVideo = selected?.vcodec && selected.vcodec !== 'none'
+  const hasAudio = selected?.acodec && selected.acodec !== 'none'
+
+  if (!selected || !['mp4', 'm4a'].includes(ext)) {
+    const err = new Error('该格式不可用：仅支持 MP4 / M4A 下载')
+    err.statusCode = 400
+    throw err
+  }
+
+  if (ext === 'm4a' && (!hasAudio || hasVideo)) {
+    const err = new Error('该音频格式不可用')
+    err.statusCode = 400
+    throw err
+  }
+
+  if (ext === 'mp4' && !hasVideo) {
+    const err = new Error('该视频格式不可用')
+    err.statusCode = 400
+    throw err
+  }
+
+  return { ext, hasVideo, hasAudio }
+}
+
 const toUniqueFormats = (formats = [], duration = 0) => {
   const byResolution = new Map()
-  const allowedExt = new Set(['mp4', 'webm', 'mkv'])
+  let bestAudio = null
 
   for (const f of formats) {
-    if (!f || !f.height) continue
-    if (!f.ext || !allowedExt.has(String(f.ext).toLowerCase())) continue
+    if (!f || !f.ext) continue
+    const ext = String(f.ext || '').toLowerCase()
+    const hasVideo = f.vcodec && f.vcodec !== 'none'
+    const hasAudio = f.acodec && f.acodec !== 'none'
+    const size = estimateSizeBytes(f, duration)
+
+    if (ext === 'm4a' && hasAudio && !hasVideo) {
+      const score = Number(f.abr || f.tbr || 0)
+      if (!bestAudio || score > bestAudio.score) {
+        bestAudio = {
+          score,
+          value: {
+            format_id: f.format_id,
+            resolution: 'Audio',
+            format_note: f.format_note || 'audio only',
+            ext: f.ext,
+            filesize_mb: formatSizeMb(size),
+            has_audio: true,
+            has_video: false
+          }
+        }
+      }
+      continue
+    }
+
+    if (ext !== 'mp4') continue
+    if (!f.height) continue
     if (Number(f.height) < 144) continue
     if (String(f.format_note || '').toLowerCase().includes('storyboard')) continue
-    if (!f.vcodec || f.vcodec === 'none') continue
+    if (!hasVideo) continue
 
     const resolution = `${f.height}p`
     const existing = byResolution.get(resolution)
     const score = Number(f.tbr || 0)
-
-    const size = estimateSizeBytes(f, duration)
 
     if (!existing || score > existing.score) {
       byResolution.set(resolution, {
@@ -308,6 +391,7 @@ const toUniqueFormats = (formats = [], duration = 0) => {
   return Array.from(byResolution.values())
     .map((x) => x.value)
     .sort((a, b) => parseInt(b.resolution, 10) - parseInt(a.resolution, 10))
+    .concat(bestAudio ? [bestAudio.value] : [])
 }
 
 app.get('/api/health', (req, res) => {
@@ -412,15 +496,22 @@ app.post('/api/parse', async (req, res) => {
     const formats = toUniqueFormats(info.formats, info.duration)
 
     if (!formats.length) {
-      return res.status(400).json({ error: '未获取到可下载分辨率，请尝试设置对应平台 Cookies' })
+      return res.status(400).json({
+        code: 'NO_VISIBLE_FORMATS',
+        error: '未找到可下载的 MP4 / 音频格式。'
+      })
     }
 
     const thumbnail = normalizeThumbnail(info)
+    const subtitleInfo = getSubtitleInfo(info)
     res.json({
       title: info.title,
       thumbnail,
       thumbnail_proxy: buildThumbnailProxyUrl(thumbnail),
       duration: info.duration,
+      uploader: info.uploader || info.channel || info.creator || '',
+      upload_date: info.upload_date || info.release_date || info.timestamp || '',
+      ...subtitleInfo,
       source_url: url,
       formats
     })
@@ -486,8 +577,9 @@ app.post('/api/download', async (req, res) => {
       return res.status(400).json({ error: '缺少 url 或 resolution 参数' })
     }
 
-    const height = parseInt(resolution.replace(/[^0-9]/g, ''), 10)
-    if (!height) {
+    const isAudioOnly = /^audio$/i.test(resolution) || /^audio only$/i.test(resolution)
+    const height = isAudioOnly ? 0 : parseInt(resolution.replace(/[^0-9]/g, ''), 10)
+    if (!isAudioOnly && !height) {
       return res.status(400).json({ error: '无效的 resolution 参数' })
     }
 
@@ -495,9 +587,21 @@ app.post('/api/download', async (req, res) => {
     const targetDir = normalizeOutputDir(req.body?.output_dir || userSettings.default_download_dir, req.clientId)
     fs.mkdirSync(targetDir, { recursive: true })
 
-    const formatSelector = formatId
-      ? `${formatId}/best[height<=${height}][vcodec!=none][acodec!=none]/best[height<=${height}]/best`
-      : `best[height<=${height}][vcodec!=none][acodec!=none]/bestvideo[height<=${height}]+bestaudio/best[height<=${height}]/best`
+    const selectedFormat = await assertAllowedDownloadFormat(req.clientId, url, formatId)
+    const selectedVideoSelector = formatId
+      ? (selectedFormat?.hasAudio
+          ? `${formatId}[ext=mp4]`
+          : `${formatId}[ext=mp4]+bestaudio[ext=m4a]`)
+      : `bestvideo[height<=${height}][ext=mp4]+bestaudio[ext=m4a]/best[height<=${height}][ext=mp4]`
+    const formatSelector = isAudioOnly
+      ? (formatId ? `${formatId}[ext=m4a][vcodec=none]/bestaudio[ext=m4a]` : 'bestaudio[ext=m4a]')
+      : selectedVideoSelector
+    if (selectedFormat?.ext === 'm4a' && !isAudioOnly) {
+      return res.status(400).json({ error: '音频格式请使用 Audio 下载项' })
+    }
+    if (selectedFormat?.ext === 'mp4' && isAudioOnly) {
+      return res.status(400).json({ error: '视频格式不能作为 Audio 下载' })
+    }
     const outputTemplate = path.join(targetDir, '%(title).140B-%(id)s.%(ext)s')
 
     const baseArgs = [
@@ -563,6 +667,9 @@ app.post('/api/download', async (req, res) => {
     })
   } catch (error) {
     const msg = String(error?.message || '')
+    if (error?.statusCode) {
+      return res.status(error.statusCode).json({ error: msg })
+    }
     if (msg.includes('Sign in to confirm you’re not a bot')) {
       return res.status(500).json({
         error: '下载失败: YouTube 触发了机器人校验，请先在 Cookies 设置里更新 YouTube cookies（建议重新导出）后重试。'
