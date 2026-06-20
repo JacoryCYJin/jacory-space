@@ -1,14 +1,15 @@
 ---
-name: jacory-space-git-rule
-description: Jacory Space Git branch, commit, push, PR, and merge rules. Use for any Git workflow in this repository, including creating branches, committing, pushing, opening PRs, checking status, or merging. When the user asks to commit or submit a branch, commit and then push the current branch by default unless they explicitly say not to push. Do not commit directly on main, exclude local runtime data, use Chinese one-line conventional commit messages, and never merge PRs unless the user explicitly asks.
+name: git-rule
+description: MUST use before any git branch, commit, push, PR, merge, checkout, or status workflow in this repository. Jacory Space Git rules require task branches before code commits, Chinese one-line conventional commit messages in the format `<type>: 中文描述`, immediate push after requested commits, exclusion of local runtime data, and no PR merge unless the user explicitly asks.
 ---
 
-# jacory-space-git-rule
+# git-rule
 
 ## Branch Naming
 
 - Do not commit code changes directly on `main`; create or use a task branch first.
 - Branch format: `<type>/<short-kebab-desc>`.
+- Use the full branch prefix names below; do not use `feat/` as a branch prefix.
 - Common prefixes:
   - `feature/`: new features or meaningful capability improvements.
   - `fix/`: bug, exception, or regression fixes.

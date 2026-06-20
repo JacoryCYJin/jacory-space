@@ -51,7 +51,10 @@ npm run dev
 ## Git Workflow
 
 - 分支、commit 和 PR 规范见 `.cursor/rules/git-rule.mdc`。
+- 如 skill 系统可用，任何 `git status`、建分支、commit、push、PR 或 merge 操作前必须使用 `git-rule` skill。
 - 不在 `main` 上直接提交代码改动；先建任务分支。
+- 分支前缀使用 `feature/`、`fix/`、`chore/` 或 `docs/`；不要用缩写 `feat/` 作为分支前缀。
+- Commit message 必须使用一行中文 Conventional Commit：`<type>: 中文描述`，例如 `feat: 微调首页 Hero 与选中文本样式`。
 - 提交前执行 `git status`，不要把本地运行时数据、下载文件、个人文档提交进去。
 - `video-backend/data/users/`、`video-backend/downloads/`、`.dev/` 属于本地运行数据，不应进入提交。
 
