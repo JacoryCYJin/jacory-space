@@ -31,11 +31,12 @@
           <div
             v-for="tool in tools"
             :key="tool.no"
-            data-tools-reveal
-            data-tools-item
+            class="bg-background"
           >
             <RouterLink
               :to="tool.href"
+              data-tools-reveal
+              data-tools-item
               class="group flex h-full min-h-64 flex-col justify-between bg-background p-6 transition-colors duration-300 hover:bg-card"
             >
               <div class="flex items-start justify-between">
