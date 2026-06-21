@@ -3,18 +3,18 @@
     <section class="px-5 pt-28 md:px-8 md:pt-36">
       <div class="mx-auto max-w-screen-xl">
         <div class="reveal blog-reveal flex items-center justify-between border-b border-line pb-4">
-          <span class="font-mono text-xs tracking-[0.16em] text-blue">01 — Journal</span>
-          <span class="tech">14 entries / archive open</span>
+          <span class="font-mono text-xs tracking-[0.16em] text-blue">{{ t('blog.fieldNotes.journalLabel') }}</span>
+          <span class="tech">{{ t('blog.fieldNotes.archiveOpen', { count: entryCount }) }}</span>
         </div>
 
         <div class="reveal blog-reveal" style="transition-delay: 80ms">
           <h1
             class="mt-10 max-w-4xl text-balance font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-7xl"
           >
-            Field<span class="italic text-blue"> Notes</span>
+            {{ t('blog.fieldNotes.titleLead') }}<span class="italic text-blue">{{ t('blog.fieldNotes.titleAccent') }}</span>
           </h1>
           <p class="mt-6 max-w-md text-pretty text-sm leading-relaxed text-muted-foreground">
-            关于界面、系统与时间的记录。不追求频率,只追求每一篇都值得被归档。
+            {{ t('blog.fieldNotes.subtitle') }}
           </p>
         </div>
       </div>
@@ -22,9 +22,9 @@
 
     <section class="px-5 py-20 md:px-8 md:py-28">
       <div class="mx-auto max-w-screen-xl">
-        <div class="reveal blog-reveal">
+        <div v-if="lead" class="reveal blog-reveal">
           <RouterLink
-            to="/blog"
+            :to="`/blog/${lead.slug}`"
             class="group grid gap-8 border-y border-line py-10 lg:grid-cols-12 lg:gap-10"
           >
             <div class="flex items-start justify-between lg:col-span-4 lg:flex-col lg:gap-6">
@@ -47,7 +47,7 @@
               <span
                 class="mt-6 inline-flex items-center gap-2 font-mono text-xs tracking-[0.14em] text-foreground transition-colors group-hover:text-blue"
               >
-                Read entry
+                {{ t('blog.fieldNotes.readEntry') }}
                 <span class="transition-transform duration-500 ease-out group-hover:translate-x-1">↗</span>
               </span>
             </div>
@@ -59,19 +59,19 @@
     <section class="px-5 pb-28 md:px-8">
       <div class="mx-auto max-w-screen-xl">
         <div class="reveal blog-reveal mb-4 flex items-center justify-between">
-          <span class="tech">Archive — All Entries</span>
-          <span class="tech">↓ scroll</span>
+          <span class="tech">{{ t('blog.fieldNotes.archiveAll') }}</span>
+          <span class="tech">{{ t('blog.fieldNotes.scrollHint') }}</span>
         </div>
 
         <ul class="border-t border-line">
           <li
             v-for="(entry, index) in entries"
-            :key="entry.no"
+            :key="entry.slug"
             class="reveal blog-reveal"
             :style="{ transitionDelay: `${index * 60}ms` }"
           >
             <RouterLink
-              to="/blog"
+              :to="`/blog/${entry.slug}`"
               class="group grid grid-cols-12 items-center gap-2 border-b border-line py-6 transition-colors duration-300 hover:bg-card"
             >
               <span class="col-span-3 font-mono text-xs text-blue md:col-span-2">
@@ -106,10 +106,10 @@
         <div class="reveal blog-reveal flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
             <p class="font-sans text-3xl font-medium tracking-tight text-foreground md:text-4xl">
-              End of index<span class="text-blue">.</span>
+              {{ t('blog.fieldNotes.endOfIndex') }}<span class="text-blue">.</span>
             </p>
             <p class="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-              这套系统就绪后,下一步才是具体的页面:写作、工具、作品集——都将活在这套冷白的语言里。
+              {{ t('blog.fieldNotes.footerNote') }}
             </p>
           </div>
 
@@ -131,72 +131,40 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { listPosts } from '../lib/blog'
 
 const pageRoot = ref(null)
+const { t } = useI18n()
 let revealObserver
 
-const lead = {
-  no: '№ 014',
-  title: '关于冷白:为什么我把整个数字空间建立在留白之上',
-  excerpt:
-    '暖色让人放松,冷色让人专注。一个数字档案不需要被取悦,它需要被信任——于是我移除了所有米色、所有阴影、所有圆角,只留下细线与编号。',
-  cat: 'Essay',
-  date: '2026.06',
-  read: '8 min'
+function categoryLabel(category) {
+  const key = category || 'NOTE'
+  return t(`blog.entryCategories.${key}`, key)
 }
 
-const entries = [
-  {
-    no: '№ 013',
-    title: '细线作为结构:hairline 是怎样取代卡片的',
-    cat: 'Method',
-    date: '2026.05',
-    read: '6 min'
-  },
-  {
-    no: '№ 012',
-    title: '等宽字体里的秩序感——编号、坐标与索引',
-    cat: 'Type',
-    date: '2026.05',
-    read: '5 min'
-  },
-  {
-    no: '№ 011',
-    title: '滚动揭示的节奏:600ms 与一条缓动曲线',
-    cat: 'Motion',
-    date: '2026.04',
-    read: '7 min'
-  },
-  {
-    no: '№ 010',
-    title: '把个人网站当作操作系统来设计',
-    cat: 'Essay',
-    date: '2026.03',
-    read: '11 min'
-  },
-  {
-    no: '№ 009',
-    title: '蚀刻噪点:让纯净的界面有触感',
-    cat: 'Texture',
-    date: '2026.02',
-    read: '4 min'
-  },
-  {
-    no: '№ 008',
-    title: '隐藏层:悬停才出现的第二层信息',
-    cat: 'Interaction',
-    date: '2026.01',
-    read: '6 min'
-  }
-]
+const toEntry = (post) => ({
+  slug: post.slug,
+  no: `№ ${post.index}`,
+  title: post.title,
+  excerpt: post.description,
+  cat: categoryLabel(post.category),
+  date: post.date,
+  read: post.readTime
+})
 
-const footerMeta = [
-  { key: 'System', value: 'Personal OS / v.01' },
-  { key: 'Surface', value: 'Cool White' },
-  { key: 'Accent', value: 'Cool Blue' },
-  { key: 'Status', value: 'Foundation' }
-]
+const allPosts = computed(() => listPosts().map(toEntry))
+const lead = computed(() => allPosts.value[0] ?? null)
+const entries = computed(() => allPosts.value.slice(1))
+const entryCount = computed(() => allPosts.value.length)
+
+const footerMeta = computed(() => [
+  { key: t('blog.fieldNotes.footer.system'), value: t('blog.fieldNotes.footer.systemValue') },
+  { key: t('blog.fieldNotes.footer.surface'), value: t('blog.fieldNotes.footer.surfaceValue') },
+  { key: t('blog.fieldNotes.footer.accent'), value: t('blog.fieldNotes.footer.accentValue') },
+  { key: t('blog.fieldNotes.footer.status'), value: t('blog.fieldNotes.footer.statusValue') }
+])
 
 onMounted(() => {
   const revealItems = pageRoot.value?.querySelectorAll('.blog-reveal') ?? []

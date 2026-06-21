@@ -75,6 +75,47 @@ export default {
       development: '开发笔记',
       workflow: '工作流',
       life: '生活观察'
+    },
+    fieldNotes: {
+      journalLabel: '01 — 日志',
+      archiveOpen: '{count} 篇 / 归档已开放',
+      titleLead: 'Field',
+      titleAccent: ' Notes',
+      subtitle: '关于界面、系统与时间的记录。不追求频率，只追求每一篇都值得被归档。',
+      readEntry: '阅读全文',
+      archiveAll: '归档 — 全部条目',
+      scrollHint: '↓ 继续浏览',
+      endOfIndex: 'End of index',
+      footerNote: '这套系统就绪后，下一步才是具体的页面：写作、工具、作品集——都将活在这套冷白的语言里。',
+      footer: {
+        system: 'System',
+        systemValue: 'Personal OS / v.01',
+        surface: 'Surface',
+        surfaceValue: 'Cool White',
+        accent: 'Accent',
+        accentValue: 'Cool Blue',
+        status: 'Status',
+        statusValue: 'Foundation'
+      }
+    },
+    post: {
+      onThisNote: '本篇目录',
+      backToFieldNotes: '返回日志列表',
+      previousEntry: '上一篇',
+      nextEntry: '下一篇',
+      fieldNote: '现场笔记',
+      headerLabel: '№ {index} — {category} / {fieldNote}',
+      navAria: '文章导航',
+      notFoundBadge: 'Error 404 / 条目未找到',
+      notFoundTitle: '这篇笔记不存在'
+    },
+    entryCategories: {
+      WEEKLY: '周刊',
+      RESEARCH: '调研',
+      ESSAY: '随笔',
+      METHOD: '方法',
+      REVIEW: '简评',
+      NOTE: '笔记'
     }
   },
   about: {
