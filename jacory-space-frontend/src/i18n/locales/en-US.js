@@ -75,6 +75,47 @@ export default {
       development: 'Development Notes',
       workflow: 'Workflow',
       life: 'Life Notes'
+    },
+    fieldNotes: {
+      journalLabel: '01 — Journal',
+      archiveOpen: '{count} entries / archive open',
+      titleLead: 'Field',
+      titleAccent: ' Notes',
+      subtitle: 'Notes on interface, systems, and time. Not about frequency—only about entries worth archiving.',
+      readEntry: 'Read entry',
+      archiveAll: 'Archive — All Entries',
+      scrollHint: '↓ scroll',
+      endOfIndex: 'End of index',
+      footerNote: 'Once this system is ready, the next step is the pages themselves—writing, tools, portfolio—all living in this cool-white language.',
+      footer: {
+        system: 'System',
+        systemValue: 'Personal OS / v.01',
+        surface: 'Surface',
+        surfaceValue: 'Cool White',
+        accent: 'Accent',
+        accentValue: 'Cool Blue',
+        status: 'Status',
+        statusValue: 'Foundation'
+      }
+    },
+    post: {
+      onThisNote: 'On this note',
+      backToFieldNotes: 'Back to Field Notes',
+      previousEntry: 'Previous Entry',
+      nextEntry: 'Next Entry',
+      fieldNote: 'FIELD NOTE',
+      headerLabel: '№ {index} — {category} / {fieldNote}',
+      navAria: 'Article navigation',
+      notFoundBadge: 'Error 404 / entry not found',
+      notFoundTitle: 'This entry does not exist'
+    },
+    entryCategories: {
+      WEEKLY: 'WEEKLY',
+      RESEARCH: 'RESEARCH',
+      ESSAY: 'ESSAY',
+      METHOD: 'METHOD',
+      REVIEW: 'REVIEW',
+      NOTE: 'NOTE'
     }
   },
   about: {

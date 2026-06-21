@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="900" viewBox="0 0 1200 900" role="img" aria-label="White space as structure">
+  <rect width="1200" height="900" fill="#eef1f4"/>
+  <rect x="0" y="0" width="1200" height="900" fill="#e7eaee"/>
+
+  <!-- ceiling planes, cool-grey, hairline seams -->
+  <polygon points="0,0 1200,0 980,360 220,360" fill="#f2f4f6"/>
+  <polygon points="0,0 220,360 120,900 0,900" fill="#e3e7eb"/>
+  <polygon points="1200,0 1200,900 1080,900 980,360" fill="#e3e7eb"/>
+  <polygon points="220,360 980,360 1080,900 120,900" fill="#eceff2"/>
+
+  <g stroke="#d4d9de" stroke-width="1" fill="none">
+    <polygon points="0,0 1200,0 980,360 220,360"/>
+    <polygon points="0,0 220,360 120,900 0,900"/>
+    <polygon points="1200,0 1200,900 1080,900 980,360"/>
+    <polygon points="220,360 980,360 1080,900 120,900"/>
+  </g>
+
+  <!-- circular skylights -->
+  <g>
+    <ellipse cx="600" cy="250" rx="210" ry="78" fill="#fbfcfd"/>
+    <ellipse cx="600" cy="250" rx="210" ry="78" fill="none" stroke="#cfd5da" stroke-width="1.5"/>
+    <ellipse cx="600" cy="250" rx="150" ry="54" fill="#ffffff"/>
+    <ellipse cx="600" cy="250" rx="150" ry="54" fill="none" stroke="#dde1e5" stroke-width="1"/>
+
+    <ellipse cx="600" cy="620" rx="300" ry="118" fill="#fafbfc"/>
+    <ellipse cx="600" cy="620" rx="300" ry="118" fill="none" stroke="#cfd5da" stroke-width="1.5"/>
+    <ellipse cx="600" cy="620" rx="214" ry="82" fill="#ffffff"/>
+    <ellipse cx="600" cy="620" rx="214" ry="82" fill="none" stroke="#dde1e5" stroke-width="1"/>
+  </g>
+
+  <!-- subtle structural hairlines -->
+  <g stroke="#d8dde2" stroke-width="1">
+    <line x1="220" y1="360" x2="600" y2="250"/>
+    <line x1="980" y1="360" x2="600" y2="250"/>
+    <line x1="120" y1="900" x2="600" y2="620"/>
+    <line x1="1080" y1="900" x2="600" y2="620"/>
+  </g>
+</svg>

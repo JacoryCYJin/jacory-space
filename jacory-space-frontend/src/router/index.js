@@ -3,6 +3,7 @@ import Home from '../views/Home.vue'
 import VideoParser from '../views/VideoParser.vue'
 import About from '../views/About.vue'
 import Blog from '../views/Blog.vue'
+import BlogPost from '../views/BlogPost.vue'
 import Tools from '../views/Tools.vue'
 
 const routes = [
@@ -25,6 +26,11 @@ const routes = [
     path: '/blog',
     name: 'Blog',
     component: Blog
+  },
+  {
+    path: '/blog/:slug',
+    name: 'BlogPost',
+    component: BlogPost
   },
   {
     path: '/about',
