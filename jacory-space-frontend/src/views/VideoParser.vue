@@ -170,7 +170,7 @@
                   </div>
                 </section>
 
-                <section v-if="showResolvedModules" class="grid gap-5 border-b border-line py-10 md:grid-cols-[96px_minmax(0,1fr)]">
+                <section v-if="showResolvedModules" class="grid gap-5 py-10 md:grid-cols-[96px_minmax(0,1fr)]">
                   <div>
                     <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">04</p>
                     <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.downloadRegistry') }}</p>
@@ -304,39 +304,60 @@
 
                 <div v-if="outlineState === 'success'" class="mt-7 overflow-x-auto pb-2">
                   <div class="outline-map">
-                    <div class="outline-root">{{ t('videoParser.outline.root') }}</div>
+                    <div class="outline-root">
+                      <span class="outline-root-kicker">ROOT</span>
+                      <span class="outline-root-title">{{ outlineTitle }}</span>
+                    </div>
                     <div class="outline-trunk"></div>
                     <div class="outline-branches">
-                      <div v-for="item in outlineNodes" :key="item.id" class="outline-branch">
-                        <div class="outline-node">{{ item.title }}</div>
-                        <ul>
-                          <li v-for="child in item.children" :key="child">{{ child }}</li>
+                      <article v-for="item in outlineNodes" :key="item.id" class="outline-branch">
+                        <div class="outline-node">
+                          <span class="outline-node-index">{{ item.id }}</span>
+                          <span class="outline-node-title">{{ item.title }}</span>
+                          <span v-if="item.summary" class="outline-node-summary">{{ item.summary }}</span>
+                        </div>
+                        <ul class="outline-children">
+                          <li v-for="child in item.children" :key="child.id">
+                            <span class="outline-child-index">{{ child.id }}</span>
+                            <span class="outline-child-content">
+                              <span class="outline-child-title">{{ child.title }}</span>
+                              <span v-if="child.summary" class="outline-child-summary">{{ child.summary }}</span>
+                            </span>
+                          </li>
                         </ul>
-                      </div>
+                      </article>
                     </div>
                   </div>
+                  <p v-if="outlineSummary" class="mt-5 border-l border-line-strong pl-4 text-sm leading-relaxed text-muted-foreground">
+                    {{ outlineSummary }}
+                  </p>
                 </div>
 
-                <div v-else class="mt-7 flex min-h-[430px] items-center border border-line bg-card px-8 py-10">
+                <div
+                  v-else
+                  class="outline-state-panel mt-7"
+                  :class="{ 'is-generating': outlineState === 'generating' }"
+                >
                   <div>
                     <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
                       {{ outlineStateMeta.title }}
                     </p>
                     <p class="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">
-                      {{ outlineStateMeta.description }}
+                      {{ outlineState === 'failed' && outlineError ? outlineError : outlineStateMeta.description }}
                     </p>
-                    <div v-if="outlineState === 'generating'" class="mt-6 h-px w-40 overflow-hidden bg-line">
-                      <span class="outline-loading-line block h-px w-16 bg-blue"></span>
+                    <div v-if="outlineState === 'generating'" class="outline-loading-system">
+                      <div class="outline-loading-meta">
+                        <span>TRANSCRIPT</span>
+                        <span>MODEL</span>
+                        <span>OUTLINE</span>
+                      </div>
+                      <div class="outline-scan-track">
+                        <span></span>
+                      </div>
+                      <div class="outline-loading-grid" aria-hidden="true">
+                        <span v-for="index in 18" :key="index"></span>
+                      </div>
                     </div>
-                    <button
-                      v-if="outlineState === 'failed'"
-                      type="button"
-                      class="mt-6 inline-flex h-10 items-center gap-2 border border-line px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted"
-                      @click="retryOutline"
-                    >
-                      <RefreshCw class="h-3.5 w-3.5" />
-                      {{ t('videoParser.outline.retry') }}
-                    </button>
                   </div>
                 </div>
               </aside>
@@ -645,6 +666,8 @@ const savingCookieSettings = ref(false)
 const cookieSettingsStatus = ref(null)
 const copyStatus = ref('')
 const outlineGenerationState = ref('idle')
+const generatedOutline = ref(null)
+const outlineError = ref('')
 
 const showSettingsRail = ref(false)
 const showEditCookies = ref(false)
@@ -658,63 +681,6 @@ const customPlatforms = ref([])
 const cookiesInfo = ref({ youtube: {}, bilibili: {} })
 
 const statusKeys = ['READY', 'PARSING', 'RESOLVED', 'DOWNLOADING', 'COMPLETE', 'FAILED']
-
-const outlineMock = {
-  'zh-CN': [
-    {
-      id: 'intro',
-      title: '1. 引言',
-      children: ['为什么需要个人操作系统', '数字空间的混乱与成本', 'OS 思维：系统化与可组合性']
-    },
-    {
-      id: 'core',
-      title: '2. 核心理念',
-      children: ['统一入口与标准化输出', '收藏 → 处理 → 存储 → 输出', '自动化流程：从想法到沉淀']
-    },
-    {
-      id: 'workflow',
-      title: '3. 工作流',
-      children: ['工具链与数据源', '获取与工具选择策略', '任务编排与稳定运行']
-    },
-    {
-      id: 'tools',
-      title: '4. 工具系统',
-      children: ['解析工具链与质量层次', '格式策略与参数说明', '下载与校验机制优化']
-    },
-    {
-      id: 'summary',
-      title: '5. 总结',
-      children: ['构建属于自己的数字空间', '下一步：持续迭代与优化']
-    }
-  ],
-  'en-US': [
-    {
-      id: 'intro',
-      title: '1. Introduction',
-      children: ['Why personal operating systems matter', 'The cost of scattered digital space', 'OS thinking: systems and composability']
-    },
-    {
-      id: 'core',
-      title: '2. Core Idea',
-      children: ['One entry point and normalized output', 'Collect → process → store → publish', 'Automation from raw idea to archive']
-    },
-    {
-      id: 'workflow',
-      title: '3. Workflow',
-      children: ['Toolchain and data sources', 'Acquisition and tool selection strategy', 'Task orchestration and stable runs']
-    },
-    {
-      id: 'tools',
-      title: '4. Tool System',
-      children: ['Parser chain and quality layers', 'Format strategy and parameter notes', 'Download and verification improvements']
-    },
-    {
-      id: 'summary',
-      title: '5. Summary',
-      children: ['Build a digital space that belongs to you', 'Next step: continuous iteration']
-    }
-  ]
-}
 
 const cookieModes = ['manual', 'browser', 'none']
 const browserSources = [
@@ -758,12 +724,28 @@ const activeStatusIndex = computed(() => Math.max(0, statusKeys.indexOf(parserSt
 
 const showStatusSection = computed(() => parserState.value !== 'READY' || Boolean(error.value || success.value))
 const showResolvedModules = computed(() => Boolean(videoInfo.value))
-const showOutlineModule = computed(() => ['noSubtitles', 'subtitlesAvailable', 'generating', 'success', 'failed'].includes(outlineState.value))
+const showOutlineModule = computed(() => ['noSubtitles', 'insufficient', 'subtitlesAvailable', 'generating', 'success', 'failed'].includes(outlineState.value))
 const showOutputPathSection = computed(() => Boolean(lastDownloadedPath.value))
 
-const outlineNodes = computed(() => outlineMock[locale.value] || outlineMock['zh-CN'])
+const outlineNodes = computed(() => generatedOutline.value?.nodes || [])
+const outlineTitle = computed(() => generatedOutline.value?.title || t('videoParser.outline.root'))
+const outlineSummary = computed(() => generatedOutline.value?.summary || '')
 
-const hasSubtitleSource = computed(() => {
+const minTranscriptCompactLength = 100
+
+const getTranscriptCompactLength = (transcript = '') => String(transcript || '').replace(/\s+/g, '').length
+
+const isUsableTranscript = (info) => {
+  if (!info) return false
+  const transcript = String(info.transcript || '').trim()
+  if (!transcript) return false
+  const compactLength = Number(info.transcript_compact_length || getTranscriptCompactLength(transcript))
+  return info.transcript_is_valid === true && compactLength >= minTranscriptCompactLength
+}
+
+const hasOutlineTranscript = computed(() => isUsableTranscript(videoInfo.value))
+
+const hasCaptionMetadata = computed(() => {
   const info = videoInfo.value
   if (!info) return false
   return Boolean(
@@ -774,12 +756,20 @@ const hasSubtitleSource = computed(() => {
   )
 })
 
+const hasInsufficientTranscript = computed(() => {
+  const info = videoInfo.value
+  if (!info || hasOutlineTranscript.value) return false
+  return info.transcript_status === 'insufficient' || hasCaptionMetadata.value
+})
+
 const outlineState = computed(() => {
   if (!videoInfo.value) return 'idle'
   if (outlineGenerationState.value === 'generating') return 'generating'
   if (outlineGenerationState.value === 'failed') return 'failed'
   if (outlineGenerationState.value === 'success') return 'success'
-  return hasSubtitleSource.value ? 'subtitlesAvailable' : 'noSubtitles'
+  if (hasOutlineTranscript.value) return 'subtitlesAvailable'
+  if (hasInsufficientTranscript.value) return 'insufficient'
+  return 'noSubtitles'
 })
 
 const outlineStateMeta = computed(() => {
@@ -886,11 +876,25 @@ const parseVideo = async () => {
   videoInfo.value = null
   lastDownloadedPath.value = ''
   outlineGenerationState.value = 'idle'
+  generatedOutline.value = null
+  outlineError.value = ''
   Object.keys(downloadRows).forEach((key) => delete downloadRows[key])
+  let shouldGenerateOutline = false
   try {
     const response = await axios.post('/api/parse', { url })
     videoInfo.value = response.data
     videoUrl.value = response.data?.source_url || url
+    console.info('[VideoParser] Transcript parsed', {
+      transcriptStatus: response.data?.transcript_status,
+      transcriptValid: response.data?.transcript_is_valid,
+      transcriptLanguage: response.data?.transcript_language,
+      transcriptSource: response.data?.transcript_source,
+      transcriptFormat: response.data?.transcript_format,
+      transcriptLength: response.data?.transcript_char_count,
+      transcriptCompactLength: response.data?.transcript_compact_length,
+      transcriptPreview: response.data?.transcript_preview
+    })
+    shouldGenerateOutline = isUsableTranscript(response.data)
   } catch (err) {
     if (err.response?.data?.code === 'NO_VISIBLE_FORMATS') {
       error.value = t('videoParser.errors.noVisibleFormats')
@@ -899,6 +903,10 @@ const parseVideo = async () => {
     }
   } finally {
     loading.value = false
+  }
+
+  if (shouldGenerateOutline) {
+    await generateOutline()
   }
 }
 
@@ -1144,17 +1152,59 @@ const copyOutline = () => {
   if (outlineState.value !== 'success') return
   const text = outlineNodes
     .value
-    .map((node) => `${node.title}\n${node.children.map((child) => `- ${child}`).join('\n')}`)
+    .map((node) => {
+      const children = node.children
+        .map((child) => `- ${child.title}${child.summary ? `: ${child.summary}` : ''}`)
+        .join('\n')
+      return `${node.title}${node.summary ? `\n${node.summary}` : ''}${children ? `\n${children}` : ''}`
+    })
     .join('\n\n')
-  copyToClipboard(text)
+  copyToClipboard(`${outlineTitle.value}\n${outlineSummary.value}\n\n${text}`.trim())
   markCopied(t('videoParser.outline.copied'))
 }
 
-const retryOutline = () => {
+const outlineLanguage = computed(() => (String(locale.value).toLowerCase().startsWith('zh') ? 'zh' : 'en'))
+
+const generateOutline = async () => {
+  const transcript = String(videoInfo.value?.transcript || '').trim()
+  if (!isUsableTranscript(videoInfo.value)) {
+    outlineError.value = t('videoParser.outline.states.insufficient.description')
+    outlineGenerationState.value = 'idle'
+    return
+  }
   outlineGenerationState.value = 'generating'
-  window.setTimeout(() => {
+  generatedOutline.value = null
+  outlineError.value = ''
+  try {
+    const response = await axios.post('/api/video/outline', {
+      title: videoInfo.value?.title || '',
+      platform: sourcePlatform.value,
+      duration: videoInfo.value?.duration ? formatDuration(videoInfo.value.duration) : '',
+      language: outlineLanguage.value,
+      transcript
+    })
+    if (!response.data?.success || !response.data?.outline) {
+      throw new Error(response.data?.error || t('videoParser.errors.outlineFailed'))
+    }
+    generatedOutline.value = response.data.outline
+    outlineGenerationState.value = 'success'
+  } catch (err) {
+    console.error('[VideoParser] Outline generation failed', {
+      endpoint: '/api/video/outline',
+      status: err.response?.status,
+      response: err.response?.data,
+      message: err.message,
+      request: {
+        title: videoInfo.value?.title || '',
+        platform: sourcePlatform.value,
+        duration: videoInfo.value?.duration ? formatDuration(videoInfo.value.duration) : '',
+        language: outlineLanguage.value,
+        transcriptLength: transcript.length
+      }
+    })
+    outlineError.value = err.response?.data?.error || t('videoParser.errors.outlineFailed')
     outlineGenerationState.value = 'failed'
-  }, 900)
+  }
 }
 
 loadSettings()
@@ -1284,107 +1334,255 @@ onBeforeUnmount(() => {
 }
 
 .outline-map {
+  --outline-map-top: 30px;
+  --outline-root-width: 220px;
+  --outline-trunk-width: 48px;
+  --outline-branch-gutter: 34px;
+  --outline-branch-gap: 18px;
+  --outline-line-y: 25px;
+  --outline-trunk-x: calc(var(--outline-root-width) - 1px);
+  --outline-branch-x: calc(var(--outline-root-width) + var(--outline-trunk-width));
+  --outline-line-absolute-y: calc(var(--outline-map-top) + var(--outline-line-y));
   position: relative;
-  min-width: 560px;
-  min-height: 430px;
-  padding: 86px 0 28px;
-}
-
-.outline-root,
-.outline-node {
-  width: max-content;
-  border: 1px solid var(--line-strong);
-  background: var(--card);
-  padding: 0.55rem 0.7rem;
-  font-family: theme("fontFamily.mono");
-  font-size: 0.75rem;
-  line-height: 1.2;
-  color: var(--foreground);
+  min-width: 680px;
+  padding: var(--outline-map-top) 0 18px;
 }
 
 .outline-root {
   position: absolute;
-  top: 192px;
+  top: var(--outline-map-top);
   left: 0;
+  z-index: 2;
+  display: inline-grid;
+  width: var(--outline-root-width);
+  border: 1px solid var(--line-strong);
+  background: var(--card);
+  padding: 0.7rem 0.8rem;
+}
+
+.outline-root-kicker,
+.outline-node-index,
+.outline-child-index {
+  font-family: theme("fontFamily.mono");
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  color: var(--blue);
+}
+
+.outline-root-title {
+  margin-top: 0.3rem;
+  font-size: 0.82rem;
+  line-height: 1.2;
+  color: var(--foreground);
 }
 
 .outline-trunk {
   position: absolute;
-  top: 210px;
-  left: 128px;
-  width: 42px;
+  top: var(--outline-line-absolute-y);
+  left: var(--outline-trunk-x);
+  width: calc(var(--outline-trunk-width) + 2px);
   height: 1px;
   background: var(--line-strong);
 }
 
 .outline-branches {
-  margin-left: 170px;
+  position: relative;
   display: grid;
-  gap: 26px;
+  gap: var(--outline-branch-gap);
+  margin-left: var(--outline-branch-x);
+  padding-left: var(--outline-branch-gutter);
 }
 
 .outline-branch {
   position: relative;
   display: grid;
-  grid-template-columns: 190px minmax(190px, 1fr);
-  align-items: center;
-  gap: 34px;
+  grid-template-columns: minmax(150px, 190px) minmax(250px, 1fr);
+  gap: 24px;
+  align-items: start;
 }
 
 .outline-branch::before {
   position: absolute;
-  left: -42px;
-  width: 42px;
+  top: var(--outline-line-y);
+  left: calc((var(--outline-branch-gutter) * -1) - 1px);
+  width: calc(var(--outline-branch-gutter) + 2px);
   height: 1px;
   content: "";
   background: var(--line-strong);
 }
 
-.outline-branch::after {
+.outline-branch:not(:last-child)::after {
   position: absolute;
-  left: -42px;
+  top: var(--outline-line-y);
+  left: calc(var(--outline-branch-gutter) * -1);
   width: 1px;
-  height: calc(100% + 26px);
+  height: calc(100% + var(--outline-branch-gap));
   content: "";
   background: var(--line-strong);
 }
 
-.outline-branch:first-child::after {
-  top: 50%;
-}
-
-.outline-branch:last-child::after {
-  bottom: 50%;
-}
-
-.outline-branch:not(:first-child):not(:last-child)::after {
-  top: calc(-50% - 13px);
-  height: calc(100% + 26px);
-}
-
-.outline-branch ul {
+.outline-node {
   display: grid;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  gap: 0.35rem;
+  border: 1px solid var(--line);
+  background: var(--card);
+  padding: 0.62rem 0.72rem;
+  transition:
+    border-color 220ms var(--ease-premium),
+    color 220ms var(--ease-premium);
 }
 
-.outline-branch li {
-  position: relative;
-  font-size: 0.75rem;
-  line-height: 1.35;
+.outline-branch:hover .outline-node {
+  border-color: var(--line-strong);
+}
+
+.outline-node-title {
+  font-size: 0.8rem;
+  line-height: 1.25;
+  color: var(--foreground);
+}
+
+.outline-node-summary {
+  font-size: 0.72rem;
+  line-height: 1.45;
   color: var(--muted-foreground);
 }
 
-.outline-branch li::before {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  margin-right: 9px;
-  border: 1px solid var(--haze);
-  border-radius: 9999px;
-  content: "";
+.outline-children {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0.2rem 0 0;
+  list-style: none;
+}
+
+.outline-children li {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  padding-top: 9px;
+  font-size: 0.74rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+}
+
+.outline-children li:first-child {
+  border-top-color: transparent;
+  padding-top: 0;
+}
+
+.outline-child-index {
+  color: var(--haze);
+}
+
+.outline-child-content {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.outline-child-title {
+  color: var(--foreground);
+}
+
+.outline-child-summary {
+  color: var(--haze);
+}
+
+.outline-state-panel {
+  position: relative;
+  display: flex;
+  min-height: 430px;
+  align-items: center;
+  border: 1px solid var(--line);
+  background: var(--card);
+  padding: 2.5rem 2rem;
+}
+
+.outline-state-panel > div {
+  max-width: 460px;
+}
+
+.outline-state-panel.is-generating {
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.outline-state-panel.is-generating > div {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  width: clamp(380px, 72%, 460px);
+  max-width: calc(100% - 4rem);
+  transform: translate(-50%, -50%);
+}
+
+.outline-loading-system {
+  margin-top: 1.65rem;
+  width: 100%;
+}
+
+.outline-loading-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  font-family: theme("fontFamily.mono");
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
+  color: var(--muted-foreground);
+}
+
+.outline-scan-track {
+  position: relative;
+  margin-top: 0.75rem;
+  height: 1px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.outline-scan-track span {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  display: block;
+  width: 72px;
+  background: var(--blue);
+  animation: outline-scan 2.6s var(--ease-premium) infinite;
+}
+
+.outline-loading-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-top: 1rem;
+}
+
+.outline-loading-grid span {
+  height: 1px;
+  background: var(--line);
+}
+
+@keyframes outline-scan {
+  0% {
+    transform: translateX(-80px);
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  82% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(370px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outline-scan-track span {
+    animation: none;
+  }
 }
 
 .settings-choice {

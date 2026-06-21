@@ -19,6 +19,7 @@ Jacory Space 开发服务脚本
 用法:
   bash scripts/dev.sh                 启动全部服务
   bash scripts/dev.sh <service>       启动单个服务
+  bash scripts/dev.sh restart [service] 重启全部或单个服务
   bash scripts/dev.sh stop [service]  停止全部或单个服务
   bash scripts/dev.sh status          查看运行状态
   bash scripts/dev.sh ls              列出可用服务
@@ -178,6 +179,13 @@ stop_service() {
   rm -f "$pid_file"
 }
 
+restart_service() {
+  local service="$1"
+
+  stop_service "$service"
+  start_service "$service"
+}
+
 print_status() {
   local item name dir cmd port pid
   printf '%-24s %-8s %-8s %s\n' "SERVICE" "PORT" "PID" "STATUS"
@@ -218,6 +226,16 @@ main() {
         for item in "${SERVICES[@]}"; do
           IFS='|' read -r name _ _ _ <<< "$item"
           stop_service "$name"
+        done
+      fi
+      ;;
+    restart)
+      if [[ -n "$target" ]]; then
+        restart_service "$target"
+      else
+        for item in "${SERVICES[@]}"; do
+          IFS='|' read -r name _ _ _ <<< "$item"
+          restart_service "$name"
         done
       fi
       ;;

@@ -172,23 +172,28 @@ export default {
       copyOutline: 'COPY OUTLINE',
       root: 'Video Outline',
       copied: 'Copied',
+      generate: 'GENERATE OUTLINE',
       retry: 'Retry generation',
       states: {
         idle: {
           title: 'Waiting for video',
-          description: 'Parse a video to generate an outline. When the model integration lands, outlines will be generated in English for EN mode.'
+          description: 'Parse a video to generate an outline.'
         },
         noSubtitles: {
           title: 'No subtitles',
           description: 'No platform subtitles were detected, so an outline cannot be generated yet.'
         },
+        insufficient: {
+          title: 'Insufficient subtitles',
+          description: 'Subtitle content is insufficient, so an outline cannot be generated.'
+        },
         subtitlesAvailable: {
           title: 'Subtitles available',
-          description: 'Subtitle metadata was detected. A SiliconFlow model can later use it to generate an English outline.'
+          description: 'Subtitle text was detected. Generate a video outline in the current page language.'
         },
         generating: {
           title: 'Generating outline',
-          description: 'Building a video outline from the subtitle structure.'
+          description: 'Generating a video outline from the subtitle text…'
         },
         success: {
           title: 'Outline ready',
@@ -286,6 +291,7 @@ export default {
       loadSettingsFailed: 'Failed to load settings',
       saveDefaultDirFailed: 'Failed to save default download directory',
       folderDialogFailed: 'Failed to open system folder picker',
+      outlineFailed: 'Failed to generate outline',
       saveCookieSettingsFailed: 'Failed to save Cookie mode',
       loadCookiesFailed: 'Failed to load cookies status',
       saveFailed: 'Save failed',

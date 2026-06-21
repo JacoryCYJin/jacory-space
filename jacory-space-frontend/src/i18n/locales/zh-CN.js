@@ -172,23 +172,28 @@ export default {
       copyOutline: '复制大纲',
       root: '视频大纲 / Outline',
       copied: '复制成功',
+      generate: '生成大纲',
       retry: '重试生成',
       states: {
         idle: {
           title: '等待解析视频',
-          description: '解析视频后可生成大纲。后续接入大模型时，将根据当前语言生成中文大纲。'
+          description: '解析视频后可生成大纲。'
         },
         noSubtitles: {
           title: '暂无字幕',
           description: '未检测到平台字幕，暂时无法生成大纲。'
         },
+        insufficient: {
+          title: '字幕内容不足',
+          description: '字幕内容不足，无法生成大纲。'
+        },
         subtitlesAvailable: {
           title: '字幕可用',
-          description: '已检测到字幕信息，后续可接入硅基流动大模型生成中文大纲。'
+          description: '已检测到字幕文本，可根据当前页面语言生成视频大纲。'
         },
         generating: {
           title: '正在生成大纲',
-          description: '正在根据字幕结构生成视频大纲。'
+          description: '正在根据字幕内容生成视频大纲…'
         },
         success: {
           title: '大纲已生成',
@@ -286,6 +291,7 @@ export default {
       loadSettingsFailed: '加载设置失败',
       saveDefaultDirFailed: '保存默认下载目录失败',
       folderDialogFailed: '打开系统文件夹选择失败',
+      outlineFailed: '生成大纲失败',
       saveCookieSettingsFailed: '保存 Cookie 使用方式失败',
       loadCookiesFailed: '加载 cookies 状态失败',
       saveFailed: '保存失败',
