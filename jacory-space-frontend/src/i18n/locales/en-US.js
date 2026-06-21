@@ -102,6 +102,134 @@ export default {
     title: 'Video Parser and Downloader',
     subtitle: 'Supports video parsing from Bilibili, YouTube, and more.',
     tip: 'Tip: parse and download videos from Bilibili, YouTube, and other platforms.',
+    pageDescription: 'Parse YouTube / Bilibili video links, extract available formats, and save files locally.',
+    ui: {
+      settings: 'SETTINGS',
+      cookiesDirectory: 'COOKIES / DIRECTORY'
+    },
+    cookieEntry: {
+      label: 'Cookie Settings',
+      hint: 'This video requires cookies. Open Settings to configure cookies and try again.'
+    },
+    sections: {
+      command: 'COMMAND',
+      status: 'STATUS',
+      videoInfo: 'VIDEO INFO',
+      downloadRegistry: 'DOWNLOAD REGISTRY',
+      outputPath: 'OUTPUT PATH',
+      outlineMap: 'OUTLINE MAP',
+      cookiesSettings: 'COOKIES SETTINGS',
+      directorySettings: 'DIRECTORY SETTINGS'
+    },
+    statusRail: {
+      READY: 'Ready',
+      PARSING: 'Parsing',
+      RESOLVED: 'Resolved',
+      DOWNLOADING: 'Downloading',
+      COMPLETE: 'Complete',
+      COOKIES_REQUIRED: 'Cookies required',
+      FAILED: 'Failed'
+    },
+    info: {
+      awaitingUrl: 'AWAITING URL',
+      awaitingDescription: 'Paste a video link and parse it to display the thumbnail, title, source, duration, and video metadata.',
+      source: 'SOURCE',
+      duration: 'DURATION',
+      uploader: 'UPLOADER',
+      pubDate: 'PUB DATE',
+      formatsAvailable: 'FORMATS AVAILABLE'
+    },
+    registry: {
+      items: '{count} ITEMS',
+      empty: 'No downloadable MP4 or audio formats found.',
+      resolution: 'RESOLUTION',
+      format: 'FORMAT',
+      size: 'SIZE',
+      status: 'STATUS',
+      action: 'ACTION',
+      rowStatus: {
+        READY: 'READY',
+        DOWNLOADING: 'DOWNLOADING',
+        COMPLETE: 'COMPLETE',
+        FAILED: 'FAILED',
+        UNAVAILABLE: 'UNAVAILABLE'
+      },
+      actions: {
+        download: 'DOWNLOAD',
+        pause: 'PAUSE',
+        retry: 'RETRY',
+        reveal: 'REVEAL',
+        open: 'OPEN'
+      }
+    },
+    output: {
+      pending: 'The local save path will appear after a download completes.',
+      copyPath: 'COPY PATH',
+      revealInFinder: 'REVEAL IN FINDER',
+      copied: 'Path copied'
+    },
+    outline: {
+      copyOutline: 'COPY OUTLINE',
+      root: 'Video Outline',
+      copied: 'Copied',
+      generate: 'GENERATE OUTLINE',
+      retry: 'Retry generation',
+      states: {
+        idle: {
+          title: 'Waiting for video',
+          description: 'Parse a video to generate an outline.'
+        },
+        noSubtitles: {
+          title: 'No subtitles',
+          description: 'No platform subtitles were detected, so an outline cannot be generated yet.'
+        },
+        insufficient: {
+          title: 'Insufficient subtitles',
+          description: 'Subtitle content is insufficient, so an outline cannot be generated.'
+        },
+        subtitlesAvailable: {
+          title: 'Subtitles available',
+          description: 'Subtitle text was detected. Generate a video outline in the current page language.'
+        },
+        generating: {
+          title: 'Generating outline',
+          description: 'Generating a video outline from the subtitle text…'
+        },
+        success: {
+          title: 'Outline ready',
+          description: 'The video outline is ready.'
+        },
+        failed: {
+          title: 'Generation failed',
+          description: 'Something went wrong while generating the outline. You can retry generation.'
+        },
+        empty: {
+          title: 'No outline',
+          description: 'There is no outline available for this video yet.'
+        }
+      }
+    },
+    settings: {
+      mode: 'MODE',
+      cookieModes: {
+        manual: 'MANUAL',
+        browser: 'BROWSER',
+        none: 'NONE'
+      },
+      browserSource: 'BROWSER SOURCE',
+      platformCookies: 'PLATFORM COOKIES',
+      set: 'SET',
+      notSet: 'NOT SET',
+      edit: 'EDIT',
+      delete: 'DELETE',
+      custom: '+ CUSTOM',
+      cookiesUsageNote: 'Cookies are only used to access private or restricted videos that require login.',
+      defaultDownloadDirectory: 'DEFAULT DOWNLOAD DIRECTORY',
+      temporaryDirectory: 'TEMPORARY DIRECTORY (THIS DOWNLOAD)',
+      useDefaultDirectory: 'Use default directory',
+      change: 'CHANGE',
+      temporaryDirectoryNote: 'The temporary directory stores in-progress download files and can be cleaned automatically after the task completes.'
+    },
     thumbnailAlt: 'Video thumbnail',
     cookiesSettings: 'Cookies Settings',
     downloadSettings: 'Download Directory',
@@ -156,11 +284,14 @@ export default {
     cookiesPlaceholder: 'Paste {platform} cookies.txt content here...',
     errors: {
       emptyUrl: 'Please enter a video URL',
+      invalidUrl: 'Please enter a valid video URL',
+      noVisibleFormats: 'No downloadable MP4 or audio formats found.',
       parseFailed: 'Parse failed: {message}',
       downloadFailed: 'Download failed: {message}',
       loadSettingsFailed: 'Failed to load settings',
       saveDefaultDirFailed: 'Failed to save default download directory',
       folderDialogFailed: 'Failed to open system folder picker',
+      outlineFailed: 'Failed to generate outline',
       saveCookieSettingsFailed: 'Failed to save Cookie mode',
       loadCookiesFailed: 'Failed to load cookies status',
       saveFailed: 'Save failed',
@@ -168,6 +299,7 @@ export default {
       platformExists: 'Platform already exists'
     },
     messages: {
+      readingMetadata: 'Reading video metadata…',
       downloadingResolution: 'Downloading {resolution} version...',
       downloadComplete: 'Download complete! File saved at: {path}',
       defaultDirSaved: 'Default download directory saved: {path}',
