@@ -1,7 +1,7 @@
 <template>
   <section
     data-tools-enter
-    class="spatial-index relative hidden border-y border-line md:block"
+    class="relative hidden h-full min-h-[560px] border-y border-line md:block lg:min-h-0"
     aria-label="Layered spatial project index"
   >
     <canvas
@@ -19,9 +19,9 @@
         :ref="(el) => setLayerEl(layer.id, el)"
         class="spatial-anchor"
       >
-        <div class="spatial-layer-label">
-          <span class="spatial-layer-name font-mono text-xs">{{ layer.id }}</span>
-          <span class="spatial-layer-count font-mono text-xs">{{ layer.count }}</span>
+        <div class="spatial-layer-label flex flex-col items-end gap-[0.2rem] text-right">
+          <span class="font-mono text-xs uppercase tracking-[0.2em] text-foreground">{{ layer.id }}</span>
+          <span class="font-mono text-xs tracking-[0.16em] text-muted-foreground">{{ layer.count }}</span>
         </div>
       </div>
 
@@ -31,25 +31,34 @@
         :ref="(el) => setEntryEl(project.id, el)"
         class="spatial-anchor"
       >
-        <div class="spatial-entry" :class="hoveredId === project.id ? 'is-hovered' : ''">
-          <span class="spatial-entry-no font-mono text-xs">{{ project.no }}</span>
-          <span class="spatial-entry-title font-mono text-sm">{{ project.title }}</span>
-          <span class="spatial-entry-dot" :class="statusDotClass(project.status)" aria-hidden="true" />
+        <div class="spatial-entry inline-flex items-baseline gap-[0.4rem] whitespace-nowrap">
+          <span class="font-mono text-xs tracking-[0.06em] text-blue">{{ project.no }}</span>
+          <span
+            class="font-mono text-sm tracking-[0.01em] transition-colors duration-300 ease-premium"
+            :class="hoveredId === project.id ? 'text-blue' : 'text-foreground'"
+          >{{ project.title }}</span>
+          <span
+            class="h-[0.34rem] w-[0.34rem] self-center rounded-full"
+            :class="statusDotClass(project.status)"
+            aria-hidden="true"
+          />
         </div>
       </div>
     </div>
 
-    <p class="spatial-hint font-mono text-xs">Hover to inspect / Click to open</p>
+    <p class="absolute bottom-4 left-[1.1rem] font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
+      Hover to inspect / Click to open
+    </p>
 
-    <div class="spatial-axis" aria-hidden="true">
-      <span class="spatial-axis-z font-mono text-xs">Z</span>
-      <span class="spatial-axis-y font-mono text-xs">Y</span>
-      <span class="spatial-axis-x font-mono text-xs">X</span>
+    <div class="pointer-events-none absolute bottom-4 right-[1.2rem] h-12 w-12" aria-hidden="true">
+      <span class="absolute right-[1.2rem] top-0 font-mono text-xs tracking-[0.1em] text-muted-foreground">Z</span>
+      <span class="absolute bottom-0 right-0 font-mono text-xs tracking-[0.1em] text-muted-foreground">Y</span>
+      <span class="absolute bottom-0 left-0 font-mono text-xs tracking-[0.1em] text-muted-foreground">X</span>
     </div>
   </section>
 
-  <section data-tools-enter class="mt-8 md:hidden">
-    <div v-for="layer in layerMeta" :key="'m-' + layer.id" class="mobile-layer">
+  <section data-tools-enter class="mt-8 space-y-9 md:hidden">
+    <div v-for="layer in layerMeta" :key="'m-' + layer.id">
       <div class="flex items-baseline justify-between">
         <span class="tech text-foreground">{{ layer.id }}</span>
         <span class="tech">{{ layer.count }}</span>
@@ -585,17 +594,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.spatial-index {
-  height: 100%;
-  min-height: 560px;
-}
-
-@media (min-width: 1024px) {
-  .spatial-index {
-    min-height: 0;
-  }
-}
-
+/* Reused on every layer/entry anchor; needs will-change for per-frame transforms. */
 .spatial-anchor {
   position: absolute;
   top: 0;
@@ -603,98 +602,12 @@ onBeforeUnmount(() => {
   will-change: transform, opacity;
 }
 
+/* calc()-based label offsets are hard to express with Tailwind utilities. */
 .spatial-layer-label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
   transform: translate(calc(-100% - 0.6rem), -50%);
-  text-align: right;
-}
-
-.spatial-layer-name {
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--foreground);
-}
-
-.spatial-layer-count {
-  letter-spacing: 0.16em;
-  color: var(--muted-foreground);
 }
 
 .spatial-entry {
-  display: inline-flex;
-  align-items: baseline;
-  gap: 0.4rem;
   transform: translate(-50%, calc(-100% - 0.3rem));
-  white-space: nowrap;
-  transition: color 300ms var(--ease-premium);
-}
-
-.spatial-entry-no {
-  letter-spacing: 0.06em;
-  color: var(--blue);
-}
-
-.spatial-entry-title {
-  letter-spacing: 0.01em;
-  color: var(--foreground);
-}
-
-.spatial-entry-dot {
-  align-self: center;
-  width: 0.34rem;
-  height: 0.34rem;
-  border-radius: 9999px;
-}
-
-.spatial-entry.is-hovered .spatial-entry-no,
-.spatial-entry.is-hovered .spatial-entry-title {
-  color: var(--blue);
-}
-
-.spatial-hint {
-  position: absolute;
-  bottom: 1rem;
-  left: 1.1rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-}
-
-.spatial-axis {
-  position: absolute;
-  bottom: 1rem;
-  right: 1.2rem;
-  width: 3rem;
-  height: 3rem;
-  pointer-events: none;
-}
-
-.spatial-axis span {
-  position: absolute;
-  font-family: theme("fontFamily.mono");
-  font-size: 0.625rem;
-  letter-spacing: 0.1em;
-  color: var(--muted-foreground);
-}
-
-.spatial-axis-z {
-  top: 0;
-  right: 1.2rem;
-}
-
-.spatial-axis-y {
-  bottom: 0;
-  right: 0;
-}
-
-.spatial-axis-x {
-  bottom: 0;
-  left: 0;
-}
-
-.mobile-layer + .mobile-layer {
-  margin-top: 2.25rem;
 }
 </style>

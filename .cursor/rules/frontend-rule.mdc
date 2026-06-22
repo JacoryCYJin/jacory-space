@@ -1,5 +1,5 @@
 ---
-description: Jacory Space 前端规范：图标用 icon 不用 emoji；字体/字号用 Tailwind 命名档位
+description: Jacory Space 前端规范：图标用 icon 不用 emoji；样式优先 Tailwind 内联；字体/字号用命名档位
 globs: jacory-space-frontend/**/*
 alwaysApply: false
 ---
@@ -7,6 +7,14 @@ alwaysApply: false
 # frontend-rule
 
 编辑 `jacory-space-frontend/` 时适用。
+
+## 样式写法
+
+- **默认**：样式直接用 Tailwind 工具类写在模板 `class` 上（颜色、间距、布局、定位、字体等）。
+- **只在以下情况写 scoped `.xxx {}`**：
+  1. 同一套样式被多个元素/组件**重复使用**，需要复用。
+  2. Tailwind 难以表达的属性（复杂 `transform`、`letter-spacing`、伪元素、关键帧等）。
+- **禁止**为「只用一次的几个工具类」单独包一个 `.xxx` 类。
 
 ## 图标
 
