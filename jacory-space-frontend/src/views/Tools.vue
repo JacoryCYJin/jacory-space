@@ -1,7 +1,7 @@
 <template>
   <main ref="pageRoot" class="grain min-h-screen bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
-    <div class="tools-shell mx-auto grid w-full border-line">
-      <aside class="tools-sidebar border-line lg:sticky lg:top-[var(--navbar-height)] lg:h-[calc(100vh-var(--navbar-height))] lg:border-r">
+    <div class="grid w-full grid-cols-[minmax(0,1fr)] border-line lg:grid-cols-[360px_minmax(0,1fr)] lg:px-12 2xl:grid-cols-[380px_minmax(0,1fr)] 2xl:px-20">
+      <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:h-[calc(100vh-var(--navbar-height))] lg:border-b-0 lg:border-r lg:px-[2.35rem] 2xl:px-12">
         <section data-tools-enter class="sidebar-section">
           <div class="grid gap-10">
             <div class="grid gap-12">
@@ -44,8 +44,8 @@
         </section>
 
         <section data-tools-enter class="sidebar-section">
-          <p class="sidebar-section-label">{{ t('tools.interfaceIndex.summaryLabel') }}</p>
-          <div class="sidebar-row-stack sidebar-row-list">
+          <p class="font-mono text-sm uppercase leading-none tracking-[0.16em] text-muted-foreground">{{ t('tools.interfaceIndex.summaryLabel') }}</p>
+          <div class="sidebar-row-stack mt-[1.3rem]">
             <div v-for="item in summaryRows" :key="item.label" class="sidebar-row">
               <span>{{ item.label }}</span>
               <span class="sidebar-count">{{ item.value }}</span>
@@ -53,10 +53,10 @@
           </div>
         </section>
 
-        <section data-tools-enter class="sidebar-section sidebar-section-last">
-          <p class="sidebar-section-label">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</p>
-          <div class="sidebar-row-stack sidebar-row-list">
-            <div class="sidebar-row sidebar-date-row">
+        <section data-tools-enter class="sidebar-section !border-b-0">
+          <p class="font-mono text-sm uppercase leading-none tracking-[0.16em] text-muted-foreground">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</p>
+          <div class="sidebar-row-stack mt-[1.3rem]">
+            <div class="sidebar-row">
               <span>{{ lastUpdate }}</span>
               <span aria-hidden="true"></span>
             </div>
@@ -64,7 +64,7 @@
         </section>
       </aside>
 
-      <section class="spatial-main flex min-w-0 flex-col px-6 pb-12 pt-16 md:px-9 md:pt-20 lg:px-10 lg:pt-12 lg:pb-10 2xl:px-12">
+      <section class="flex min-w-0 flex-col px-6 pb-12 pt-16 md:px-9 md:pt-20 lg:h-[calc(100svh-var(--navbar-height))] lg:px-10 lg:pb-10 lg:pt-12 2xl:px-12">
         <div data-tools-enter class="min-h-0 flex-1">
           <LayeredSpatialIndex
             :projects="projects"
@@ -214,111 +214,24 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.tools-shell {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.tools-sidebar {
-  align-self: start;
-  --sidebar-x: 2rem;
-  --sidebar-line-gap: 2.5rem;
-  --sidebar-section-gap: 1.3rem;
-  --sidebar-row-height: 2.4rem;
-  padding: 1.25rem var(--sidebar-x) 3.5rem;
-}
-
+/* Reused across sidebar sections/rows; kept as classes for DRY. */
 .sidebar-section {
-  border-bottom: 1px solid var(--line);
-  padding-block: var(--sidebar-line-gap);
-}
-
-.sidebar-section-last {
-  border-bottom: 0;
+  @apply border-b border-line py-10;
 }
 
 .sidebar-row {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 2ch;
-  align-items: center;
-  height: var(--sidebar-row-height);
-  column-gap: 1.5rem;
-  font-family: theme("fontFamily.mono");
-  @apply text-sm;
-  letter-spacing: 0.16em;
-  line-height: 1;
-  text-transform: uppercase;
+  @apply relative grid h-[2.4rem] grid-cols-[minmax(0,1fr)_2ch] items-center gap-x-6 font-mono text-sm uppercase leading-none tracking-[0.16em];
 }
 
 .sidebar-count {
-  position: relative;
-  justify-self: end;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.12em;
+  @apply relative justify-self-end tabular-nums tracking-[0.12em];
 }
 
 .sidebar-active-dot {
-  position: absolute;
-  top: 50%;
-  right: -1.25rem;
-  width: 0.375rem;
-  height: 0.375rem;
-  border-radius: 9999px;
-  background: var(--blue);
-  transform: translateY(-50%);
-  transition: opacity 300ms var(--ease-premium);
-}
-
-.sidebar-section-label {
-  font-family: theme("fontFamily.mono");
-  @apply text-sm;
-  letter-spacing: 0.16em;
-  line-height: 1;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
+  @apply absolute right-[-1.25rem] top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-blue transition-opacity duration-300 ease-premium;
 }
 
 .sidebar-row-stack {
-  display: grid;
-  gap: 0;
-  grid-auto-rows: var(--sidebar-row-height);
-}
-
-.sidebar-row-list {
-  margin-top: var(--sidebar-section-gap);
-}
-
-@media (max-width: 1023px) {
-  .tools-sidebar {
-    position: relative;
-    height: auto;
-    border-bottom: 1px solid var(--line);
-  }
-}
-
-@media (min-width: 1024px) {
-  .tools-shell {
-    grid-template-columns: 360px minmax(0, 1fr);
-    padding-inline: 3rem;
-  }
-
-  .tools-sidebar {
-    --sidebar-x: 2.35rem;
-  }
-
-  .spatial-main {
-    height: calc(100svh - var(--navbar-height));
-  }
-}
-
-@media (min-width: 1536px) {
-  .tools-shell {
-    grid-template-columns: 380px minmax(0, 1fr);
-    padding-inline: 5rem;
-  }
-
-  .tools-sidebar {
-    --sidebar-x: 3rem;
-  }
+  @apply grid gap-0 [grid-auto-rows:2.4rem];
 }
 </style>
