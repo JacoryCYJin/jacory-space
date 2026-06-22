@@ -36,6 +36,28 @@ export default {
       }
     }
   },
+  tools: {
+    interfaceIndex: {
+      kicker: '01 — INTERFACE INDEX',
+      description: 'A curated index of tools, works, interface experiments, and system components.',
+      categoriesAria: 'Interface categories',
+      summaryLabel: 'SUMMARY',
+      lastUpdateLabel: 'LAST UPDATE',
+      filters: {
+        all: 'ALL',
+        tools: 'TOOLS',
+        works: 'WORKS',
+        experiments: 'EXPERIMENTS',
+        archived: 'ARCHIVED'
+      },
+      summary: {
+        entries: 'ENTRIES',
+        live: 'LIVE',
+        wipBeta: 'WIP / BETA',
+        archived: 'ARCHIVED'
+      }
+    }
+  },
   blog: {
     badge: 'Jacory Blog',
     title: 'Personal Blog',

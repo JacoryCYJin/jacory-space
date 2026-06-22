@@ -1,182 +1,198 @@
 <template>
-  <main ref="pageRoot" class="grain min-h-screen bg-background">
-    <section class="px-5 pt-28 md:px-8 md:pt-36">
-      <div class="mx-auto max-w-screen-xl">
-        <div data-tools-enter class="flex items-center justify-between border-b border-line pb-4">
-          <span class="font-mono text-xs tracking-[0.16em] text-blue">01 — Lab</span>
-          <span class="tech">06 tools / 01 live</span>
-        </div>
-
-        <div data-tools-enter>
-          <h1
-            class="mt-10 max-w-4xl text-balance font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-7xl"
-          >
-            Interface<span class="italic text-blue"> Tools</span>
-          </h1>
-          <p class="mt-6 max-w-md text-pretty text-sm leading-relaxed text-muted-foreground">
-            自建的小工具与实验。视频解析、界面工具与系统组件都从这里进入。
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="px-5 py-20 md:px-8 md:py-28">
-      <div class="mx-auto max-w-screen-xl">
-        <div data-tools-enter class="mb-4 flex items-center justify-between">
-          <span class="tech">Registry — All Tools</span>
-          <span class="tech">grid / 12-col</span>
-        </div>
-
-        <div class="tools-registry grid sm:grid-cols-2 lg:grid-cols-3">
-          <div
-            v-for="tool in tools"
-            :key="tool.no"
-            data-tools-enter
-            class="tools-registry-item"
-          >
-            <ToolCard
-              :tool="tool"
-              :status-class="statusClass[tool.status]"
-              :watermark-src="toolWatermarks[tool.no]"
-            />
+  <main ref="pageRoot" class="grain min-h-screen bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
+    <div class="tools-shell mx-auto grid w-full border-line">
+      <aside class="tools-sidebar border-line lg:sticky lg:top-[var(--navbar-height)] lg:h-[calc(100vh-var(--navbar-height))] lg:border-r">
+        <section data-tools-enter class="sidebar-section">
+          <div class="grid gap-10">
+            <div class="grid gap-12">
+              <p class="font-mono text-xs tracking-[0.18em] text-blue">{{ t('tools.interfaceIndex.kicker') }}</p>
+              <h1 class="font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-[4.15rem]">
+                Interface
+                <span class="block italic text-blue">Index</span>
+              </h1>
+            </div>
+            <div class="grid max-w-[25rem] text-[15px] leading-[1.72] text-muted-foreground">
+              <p>{{ t('tools.interfaceIndex.description') }}</p>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
+        </section>
 
-    <section class="px-5 pb-28 md:px-8">
-      <div class="mx-auto max-w-screen-xl">
-        <div data-tools-enter class="flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-line pt-6">
-          <span class="tech">Legend</span>
-          <span
-            v-for="legend in legends"
-            :key="legend.status"
-            class="flex items-center gap-2"
-          >
-            <span
-              class="font-mono text-[11px] tracking-[0.16em]"
-              :class="statusClass[legend.status]"
+        <section data-tools-enter class="sidebar-section" :aria-label="t('tools.interfaceIndex.categoriesAria')">
+          <nav class="sidebar-row-stack">
+            <div
+              v-for="filter in sidebarFilters"
+              :key="filter.id"
+              role="button"
+              tabindex="0"
+              class="sidebar-row group text-left transition-colors duration-300"
+              :class="activeFilter === filter.id ? 'text-blue' : 'text-foreground hover:text-blue'"
+              @click="setFilter(filter.id)"
+              @keydown.enter.prevent="setFilter(filter.id)"
+              @keydown.space.prevent="setFilter(filter.id)"
             >
-              ● {{ legend.status }}
-            </span>
-            <span class="text-xs text-muted-foreground">{{ legend.label }}</span>
-          </span>
+              <span>{{ filter.label }}</span>
+              <span class="sidebar-count">
+                {{ filter.count }}
+                <span
+                  class="sidebar-active-dot"
+                  :class="activeFilter === filter.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'"
+                  aria-hidden="true"
+                />
+              </span>
+            </div>
+          </nav>
+        </section>
+
+        <section data-tools-enter class="sidebar-section">
+          <p class="sidebar-section-label">{{ t('tools.interfaceIndex.summaryLabel') }}</p>
+          <div class="sidebar-row-stack sidebar-row-list">
+            <div v-for="item in summaryRows" :key="item.label" class="sidebar-row">
+              <span>{{ item.label }}</span>
+              <span class="sidebar-count">{{ item.value }}</span>
+            </div>
+          </div>
+        </section>
+
+        <section data-tools-enter class="sidebar-section sidebar-section-last">
+          <p class="sidebar-section-label">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</p>
+          <div class="sidebar-row-stack sidebar-row-list">
+            <div class="sidebar-row sidebar-date-row">
+              <span>{{ lastUpdate }}</span>
+              <span aria-hidden="true"></span>
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="spatial-main flex min-w-0 flex-col px-6 pb-12 pt-16 md:px-9 md:pt-20 lg:px-10 lg:pt-12 lg:pb-10 2xl:px-12">
+        <div data-tools-enter class="min-h-0 flex-1">
+          <LayeredSpatialIndex
+            :projects="projects"
+            :active-filter="activeFilter"
+            @select="handleSelect"
+          />
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   </main>
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
-import ToolCard from '../components/tools/ToolCard.vue'
-import coolPaletteWatermark from '../assets/tools/cool-palete-watermark.png'
-import exampleWatermark from '../assets/tools/example-watermark.png'
-import videoParserWatermark from '../assets/tools/video-parser-watermark.png'
+import LayeredSpatialIndex from '../components/tools/LayeredSpatialIndex.vue'
 
 gsap.registerPlugin(CustomEase)
 
+const { t } = useI18n()
 const pageRoot = ref(null)
-let toolsContext
+const activeFilter = ref('all')
+const selectedProject = ref(null)
+let toolsContext = null
 
-const tools = [
+const projects = [
   {
-    no: '001',
-    name: 'Video Parser',
-    desc: '解析 Bilibili、YouTube 等多平台视频,选择清晰度并下载到指定目录。',
-    status: 'LIVE',
-    tag: 'Utility',
-    ver: 'v1.0',
-    href: '/video-parser'
+    id: '001', no: '001', title: 'Video Parser', layer: 'TOOLS', category: 'tool', status: 'live',
+    pos: [-7.0, -1.6], description: '解析 Bilibili、YouTube 等平台视频，提取字幕、总结大纲、生成结构化笔记。',
+    stack: ['Vue', 'Express', 'yt-dlp'], version: 'v1.0.0', updated: '2026.06.20', href: '/video-parser'
   },
   {
-    no: '002',
-    name: 'Hairline Grid',
-    desc: '生成可见细线的 12 列基线网格,导出为 CSS 变量与 SVG 叠层。',
-    status: 'WIP',
-    tag: 'Layout',
-    ver: 'v0.2',
-    href: '/tools'
+    id: '002', no: '002', title: 'Hairline Grid', layer: 'TOOLS', category: 'tool', status: 'wip',
+    pos: [-1.2, 1.4], description: '生成可见的细线网格，用于界面排版、排版标尺与视觉参考。',
+    stack: ['CSS', 'SVG'], version: 'v0.2.0', updated: '2026.06.18', href: '/tools'
   },
   {
-    no: '003',
-    name: 'Cool Palette',
-    desc: '从一个冷色种子推导出克制色彩系统,带 OKLCH 对比校验。',
-    status: 'WIP',
-    tag: 'Color',
-    ver: 'v0.1',
-    href: '/tools'
+    id: '003', no: '003', title: 'Cool Palette', layer: 'TOOLS', category: 'tool', status: 'wip',
+    pos: [3.8, -1.2], description: '从一个冷色种子值导出完整的色彩系统，并提供 OKLCH 对比校验。',
+    stack: ['OKLCH', 'Color System'], version: 'v0.3.1', updated: '2026.06.17', href: '/tools'
   },
   {
-    no: '004',
-    name: 'Mono Index',
-    desc: '把任意列表转成等宽编号索引,让编号、类目与坐标自动对齐。',
-    status: 'BETA',
-    tag: 'Type',
-    ver: 'v0.4',
-    href: '/tools'
+    id: '004', no: '004', title: 'Interface Kit', layer: 'TOOLS', category: 'tool', status: 'wip',
+    pos: [7.4, 1.5], description: '常用界面结构与组件片段集合，面向快速搭建与复用。',
+    stack: ['Vue', 'Components'], version: 'v0.1.0', updated: '2026.06.10', href: '/tools'
   },
   {
-    no: '005',
-    name: 'Reveal Timing',
-    desc: '可视化缓动曲线与滚动揭示节奏,预览 600–900ms 区间。',
-    status: 'BETA',
-    tag: 'Motion',
-    ver: 'v0.3',
-    href: '/tools'
+    id: '005', no: '005', title: 'Jacory Space', layer: 'WORKS', category: 'work', status: 'live',
+    pos: [-6.8, 0.8], description: '个人数字空间与操作系统，整合工具、博客与实验。',
+    stack: ['Vue', 'GSAP', 'Design System'], version: 'v1.5.0', updated: '2026.06.15', href: '/'
   },
   {
-    no: '006',
-    name: 'Coord Stamp',
-    desc: '为页面生成经纬度与时间戳水印,给数字档案一个坐标。',
-    status: 'ARCHIVED',
-    tag: 'Utility',
-    ver: 'v1.0',
-    href: '/tools'
+    id: '006', no: '006', title: 'Portfolio System', layer: 'WORKS', category: 'work', status: 'wip',
+    pos: [-0.6, -1.5], description: '作品结构、项目叙事与展示索引系统。',
+    stack: ['Vue', 'Content Model'], version: 'v0.2.0', updated: '2026.06.08', href: '/tools'
+  },
+  {
+    id: '007', no: '007', title: 'Design System', layer: 'WORKS', category: 'work', status: 'live',
+    pos: [6.2, 1.1], description: '冷白界面系统、技术标签、细线结构与动效规范。',
+    stack: ['Tailwind', 'Tokens'], version: 'v1.1.0', updated: '2026.06.06', href: '/tools'
+  },
+  {
+    id: '008', no: '008', title: 'Mono Index', layer: 'EXPERIMENTS', category: 'experiment', status: 'beta',
+    pos: [-6.0, -1.2], description: '把任意列表转成等宽索引系统，支持编号、层级与检索。',
+    stack: ['TypeScript', 'Algorithm'], version: 'v0.4.0', updated: '2026.06.12', href: '/tools'
+  },
+  {
+    id: '009', no: '009', title: 'Reveal Timing', layer: 'EXPERIMENTS', category: 'experiment', status: 'beta',
+    pos: [1.2, 1.4], description: '可视化缓动曲线与滚动揭示节奏，预览 600–900ms 动效区间。',
+    stack: ['GSAP', 'Motion'], version: 'v0.3.0', updated: '2026.06.03', href: '/tools'
+  },
+  {
+    id: '010', no: '010', title: 'Old Playground', layer: 'EXPERIMENTS', category: 'archived', status: 'archived',
+    pos: [6.8, -0.8], description: '早期界面试验集合，作为暂不维护的历史记录保留。',
+    stack: ['CSS', 'Prototype'], version: 'v0.1.0', updated: '2026.05.28', href: '/tools'
   }
 ]
 
-const legends = [
-  { status: 'LIVE', label: '已上线' },
-  { status: 'BETA', label: '测试中' },
-  { status: 'WIP', label: '开发中' },
-  { status: 'ARCHIVED', label: '已归档' }
-]
-
-const statusClass = {
-  LIVE: 'text-blue',
-  BETA: 'text-foreground',
-  WIP: 'text-muted-foreground',
-  ARCHIVED: 'text-muted-foreground/60'
+function pad2(value) {
+  return String(value).padStart(2, '0')
 }
 
-const toolWatermarks = {
-  '001': videoParserWatermark,
-  '002': exampleWatermark,
-  '003': coolPaletteWatermark,
-  '004': exampleWatermark,
-  '005': exampleWatermark,
-  '006': exampleWatermark
+function categoryCount(category) {
+  return projects.filter((project) => project.category === category).length
 }
 
-onMounted(() => {
+const sidebarFilters = computed(() => [
+  { id: 'all', label: t('tools.interfaceIndex.filters.all'), count: pad2(projects.length) },
+  { id: 'tool', label: t('tools.interfaceIndex.filters.tools'), count: pad2(categoryCount('tool')) },
+  { id: 'work', label: t('tools.interfaceIndex.filters.works'), count: pad2(categoryCount('work')) },
+  { id: 'experiment', label: t('tools.interfaceIndex.filters.experiments'), count: pad2(categoryCount('experiment')) },
+  { id: 'archived', label: t('tools.interfaceIndex.filters.archived'), count: pad2(categoryCount('archived')) }
+])
+
+const summaryRows = computed(() => [
+  { label: t('tools.interfaceIndex.summary.entries'), value: pad2(projects.length) },
+  { label: t('tools.interfaceIndex.summary.live'), value: pad2(projects.filter((p) => p.status === 'live').length) },
+  { label: t('tools.interfaceIndex.summary.wipBeta'), value: pad2(projects.filter((p) => p.status === 'wip' || p.status === 'beta').length) },
+  { label: t('tools.interfaceIndex.summary.archived'), value: pad2(projects.filter((p) => p.status === 'archived').length) }
+])
+
+const lastUpdate = computed(() => projects.map((project) => project.updated).sort().at(-1))
+
+function setFilter(id) {
+  activeFilter.value = id
+  selectedProject.value = null
+}
+
+function handleSelect(project) {
+  selectedProject.value = project
+}
+
+onMounted(async () => {
   const root = pageRoot.value
   if (!root) return
 
-  const enterEase = CustomEase.create('tools-enter', '0.16,1,0.3,1')
+  await nextTick()
+
+  const enterEase = CustomEase.create('tools-interface-enter', '0.16,1,0.3,1')
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
 
   toolsContext = gsap.context(() => {
     const enterItems = gsap.utils.toArray('[data-tools-enter]', root)
 
     if (reducedMotion.matches) {
-      gsap.set(enterItems, {
-        clearProps: 'all',
-        autoAlpha: 1,
-        y: 0
-      })
+      gsap.set(enterItems, { clearProps: 'all', autoAlpha: 1, y: 0 })
       return
     }
 
@@ -198,46 +214,111 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.tools-registry-item {
-  border-right: 1px solid var(--line);
+.tools-shell {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.tools-sidebar {
+  align-self: start;
+  --sidebar-x: 2rem;
+  --sidebar-line-gap: 2.5rem;
+  --sidebar-section-gap: 1.3rem;
+  --sidebar-row-height: 2.4rem;
+  padding: 1.25rem var(--sidebar-x) 3.5rem;
+}
+
+.sidebar-section {
   border-bottom: 1px solid var(--line);
-  border-left: 1px solid var(--line);
+  padding-block: var(--sidebar-line-gap);
 }
 
-.tools-registry-item:first-child {
-  border-top: 1px solid var(--line);
+.sidebar-section-last {
+  border-bottom: 0;
 }
 
-@media (min-width: 640px) {
-  .tools-registry-item {
-    border-top: 0;
-    border-right: 0;
-  }
+.sidebar-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2ch;
+  align-items: center;
+  height: var(--sidebar-row-height);
+  column-gap: 1.5rem;
+  font-family: theme("fontFamily.mono");
+  @apply text-sm;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
 
-  .tools-registry-item:nth-child(-n + 2) {
-    border-top: 1px solid var(--line);
-  }
+.sidebar-count {
+  position: relative;
+  justify-self: end;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.12em;
+}
 
-  .tools-registry-item:nth-child(2n) {
-    border-right: 1px solid var(--line);
+.sidebar-active-dot {
+  position: absolute;
+  top: 50%;
+  right: -1.25rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: var(--blue);
+  transform: translateY(-50%);
+  transition: opacity 300ms var(--ease-premium);
+}
+
+.sidebar-section-label {
+  font-family: theme("fontFamily.mono");
+  @apply text-sm;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.sidebar-row-stack {
+  display: grid;
+  gap: 0;
+  grid-auto-rows: var(--sidebar-row-height);
+}
+
+.sidebar-row-list {
+  margin-top: var(--sidebar-section-gap);
+}
+
+@media (max-width: 1023px) {
+  .tools-sidebar {
+    position: relative;
+    height: auto;
+    border-bottom: 1px solid var(--line);
   }
 }
 
 @media (min-width: 1024px) {
-  .tools-registry-item {
-    border-right: 0;
+  .tools-shell {
+    grid-template-columns: 360px minmax(0, 1fr);
+    padding-inline: 3rem;
   }
 
-  .tools-registry-item:nth-child(-n + 3) {
-    border-top: 1px solid var(--line);
+  .tools-sidebar {
+    --sidebar-x: 2.35rem;
   }
 
-  .tools-registry-item:nth-child(2n) {
-    border-right: 0;
+  .spatial-main {
+    height: calc(100svh - var(--navbar-height));
+  }
+}
+
+@media (min-width: 1536px) {
+  .tools-shell {
+    grid-template-columns: 380px minmax(0, 1fr);
+    padding-inline: 5rem;
   }
 
-  .tools-registry-item:nth-child(3n) {
-    border-right: 1px solid var(--line);
+  .tools-sidebar {
+    --sidebar-x: 3rem;
   }
 }
 </style>
