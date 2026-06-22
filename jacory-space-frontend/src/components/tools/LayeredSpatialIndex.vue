@@ -20,8 +20,8 @@
         class="spatial-anchor"
       >
         <div class="spatial-layer-label">
-          <span class="spatial-layer-name">{{ layer.id }}</span>
-          <span class="spatial-layer-count">{{ layer.count }}</span>
+          <span class="spatial-layer-name font-mono text-xs">{{ layer.id }}</span>
+          <span class="spatial-layer-count font-mono text-xs">{{ layer.count }}</span>
         </div>
       </div>
 
@@ -32,19 +32,19 @@
         class="spatial-anchor"
       >
         <div class="spatial-entry" :class="hoveredId === project.id ? 'is-hovered' : ''">
-          <span class="spatial-entry-no">{{ project.no }}</span>
-          <span class="spatial-entry-title">{{ project.title }}</span>
+          <span class="spatial-entry-no font-mono text-xs">{{ project.no }}</span>
+          <span class="spatial-entry-title font-mono text-sm">{{ project.title }}</span>
           <span class="spatial-entry-dot" :class="statusDotClass(project.status)" aria-hidden="true" />
         </div>
       </div>
     </div>
 
-    <p class="spatial-hint">Hover to inspect / Click to open</p>
+    <p class="spatial-hint font-mono text-xs">Hover to inspect / Click to open</p>
 
     <div class="spatial-axis" aria-hidden="true">
-      <span class="spatial-axis-z">Z</span>
-      <span class="spatial-axis-y">Y</span>
-      <span class="spatial-axis-x">X</span>
+      <span class="spatial-axis-z font-mono text-xs">Z</span>
+      <span class="spatial-axis-y font-mono text-xs">Y</span>
+      <span class="spatial-axis-x font-mono text-xs">X</span>
     </div>
   </section>
 
@@ -62,9 +62,9 @@
           :class="entryVisible(project) ? '' : 'opacity-30'"
           @click="emit('select', project)"
         >
-          <span class="font-mono text-[11px] text-blue">{{ project.no }}</span>
+          <span class="font-mono text-xs text-blue">{{ project.no }}</span>
           <span class="flex-1 text-sm font-medium tracking-tight text-foreground">{{ project.title }}</span>
-          <span class="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
+          <span class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground">
             <span class="h-1.5 w-1.5 rounded-full" :class="statusDotClass(project.status)" aria-hidden="true" />
             {{ statusLabel(project.status) }}
           </span>
@@ -612,16 +612,12 @@ onBeforeUnmount(() => {
 }
 
 .spatial-layer-name {
-  font-family: theme("fontFamily.mono");
-  font-size: 0.6875rem;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--foreground);
 }
 
 .spatial-layer-count {
-  font-family: theme("fontFamily.mono");
-  font-size: 0.625rem;
   letter-spacing: 0.16em;
   color: var(--muted-foreground);
 }
@@ -636,15 +632,11 @@ onBeforeUnmount(() => {
 }
 
 .spatial-entry-no {
-  font-family: theme("fontFamily.mono");
-  font-size: 0.6875rem;
   letter-spacing: 0.06em;
   color: var(--blue);
 }
 
 .spatial-entry-title {
-  font-family: theme("fontFamily.mono");
-  font-size: 0.78rem;
   letter-spacing: 0.01em;
   color: var(--foreground);
 }
@@ -665,8 +657,6 @@ onBeforeUnmount(() => {
   position: absolute;
   bottom: 1rem;
   left: 1.1rem;
-  font-family: theme("fontFamily.mono");
-  font-size: 0.625rem;
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--muted-foreground);

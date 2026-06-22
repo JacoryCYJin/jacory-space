@@ -1,5 +1,5 @@
 ---
-description: Jacory Space 前端规范：图标使用 icon，不用 emoji
+description: Jacory Space 前端规范：图标用 icon 不用 emoji；字体/字号用 Tailwind 命名档位
 globs: jacory-space-frontend/**/*
 alwaysApply: false
 ---
@@ -28,3 +28,25 @@ alwaysApply: false
 ```
 
 - 新增 icon 依赖时，优先选轻量、与 Tailwind 搭配好的库；不要为单个图标手写大段 SVG，除非项目已有统一 icon 组件
+
+## 字体 / 字号
+
+- 字号用 Tailwind 命名档位（`text-xs` / `text-sm` / `text-base` …），按最接近的标准档选取。
+- **禁止**任意值 `text-[0.78rem]` / `text-[11px]`，**禁止**在 `<style>` 写 `font-size`。
+- 无 10px/11px 命名档，统一收敛到 `text-xs`；更显眼的层级用 `text-sm`。
+- 字体族用 `font-sans`（正文/标题）、`font-mono`（编号/坐标/状态/meta）；**禁止** `<style>` 里 `font-family: theme("fontFamily.mono")`。
+- `<style>` 只保留 Tailwind 难表达的属性（`letter-spacing`、`transform`、定位、`color` token、`text-transform` 等）；颜色用语义 token 类。
+
+```vue
+<!-- BAD -->
+<span class="text-[11px]" style="font-size:0.78rem">{{ no }}</span>
+<style scoped>
+.label { font-family: theme("fontFamily.mono"); font-size: 0.625rem; }
+</style>
+
+<!-- GOOD -->
+<span class="font-mono text-xs">{{ no }}</span>
+<style scoped>
+.label { letter-spacing: 0.16em; color: var(--muted-foreground); }
+</style>
+```
