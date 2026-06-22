@@ -137,11 +137,6 @@ const projects = [
     id: '009', no: '009', title: 'Reveal Timing', layer: 'EXPERIMENTS', category: 'experiment', status: 'beta',
     pos: [1.2, 1.4], description: '可视化缓动曲线与滚动揭示节奏，预览 600–900ms 动效区间。',
     stack: ['GSAP', 'Motion'], version: 'v0.3.0', updated: '2026.06.03', href: '/tools'
-  },
-  {
-    id: '010', no: '010', title: 'Old Playground', layer: 'EXPERIMENTS', category: 'archived', status: 'archived',
-    pos: [6.8, -0.8], description: '早期界面试验集合，作为暂不维护的历史记录保留。',
-    stack: ['CSS', 'Prototype'], version: 'v0.1.0', updated: '2026.05.28', href: '/tools'
   }
 ]
 
@@ -157,15 +152,13 @@ const sidebarFilters = computed(() => [
   { id: 'all', label: t('tools.interfaceIndex.filters.all'), count: pad2(projects.length) },
   { id: 'tool', label: t('tools.interfaceIndex.filters.tools'), count: pad2(categoryCount('tool')) },
   { id: 'work', label: t('tools.interfaceIndex.filters.works'), count: pad2(categoryCount('work')) },
-  { id: 'experiment', label: t('tools.interfaceIndex.filters.experiments'), count: pad2(categoryCount('experiment')) },
-  { id: 'archived', label: t('tools.interfaceIndex.filters.archived'), count: pad2(categoryCount('archived')) }
+  { id: 'experiment', label: t('tools.interfaceIndex.filters.experiments'), count: pad2(categoryCount('experiment')) }
 ])
 
 const summaryRows = computed(() => [
   { label: t('tools.interfaceIndex.summary.entries'), value: pad2(projects.length) },
   { label: t('tools.interfaceIndex.summary.live'), value: pad2(projects.filter((p) => p.status === 'live').length) },
-  { label: t('tools.interfaceIndex.summary.wipBeta'), value: pad2(projects.filter((p) => p.status === 'wip' || p.status === 'beta').length) },
-  { label: t('tools.interfaceIndex.summary.archived'), value: pad2(projects.filter((p) => p.status === 'archived').length) }
+  { label: t('tools.interfaceIndex.summary.wipBeta'), value: pad2(projects.filter((p) => p.status === 'wip' || p.status === 'beta').length) }
 ])
 
 const lastUpdate = computed(() => projects.map((project) => project.updated).sort().at(-1))
