@@ -50,6 +50,12 @@ export default {
         experiments: '实验',
         archived: '归档'
       },
+      categoryDescriptions: {
+        all: '完整空间索引与全部条目。',
+        tools: '基础工具与界面元素。',
+        works: '已发布项目与案例研究。',
+        experiments: '研究、原型与探索。'
+      },
       summary: {
         entries: '条目',
         live: '在线',

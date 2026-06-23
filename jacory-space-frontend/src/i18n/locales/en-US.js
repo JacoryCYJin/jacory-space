@@ -50,6 +50,12 @@ export default {
         experiments: 'EXPERIMENTS',
         archived: 'ARCHIVED'
       },
+      categoryDescriptions: {
+        all: 'Complete spatial index and every entry.',
+        tools: 'Foundational utilities and interface elements.',
+        works: 'Published projects and case studies.',
+        experiments: 'Research, prototypes, and explorations.'
+      },
       summary: {
         entries: 'ENTRIES',
         live: 'LIVE',
