@@ -1,12 +1,12 @@
 <template>
   <main ref="pageRoot" class="grain min-h-screen bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
     <div class="grid w-full grid-cols-[minmax(0,1fr)] border-line lg:grid-cols-[360px_minmax(0,1fr)] lg:px-4 xl:grid-cols-[372px_minmax(0,1fr)] xl:px-8 2xl:grid-cols-[380px_minmax(0,1fr)] 2xl:px-20">
-      <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:h-[calc(100vh-var(--navbar-height))] lg:border-b-0 lg:border-r lg:px-[2.35rem] xl:px-10 2xl:px-12">
-        <section data-tools-enter class="sidebar-section">
-          <div class="grid gap-10">
-            <div class="grid gap-12">
+      <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:flex lg:h-[calc(100svh-var(--navbar-height))] lg:flex-col lg:border-b-0 lg:border-r lg:px-[2.35rem] lg:pb-6 lg:pt-5 xl:px-10 2xl:px-12">
+        <section data-tools-enter class="sidebar-hero-section">
+          <div class="grid gap-8 lg:gap-4 xl:gap-6">
+            <div class="grid gap-10 lg:gap-4 xl:gap-7">
               <p class="font-mono text-xs tracking-[0.18em] text-blue">{{ t('tools.interfaceIndex.kicker') }}</p>
-              <h1 class="font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-[4.15rem]">
+              <h1 class="font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-[4.15rem] lg:text-[3.55rem] xl:text-[4.15rem]">
                 Interface
                 <span class="block italic text-blue">Index</span>
               </h1>
@@ -17,48 +17,37 @@
           </div>
         </section>
 
-        <section data-tools-enter class="sidebar-section" :aria-label="t('tools.interfaceIndex.categoriesAria')">
-          <nav class="sidebar-row-stack">
-            <div
-              v-for="filter in sidebarFilters"
-              :key="filter.id"
-              role="button"
-              tabindex="0"
-              class="sidebar-row group text-left transition-colors duration-300"
-              :class="activeFilter === filter.id ? 'text-blue' : 'text-foreground hover:text-blue'"
-              @click="setFilter(filter.id)"
-              @keydown.enter.prevent="setFilter(filter.id)"
-              @keydown.space.prevent="setFilter(filter.id)"
+        <section data-tools-enter class="sidebar-index-section" :aria-label="t('tools.interfaceIndex.categoriesAria')">
+          <nav class="space-y-1 pb-[var(--sidebar-border-gap)] pt-3 lg:space-y-0 lg:pt-1 xl:space-y-1 xl:pt-2">
+            <button
+              v-for="panel in categoryPanels"
+              :key="panel.id"
+              type="button"
+              class="sidebar-index-item group"
+              :class="activeFilter === panel.id ? 'text-blue' : 'text-foreground hover:text-blue'"
+              @click="setFilter(panel.id)"
             >
-              <span>{{ filter.label }}</span>
-              <span class="sidebar-count">
-                {{ filter.count }}
+              <span class="grid grid-cols-[1rem_minmax(0,1fr)_2ch] items-baseline gap-x-4">
                 <span
-                  class="sidebar-active-dot"
-                  :class="activeFilter === filter.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-40'"
+                  class="mt-[0.08rem] h-1.5 w-1.5 rounded-full bg-blue transition-opacity duration-300 ease-premium"
+                  :class="activeFilter === panel.id ? 'opacity-100' : 'opacity-45 group-hover:opacity-80'"
                   aria-hidden="true"
                 />
+                <span class="font-mono text-sm font-semibold uppercase tracking-[0.2em]">{{ panel.label }}</span>
+                <span class="justify-self-end font-mono text-sm tabular-nums tracking-[0.12em]">{{ panel.count }}</span>
               </span>
-            </div>
+              <span class="mt-[var(--sidebar-copy-gap)] block max-w-[18rem] pl-8 font-mono text-xs leading-relaxed tracking-[0.08em] text-muted-foreground">
+                {{ panel.description }}
+              </span>
+            </button>
           </nav>
-        </section>
 
-        <section data-tools-enter class="sidebar-section">
-          <p class="font-mono text-sm uppercase leading-none tracking-[0.16em] text-muted-foreground">{{ t('tools.interfaceIndex.summaryLabel') }}</p>
-          <div class="sidebar-row-stack mt-[1.3rem]">
-            <div v-for="item in summaryRows" :key="item.label" class="sidebar-row">
-              <span>{{ item.label }}</span>
-              <span class="sidebar-count">{{ item.value }}</span>
-            </div>
-          </div>
-        </section>
-
-        <section data-tools-enter class="sidebar-section !border-b-0">
-          <p class="font-mono text-sm uppercase leading-none tracking-[0.16em] text-muted-foreground">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</p>
-          <div class="sidebar-row-stack mt-[1.3rem]">
-            <div class="sidebar-row">
-              <span>{{ lastUpdate }}</span>
-              <span aria-hidden="true"></span>
+          <div class="border-t border-line pt-[var(--sidebar-border-gap)]">
+            <div class="sidebar-index-item">
+              <p class="font-mono text-sm uppercase leading-none tracking-[0.16em] text-muted-foreground">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</p>
+              <p class="mt-[var(--sidebar-update-gap)] font-mono text-sm uppercase leading-none tracking-[0.16em] text-foreground">
+                {{ lastUpdate }}
+              </p>
             </div>
           </div>
         </section>
@@ -148,17 +137,31 @@ function categoryCount(category) {
   return projects.filter((project) => project.category === category).length
 }
 
-const sidebarFilters = computed(() => [
-  { id: 'all', label: t('tools.interfaceIndex.filters.all'), count: pad2(projects.length) },
-  { id: 'tool', label: t('tools.interfaceIndex.filters.tools'), count: pad2(categoryCount('tool')) },
-  { id: 'work', label: t('tools.interfaceIndex.filters.works'), count: pad2(categoryCount('work')) },
-  { id: 'experiment', label: t('tools.interfaceIndex.filters.experiments'), count: pad2(categoryCount('experiment')) }
-])
-
-const summaryRows = computed(() => [
-  { label: t('tools.interfaceIndex.summary.entries'), value: pad2(projects.length) },
-  { label: t('tools.interfaceIndex.summary.live'), value: pad2(projects.filter((p) => p.status === 'live').length) },
-  { label: t('tools.interfaceIndex.summary.wipBeta'), value: pad2(projects.filter((p) => p.status === 'wip' || p.status === 'beta').length) }
+const categoryPanels = computed(() => [
+  {
+    id: 'all',
+    label: t('tools.interfaceIndex.filters.all'),
+    description: t('tools.interfaceIndex.categoryDescriptions.all'),
+    count: pad2(projects.length)
+  },
+  {
+    id: 'tool',
+    label: t('tools.interfaceIndex.filters.tools'),
+    description: t('tools.interfaceIndex.categoryDescriptions.tools'),
+    count: pad2(categoryCount('tool'))
+  },
+  {
+    id: 'work',
+    label: t('tools.interfaceIndex.filters.works'),
+    description: t('tools.interfaceIndex.categoryDescriptions.works'),
+    count: pad2(categoryCount('work'))
+  },
+  {
+    id: 'experiment',
+    label: t('tools.interfaceIndex.filters.experiments'),
+    description: t('tools.interfaceIndex.categoryDescriptions.experiments'),
+    count: pad2(categoryCount('experiment'))
+  }
 ])
 
 const lastUpdate = computed(() => projects.map((project) => project.updated).sort().at(-1))
@@ -207,24 +210,31 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-/* Reused across sidebar sections/rows; kept as classes for DRY. */
-.sidebar-section {
-  @apply border-b border-line py-10;
+.sidebar-hero-section {
+  @apply border-b border-line py-10 lg:shrink-0 lg:pb-5 lg:pt-5 xl:pb-7 xl:pt-8;
 }
 
-.sidebar-row {
-  @apply relative grid h-[2.4rem] grid-cols-[minmax(0,1fr)_2ch] items-center gap-x-6 font-mono text-sm uppercase leading-none tracking-[0.16em];
+.sidebar-index-section {
+  --sidebar-border-gap: 1.5rem;
+  --sidebar-copy-gap: 1rem;
+  --sidebar-update-gap: 1.5rem;
+
+  @apply border-b-0 py-10 lg:min-h-0 lg:flex-1 lg:py-3 xl:py-5;
 }
 
-.sidebar-count {
-  @apply relative justify-self-end tabular-nums tracking-[0.12em];
+@media (min-width: 1024px) {
+  .sidebar-index-section {
+    --sidebar-border-gap: 0.75rem;
+  }
 }
 
-.sidebar-active-dot {
-  @apply absolute right-[-1.25rem] top-1/2 h-1.5 w-1.5 -translate-y-1/2 rounded-full bg-blue transition-opacity duration-300 ease-premium;
+@media (min-width: 1280px) {
+  .sidebar-index-section {
+    --sidebar-border-gap: 1.25rem;
+  }
 }
 
-.sidebar-row-stack {
-  @apply grid gap-0 [grid-auto-rows:2.4rem];
+.sidebar-index-item {
+  @apply block w-full py-6 text-left transition-colors duration-300 ease-premium lg:py-2.5 xl:py-2.5;
 }
 </style>
