@@ -14,11 +14,18 @@
 
     <div ref="overlayEl" class="pointer-events-none absolute inset-0 overflow-hidden">
       <svg class="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden="true">
-        <line ref="railLineEl" x1="0" y1="0" x2="0" y2="0" class="stroke-muted-foreground" stroke-width="1" stroke-opacity="0.4" />
-        <line ref="railConnAEl" x1="0" y1="0" x2="0" y2="0" class="stroke-muted-foreground" stroke-width="1" stroke-opacity="0.4" />
-        <line ref="railConnBEl" x1="0" y1="0" x2="0" y2="0" class="stroke-muted-foreground" stroke-width="1" stroke-opacity="0.4" />
-        <circle ref="railNodeAEl" cx="0" cy="0" r="3" class="stroke-muted-foreground fill-background" stroke-width="1.1" stroke-opacity="0.7" />
-        <circle ref="railNodeBEl" cx="0" cy="0" r="3" class="stroke-muted-foreground fill-background" stroke-width="1.1" stroke-opacity="0.7" />
+        <line ref="railLineEl" x1="0" y1="0" x2="0" y2="0" class="stroke-line-strong" stroke-width="1" stroke-opacity="0.68" />
+        <line ref="railConnAEl" x1="0" y1="0" x2="0" y2="0" class="stroke-line-strong" stroke-width="1" stroke-opacity="0.68" />
+        <line ref="railConnBEl" x1="0" y1="0" x2="0" y2="0" class="stroke-line-strong" stroke-width="1" stroke-opacity="0.68" />
+        <circle ref="railNodeAEl" cx="0" cy="0" r="3" class="stroke-line-strong fill-background" stroke-width="1.1" stroke-opacity="0.85" />
+        <circle ref="railNodeBEl" cx="0" cy="0" r="3" class="stroke-line-strong fill-background" stroke-width="1.1" stroke-opacity="0.85" />
+        <g
+          ref="targetOverlayEl"
+          fill="none"
+          stroke="var(--line-strong)"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
       </svg>
 
       <div
@@ -58,6 +65,12 @@
       </div>
     </div>
 
+    <div class="spatial-meta spatial-meta-bottom">
+      <span>GRID 16 × 08</span>
+      <span>SLAB Δ 0.08</span>
+      <span>DRAFT OPACITY 0.80</span>
+    </div>
+
     <div class="pointer-events-none absolute bottom-4 left-[1.1rem] flex flex-col gap-[0.32rem] font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
       <span>X — INDEX SPAN</span>
       <span>Y — LAYER RAIL</span>
@@ -65,21 +78,38 @@
       <span>+ — ENTRY POINT</span>
     </div>
 
-    <div class="pointer-events-none absolute bottom-4 right-[1.2rem] text-muted-foreground" aria-hidden="true">
-      <svg viewBox="0 0 60 60" class="h-12 w-12 overflow-visible">
-        <polygon
-          points="30,12 45.6,21 45.6,39 30,48 14.4,39 14.4,21"
+    <div class="pointer-events-none absolute bottom-4 right-[1.2rem] text-line-strong" aria-hidden="true">
+      <svg viewBox="0 0 60 60" class="h-24 w-24 overflow-visible">
+        <g
           fill="none"
           stroke="currentColor"
-          stroke-width="1"
-          stroke-opacity="0.55"
-        />
-        <line x1="30" y1="30" x2="30" y2="12" stroke="currentColor" stroke-width="1" stroke-opacity="0.55" />
-        <line x1="30" y1="30" x2="14.4" y2="39" stroke="currentColor" stroke-width="1" stroke-opacity="0.55" />
-        <line x1="30" y1="30" x2="45.6" y2="39" stroke="currentColor" stroke-width="1" stroke-opacity="0.55" />
-        <text x="30" y="8" text-anchor="middle" font-size="8" class="fill-current font-mono">Z</text>
-        <text x="7" y="44" text-anchor="middle" font-size="8" class="fill-current font-mono">X</text>
-        <text x="53" y="44" text-anchor="middle" font-size="8" class="fill-current font-mono">Y</text>
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.15"
+          stroke-opacity="0.42"
+        >
+          <path d="M30 8 V16" />
+          <path d="M18 34 L8 39.8" />
+          <path d="M42 34 L52 39.8" />
+          <path d="M30 16 L42 22 V34 L30 40 L18 34 V22 Z" />
+          <path d="M18 22 L30 28 L42 22" />
+          <path d="M30 28 V40" />
+        </g>
+        <g
+          fill="none"
+          stroke="currentColor"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="0.9"
+          stroke-dasharray="2 2"
+          stroke-opacity="0.18"
+        >
+          <path d="M18 34 L30 28 L42 34" />
+          <path d="M30 16 V28" />
+        </g>
+        <text x="30" y="5" text-anchor="middle" font-size="8" class="fill-current font-mono" fill-opacity="0.62">Z</text>
+        <text x="5" y="40" text-anchor="middle" font-size="8" class="fill-current font-mono" fill-opacity="0.62">X</text>
+        <text x="55" y="40" text-anchor="middle" font-size="8" class="fill-current font-mono" fill-opacity="0.62">Y</text>
       </svg>
     </div>
   </section>
@@ -133,6 +163,7 @@ const railConnAEl = ref(null)
 const railConnBEl = ref(null)
 const railNodeAEl = ref(null)
 const railNodeBEl = ref(null)
+const targetOverlayEl = ref(null)
 
 // Spatial geometry scale — tweak these to reshape the layered index.
 // Per-project stem heights (authored in approximate screen px) so labels sit at
@@ -158,22 +189,35 @@ function stemHeightFor(project) {
 const HALF_X = 7.6
 const HALF_Z = 3.2
 const LAYER_Y = { TOOLS: 4.4, WORKS: 0, EXPERIMENTS: -4.4 }
-const FRUSTUM = 18.5
 const CAMERA_POSITION = [4.6, 3.1, 12]
 const CAMERA_TARGET = [0, -0.2, 0]
 const SINGLE_LAYER_SCALE = 1.16
 // Keep markers inside the narrowed volume (data is authored for a wider box).
 const MARKER_X_SCALE = 0.68
-// Pan the volume right inside the canvas so the layer rail gets a left gutter.
-const PAN_X = 1.4
-// Layer rail sits at the canvas's far-left edge; a long connector bridges the gap
-// to each slice. RAIL_Z = 0 puts nodes/labels at the mid-depth of each plane's
-// left edge (its vertical centre) so a label points at its layer, not the gap.
-const RAIL_X = -HALF_X - 3.1
+const SPATIAL_PROFILE = {
+  roomy: {
+    frustum: 18.5,
+    panX: 1.4,
+    railX: -HALF_X - 3.1
+  },
+  compact: {
+    frustum: 18.0,
+    panX: 1.0,
+    railX: -HALF_X - 2.45
+  }
+}
+// Layer rail bridges into each slice. RAIL_Z puts nodes/labels at the mid-depth
+// of each plane's left edge so a label points at its layer, not the gap.
 const RAIL_Z = HALF_Z
 // Lift the label/rail node above its plane so the plane's front-left corner node
 // drops into the gap below the label.
 const LABEL_LIFT = 2.0
+
+function spatialProfileFor(width, height) {
+  const narrow = width <= 1180
+  const shortAndNarrow = width <= 1320 && height <= 760
+  return narrow || shortAndNarrow ? SPATIAL_PROFILE.compact : SPATIAL_PROFILE.roomy
+}
 
 const statusNames = { live: 'LIVE', wip: 'WIP', beta: 'BETA', archived: 'ARCHIVED' }
 
@@ -221,6 +265,8 @@ function setLayerEl(id, el) {
 
 let sceneState = null
 let desktopMq = null
+let resizeObserver = null
+let resizeFrame = 0
 const tmpVec = new THREE.Vector3()
 
 function getCssColor(name) {
@@ -272,6 +318,35 @@ function makeLine(points, color, opacity) {
 const X_DIV = 16
 const Z_DIV = 8
 const LATTICE_STEP = 2
+const DRAFT_EXTENT = 1.9
+const DRAFT_OVER = 2.55
+const DRAFT_GHOST_OFFSET = 0.1
+// Dev preview opacity: keep the draft layer intentionally loud while tuning
+// construction-line shape; lower this once the form is approved.
+const DRAFT_DEV_OPACITY = 0.8
+const BASE_MESH_OPACITY = 0.38
+const BASE_EDGE_OPACITY = 0.68
+const BASE_SLAB_OPACITY = 0.44
+const BASE_CONNECTOR_OPACITY = 0.5
+const NODE_TARGET_OPACITY = 0.74
+const NODE_TICK_OPACITY = 0.58
+const HISTORIC_TARGETS = {
+  TOOLS: [
+    { x: HALF_X, z: -HALF_Z, size: { rx: 5.0, ry: 6.3 }, opacity: NODE_TARGET_OPACITY },
+    { x: -HALF_X * 0.45, z: HALF_Z, size: { rx: 4.4, ry: 5.6 }, opacity: NODE_TARGET_OPACITY * 0.7 },
+    { x: -HALF_X, z: -HALF_Z * 0.34, size: { rx: 3.8, ry: 4.9 }, opacity: NODE_TARGET_OPACITY * 0.56 }
+  ],
+  WORKS: [
+    { x: -HALF_X, z: 0, size: { rx: 4.7, ry: 5.9 }, opacity: NODE_TARGET_OPACITY * 0.82 },
+    { x: HALF_X, z: -HALF_Z * 0.42, size: { rx: 4.1, ry: 5.2 }, opacity: NODE_TARGET_OPACITY * 0.62 },
+    { x: HALF_X * 0.34, z: HALF_Z, size: { rx: 4.4, ry: 5.6 }, opacity: NODE_TARGET_OPACITY * 0.68 }
+  ],
+  EXPERIMENTS: [
+    { x: -HALF_X, z: -HALF_Z, size: { rx: 4.6, ry: 5.7 }, opacity: NODE_TARGET_OPACITY * 0.76 },
+    { x: HALF_X * 0.72, z: HALF_Z, size: { rx: 5.0, ry: 6.2 }, opacity: NODE_TARGET_OPACITY * 0.72 },
+    { x: HALF_X, z: HALF_Z * 0.24, size: { rx: 3.9, ry: 5.0 }, opacity: NODE_TARGET_OPACITY * 0.58 }
+  ]
+}
 
 // Coarser lattice (every Nth grid line) where vertical columns + entry nodes sit,
 // over the finer surface grid.
@@ -296,12 +371,55 @@ function mergedSegments(segments, color, opacity) {
   return new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(points), material)
 }
 
+function addDraftLineTier(group, statics, segments, color, opacity) {
+  if (segments.length === 0) return
+  const line = mergedSegments(segments, color, opacity)
+  group.add(line)
+  statics.push({ material: line.material, base: opacity })
+}
+
+function pointBetween(a, b, t) {
+  return new THREE.Vector3().lerpVectors(a, b, t)
+}
+
+function draftRecipe(seed) {
+  const recipes = [
+    [
+      [0, 0.32],
+      [0.5, 1]
+    ],
+    [[0.08, 0.72]],
+    [
+      [0, 0.22],
+      [0.36, 0.58],
+      [0.76, 1]
+    ],
+    [[0.2, 1]],
+    []
+  ]
+  return recipes[Math.abs(seed) % recipes.length]
+}
+
+function addDraftStroke(segments, a, b, seed) {
+  draftRecipe(seed).forEach(([from, to]) => {
+    segments.push([pointBetween(a, b, from), pointBetween(a, b, to)])
+  })
+}
+
+function addTickCross(segments, x, y, z, size) {
+  segments.push(
+    [new THREE.Vector3(x - size, y, z), new THREE.Vector3(x + size, y, z)],
+    [new THREE.Vector3(x, y, z - size), new THREE.Vector3(x, y, z + size)]
+  )
+}
+
 // Vertical offset of the rear/lower supporting layer — keeps each base a very
 // thin double-layer slab rather than a single sheet (or a heavy box).
-const SLAB_THICKNESS = 0.12
+const SLAB_THICKNESS = 0.08
 
-function buildLayerPlane(colors, statics) {
+function buildLayerPlane(colors, statics, layerId) {
   const group = new THREE.Group()
+  const targetAnchors = []
 
   const add = (object, base) => {
     group.add(object)
@@ -314,15 +432,17 @@ function buildLayerPlane(colors, statics) {
   for (let i = 0; i <= X_DIV; i += 1) {
     const x = -HALF_X + (i / X_DIV) * HALF_X * 2
     const seg = [new THREE.Vector3(x, 0, -HALF_Z), new THREE.Vector3(x, 0, HALF_Z)]
-    ;(i === 0 || i === X_DIV ? edgeSegs : meshSegs).push(seg)
+    if (i === 0 || i === X_DIV) edgeSegs.push(seg)
+    else addDraftStroke(meshSegs, seg[0], seg[1], i * 5)
   }
   for (let j = 0; j <= Z_DIV; j += 1) {
     const z = -HALF_Z + (j / Z_DIV) * HALF_Z * 2
     const seg = [new THREE.Vector3(-HALF_X, 0, z), new THREE.Vector3(HALF_X, 0, z)]
-    ;(j === 0 || j === Z_DIV ? edgeSegs : meshSegs).push(seg)
+    if (j === 0 || j === Z_DIV) edgeSegs.push(seg)
+    else addDraftStroke(meshSegs, seg[0], seg[1], j * 7 + 2)
   }
-  add(mergedSegments(meshSegs, colors.muted, 0.3), 0.3)
-  add(mergedSegments(edgeSegs, colors.muted, 0.58), 0.58)
+  add(mergedSegments(meshSegs, colors.muted, BASE_MESH_OPACITY), BASE_MESH_OPACITY)
+  add(mergedSegments(edgeSegs, colors.muted, BASE_EDGE_OPACITY), BASE_EDGE_OPACITY)
 
   // --- Rear/lower supporting layer: a faint perimeter outline offset down, so
   // the base reads as a thin slab with a back layer. ---
@@ -342,9 +462,9 @@ function buildLayerPlane(colors, statics) {
         [lower[3], lower[0]]
       ],
       colors.muted,
-      0.34
+      BASE_SLAB_OPACITY
     ),
-    0.34
+    BASE_SLAB_OPACITY
   )
 
   // --- A few thin connectors (corners + edge midpoints) tying the two layers. ---
@@ -362,23 +482,131 @@ function buildLayerPlane(colors, statics) {
     mergedSegments(
       tops.map(([x, z]) => [new THREE.Vector3(x, 0, z), new THREE.Vector3(x, ly, z)]),
       colors.muted,
-      0.4
+      BASE_CONNECTOR_OPACITY
     ),
-    0.4
+    BASE_CONNECTOR_OPACITY
   )
 
-  // Entry-point anchor nodes at the lattice points (where vertical columns pass
-  // through this slice) — small diamonds, cool gray structural intersections.
-  const anchorSegs = []
-  const s = 0.07
-  latticePoints().forEach(([x, z]) => {
-    const top = new THREE.Vector3(x, 0, z - s)
-    const right = new THREE.Vector3(x + s, 0, z)
-    const bottom = new THREE.Vector3(x, 0, z + s)
-    const left = new THREE.Vector3(x - s, 0, z)
-    anchorSegs.push([top, right], [right, bottom], [bottom, left], [left, top])
+  // Fine ticks keep a few construction intersections without competing with the
+  // historic target rings.
+  const tickSegs = []
+
+  const targetY = -SLAB_THICKNESS * 0.5
+  ;(HISTORIC_TARGETS[layerId] ?? []).forEach(({ x, z, size, opacity }) => {
+    const target = new THREE.Object3D()
+    target.position.set(x, targetY, z)
+    target.userData.targetSize = size
+    target.userData.targetOpacity = opacity
+    group.add(target)
+    targetAnchors.push(target)
   })
-  add(mergedSegments(anchorSegs, colors.muted, 0.5), 0.5)
+
+  ;[
+    [0, -HALF_Z],
+    [HALF_X, 0],
+    [0, HALF_Z],
+    [-HALF_X, 0],
+    [-HALF_X * 0.5, 0],
+    [HALF_X * 0.5, 0]
+  ].forEach(([x, z]) => addTickCross(tickSegs, x, 0.018, z, 0.16))
+  add(mergedSegments(tickSegs, colors.muted, NODE_TICK_OPACITY), NODE_TICK_OPACITY)
+
+  group.userData.targetAnchors = targetAnchors
+  return group
+}
+
+function buildConstructionOverlay(colors, statics) {
+  const group = new THREE.Group()
+  const layerYs = Object.values(LAYER_Y)
+  const verticalSegs = []
+  const edgeExtensionSegs = []
+  const ghostEdgeSegs = []
+  const projectionSegs = []
+
+  // Sparse through-lines that overshoot the slices. They are broken with fixed
+  // recipes, so the draft feels historical rather than evenly generated.
+  latticePoints().forEach(([x, z, i, j]) => {
+    const perimeter = i === 0 || i === X_DIV || j === 0 || j === Z_DIV
+    const drafted = perimeter ? (i + j) % 3 !== 1 : (i * 7 + j * 5) % 11 === 0
+    if (!drafted) return
+    const bottomOver = DRAFT_OVER * (0.45 + ((i + 2 * j) % 5) * 0.16)
+    const topOver = DRAFT_OVER * (0.5 + ((2 * i + j) % 4) * 0.18)
+    addDraftStroke(
+      verticalSegs,
+      new THREE.Vector3(x, LAYER_Y.EXPERIMENTS - bottomOver, z),
+      new THREE.Vector3(x, LAYER_Y.TOOLS + topOver, z),
+      i * 13 + j * 17
+    )
+  })
+
+  layerYs.forEach((y, layerIndex) => {
+    const ghost = DRAFT_GHOST_OFFSET * (layerIndex === 1 ? -1 : 1)
+    const ghostY = y - SLAB_THICKNESS * 0.45
+
+    // A second, slightly displaced perimeter pass reads like a construction
+    // trace without changing the real plane dimensions.
+    ;[
+      [new THREE.Vector3(-HALF_X - ghost, ghostY, -HALF_Z), new THREE.Vector3(HALF_X + ghost * 0.5, ghostY, -HALF_Z)],
+      [new THREE.Vector3(HALF_X + ghost, ghostY, -HALF_Z), new THREE.Vector3(HALF_X + ghost, ghostY, HALF_Z + ghost * 0.65)],
+      [new THREE.Vector3(HALF_X, ghostY, HALF_Z + ghost), new THREE.Vector3(-HALF_X - ghost * 0.7, ghostY, HALF_Z + ghost)],
+      [new THREE.Vector3(-HALF_X - ghost, ghostY, HALF_Z + ghost), new THREE.Vector3(-HALF_X - ghost, ghostY, -HALF_Z * 0.72)]
+    ].forEach(([a, b], edgeIndex) =>
+      addDraftStroke(ghostEdgeSegs, a, b, layerIndex * 7 + edgeIndex * 3)
+    )
+
+    ;[-HALF_Z, 0, HALF_Z].forEach((z, zIndex) => {
+      const leftExtent = DRAFT_EXTENT * (0.42 + ((layerIndex + zIndex) % 4) * 0.28)
+      const rightExtent = DRAFT_EXTENT * (0.55 + ((layerIndex * 2 + zIndex) % 3) * 0.36)
+      addDraftStroke(
+        edgeExtensionSegs,
+        new THREE.Vector3(-HALF_X - leftExtent, y, z),
+        new THREE.Vector3(-HALF_X, y, z),
+        layerIndex * 11 + zIndex
+      )
+      addDraftStroke(
+        edgeExtensionSegs,
+        new THREE.Vector3(HALF_X, y, z),
+        new THREE.Vector3(HALF_X + rightExtent, y, z),
+        layerIndex * 13 + zIndex + 2
+      )
+    })
+
+    ;[-HALF_X, 0, HALF_X].forEach((x, xIndex) => {
+      const backExtent = DRAFT_EXTENT * (0.35 + ((xIndex + layerIndex) % 3) * 0.22)
+      const frontExtent = DRAFT_EXTENT * (0.52 + ((xIndex * 2 + layerIndex) % 4) * 0.18)
+      addDraftStroke(
+        edgeExtensionSegs,
+        new THREE.Vector3(x, y, -HALF_Z - backExtent),
+        new THREE.Vector3(x, y, -HALF_Z),
+        layerIndex * 17 + xIndex + 1
+      )
+      addDraftStroke(
+        edgeExtensionSegs,
+        new THREE.Vector3(x, y, HALF_Z),
+        new THREE.Vector3(x, y, HALF_Z + frontExtent),
+        layerIndex * 19 + xIndex + 4
+      )
+    })
+
+    const rayZ = layerIndex === 1 ? 0 : HALF_Z
+    addDraftStroke(
+      projectionSegs,
+      new THREE.Vector3(-HALF_X, y, rayZ),
+      new THREE.Vector3(-HALF_X - DRAFT_EXTENT * (1.4 + layerIndex * 0.38), y, rayZ + 0.2),
+      layerIndex * 23 + 3
+    )
+    addDraftStroke(
+      projectionSegs,
+      new THREE.Vector3(HALF_X, y, -rayZ),
+      new THREE.Vector3(HALF_X + DRAFT_EXTENT * (1.2 + layerIndex * 0.27), y, -rayZ - 0.16),
+      layerIndex * 29 + 5
+    )
+  })
+
+  addDraftLineTier(group, statics, verticalSegs, colors.blueSoft, DRAFT_DEV_OPACITY)
+  addDraftLineTier(group, statics, edgeExtensionSegs, colors.muted, DRAFT_DEV_OPACITY)
+  addDraftLineTier(group, statics, ghostEdgeSegs, colors.lineStrong, DRAFT_DEV_OPACITY)
+  addDraftLineTier(group, statics, projectionSegs, colors.blueSoft, DRAFT_DEV_OPACITY)
 
   return group
 }
@@ -436,6 +664,18 @@ function buildMarker(project, colors) {
   entryDot.position.y = 0.026
   root.add(entryDot)
 
+  const washerMaterial = new THREE.MeshBasicMaterial({
+    color: project.status === 'archived' ? colors.muted : colors.lineStrong,
+    transparent: true,
+    opacity: 0.66,
+    side: THREE.DoubleSide
+  })
+  washerMaterial.userData.baseOpacity = 0.66
+  const washer = new THREE.Mesh(new THREE.RingGeometry(0.105, 0.135, 28), washerMaterial)
+  washer.rotation.x = -Math.PI / 2
+  washer.position.y = 0.024
+  root.add(washer)
+
   const stemHeight = stemHeightFor(project)
 
   // Dedicated stem — a cool blue-gray that is clearly more visible than the gray
@@ -474,6 +714,7 @@ function buildMarker(project, colors) {
     hit,
     labelAnchor,
     entryDot: entryDotMaterial,
+    washer: washerMaterial,
     guide: guideMaterial,
     scaleCurrent: 1,
     fadeState: { value: 1 }
@@ -515,20 +756,21 @@ function buildScene() {
   const boxState = { value: 1 }
   const skeleton = buildSkeleton(colors, boxStatics)
   scene.add(skeleton)
+  scene.add(buildConstructionOverlay(colors, boxStatics))
 
   const layers = ['TOOLS', 'WORKS', 'EXPERIMENTS'].map((id) => {
     const statics = []
-    const group = buildLayerPlane(colors, statics)
+    const group = buildLayerPlane(colors, statics, id)
     group.position.y = LAYER_Y[id]
 
     // Lift the label above its plane so the layer reads: label on top, then the
     // plane's front-left corner node sitting in the gap below it.
     const labelAnchor = new THREE.Object3D()
-    labelAnchor.position.set(RAIL_X, LABEL_LIFT, RAIL_Z)
+    labelAnchor.position.set(SPATIAL_PROFILE.roomy.railX, LABEL_LIFT, RAIL_Z)
     group.add(labelAnchor)
 
     scene.add(group)
-    return { id, group, statics, labelAnchor, fadeState: { value: 1 } }
+    return { id, group, statics, labelAnchor, targetAnchors: group.userData.targetAnchors ?? [], fadeState: { value: 1 } }
   })
 
   const layerById = Object.fromEntries(layers.map((layer) => [layer.id, layer]))
@@ -548,6 +790,7 @@ function buildScene() {
     renderer,
     colors,
     layers,
+    targetOverlays: layers.flatMap((layer) => layer.targetAnchors.map((anchor) => ({ anchor, layer }))),
     markers,
     boxState,
     boxStatics,
@@ -555,9 +798,89 @@ function buildScene() {
     pointer,
     reducedMotion,
     spatialEase,
+    profile: SPATIAL_PROFILE.roomy,
     size: { width: 1, height: 1 },
     animationId: 0
   }
+}
+
+function setCameraFrame(camera, profile, aspect, panX) {
+  camera.left = (-profile.frustum * aspect) / 2 + panX
+  camera.right = (profile.frustum * aspect) / 2 + panX
+  camera.top = profile.frustum / 2
+  camera.bottom = -profile.frustum / 2
+  camera.updateProjectionMatrix()
+}
+
+function addLayerVisualBounds(points, y) {
+  const lowerY = y - SLAB_THICKNESS
+  const leftDraft = DRAFT_EXTENT * 1.95
+  const rightDraft = DRAFT_EXTENT * 1.75
+  const depthDraft = DRAFT_EXTENT * 1.05
+
+  ;[
+    [-HALF_X, y, -HALF_Z],
+    [HALF_X, y, -HALF_Z],
+    [HALF_X, y, HALF_Z],
+    [-HALF_X, y, HALF_Z],
+    [-HALF_X, lowerY, -HALF_Z],
+    [HALF_X, lowerY, -HALF_Z],
+    [HALF_X, lowerY, HALF_Z],
+    [-HALF_X, lowerY, HALF_Z],
+    [-HALF_X - leftDraft, y, -HALF_Z],
+    [-HALF_X - leftDraft, y, HALF_Z],
+    [HALF_X + rightDraft, y, -HALF_Z],
+    [HALF_X + rightDraft, y, HALF_Z],
+    [-HALF_X, y, -HALF_Z - depthDraft],
+    [HALF_X, y, -HALF_Z - depthDraft],
+    [-HALF_X, y, HALF_Z + depthDraft],
+    [HALF_X, y, HALF_Z + depthDraft]
+  ].forEach(([x, pointY, z]) => points.push(new THREE.Vector3(x, pointY, z)))
+}
+
+function visualBoundsPoints(profile) {
+  const points = []
+  Object.values(LAYER_Y).forEach((y) => addLayerVisualBounds(points, y))
+
+  points.push(
+    new THREE.Vector3(profile.railX - 0.28, LAYER_Y.TOOLS + LABEL_LIFT, RAIL_Z),
+    new THREE.Vector3(profile.railX - 0.28, LAYER_Y.EXPERIMENTS + LABEL_LIFT, RAIL_Z),
+    new THREE.Vector3(profile.railX + 1.9, LAYER_Y.TOOLS + LABEL_LIFT, RAIL_Z),
+    new THREE.Vector3(profile.railX + 1.9, LAYER_Y.EXPERIMENTS + LABEL_LIFT, RAIL_Z),
+    new THREE.Vector3(-HALF_X - DRAFT_EXTENT * 2.2, LAYER_Y.EXPERIMENTS - DRAFT_OVER * 0.7, HALF_Z),
+    new THREE.Vector3(HALF_X + DRAFT_EXTENT * 1.8, LAYER_Y.TOOLS + DRAFT_OVER * 0.7, -HALF_Z)
+  )
+
+  sceneState?.markers.forEach((marker) => {
+    marker.labelAnchor.getWorldPosition(tmpVec)
+    points.push(tmpVec.clone())
+  })
+
+  return points
+}
+
+function calibrateCameraPan(profile, width, height, aspect) {
+  setCameraFrame(sceneState.camera, profile, aspect, profile.panX)
+  sceneState.scene.updateMatrixWorld(true)
+
+  const bounds = visualBoundsPoints(profile).reduce(
+    (acc, point) => {
+      const projected = point.clone().project(sceneState.camera)
+      const x = (projected.x * 0.5 + 0.5) * width
+      return {
+        min: Math.min(acc.min, x),
+        max: Math.max(acc.max, x)
+      }
+    },
+    { min: Number.POSITIVE_INFINITY, max: Number.NEGATIVE_INFINITY }
+  )
+
+  if (!Number.isFinite(bounds.min) || !Number.isFinite(bounds.max)) return profile.panX
+
+  const visualCenterX = (bounds.min + bounds.max) / 2
+  const centerOffsetPx = visualCenterX - width / 2
+  const worldUnitsPerPx = (profile.frustum * aspect) / width
+  return profile.panX + centerOffsetPx * worldUnitsPerPx
 }
 
 function resizeScene() {
@@ -566,15 +889,33 @@ function resizeScene() {
   const width = Math.max(1, rect.width)
   const height = Math.max(1, rect.height)
   const aspect = width / height
+  const profile = spatialProfileFor(width, height)
 
-  sceneState.camera.left = (-FRUSTUM * aspect) / 2 + PAN_X
-  sceneState.camera.right = (FRUSTUM * aspect) / 2 + PAN_X
-  sceneState.camera.top = FRUSTUM / 2
-  sceneState.camera.bottom = -FRUSTUM / 2
-  sceneState.camera.updateProjectionMatrix()
+  sceneState.profile = profile
+  sceneState.layers.forEach((layer) => {
+    layer.labelAnchor.position.x = profile.railX
+  })
+  const panX = calibrateCameraPan(profile, width, height, aspect)
+  setCameraFrame(sceneState.camera, profile, aspect, panX)
   sceneState.renderer.setSize(width, height, false)
   sceneState.size.width = width
   sceneState.size.height = height
+}
+
+function scheduleResize() {
+  if (!sceneState) return
+  if (resizeFrame) window.cancelAnimationFrame(resizeFrame)
+  resizeFrame = window.requestAnimationFrame(() => {
+    resizeFrame = 0
+    resizeScene()
+  })
+}
+
+function scheduleSettledResize() {
+  scheduleResize()
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(resizeScene)
+  })
 }
 
 function applyFilter(animate) {
@@ -634,10 +975,11 @@ function projectVec(x, y, z) {
 }
 
 function updateRailOverlay() {
-  const railX = projectVec(RAIL_X, 0, RAIL_Z).x
+  const railWorldX = sceneState.profile.railX
+  const railX = projectVec(railWorldX, 0, RAIL_Z).x
   // Rail spans from the first to the last label node (no overshoot into empty space).
-  const topY = projectVec(RAIL_X, LAYER_Y.TOOLS + LABEL_LIFT, RAIL_Z).y
-  const botY = projectVec(RAIL_X, LAYER_Y.EXPERIMENTS + LABEL_LIFT, RAIL_Z).y
+  const topY = projectVec(railWorldX, LAYER_Y.TOOLS + LABEL_LIFT, RAIL_Z).y
+  const botY = projectVec(railWorldX, LAYER_Y.EXPERIMENTS + LABEL_LIFT, RAIL_Z).y
 
   if (railLineEl.value) {
     railLineEl.value.setAttribute('x1', railX)
@@ -672,6 +1014,77 @@ function updateRailOverlay() {
   return railX
 }
 
+function ensureTargetOverlayNodes() {
+  const root = targetOverlayEl.value
+  if (!root || !sceneState) return []
+  const targets = sceneState.targetOverlays
+  if (root.childNodes.length === targets.length) return Array.from(root.childNodes)
+
+  root.replaceChildren()
+  return targets.map(() => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    const ellipse = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse')
+    ellipse.setAttribute('stroke-width', '0.85')
+    ellipse.setAttribute('vector-effect', 'non-scaling-stroke')
+    g.appendChild(ellipse)
+
+    for (let i = 0; i < 4; i += 1) {
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line')
+      line.setAttribute('stroke-width', i < 2 ? '0.75' : '0.65')
+      line.setAttribute('vector-effect', 'non-scaling-stroke')
+      g.appendChild(line)
+    }
+
+    root.appendChild(g)
+    return g
+  })
+}
+
+function updateTargetOverlay() {
+  if (!sceneState) return
+  const nodes = ensureTargetOverlayNodes()
+  sceneState.targetOverlays.forEach(({ anchor, layer }, index) => {
+    const el = nodes[index]
+    if (!el) return
+    const point = projectAnchor(anchor)
+    const size = anchor.userData.targetSize
+    const rx = size.rx
+    const ry = size.ry
+    const xTick = rx + 3.2
+    const xGap = rx + 1.15
+    const yTick = ry + 3.4
+    const yGap = ry + 1.25
+    const opacity = anchor.userData.targetOpacity * layer.fadeState.value * sceneState.boxState.value
+    const [ellipse, left, right, verticalA, verticalB] = el.childNodes
+
+    el.setAttribute('opacity', String(opacity))
+    ellipse.setAttribute('cx', point.x)
+    ellipse.setAttribute('cy', point.y)
+    ellipse.setAttribute('rx', rx)
+    ellipse.setAttribute('ry', ry)
+
+    left.setAttribute('x1', point.x - xTick)
+    left.setAttribute('y1', point.y)
+    left.setAttribute('x2', point.x - xGap)
+    left.setAttribute('y2', point.y)
+
+    right.setAttribute('x1', point.x + xGap)
+    right.setAttribute('y1', point.y)
+    right.setAttribute('x2', point.x + xTick)
+    right.setAttribute('y2', point.y)
+
+    verticalA.setAttribute('x1', point.x)
+    verticalA.setAttribute('y1', point.y - yTick)
+    verticalA.setAttribute('x2', point.x)
+    verticalA.setAttribute('y2', point.y - yGap)
+
+    verticalB.setAttribute('x1', point.x)
+    verticalB.setAttribute('y1', point.y + yGap)
+    verticalB.setAttribute('x2', point.x)
+    verticalB.setAttribute('y2', point.y + yTick)
+  })
+}
+
 function renderScene() {
   if (!sceneState) return
   const { colors } = sceneState
@@ -703,6 +1116,9 @@ function renderScene() {
     marker.entryDot.color.copy(inkColor)
     marker.entryDot.opacity = marker.entryDot.userData.baseOpacity * visible
 
+    marker.washer.color.copy(hovered ? colors.blueSoft : archived ? colors.muted : colors.lineStrong)
+    marker.washer.opacity = (hovered ? 0.82 : marker.washer.userData.baseOpacity) * visible
+
     marker.guide.color.copy(hovered ? colors.blue : colors.muted)
     marker.guide.opacity = (hovered ? 0.85 : marker.guide.userData.baseOpacity) * visible
 
@@ -712,6 +1128,7 @@ function renderScene() {
   sceneState.renderer.render(sceneState.scene, sceneState.camera)
 
   const railX = updateRailOverlay()
+  updateTargetOverlay()
 
   sceneState.layers.forEach((layer) => {
     const el = layerEls[layer.id]
@@ -767,12 +1184,20 @@ function initScene() {
   resizeScene()
   applyFilter(false)
   renderScene()
-  window.addEventListener('resize', resizeScene)
+  resizeObserver = new ResizeObserver(scheduleResize)
+  if (canvasEl.value) resizeObserver.observe(canvasEl.value)
+  window.addEventListener('resize', scheduleResize)
+  document.fonts?.ready?.then(scheduleSettledResize)
+  scheduleSettledResize()
 }
 
 function disposeScene() {
   if (!sceneState) return
-  window.removeEventListener('resize', resizeScene)
+  window.removeEventListener('resize', scheduleResize)
+  resizeObserver?.disconnect()
+  resizeObserver = null
+  if (resizeFrame) window.cancelAnimationFrame(resizeFrame)
+  resizeFrame = 0
   window.cancelAnimationFrame(sceneState.animationId)
   sceneState.scene.traverse((object) => {
     object.geometry?.dispose()
@@ -814,6 +1239,34 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+.spatial-meta {
+  pointer-events: none;
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.625rem;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+  opacity: 0.48;
+  text-transform: uppercase;
+}
+
+.spatial-meta-bottom {
+  right: 5.35rem;
+  bottom: 1.1rem;
+  align-items: center;
+  gap: 1rem;
+}
+
+@media (max-width: 1536px), (max-height: 820px) {
+  .spatial-meta-bottom {
+    right: 6.4rem;
+    bottom: 2.65rem;
+  }
+}
+
 /* Reused on every layer/entry anchor; needs will-change for per-frame transforms. */
 .spatial-anchor {
   position: absolute;

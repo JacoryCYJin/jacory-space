@@ -1,7 +1,7 @@
 <template>
   <main ref="pageRoot" class="grain min-h-screen bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
-    <div class="grid w-full grid-cols-[minmax(0,1fr)] border-line lg:grid-cols-[360px_minmax(0,1fr)] lg:px-12 2xl:grid-cols-[380px_minmax(0,1fr)] 2xl:px-20">
-      <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:h-[calc(100vh-var(--navbar-height))] lg:border-b-0 lg:border-r lg:px-[2.35rem] 2xl:px-12">
+    <div class="grid w-full grid-cols-[minmax(0,1fr)] border-line lg:grid-cols-[360px_minmax(0,1fr)] lg:px-4 xl:grid-cols-[372px_minmax(0,1fr)] xl:px-8 2xl:grid-cols-[380px_minmax(0,1fr)] 2xl:px-20">
+      <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:h-[calc(100vh-var(--navbar-height))] lg:border-b-0 lg:border-r lg:px-[2.35rem] xl:px-10 2xl:px-12">
         <section data-tools-enter class="sidebar-section">
           <div class="grid gap-10">
             <div class="grid gap-12">
@@ -64,7 +64,7 @@
         </section>
       </aside>
 
-      <section class="flex min-w-0 flex-col px-6 pb-12 pt-16 md:px-9 md:pt-20 lg:h-[calc(100svh-var(--navbar-height))] lg:px-10 lg:pb-10 lg:pt-12 2xl:px-12">
+      <section class="flex min-w-0 flex-col px-6 pb-12 pt-16 md:px-9 md:pt-20 lg:h-[calc(100svh-var(--navbar-height))] lg:px-10 lg:pb-10 lg:pt-12 xl:px-11 2xl:px-12">
         <div data-tools-enter class="min-h-0 flex-1">
           <LayeredSpatialIndex
             :projects="projects"
