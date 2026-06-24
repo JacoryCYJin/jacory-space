@@ -98,19 +98,9 @@ const projects = [
     stack: ['Vue', 'Express', 'yt-dlp'], version: 'v1.0.0', updated: '2026.06.20', href: '/video-parser'
   },
   {
-    id: '002', no: '002', title: 'Hairline Grid', layer: 'TOOLS', category: 'tool', status: 'wip',
-    pos: [-1.2, 1.4], description: '生成可见的细线网格，用于界面排版、排版标尺与视觉参考。',
-    stack: ['CSS', 'SVG'], version: 'v0.2.0', updated: '2026.06.18', href: '/tools'
-  },
-  {
     id: '003', no: '003', title: 'Cool Palette', layer: 'TOOLS', category: 'tool', status: 'wip',
     pos: [3.8, -1.2], description: '从一个冷色种子值导出完整的色彩系统，并提供 OKLCH 对比校验。',
     stack: ['OKLCH', 'Color System'], version: 'v0.3.1', updated: '2026.06.17', href: '/tools'
-  },
-  {
-    id: '004', no: '004', title: 'Interface Kit', layer: 'TOOLS', category: 'tool', status: 'wip',
-    pos: [7.4, 1.5], description: '常用界面结构与组件片段集合，面向快速搭建与复用。',
-    stack: ['Vue', 'Components'], version: 'v0.1.0', updated: '2026.06.10', href: '/tools'
   },
   {
     id: '005', no: '005', title: 'Jacory Space', layer: 'WORKS', category: 'work', status: 'live',
@@ -118,24 +108,9 @@ const projects = [
     stack: ['Vue', 'GSAP', 'Design System'], version: 'v1.5.0', updated: '2026.06.15', href: '/'
   },
   {
-    id: '006', no: '006', title: 'Portfolio System', layer: 'WORKS', category: 'work', status: 'wip',
-    pos: [-0.6, -1.5], description: '作品结构、项目叙事与展示索引系统。',
-    stack: ['Vue', 'Content Model'], version: 'v0.2.0', updated: '2026.06.08', href: '/tools'
-  },
-  {
-    id: '007', no: '007', title: 'Design System', layer: 'WORKS', category: 'work', status: 'live',
-    pos: [6.2, 1.1], description: '冷白界面系统、技术标签、细线结构与动效规范。',
-    stack: ['Tailwind', 'Tokens'], version: 'v1.1.0', updated: '2026.06.06', href: '/tools'
-  },
-  {
-    id: '008', no: '008', title: 'Mono Index', layer: 'EXPERIMENTS', category: 'experiment', status: 'beta',
-    pos: [-6.0, -1.2], description: '把任意列表转成等宽索引系统，支持编号、层级与检索。',
-    stack: ['TypeScript', 'Algorithm'], version: 'v0.4.0', updated: '2026.06.12', href: '/tools'
-  },
-  {
-    id: '009', no: '009', title: 'Reveal Timing', layer: 'EXPERIMENTS', category: 'experiment', status: 'beta',
-    pos: [1.2, 1.4], description: '可视化缓动曲线与滚动揭示节奏，预览 600–900ms 动效区间。',
-    stack: ['GSAP', 'Motion'], version: 'v0.3.0', updated: '2026.06.03', href: '/tools'
+    id: '007', no: '007', title: 'Agent Library', layer: 'TOOLS', category: 'tool', status: 'wip',
+    pos: [7.0, 1.3], description: '集中管理和组织可复用的 Skills、Rules 与 Prompts，形成个人 AI 工作流资产库。',
+    stack: ['Skills', 'Rules', 'Prompts'], version: 'v0.1.0', updated: '2026.06.24', href: '/tools'
   }
 ]
 
