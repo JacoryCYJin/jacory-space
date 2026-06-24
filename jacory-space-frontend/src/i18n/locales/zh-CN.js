@@ -291,7 +291,7 @@ export default {
       notSet: '未设置',
       edit: '编辑',
       delete: '删除',
-      custom: '+ 自定义',
+      custom: '自定义',
       cookiesUsageNote: 'Cookies 仅用于访问需要登录的私密或受限视频。',
       defaultDownloadDirectory: '默认下载目录',
       temporaryDirectory: '临时目录（本次下载）',
