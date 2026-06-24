@@ -1,6 +1,6 @@
 <template>
   <main ref="pageRoot" class="grain min-h-screen bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
-    <div class="relative isolate">
+    <div class="relative isolate overflow-hidden">
       <img
         :src="heroFigure"
         alt=""
