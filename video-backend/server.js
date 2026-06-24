@@ -848,6 +848,8 @@ const callSiliconFlowOutline = async (payload) => {
           }
         ],
         temperature: 0.2,
+        enable_thinking: false,
+        max_tokens: 3000,
         response_format: { type: 'json_object' }
       })
     })

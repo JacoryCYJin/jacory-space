@@ -291,7 +291,7 @@ export default {
       notSet: 'NOT SET',
       edit: 'EDIT',
       delete: 'DELETE',
-      custom: '+ CUSTOM',
+      custom: 'CUSTOM',
       cookiesUsageNote: 'Cookies are only used to access private or restricted videos that require login.',
       defaultDownloadDirectory: 'DEFAULT DOWNLOAD DIRECTORY',
       temporaryDirectory: 'TEMPORARY DIRECTORY (THIS DOWNLOAD)',

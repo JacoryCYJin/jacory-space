@@ -293,12 +293,20 @@
                     <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.outlineMap') }}</p>
                   </div>
                   <button
+                    v-if="outlineState === 'success'"
                     type="button"
                     class="font-mono text-[11px] uppercase tracking-[0.16em] text-blue transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:text-haze"
-                    :disabled="outlineState !== 'success'"
                     @click="copyOutline"
                   >
                     {{ t('videoParser.outline.copyOutline') }}
+                  </button>
+                  <button
+                    v-else-if="outlineState === 'subtitlesAvailable' || outlineState === 'failed'"
+                    type="button"
+                    class="font-mono text-[11px] uppercase tracking-[0.16em] text-blue transition-colors hover:text-foreground"
+                    @click="generateOutline"
+                  >
+                    {{ outlineState === 'failed' ? t('videoParser.outline.retry') : t('videoParser.outline.generate') }}
                   </button>
                 </div>
 
@@ -366,7 +374,7 @@
 
           <aside v-if="showSettingsRail" class="settings-rail border-line xl:border-l xl:pl-8">
             <div class="sticky top-24 space-y-10">
-              <section class="border-b border-line pb-9">
+              <section class="pb-9">
                 <div class="mb-7 flex items-center justify-between">
                   <div>
                     <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.cookiesSettings') }}</p>
@@ -536,6 +544,12 @@
       </div>
     </section>
 
+    <StatusToast
+      :visible="Boolean(outlineCopyStatus)"
+      :message="outlineCopyStatus"
+      type="success"
+    />
+
     <div
       v-if="showAddPlatform"
       class="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 p-4"
@@ -621,6 +635,7 @@
 import { computed, onBeforeUnmount, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+import StatusToast from '../components/StatusToast.vue'
 import {
   ArrowRight,
   Clapperboard,
@@ -656,6 +671,7 @@ const videoInfo = ref(null)
 const downloading = reactive({})
 const downloadRows = reactive({})
 const downloadTimers = new Map()
+let outlineCopyTimer = 0
 const lastDownloadedPath = ref('')
 const defaultDownloadDir = ref('')
 const downloadDirOverride = ref('')
@@ -665,6 +681,7 @@ const browserCookieSource = ref('chrome')
 const savingCookieSettings = ref(false)
 const cookieSettingsStatus = ref(null)
 const copyStatus = ref('')
+const outlineCopyStatus = ref('')
 const outlineGenerationState = ref('idle')
 const generatedOutline = ref(null)
 const outlineError = ref('')
@@ -875,11 +892,11 @@ const parseVideo = async () => {
   success.value = ''
   videoInfo.value = null
   lastDownloadedPath.value = ''
+  outlineCopyStatus.value = ''
   outlineGenerationState.value = 'idle'
   generatedOutline.value = null
   outlineError.value = ''
   Object.keys(downloadRows).forEach((key) => delete downloadRows[key])
-  let shouldGenerateOutline = false
   try {
     const response = await axios.post('/api/parse', { url })
     videoInfo.value = response.data
@@ -894,7 +911,6 @@ const parseVideo = async () => {
       transcriptCompactLength: response.data?.transcript_compact_length,
       transcriptPreview: response.data?.transcript_preview
     })
-    shouldGenerateOutline = isUsableTranscript(response.data)
   } catch (err) {
     if (err.response?.data?.code === 'NO_VISIBLE_FORMATS') {
       error.value = t('videoParser.errors.noVisibleFormats')
@@ -903,10 +919,6 @@ const parseVideo = async () => {
     }
   } finally {
     loading.value = false
-  }
-
-  if (shouldGenerateOutline) {
-    await generateOutline()
   }
 }
 
@@ -1148,7 +1160,7 @@ const revealOutputPath = () => {
   window.open(url, '_blank')
 }
 
-const copyOutline = () => {
+const copyOutline = async () => {
   if (outlineState.value !== 'success') return
   const text = outlineNodes
     .value
@@ -1159,8 +1171,14 @@ const copyOutline = () => {
       return `${node.title}${node.summary ? `\n${node.summary}` : ''}${children ? `\n${children}` : ''}`
     })
     .join('\n\n')
-  copyToClipboard(`${outlineTitle.value}\n${outlineSummary.value}\n\n${text}`.trim())
-  markCopied(t('videoParser.outline.copied'))
+  await copyToClipboard(`${outlineTitle.value}\n${outlineSummary.value}\n\n${text}`.trim())
+  const message = t('videoParser.outline.copied')
+  if (outlineCopyTimer) window.clearTimeout(outlineCopyTimer)
+  outlineCopyStatus.value = message
+  outlineCopyTimer = window.setTimeout(() => {
+    if (outlineCopyStatus.value === message) outlineCopyStatus.value = ''
+    outlineCopyTimer = 0
+  }, 1800)
 }
 
 const outlineLanguage = computed(() => (String(locale.value).toLowerCase().startsWith('zh') ? 'zh' : 'en'))
@@ -1212,6 +1230,7 @@ loadSettings()
 onBeforeUnmount(() => {
   downloadTimers.forEach((timer) => window.clearInterval(timer))
   downloadTimers.clear()
+  if (outlineCopyTimer) window.clearTimeout(outlineCopyTimer)
 })
 </script>
 
