@@ -156,12 +156,12 @@
 
 <script setup>
 import { computed } from 'vue'
-import coolPaletteWatermark from '../../assets/tools/cool-palete-watermark.png'
-import exampleWatermark from '../../assets/tools/example-watermark.png'
-import videoParserWatermark from '../../assets/tools/video-parser-watermark.png'
+import coolPaletteWatermark from '../../../assets/tools/cool-palete-watermark.png'
+import exampleWatermark from '../../../assets/tools/example-watermark.png'
+import videoParserWatermark from '../../../assets/tools/video-parser-watermark.png'
 import LayeredSpatialMobileIndex from './LayeredSpatialMobileIndex.vue'
-import ToolCard from './ToolCard.vue'
-import { useLayeredSpatialIndex } from './layered-spatial-index/useLayeredSpatialIndex'
+import ToolCard from '../ToolCard.vue'
+import { useLayeredSpatialIndex } from './useLayeredSpatialIndex'
 
 const props = defineProps({
   projects: { type: Array, required: true },
