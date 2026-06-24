@@ -1,67 +1,76 @@
 <template>
   <main ref="pageRoot" class="grain min-h-screen bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
-    <div class="grid w-full grid-cols-[minmax(0,1fr)] border-line lg:grid-cols-[360px_minmax(0,1fr)] lg:px-4 xl:grid-cols-[372px_minmax(0,1fr)] xl:px-8 2xl:grid-cols-[380px_minmax(0,1fr)] 2xl:px-20">
-      <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:flex lg:h-[calc(100svh-var(--navbar-height))] lg:flex-col lg:border-b-0 lg:border-r lg:px-[2.35rem] lg:pb-6 lg:pt-5 xl:px-10 2xl:px-12">
-        <section data-tools-enter class="sidebar-hero-section">
-          <div class="grid gap-8 lg:gap-4 xl:gap-6">
-            <div class="grid gap-10 lg:gap-4 xl:gap-7">
-              <p class="font-mono text-xs tracking-[0.18em] text-blue">{{ t('tools.interfaceIndex.kicker') }}</p>
-              <h1 class="font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-[4.15rem] lg:text-[3.55rem] xl:text-[4.15rem]">
-                Interface
-                <span class="block italic text-blue">Index</span>
-              </h1>
+    <div class="relative isolate">
+      <img
+        :src="heroFigure"
+        alt=""
+        aria-hidden="true"
+        class="pointer-events-none absolute left-[15%] top-[-10%] z-0 hidden h-[150%] w-auto max-w-none -translate-x-1/2 select-none opacity-[0.14] mix-blend-multiply lg:block"
+      >
+
+      <div class="relative z-10 grid w-full grid-cols-[minmax(0,1fr)] border-line lg:grid-cols-[360px_minmax(0,1fr)] lg:px-4 xl:grid-cols-[372px_minmax(0,1fr)] xl:px-8 2xl:grid-cols-[380px_minmax(0,1fr)] 2xl:px-20">
+        <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:flex lg:h-[calc(100svh-var(--navbar-height))] lg:flex-col lg:border-b-0 lg:border-r lg:px-[2.35rem] lg:pb-6 lg:pt-5 xl:px-10 2xl:px-12">
+          <section data-tools-enter class="sidebar-hero-section">
+            <div class="grid gap-8 lg:gap-4 xl:gap-6">
+              <div class="grid gap-10 lg:gap-4 xl:gap-7">
+                <p class="font-mono text-xs tracking-[0.18em] text-blue">{{ t('tools.interfaceIndex.kicker') }}</p>
+                <h1 class="font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-[4.15rem] lg:text-[3.55rem] xl:text-[4.15rem]">
+                  Interface
+                  <span class="block italic text-blue">Index</span>
+                </h1>
+              </div>
+              <div class="grid max-w-[25rem] text-[15px] leading-[1.72] text-muted-foreground">
+                <p>{{ t('tools.interfaceIndex.description') }}</p>
+              </div>
             </div>
-            <div class="grid max-w-[25rem] text-[15px] leading-[1.72] text-muted-foreground">
-              <p>{{ t('tools.interfaceIndex.description') }}</p>
+          </section>
+
+          <section data-tools-enter class="sidebar-index-section" :aria-label="t('tools.interfaceIndex.categoriesAria')">
+            <nav class="space-y-1 pb-[var(--sidebar-border-gap)] pt-3 lg:space-y-0 lg:pt-1 xl:space-y-1 xl:pt-2">
+              <button
+                v-for="panel in categoryPanels"
+                :key="panel.id"
+                type="button"
+                class="sidebar-index-item group"
+                :class="activeFilter === panel.id ? 'text-blue' : 'text-foreground hover:text-blue'"
+                @click="setFilter(panel.id)"
+              >
+                <span class="grid grid-cols-[1rem_minmax(0,1fr)_2ch] items-baseline gap-x-4">
+                  <span
+                    class="mt-[0.08rem] h-1.5 w-1.5 rounded-full bg-blue transition-opacity duration-300 ease-premium"
+                    :class="activeFilter === panel.id ? 'opacity-100' : 'opacity-45 group-hover:opacity-80'"
+                    aria-hidden="true"
+                  />
+                  <span class="font-mono text-sm font-semibold uppercase tracking-[0.2em]">{{ panel.label }}</span>
+                  <span class="justify-self-end font-mono text-sm tabular-nums tracking-[0.12em]">{{ panel.count }}</span>
+                </span>
+                <span class="mt-[var(--sidebar-copy-gap)] block max-w-[18rem] pl-8 font-mono text-xs leading-relaxed tracking-[0.08em] text-muted-foreground">
+                  {{ panel.description }}
+                </span>
+              </button>
+            </nav>
+
+            <div class="border-t border-line pt-[var(--sidebar-border-gap)]">
+              <div class="sidebar-index-item">
+                <p class="font-mono text-sm uppercase leading-none tracking-[0.16em] text-muted-foreground">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</p>
+                <p class="mt-[var(--sidebar-update-gap)] font-mono text-sm uppercase leading-none tracking-[0.16em] text-foreground">
+                  {{ lastUpdate }}
+                </p>
+              </div>
             </div>
+          </section>
+        </aside>
+
+        <section class="flex min-w-0 flex-col px-6 pb-12 pt-16 md:px-9 md:pt-20 lg:h-[calc(100svh-var(--navbar-height))] lg:px-10 lg:pb-10 lg:pt-12 xl:px-11 2xl:px-12">
+          <div data-tools-enter class="min-h-0 flex-1">
+            <LayeredSpatialIndex
+              :projects="projects"
+              :active-filter="activeFilter"
+              @select="handleSelect"
+            />
           </div>
         </section>
-
-        <section data-tools-enter class="sidebar-index-section" :aria-label="t('tools.interfaceIndex.categoriesAria')">
-          <nav class="space-y-1 pb-[var(--sidebar-border-gap)] pt-3 lg:space-y-0 lg:pt-1 xl:space-y-1 xl:pt-2">
-            <button
-              v-for="panel in categoryPanels"
-              :key="panel.id"
-              type="button"
-              class="sidebar-index-item group"
-              :class="activeFilter === panel.id ? 'text-blue' : 'text-foreground hover:text-blue'"
-              @click="setFilter(panel.id)"
-            >
-              <span class="grid grid-cols-[1rem_minmax(0,1fr)_2ch] items-baseline gap-x-4">
-                <span
-                  class="mt-[0.08rem] h-1.5 w-1.5 rounded-full bg-blue transition-opacity duration-300 ease-premium"
-                  :class="activeFilter === panel.id ? 'opacity-100' : 'opacity-45 group-hover:opacity-80'"
-                  aria-hidden="true"
-                />
-                <span class="font-mono text-sm font-semibold uppercase tracking-[0.2em]">{{ panel.label }}</span>
-                <span class="justify-self-end font-mono text-sm tabular-nums tracking-[0.12em]">{{ panel.count }}</span>
-              </span>
-              <span class="mt-[var(--sidebar-copy-gap)] block max-w-[18rem] pl-8 font-mono text-xs leading-relaxed tracking-[0.08em] text-muted-foreground">
-                {{ panel.description }}
-              </span>
-            </button>
-          </nav>
-
-          <div class="border-t border-line pt-[var(--sidebar-border-gap)]">
-            <div class="sidebar-index-item">
-              <p class="font-mono text-sm uppercase leading-none tracking-[0.16em] text-muted-foreground">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</p>
-              <p class="mt-[var(--sidebar-update-gap)] font-mono text-sm uppercase leading-none tracking-[0.16em] text-foreground">
-                {{ lastUpdate }}
-              </p>
-            </div>
-          </div>
-        </section>
-      </aside>
-
-      <section class="flex min-w-0 flex-col px-6 pb-12 pt-16 md:px-9 md:pt-20 lg:h-[calc(100svh-var(--navbar-height))] lg:px-10 lg:pb-10 lg:pt-12 xl:px-11 2xl:px-12">
-        <div data-tools-enter class="min-h-0 flex-1">
-          <LayeredSpatialIndex
-            :projects="projects"
-            :active-filter="activeFilter"
-            @select="handleSelect"
-          />
-        </div>
-      </section>
+      </div>
     </div>
   </main>
 </template>
@@ -72,6 +81,7 @@ import { useI18n } from 'vue-i18n'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 import LayeredSpatialIndex from '../components/tools/LayeredSpatialIndex.vue'
+import heroFigure from '../assets/tools/hero-figure.png'
 
 gsap.registerPlugin(CustomEase)
 
