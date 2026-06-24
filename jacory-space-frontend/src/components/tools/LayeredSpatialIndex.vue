@@ -14,11 +14,13 @@
 
     <div ref="overlayEl" class="pointer-events-none absolute inset-0 overflow-hidden">
       <svg class="pointer-events-none absolute inset-0 h-full w-full overflow-visible" aria-hidden="true">
-        <line ref="railLineEl" x1="0" y1="0" x2="0" y2="0" class="stroke-line-strong" stroke-width="1" stroke-opacity="0.68" />
-        <line ref="railConnAEl" x1="0" y1="0" x2="0" y2="0" class="stroke-line-strong" stroke-width="1" stroke-opacity="0.68" />
-        <line ref="railConnBEl" x1="0" y1="0" x2="0" y2="0" class="stroke-line-strong" stroke-width="1" stroke-opacity="0.68" />
-        <circle ref="railNodeAEl" cx="0" cy="0" r="3" class="stroke-line-strong fill-background" stroke-width="1.1" stroke-opacity="0.85" />
-        <circle ref="railNodeBEl" cx="0" cy="0" r="3" class="stroke-line-strong fill-background" stroke-width="1.1" stroke-opacity="0.85" />
+        <g ref="railOverlayEl">
+          <line ref="railLineEl" x1="0" y1="0" x2="0" y2="0" class="stroke-line-strong" stroke-width="1" stroke-opacity="0.68" />
+          <line ref="railConnAEl" x1="0" y1="0" x2="0" y2="0" class="stroke-line-strong" stroke-width="1" stroke-opacity="0.68" />
+          <line ref="railConnBEl" x1="0" y1="0" x2="0" y2="0" class="stroke-line-strong" stroke-width="1" stroke-opacity="0.68" />
+          <circle ref="railNodeAEl" cx="0" cy="0" r="3" class="stroke-line-strong fill-background" stroke-width="1.1" stroke-opacity="0.85" />
+          <circle ref="railNodeBEl" cx="0" cy="0" r="3" class="stroke-line-strong fill-background" stroke-width="1.1" stroke-opacity="0.85" />
+        </g>
         <g
           ref="targetOverlayEl"
           fill="none"
@@ -52,8 +54,8 @@
       >
         <div
           class="spatial-entry pointer-events-auto inline-flex cursor-pointer items-baseline gap-[0.4rem] whitespace-nowrap"
-          @pointerenter="hoveredId = project.id"
-          @pointerleave="hoveredId = null"
+          @pointerenter="setHoveredProject(project)"
+          @pointerleave="scheduleHoverClear"
           @click="emit('select', project)"
         >
           <span class="font-mono text-xs tracking-[0.06em] text-blue">{{ project.no }}</span>
@@ -62,6 +64,27 @@
             :class="hoveredId === project.id ? 'text-blue' : 'text-foreground'"
           >{{ project.title }}</span>
         </div>
+      </div>
+    </div>
+
+    <div
+      v-show="hoveredProject"
+      ref="previewPositionEl"
+      class="pointer-events-none absolute left-0 top-0 z-20 w-72"
+    >
+      <div
+        ref="previewMotionEl"
+        class="pointer-events-auto invisible opacity-0"
+        @pointerenter="cancelHoverClear"
+        @pointerleave="scheduleHoverClear"
+      >
+        <ToolCard
+          v-if="hoveredProject"
+          :tool="hoverCardTool"
+          :status-class="hoverStatusClass"
+          :watermark-src="hoverWatermarkSrc"
+          variant="hover"
+        />
       </div>
     </div>
 
@@ -145,6 +168,10 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
+import coolPaletteWatermark from '../../assets/tools/cool-palete-watermark.png'
+import exampleWatermark from '../../assets/tools/example-watermark.png'
+import videoParserWatermark from '../../assets/tools/video-parser-watermark.png'
+import ToolCard from './ToolCard.vue'
 
 gsap.registerPlugin(CustomEase)
 
@@ -158,6 +185,10 @@ const emit = defineEmits(['select'])
 const canvasEl = ref(null)
 const overlayEl = ref(null)
 const hoveredId = ref(null)
+const hoveredProject = ref(null)
+const previewPositionEl = ref(null)
+const previewMotionEl = ref(null)
+const railOverlayEl = ref(null)
 const railLineEl = ref(null)
 const railConnAEl = ref(null)
 const railConnBEl = ref(null)
@@ -181,8 +212,9 @@ const STEM_PX = {
 }
 const STEM_PX_TO_WORLD = 1 / 38
 const STEM_FALLBACK_PX = 80
+const HOVER_GUIDE_HEIGHT = 3.3
 // Stem thickness in world units (≈ /38 of a px). Raise for a thicker stem.
-const STEM_WIDTH = 0.02
+const STEM_WIDTH = 0.03
 function stemHeightFor(project) {
   return (STEM_PX[project.no] ?? STEM_FALLBACK_PX) * STEM_PX_TO_WORLD
 }
@@ -220,6 +252,30 @@ function spatialProfileFor(width, height) {
 }
 
 const statusNames = { live: 'LIVE', wip: 'WIP', beta: 'BETA', archived: 'ARCHIVED' }
+const hoverPreviewEase = CustomEase.create('tools-hover-preview', '0.16,1,0.3,1')
+const hoverCardTool = computed(() => {
+  const project = hoveredProject.value
+  if (!project) return null
+  return {
+    no: project.no,
+    name: project.title,
+    desc: project.description,
+    tag: project.category,
+    status: statusLabel(project.status),
+    ver: project.version,
+    href: project.href
+  }
+})
+const hoverWatermarkSrc = computed(() => {
+  if (hoveredProject.value?.id === '001') return videoParserWatermark
+  if (hoveredProject.value?.id === '003') return coolPaletteWatermark
+  return exampleWatermark
+})
+const hoverStatusClass = computed(() => {
+  if (hoveredProject.value?.status === 'live') return 'text-blue'
+  if (hoveredProject.value?.status === 'archived') return 'text-haze'
+  return 'text-muted-foreground'
+})
 
 function pad2(value) {
   return String(value).padStart(2, '0')
@@ -267,6 +323,7 @@ let sceneState = null
 let desktopMq = null
 let resizeObserver = null
 let resizeFrame = 0
+let hoverClearTimer = 0
 const tmpVec = new THREE.Vector3()
 
 function getCssColor(name) {
@@ -693,6 +750,10 @@ function buildMarker(project, colors) {
   guide.position.y = stemHeight / 2
   root.add(guide)
 
+  const guideTopAnchor = new THREE.Object3D()
+  guideTopAnchor.position.set(0, stemHeight, 0)
+  root.add(guideTopAnchor)
+
   // Hit area is a vertical billboard covering the whole marker (entry dot +
   // stem), so the entire marker is hoverable, not just the base.
   const hitHeight = stemHeight + 0.4
@@ -715,7 +776,11 @@ function buildMarker(project, colors) {
     labelAnchor,
     entryDot: entryDotMaterial,
     washer: washerMaterial,
-    guide: guideMaterial,
+    guide,
+    guideMaterial,
+    guideTopAnchor,
+    stemHeight,
+    guideScaleCurrent: 1,
     scaleCurrent: 1,
     fadeState: { value: 1 }
   }
@@ -955,6 +1020,11 @@ function applyFilter(animate) {
   const boxFade = single ? 0 : 1
   if (duration === 0) sceneState.boxState.value = boxFade
   else gsap.to(sceneState.boxState, { value: boxFade, duration, ease })
+
+  if (railOverlayEl.value) {
+    if (duration === 0) gsap.set(railOverlayEl.value, { opacity: single ? 0 : 1 })
+    else gsap.to(railOverlayEl.value, { opacity: single ? 0 : 1, duration: 0.42, ease })
+  }
 }
 
 function projectAnchor(object) {
@@ -1085,9 +1155,28 @@ function updateTargetOverlay() {
   })
 }
 
+function updateHoverPreviewPosition() {
+  if (!sceneState || !hoveredProject.value || !previewPositionEl.value) return
+  const marker = sceneState.markers.find((item) => item.project.id === hoveredProject.value.id)
+  if (!marker) return
+
+  const point = projectAnchor(marker.guideTopAnchor)
+  const cardWidth = 288
+  const cardHeight = 176
+  const gap = 16
+  const margin = 12
+  const placeRight = point.x + gap + cardWidth <= sceneState.size.width - margin
+  const preferredX = placeRight ? point.x + gap : point.x - gap - cardWidth
+  const x = Math.max(margin, Math.min(preferredX, sceneState.size.width - cardWidth - margin))
+  const preferredY = point.y + 5
+  const y = Math.max(margin, Math.min(preferredY, sceneState.size.height - cardHeight - margin))
+  previewPositionEl.value.style.transform = `translate(${x}px, ${y}px)`
+}
+
 function renderScene() {
   if (!sceneState) return
   const { colors } = sceneState
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   sceneState.boxStatics.forEach(({ material, base }) => {
     material.opacity = base * sceneState.boxState.value
@@ -1112,6 +1201,13 @@ function renderScene() {
     marker.scaleCurrent += (targetScale - marker.scaleCurrent) * 0.18
     marker.root.scale.setScalar(marker.scaleCurrent)
 
+    const targetGuideScale = hovered ? HOVER_GUIDE_HEIGHT / marker.stemHeight : 1
+    if (reduceMotion) marker.guideScaleCurrent = targetGuideScale
+    else marker.guideScaleCurrent += (targetGuideScale - marker.guideScaleCurrent) * 0.14
+    marker.guide.scale.y = marker.guideScaleCurrent
+    marker.guide.position.y = (marker.stemHeight * marker.guideScaleCurrent) / 2
+    marker.guideTopAnchor.position.y = marker.stemHeight * marker.guideScaleCurrent
+
     const inkColor = hovered ? colors.blue : archived ? colors.muted : colors.ink
     marker.entryDot.color.copy(inkColor)
     marker.entryDot.opacity = marker.entryDot.userData.baseOpacity * visible
@@ -1119,8 +1215,8 @@ function renderScene() {
     marker.washer.color.copy(hovered ? colors.blueSoft : archived ? colors.muted : colors.lineStrong)
     marker.washer.opacity = (hovered ? 0.82 : marker.washer.userData.baseOpacity) * visible
 
-    marker.guide.color.copy(hovered ? colors.blue : colors.muted)
-    marker.guide.opacity = (hovered ? 0.85 : marker.guide.userData.baseOpacity) * visible
+    marker.guideMaterial.color.copy(hovered ? colors.blue : colors.muted)
+    marker.guideMaterial.opacity = (hovered ? 0.92 : marker.guideMaterial.userData.baseOpacity) * visible
 
     marker.hit.visible = visible > 0.3
   })
@@ -1143,8 +1239,11 @@ function renderScene() {
     if (!el) return
     const point = projectAnchor(marker.labelAnchor)
     el.style.transform = `translate(${point.x}px, ${point.y}px)`
-    el.style.opacity = String(marker.layer.fadeState.value * marker.fadeState.value)
+    const labelFade = hoveredId.value === marker.project.id ? 0 : 1
+    el.style.opacity = String(marker.layer.fadeState.value * marker.fadeState.value * labelFade)
   })
+
+  updateHoverPreviewPosition()
 
   sceneState.animationId = window.requestAnimationFrame(renderScene)
 }
@@ -1161,14 +1260,85 @@ function pickProject(event) {
   return id ? props.projects.find((project) => project.id === id) ?? null : null
 }
 
+function cancelHoverClear() {
+  if (!hoverClearTimer) return
+  window.clearTimeout(hoverClearTimer)
+  hoverClearTimer = 0
+}
+
+function showHoverPreview() {
+  const el = previewMotionEl.value
+  if (!el) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.set(el, { autoAlpha: 1, y: 0 })
+    return
+  }
+  gsap.fromTo(
+    el,
+    { autoAlpha: 0, y: 8 },
+    {
+      autoAlpha: 1,
+      y: 0,
+      duration: 0.62,
+      ease: hoverPreviewEase,
+      overwrite: 'auto'
+    }
+  )
+}
+
+function hideHoverPreview() {
+  const el = previewMotionEl.value
+  if (!el) return
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    gsap.set(el, { autoAlpha: 0, y: 0 })
+    hoveredProject.value = null
+    hoveredId.value = null
+    return
+  }
+  gsap.to(el, {
+    autoAlpha: 0,
+    y: 5,
+    duration: 0.2,
+    ease: 'power1.out',
+    overwrite: 'auto',
+    onComplete: () => {
+      hoveredProject.value = null
+      hoveredId.value = null
+    }
+  })
+}
+
+async function setHoveredProject(project) {
+  cancelHoverClear()
+  if (!project) {
+    scheduleHoverClear()
+    return
+  }
+  if (hoveredProject.value?.id === project.id) {
+    hoveredId.value = project.id
+    return
+  }
+  hoveredId.value = project.id
+  hoveredProject.value = project
+  await nextTick()
+  updateHoverPreviewPosition()
+  showHoverPreview()
+}
+
+function scheduleHoverClear() {
+  if (hoverClearTimer) return
+  hoverClearTimer = window.setTimeout(hideHoverPreview, 110)
+}
+
 function handlePointerMove(event) {
   const project = pickProject(event)
-  hoveredId.value = project?.id ?? null
+  if (project) setHoveredProject(project)
+  else if (hoveredProject.value) scheduleHoverClear()
   if (canvasEl.value) canvasEl.value.style.cursor = project ? 'pointer' : 'default'
 }
 
 function handlePointerLeave() {
-  hoveredId.value = null
+  scheduleHoverClear()
   if (canvasEl.value) canvasEl.value.style.cursor = 'default'
 }
 
@@ -1213,6 +1383,8 @@ function handleMediaChange() {
   if (desktopMq.matches) {
     if (!sceneState) nextTick(initScene)
   } else {
+    cancelHoverClear()
+    hideHoverPreview()
     disposeScene()
   }
 }
@@ -1227,12 +1399,15 @@ onMounted(async () => {
 watch(
   () => props.activeFilter,
   () => {
-    hoveredId.value = null
+    cancelHoverClear()
+    hideHoverPreview()
     applyFilter(true)
   }
 )
 
 onBeforeUnmount(() => {
+  cancelHoverClear()
+  gsap.killTweensOf(previewMotionEl.value)
   desktopMq?.removeEventListener('change', handleMediaChange)
   disposeScene()
 })
