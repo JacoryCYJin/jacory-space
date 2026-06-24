@@ -81,7 +81,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
-import LayeredSpatialIndex from '../components/tools/LayeredSpatialIndex.vue'
+import LayeredSpatialIndex from '../components/tools/layered-spatial-index/LayeredSpatialIndex.vue'
 import heroFigure from '../assets/tools/hero-figure.png'
 
 gsap.registerPlugin(CustomEase)
