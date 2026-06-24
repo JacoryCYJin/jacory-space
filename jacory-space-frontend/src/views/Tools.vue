@@ -64,6 +64,7 @@
         <section class="flex min-w-0 flex-col px-6 pb-12 pt-16 md:px-9 md:pt-20 lg:h-[calc(100svh-var(--navbar-height))] lg:px-10 lg:pb-10 lg:pt-12 xl:px-11 2xl:px-12">
           <div data-tools-enter class="min-h-0 flex-1">
             <LayeredSpatialIndex
+              ref="spatialIndex"
               :projects="projects"
               :active-filter="activeFilter"
               @select="handleSelect"
@@ -87,6 +88,7 @@ gsap.registerPlugin(CustomEase)
 
 const { t } = useI18n()
 const pageRoot = ref(null)
+const spatialIndex = ref(null)
 const activeFilter = ref('all')
 const selectedProject = ref(null)
 let toolsContext = null
@@ -174,6 +176,7 @@ onMounted(async () => {
 
     if (reducedMotion.matches) {
       gsap.set(enterItems, { clearProps: 'all', autoAlpha: 1, y: 0 })
+      spatialIndex.value?.playEntrance()
       return
     }
 
@@ -181,10 +184,13 @@ onMounted(async () => {
     gsap.to(enterItems, {
       autoAlpha: 1,
       y: 0,
-      duration: 0.82,
+      duration: 0.6,
       ease: enterEase,
-      stagger: 0.055,
-      clearProps: 'opacity,visibility,transform'
+      stagger: 0.04,
+      clearProps: 'opacity,visibility,transform',
+      onComplete: () => {
+        spatialIndex.value?.playEntrance()
+      }
     })
   }, root)
 })

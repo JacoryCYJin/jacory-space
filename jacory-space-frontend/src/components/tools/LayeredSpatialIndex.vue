@@ -1,12 +1,11 @@
 <template>
   <section
-    data-tools-enter
     class="relative hidden h-full min-h-[560px] md:block lg:min-h-0"
     aria-label="Layered spatial project index"
   >
     <canvas
       ref="canvasEl"
-      class="block h-full w-full"
+      class="invisible block h-full w-full opacity-0"
       @pointermove="handlePointerMove"
       @pointerleave="handlePointerLeave"
       @click="handleCanvasClick"
@@ -41,8 +40,13 @@
           <circle cx="0" cy="0" r="5" stroke="currentColor" stroke-width="1.7" class="fill-background" />
         </svg>
         <div class="spatial-layer-label flex flex-col items-start gap-[0.2rem] text-left">
-          <span class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-blue">{{ layer.id }}</span>
-          <span class="font-mono text-xs tracking-[0.16em] text-muted-foreground">{{ layer.count }}</span>
+          <span
+            :ref="(el) => setLayerMotionEl(layer.id, el)"
+            class="flex flex-col items-start gap-[0.2rem]"
+          >
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-blue">{{ layer.id }}</span>
+            <span class="font-mono text-xs tracking-[0.16em] text-muted-foreground">{{ layer.count }}</span>
+          </span>
         </div>
       </div>
 
@@ -58,11 +62,16 @@
           @pointerleave="scheduleHoverClear"
           @click="emit('select', project)"
         >
-          <span class="font-mono text-xs tracking-[0.06em] text-blue">{{ project.no }}</span>
           <span
-            class="font-mono text-sm tracking-[0.01em] transition-colors duration-300 ease-premium"
-            :class="hoveredId === project.id ? 'text-blue' : 'text-foreground'"
-          >{{ project.title }}</span>
+            :ref="(el) => setEntryMotionEl(project.id, el)"
+            class="inline-flex items-baseline gap-[0.4rem]"
+          >
+            <span class="font-mono text-xs tracking-[0.06em] text-blue">{{ project.no }}</span>
+            <span
+              class="font-mono text-sm tracking-[0.01em] transition-colors duration-300 ease-premium"
+              :class="hoveredId === project.id ? 'text-blue' : 'text-foreground'"
+            >{{ project.title }}</span>
+          </span>
         </div>
       </div>
     </div>
@@ -308,10 +317,17 @@ function projectsByLayer(layer) {
 
 const entryEls = {}
 const layerEls = {}
+const entryMotionEls = {}
+const layerMotionEls = {}
 
 function setEntryEl(id, el) {
   if (el) entryEls[id] = el
   else delete entryEls[id]
+}
+
+function setEntryMotionEl(id, el) {
+  if (el) entryMotionEls[id] = el
+  else delete entryMotionEls[id]
 }
 
 function setLayerEl(id, el) {
@@ -319,12 +335,128 @@ function setLayerEl(id, el) {
   else delete layerEls[id]
 }
 
+function setLayerMotionEl(id, el) {
+  if (el) layerMotionEls[id] = el
+  else delete layerMotionEls[id]
+}
+
 let sceneState = null
 let desktopMq = null
 let resizeObserver = null
 let resizeFrame = 0
 let hoverClearTimer = 0
+let entranceRequested = false
+let spatialEntrancePlayed = false
+let spatialEntranceTimeline = null
 const tmpVec = new THREE.Vector3()
+
+function labelEntranceTargets() {
+  const layerTargets = ['EXPERIMENTS', 'WORKS', 'TOOLS']
+    .map((id) => layerMotionEls[id])
+    .filter(Boolean)
+  const entryTargets = [...props.projects]
+    .sort((a, b) => a.no.localeCompare(b.no))
+    .map((project) => entryMotionEls[project.id])
+    .filter(Boolean)
+  return { layerTargets, entryTargets }
+}
+
+function setEntranceEndState() {
+  if (!sceneState) return
+  const { layerTargets, entryTargets } = labelEntranceTargets()
+  sceneState.boxState.value = 1
+  sceneState.layers.forEach((layer) => {
+    layer.fadeState.value = 1
+    layer.group.position.y = LAYER_Y[layer.id]
+    layer.group.scale.setScalar(1)
+  })
+  sceneState.markers.forEach((marker) => {
+    marker.dotEntrance.value = 1
+    marker.guideEntrance.value = 1
+  })
+  if (railOverlayEl.value) gsap.set(railOverlayEl.value, { opacity: 1 })
+  gsap.set([...layerTargets, ...entryTargets], { autoAlpha: 1, y: 0 })
+}
+
+function setEntranceStartState() {
+  if (!sceneState || sceneState.reducedMotion) return
+  const { layerTargets, entryTargets } = labelEntranceTargets()
+
+  sceneState.boxState.value = 0
+  sceneState.layers.forEach((layer) => {
+    layer.fadeState.value = 0
+    layer.group.position.y = LAYER_Y[layer.id] - 0.72
+    layer.group.scale.setScalar(0.985)
+  })
+  sceneState.markers.forEach((marker) => {
+    marker.dotEntrance.value = 0
+    marker.guideEntrance.value = 0
+  })
+  gsap.set([...layerTargets, ...entryTargets], { autoAlpha: 0, y: 14 })
+  if (railOverlayEl.value) gsap.set(railOverlayEl.value, { opacity: 0 })
+}
+
+function playSpatialEntrance() {
+  entranceRequested = true
+  if (!sceneState || spatialEntrancePlayed) return
+  spatialEntrancePlayed = true
+
+  if (sceneState.reducedMotion) {
+    setEntranceEndState()
+    return
+  }
+
+  const layerOrder = ['EXPERIMENTS', 'WORKS', 'TOOLS']
+    .map((id) => sceneState.layers.find((layer) => layer.id === id))
+    .filter(Boolean)
+
+  spatialEntranceTimeline = gsap.timeline({
+    defaults: { ease: sceneState.spatialEase },
+    onComplete: () => {
+      spatialEntranceTimeline = null
+    }
+  })
+
+  spatialEntranceTimeline.to(sceneState.boxState, { value: 1, duration: 0.76 }, 0)
+  spatialEntranceTimeline.to(railOverlayEl.value, { opacity: 1, duration: 0.58 }, 0.08)
+
+  layerOrder.forEach((layer, index) => {
+    const at = index * 0.18
+    const layerLabel = layerMotionEls[layer.id]
+    spatialEntranceTimeline.to(layer.fadeState, { value: 1, duration: 0.58 }, at)
+    spatialEntranceTimeline.to(layer.group.position, { y: LAYER_Y[layer.id], duration: 0.6 }, at)
+    spatialEntranceTimeline.to(layer.group.scale, { x: 1, y: 1, z: 1, duration: 0.6 }, at)
+    if (layerLabel) {
+      spatialEntranceTimeline.to(
+        layerLabel,
+        { autoAlpha: 1, y: 0, duration: 0.38 },
+        at + 0.08
+      )
+    }
+  })
+
+  spatialEntranceTimeline.addLabel('projects', 0.98)
+
+  const markerOrder = [...sceneState.markers].sort((a, b) =>
+    a.project.no.localeCompare(b.project.no)
+  )
+  markerOrder.forEach((marker, index) => {
+    const label = entryMotionEls[marker.project.id]
+    const sequenceStart = `marker-${index}`
+    spatialEntranceTimeline.addLabel(sequenceStart, index === 0 ? 'projects' : '>-0.22')
+    spatialEntranceTimeline.to(marker.dotEntrance, { value: 1, duration: 0.11 }, sequenceStart)
+    spatialEntranceTimeline.to(marker.guideEntrance, { value: 1, duration: 0.28 }, `${sequenceStart}+=0.05`)
+    if (label) {
+      spatialEntranceTimeline.to(
+        label,
+        { autoAlpha: 1, y: 0, duration: 0.34 },
+        `${sequenceStart}+=0.32`
+      )
+    }
+  })
+}
+
+defineExpose({ playEntrance: playSpatialEntrance })
 
 function getCssColor(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
@@ -782,6 +914,8 @@ function buildMarker(project, colors) {
     stemHeight,
     guideScaleCurrent: 1,
     scaleCurrent: 1,
+    dotEntrance: { value: 1 },
+    guideEntrance: { value: 1 },
     fadeState: { value: 1 }
   }
 }
@@ -1204,21 +1338,22 @@ function renderScene() {
     const targetGuideScale = hovered ? HOVER_GUIDE_HEIGHT / marker.stemHeight : 1
     if (reduceMotion) marker.guideScaleCurrent = targetGuideScale
     else marker.guideScaleCurrent += (targetGuideScale - marker.guideScaleCurrent) * 0.14
-    marker.guide.scale.y = marker.guideScaleCurrent
-    marker.guide.position.y = (marker.stemHeight * marker.guideScaleCurrent) / 2
-    marker.guideTopAnchor.position.y = marker.stemHeight * marker.guideScaleCurrent
+    const renderedGuideScale = marker.guideScaleCurrent * marker.guideEntrance.value
+    marker.guide.scale.y = renderedGuideScale
+    marker.guide.position.y = (marker.stemHeight * renderedGuideScale) / 2
+    marker.guideTopAnchor.position.y = marker.stemHeight * renderedGuideScale
 
     const inkColor = hovered ? colors.blue : archived ? colors.muted : colors.ink
     marker.entryDot.color.copy(inkColor)
-    marker.entryDot.opacity = marker.entryDot.userData.baseOpacity * visible
+    marker.entryDot.opacity = marker.entryDot.userData.baseOpacity * visible * marker.dotEntrance.value
 
     marker.washer.color.copy(hovered ? colors.blueSoft : archived ? colors.muted : colors.lineStrong)
-    marker.washer.opacity = (hovered ? 0.82 : marker.washer.userData.baseOpacity) * visible
+    marker.washer.opacity = (hovered ? 0.82 : marker.washer.userData.baseOpacity) * visible * marker.dotEntrance.value
 
     marker.guideMaterial.color.copy(hovered ? colors.blue : colors.muted)
-    marker.guideMaterial.opacity = (hovered ? 0.92 : marker.guideMaterial.userData.baseOpacity) * visible
+    marker.guideMaterial.opacity = (hovered ? 0.92 : marker.guideMaterial.userData.baseOpacity) * visible * marker.guideEntrance.value
 
-    marker.hit.visible = visible > 0.3
+    marker.hit.visible = visible > 0.3 && marker.guideEntrance.value > 0.98
   })
 
   sceneState.renderer.render(sceneState.scene, sceneState.camera)
@@ -1353,7 +1488,10 @@ function initScene() {
   if (!sceneState) return
   resizeScene()
   applyFilter(false)
+  setEntranceStartState()
   renderScene()
+  gsap.set(canvasEl.value, { autoAlpha: 1 })
+  if (entranceRequested) window.requestAnimationFrame(playSpatialEntrance)
   resizeObserver = new ResizeObserver(scheduleResize)
   if (canvasEl.value) resizeObserver.observe(canvasEl.value)
   window.addEventListener('resize', scheduleResize)
@@ -1401,12 +1539,19 @@ watch(
   () => {
     cancelHoverClear()
     hideHoverPreview()
+    if (spatialEntranceTimeline) {
+      spatialEntranceTimeline.kill()
+      spatialEntranceTimeline = null
+      setEntranceEndState()
+    }
     applyFilter(true)
   }
 )
 
 onBeforeUnmount(() => {
   cancelHoverClear()
+  spatialEntranceTimeline?.kill()
+  spatialEntranceTimeline = null
   gsap.killTweensOf(previewMotionEl.value)
   desktopMq?.removeEventListener('change', handleMediaChange)
   disposeScene()
