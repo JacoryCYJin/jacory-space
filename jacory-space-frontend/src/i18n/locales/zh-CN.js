@@ -174,7 +174,7 @@ export default {
     pageDescription: '解析 YouTube / Bilibili 视频链接，获取可下载的音视频格式并保存到本地。',
     ui: {
       settings: '设置',
-      cookiesDirectory: 'Cookie / 目录'
+      cookiesDirectory: 'Cookie'
     },
     cookieEntry: {
       label: 'Cookie 设置',

@@ -3,14 +3,14 @@
     <div class="sticky top-24 space-y-10">
       <section class="pb-9">
         <div class="mb-7 flex items-center justify-between">
-          <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.cookiesSettings') }}</p>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.cookiesSettings') }}</p>
           <button type="button" class="text-muted-foreground hover:text-foreground" @click="emit('close')">
             <X class="h-4 w-4" />
           </button>
         </div>
 
-        <div class="space-y-7">
-          <div>
+        <div>
+          <div class="pb-7">
             <p class="tech">{{ t('videoParser.settings.mode') }}</p>
             <div class="mt-3 flex flex-wrap items-center gap-2">
               <button
@@ -26,38 +26,40 @@
             </div>
           </div>
 
-          <div>
-            <p class="tech">{{ t('videoParser.settings.browserSource') }}</p>
-            <div class="mt-3 flex flex-wrap items-center gap-2">
-              <button
-                v-for="source in browserSources"
-                :key="source.value"
-                type="button"
-                class="settings-choice"
-                :class="{ 'is-selected': browserCookieSource === source.value }"
-                :disabled="cookieMode !== 'browser'"
-                @click="emit('update:browserCookieSource', source.value)"
-              >
-                {{ source.label }}
-              </button>
+          <div class="space-y-7 border-t border-line py-7">
+            <div>
+              <p class="tech">{{ t('videoParser.settings.browserSource') }}</p>
+              <div class="mt-3 flex flex-wrap items-center gap-2">
+                <button
+                  v-for="source in browserSources"
+                  :key="source.value"
+                  type="button"
+                  class="settings-choice"
+                  :class="{ 'is-selected': browserCookieSource === source.value }"
+                  :disabled="cookieMode !== 'browser'"
+                  @click="emit('update:browserCookieSource', source.value)"
+                >
+                  {{ source.label }}
+                </button>
+              </div>
             </div>
+
+            <button
+              type="button"
+              class="inline-flex h-10 items-center border border-line px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted disabled:text-haze"
+              :disabled="savingCookieSettings"
+              @click="emit('save-cookie-settings')"
+            >
+              {{ savingCookieSettings ? t('videoParser.saving') : t('videoParser.saveUsage') }}
+            </button>
+
+            <p class="text-xs leading-relaxed text-muted-foreground">{{ t('videoParser.settings.cookiesUsageNote') }}</p>
+            <p v-if="cookieSettingsStatus" class="text-xs leading-relaxed text-muted-foreground">
+              {{ cookieSettingsStatus.message }}
+            </p>
           </div>
 
-          <button
-            type="button"
-            class="inline-flex h-10 items-center border border-line px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted disabled:text-haze"
-            :disabled="savingCookieSettings"
-            @click="emit('save-cookie-settings')"
-          >
-            {{ savingCookieSettings ? t('videoParser.saving') : t('videoParser.saveUsage') }}
-          </button>
-
-          <p class="text-xs leading-relaxed text-muted-foreground">{{ t('videoParser.settings.cookiesUsageNote') }}</p>
-          <p v-if="cookieSettingsStatus" class="border-l border-line-strong pl-3 text-xs leading-relaxed text-muted-foreground">
-            {{ cookieSettingsStatus.message }}
-          </p>
-
-          <div>
+          <div class="border-t border-line pt-7">
             <div class="mb-3 flex items-center justify-between">
               <p class="tech">{{ t('videoParser.settings.platformCookies') }}</p>
               <button type="button" class="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:text-foreground" @click="emit('add-platform')">
@@ -65,8 +67,8 @@
                 {{ t('videoParser.settings.custom') }}
               </button>
             </div>
-            <div class="border-t border-line">
-              <div v-for="platform in cookiePlatformRows" :key="platform.key" class="grid grid-cols-[minmax(0,1fr)_auto] gap-3 border-b border-line py-4">
+            <div>
+              <div v-for="platform in cookiePlatformRows" :key="platform.key" class="grid grid-cols-[minmax(0,1fr)_auto] gap-3 py-4">
                 <div class="min-w-0">
                   <div class="flex items-center gap-3">
                     <span class="h-1.5 w-1.5 rounded-full" :class="cookiesInfo[platform.key]?.has_cookies ? 'bg-blue' : 'bg-haze'"></span>
@@ -92,7 +94,7 @@
 
       <section>
         <div class="mb-7">
-          <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.directorySettings') }}</p>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.directorySettings') }}</p>
         </div>
         <div class="space-y-6">
           <div>

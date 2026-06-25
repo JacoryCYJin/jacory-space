@@ -19,7 +19,7 @@ export function useVideoParserSettings({ axios, t, error, success }) {
   const customPlatforms = ref([])
   const cookiesInfo = ref({ youtube: {}, bilibili: {} })
 
-  const cookieModes = ['manual', 'browser', 'none']
+  const cookieModes = ['manual', 'browser']
   const browserSources = [
     { value: 'chrome', label: 'Chrome' },
     { value: 'safari', label: 'Safari' },
