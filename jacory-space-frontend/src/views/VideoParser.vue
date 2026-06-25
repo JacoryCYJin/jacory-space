@@ -244,7 +244,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, reactive, ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import StatusToast from '../components/StatusToast.vue'
@@ -253,14 +253,10 @@ import VideoParserCookieDialogs from '../components/video-parser/VideoParserCook
 import VideoParserRegistry from '../components/video-parser/VideoParserRegistry.vue'
 import VideoParserSettingsRail from '../components/video-parser/VideoParserSettingsRail.vue'
 import VideoParserStatus from '../components/video-parser/VideoParserStatus.vue'
-import {
-  ArrowRight,
-  Clapperboard,
-  Copy,
-  Folder,
-  FolderOpen,
-  Link as LinkIcon
-} from 'lucide-vue-next'
+import { useVideoDownloads } from '../components/video-parser/useVideoDownloads'
+import { useVideoOutline } from '../components/video-parser/useVideoOutline'
+import { useVideoParserSettings } from '../components/video-parser/useVideoParserSettings'
+import { ArrowRight, Clapperboard, Copy, Folder, FolderOpen, Link as LinkIcon } from 'lucide-vue-next'
 
 const { t, locale } = useI18n()
 
@@ -280,357 +276,7 @@ const loading = ref(false)
 const error = ref('')
 const success = ref('')
 const videoInfo = ref(null)
-const downloading = reactive({})
-const downloadRows = reactive({})
-const downloadTimers = new Map()
-let outlineCopyTimer = 0
-const lastDownloadedPath = ref('')
-const defaultDownloadDir = ref('')
-const downloadDirOverride = ref('')
-const savingSettings = ref(false)
-const cookieMode = ref('manual')
-const browserCookieSource = ref('chrome')
-const savingCookieSettings = ref(false)
-const cookieSettingsStatus = ref(null)
 const copyStatus = ref('')
-const outlineCopyStatus = ref('')
-const outlineGenerationState = ref('idle')
-const generatedOutline = ref(null)
-const outlineError = ref('')
-
-const showSettingsRail = ref(false)
-const showEditCookies = ref(false)
-const showAddPlatform = ref(false)
-const cookiesText = ref('')
-const savingCookies = ref(false)
-const cookiesStatus = ref(null)
-const editingPlatform = ref('')
-const newPlatformName = ref('')
-const customPlatforms = ref([])
-const cookiesInfo = ref({ youtube: {}, bilibili: {} })
-
-const statusKeys = ['READY', 'PARSING', 'RESOLVED', 'DOWNLOADING', 'COMPLETE', 'FAILED']
-
-const cookieModes = ['manual', 'browser', 'none']
-const browserSources = [
-  { value: 'chrome', label: 'Chrome' },
-  { value: 'safari', label: 'Safari' },
-  { value: 'firefox', label: 'Firefox' },
-  { value: 'edge', label: 'Edge' }
-]
-
-const registryRows = computed(() => {
-  return (videoInfo.value?.formats || []).filter((format) => {
-    const ext = String(format?.ext || '').toLowerCase()
-    return ['mp4', 'm4a'].includes(ext)
-  })
-})
-
-const statusRail = computed(() =>
-  statusKeys.map((key) => ({
-    key,
-    label: t(`videoParser.statusRail.${key}`)
-  }))
-)
-
-const hasActiveDownload = computed(() => Object.values(downloading).some(Boolean))
-
-const isCookiesRequiredError = computed(() => {
-  const msg = error.value.toLowerCase()
-  return msg.includes('cookie') || msg.includes('cookies') || msg.includes('登录') || msg.includes('sign in') || msg.includes('403')
-})
-
-const parserState = computed(() => {
-  if (loading.value) return 'PARSING'
-  if (hasActiveDownload.value) return 'DOWNLOADING'
-  if (error.value) return 'FAILED'
-  if (lastDownloadedPath.value) return 'COMPLETE'
-  if (videoInfo.value) return 'RESOLVED'
-  return 'READY'
-})
-
-const activeStatusIndex = computed(() => Math.max(0, statusKeys.indexOf(parserState.value)))
-
-const showStatusSection = computed(() => parserState.value !== 'READY' || Boolean(error.value || success.value))
-const showResolvedModules = computed(() => Boolean(videoInfo.value))
-const showOutlineModule = computed(() => ['noSubtitles', 'insufficient', 'subtitlesAvailable', 'generating', 'success', 'failed'].includes(outlineState.value))
-const showOutputPathSection = computed(() => Boolean(lastDownloadedPath.value))
-
-const outlineNodes = computed(() => generatedOutline.value?.nodes || [])
-const outlineTitle = computed(() => generatedOutline.value?.title || t('videoParser.outline.root'))
-const outlineSummary = computed(() => generatedOutline.value?.summary || '')
-
-const minTranscriptCompactLength = 100
-
-const getTranscriptCompactLength = (transcript = '') => String(transcript || '').replace(/\s+/g, '').length
-
-const isUsableTranscript = (info) => {
-  if (!info) return false
-  const transcript = String(info.transcript || '').trim()
-  if (!transcript) return false
-  const compactLength = Number(info.transcript_compact_length || getTranscriptCompactLength(transcript))
-  return info.transcript_is_valid === true && compactLength >= minTranscriptCompactLength
-}
-
-const hasOutlineTranscript = computed(() => isUsableTranscript(videoInfo.value))
-
-const hasCaptionMetadata = computed(() => {
-  const info = videoInfo.value
-  if (!info) return false
-  return Boolean(
-    info.has_subtitles ||
-    info.has_automatic_captions ||
-    info.subtitle_languages?.length ||
-    info.automatic_caption_languages?.length
-  )
-})
-
-const hasInsufficientTranscript = computed(() => {
-  const info = videoInfo.value
-  if (!info || hasOutlineTranscript.value) return false
-  return info.transcript_status === 'insufficient' || hasCaptionMetadata.value
-})
-
-const outlineState = computed(() => {
-  if (!videoInfo.value) return 'idle'
-  if (outlineGenerationState.value === 'generating') return 'generating'
-  if (outlineGenerationState.value === 'failed') return 'failed'
-  if (outlineGenerationState.value === 'success') return 'success'
-  if (hasOutlineTranscript.value) return 'subtitlesAvailable'
-  if (hasInsufficientTranscript.value) return 'insufficient'
-  return 'noSubtitles'
-})
-
-const outlineStateMeta = computed(() => {
-  const key = outlineState.value
-  return {
-    title: t(`videoParser.outline.states.${key}.title`),
-    description: t(`videoParser.outline.states.${key}.description`)
-  }
-})
-
-const sourcePlatform = computed(() => {
-  const raw = videoInfo.value?.source_url || videoUrl.value
-  try {
-    const host = new URL(raw).hostname.toLowerCase()
-    if (host.includes('youtube') || host.includes('youtu.be')) return 'YouTube'
-    if (host.includes('bilibili')) return 'Bilibili'
-    return host.replace(/^www\./, '')
-  } catch (_err) {
-    return '--'
-  }
-})
-
-const outputPath = computed(() => {
-  return lastDownloadedPath.value || downloadDirOverride.value || defaultDownloadDir.value || t('videoParser.notSet')
-})
-
-const hasOutputPath = computed(() => Boolean(lastDownloadedPath.value || downloadDirOverride.value || defaultDownloadDir.value))
-
-const cookiePlatformRows = computed(() => [
-  { key: 'youtube', label: 'YouTube', custom: false },
-  { key: 'bilibili', label: 'Bilibili', custom: false },
-  ...customPlatforms.value.map((platform) => ({ key: platform, label: platform, custom: true }))
-])
-
-const formatKey = (format) => format?.format_id || format?.resolution || 'unknown'
-
-const formatLabel = (format) => {
-  const ext = String(format?.ext || 'file').toUpperCase()
-  const note = format?.format_note ? ` · ${format.format_note}` : ''
-  return `${ext}${note}`
-}
-
-const rowData = (format) => downloadRows[formatKey(format)] || null
-
-const rowStatus = (format) => {
-  const row = rowData(format)
-  if (row?.status) return row.status
-  if (!format?.format_id && !format?.resolution) return 'UNAVAILABLE'
-  return 'READY'
-}
-
-const rowStatusLabel = (format) => t(`videoParser.registry.rowStatus.${rowStatus(format)}`)
-
-const rowProgress = (format) => rowData(format)?.progress || 0
-
-const rowStatusClass = (format) => {
-  const status = rowStatus(format)
-  if (status === 'DOWNLOADING' || status === 'COMPLETE' || status === 'READY') {
-    return { dot: 'bg-blue', text: 'text-blue' }
-  }
-  if (status === 'FAILED') return { dot: 'bg-foreground', text: 'text-foreground' }
-  return { dot: 'bg-haze', text: 'text-muted-foreground' }
-}
-
-const rowActionLabel = (format) => {
-  const status = rowStatus(format)
-  if (status === 'DOWNLOADING') return t('videoParser.registry.actions.pause')
-  if (status === 'COMPLETE') return t('videoParser.registry.actions.reveal')
-  if (status === 'FAILED') return t('videoParser.registry.actions.retry')
-  if (status === 'UNAVAILABLE') return '--'
-  return t('videoParser.registry.actions.download')
-}
-
-const startDownloadProgress = (key) => {
-  clearDownloadProgress(key)
-  downloadRows[key] = { status: 'DOWNLOADING', progress: 8 }
-  const timer = window.setInterval(() => {
-    const row = downloadRows[key]
-    if (!row || row.status !== 'DOWNLOADING') return
-    row.progress = Math.min(92, row.progress + Math.ceil((92 - row.progress) * 0.16))
-  }, 700)
-  downloadTimers.set(key, timer)
-}
-
-const clearDownloadProgress = (key) => {
-  const timer = downloadTimers.get(key)
-  if (timer) window.clearInterval(timer)
-  downloadTimers.delete(key)
-}
-
-const parseVideo = async () => {
-  const url = videoUrl.value.trim()
-  if (!url) {
-    error.value = t('videoParser.errors.emptyUrl')
-    return
-  }
-  if (!isValidVideoUrl(url)) {
-    error.value = t('videoParser.errors.invalidUrl')
-    return
-  }
-  loading.value = true
-  error.value = ''
-  success.value = ''
-  videoInfo.value = null
-  lastDownloadedPath.value = ''
-  outlineCopyStatus.value = ''
-  outlineGenerationState.value = 'idle'
-  generatedOutline.value = null
-  outlineError.value = ''
-  Object.keys(downloadRows).forEach((key) => delete downloadRows[key])
-  try {
-    const response = await axios.post('/api/parse', { url })
-    videoInfo.value = response.data
-    videoUrl.value = response.data?.source_url || url
-    console.info('[VideoParser] Transcript parsed', {
-      transcriptStatus: response.data?.transcript_status,
-      transcriptValid: response.data?.transcript_is_valid,
-      transcriptLanguage: response.data?.transcript_language,
-      transcriptSource: response.data?.transcript_source,
-      transcriptFormat: response.data?.transcript_format,
-      transcriptLength: response.data?.transcript_char_count,
-      transcriptCompactLength: response.data?.transcript_compact_length,
-      transcriptPreview: response.data?.transcript_preview
-    })
-  } catch (err) {
-    if (err.response?.data?.code === 'NO_VISIBLE_FORMATS') {
-      error.value = t('videoParser.errors.noVisibleFormats')
-    } else {
-      error.value = err.response?.data?.error || t('videoParser.errors.parseFailed', { message: err.message })
-    }
-  } finally {
-    loading.value = false
-  }
-}
-
-const downloadVideo = async (format) => {
-  const resolution = format?.resolution || ''
-  const key = formatKey(format)
-  downloading[resolution] = true
-  startDownloadProgress(key)
-  error.value = ''
-  success.value = t('videoParser.messages.downloadingResolution', { resolution })
-  try {
-    const response = await axios.post('/api/download', {
-      url: videoUrl.value,
-      resolution,
-      format_id: format?.format_id || '',
-      output_dir: downloadDirOverride.value.trim() || undefined
-    })
-    lastDownloadedPath.value = response.data.path || response.data.output_dir || ''
-    downloadRows[key] = { status: 'COMPLETE', progress: 100, path: lastDownloadedPath.value }
-    success.value = t('videoParser.messages.downloadComplete', { path: response.data.path })
-  } catch (err) {
-    downloadRows[key] = { status: 'FAILED', progress: 0 }
-    error.value = err.response?.data?.error || t('videoParser.errors.downloadFailed', { message: err.message })
-    success.value = ''
-  } finally {
-    clearDownloadProgress(key)
-    downloading[resolution] = false
-  }
-}
-
-const loadSettings = async () => {
-  try {
-    const response = await axios.get('/api/settings')
-    defaultDownloadDir.value = response.data.default_download_dir || ''
-    cookieMode.value = response.data.cookie_mode || 'manual'
-    browserCookieSource.value = response.data.browser_cookie_source || 'chrome'
-  } catch (err) {
-    console.error(t('videoParser.errors.loadSettingsFailed'), err)
-  }
-}
-
-const saveDefaultDownloadDir = async () => {
-  if (!defaultDownloadDir.value.trim()) return
-  savingSettings.value = true
-  error.value = ''
-  try {
-    const response = await axios.post('/api/settings', {
-      default_download_dir: defaultDownloadDir.value.trim()
-    })
-    defaultDownloadDir.value = response.data.default_download_dir || defaultDownloadDir.value
-    success.value = t('videoParser.messages.defaultDirSaved', { path: defaultDownloadDir.value })
-  } catch (err) {
-    error.value = err.response?.data?.error || t('videoParser.errors.saveDefaultDirFailed')
-  } finally {
-    savingSettings.value = false
-  }
-}
-
-const saveCookieSettings = async () => {
-  savingCookieSettings.value = true
-  cookieSettingsStatus.value = null
-  try {
-    await axios.post('/api/settings', {
-      cookie_mode: cookieMode.value,
-      browser_cookie_source: browserCookieSource.value
-    })
-    cookieSettingsStatus.value = { type: 'success', message: t('videoParser.messages.cookieUsageSaved') }
-  } catch (err) {
-    cookieSettingsStatus.value = { type: 'error', message: err.response?.data?.error || t('videoParser.errors.saveCookieSettingsFailed') }
-  } finally {
-    savingCookieSettings.value = false
-  }
-}
-
-const chooseFolderNative = async () => {
-  const response = await axios.post('/api/folder-dialog')
-  if (response.data?.cancelled) return ''
-  return response.data?.path || ''
-}
-
-const chooseFolderAndSaveDefault = async () => {
-  try {
-    const selected = await chooseFolderNative()
-    if (!selected) return
-    defaultDownloadDir.value = selected
-    await saveDefaultDownloadDir()
-  } catch (err) {
-    error.value = err.response?.data?.error || t('videoParser.errors.folderDialogFailed')
-  }
-}
-
-const chooseFolderForOnce = async () => {
-  try {
-    const selected = await chooseFolderNative()
-    if (!selected) return
-    downloadDirOverride.value = selected
-  } catch (err) {
-    error.value = err.response?.data?.error || t('videoParser.errors.folderDialogFailed')
-  }
-}
 
 const formatDuration = (seconds) => {
   const total = Math.max(0, Math.round(Number(seconds) || 0))
@@ -657,85 +303,6 @@ const isValidVideoUrl = (value) => {
   }
 }
 
-const loadCookiesInfo = async () => {
-  try {
-    const response = await axios.get('/api/cookies')
-    cookiesInfo.value = response.data.platforms || {}
-    customPlatforms.value = response.data.custom_platforms || []
-  } catch (err) {
-    console.error(t('videoParser.errors.loadCookiesFailed'), err)
-  }
-}
-
-const editPlatform = async (platform) => {
-  editingPlatform.value = platform
-  cookiesStatus.value = null
-  showEditCookies.value = true
-  if (cookiesInfo.value[platform]?.has_cookies) {
-    try {
-      const response = await axios.get(`/api/cookies/${platform}`)
-      cookiesText.value = response.data.cookies || ''
-    } catch (_err) {
-      cookiesText.value = ''
-    }
-  } else {
-    cookiesText.value = ''
-  }
-}
-
-const saveCookies = async () => {
-  savingCookies.value = true
-  cookiesStatus.value = null
-  try {
-    const response = await axios.post('/api/cookies', {
-      cookies: cookiesText.value,
-      platform: editingPlatform.value
-    })
-    cookiesStatus.value = { type: 'success', message: response.data.message }
-    await loadCookiesInfo()
-    setTimeout(() => {
-      showEditCookies.value = false
-      cookiesText.value = ''
-      cookiesStatus.value = null
-    }, 1500)
-  } catch (err) {
-    cookiesStatus.value = { type: 'error', message: err.response?.data?.error || t('videoParser.errors.saveFailed') }
-  } finally {
-    savingCookies.value = false
-  }
-}
-
-const deletePlatformCookies = async (platform) => {
-  if (!confirm(t('videoParser.messages.confirmDeleteCookies', { platform }))) return
-  try {
-    await axios.delete(`/api/cookies/${platform}`)
-    await loadCookiesInfo()
-  } catch (_err) {
-    alert(t('videoParser.errors.deleteFailed'))
-  }
-}
-
-const addCustomPlatform = () => {
-  const name = newPlatformName.value.trim().toLowerCase()
-  if (!name) return
-  if (customPlatforms.value.includes(name) || name === 'youtube' || name === 'bilibili') {
-    alert(t('videoParser.errors.platformExists'))
-    return
-  }
-  customPlatforms.value.push(name)
-  newPlatformName.value = ''
-  showAddPlatform.value = false
-  editPlatform(name)
-}
-
-const toggleSettingsRail = async () => {
-  showSettingsRail.value = !showSettingsRail.value
-  if (showSettingsRail.value) {
-    cookieSettingsStatus.value = null
-    await Promise.all([loadCookiesInfo(), loadSettings()])
-  }
-}
-
 const copyToClipboard = async (text) => {
   if (!text || text === t('videoParser.notSet')) return
   try {
@@ -750,6 +317,145 @@ const copyToClipboard = async (text) => {
     textarea.select()
     document.execCommand('copy')
     document.body.removeChild(textarea)
+  }
+}
+
+const {
+  defaultDownloadDir,
+  downloadDirOverride,
+  savingSettings,
+  cookieMode,
+  browserCookieSource,
+  savingCookieSettings,
+  cookieSettingsStatus,
+  showSettingsRail,
+  showEditCookies,
+  showAddPlatform,
+  cookiesText,
+  savingCookies,
+  cookiesStatus,
+  editingPlatform,
+  newPlatformName,
+  cookiesInfo,
+  cookieModes,
+  browserSources,
+  cookiePlatformRows,
+  saveCookieSettings,
+  chooseFolderAndSaveDefault,
+  chooseFolderForOnce,
+  editPlatform,
+  saveCookies,
+  deletePlatformCookies,
+  addCustomPlatform,
+  toggleSettingsRail
+} = useVideoParserSettings({ axios, t, error, success })
+
+const {
+  downloading,
+  lastDownloadedPath,
+  registryRows,
+  hasActiveDownload,
+  formatKey,
+  formatLabel,
+  rowStatus,
+  rowStatusLabel,
+  rowProgress,
+  rowStatusClass,
+  rowActionLabel,
+  downloadVideo,
+  resetDownloads
+} = useVideoDownloads({ axios, t, videoInfo, videoUrl, downloadDirOverride, error, success })
+
+const sourcePlatform = computed(() => {
+  const raw = videoInfo.value?.source_url || videoUrl.value
+  try {
+    const host = new URL(raw).hostname.toLowerCase()
+    if (host.includes('youtube') || host.includes('youtu.be')) return 'YouTube'
+    if (host.includes('bilibili')) return 'Bilibili'
+    return host.replace(/^www\./, '')
+  } catch (_err) {
+    return '--'
+  }
+})
+
+const {
+  outlineCopyStatus,
+  outlineError,
+  outlineState,
+  outlineStateMeta,
+  outlineNodes,
+  outlineTitle,
+  outlineSummary,
+  copyOutline,
+  generateOutline,
+  resetOutline
+} = useVideoOutline({ axios, t, locale, videoInfo, sourcePlatform, formatDuration, copyToClipboard })
+
+const statusKeys = ['READY', 'PARSING', 'RESOLVED', 'DOWNLOADING', 'COMPLETE', 'FAILED']
+const statusRail = computed(() =>
+  statusKeys.map((key) => ({
+    key,
+    label: t(`videoParser.statusRail.${key}`)
+  }))
+)
+const isCookiesRequiredError = computed(() => {
+  const msg = error.value.toLowerCase()
+  return msg.includes('cookie') || msg.includes('cookies') || msg.includes('登录') || msg.includes('sign in') || msg.includes('403')
+})
+const parserState = computed(() => {
+  if (loading.value) return 'PARSING'
+  if (hasActiveDownload.value) return 'DOWNLOADING'
+  if (error.value) return 'FAILED'
+  if (lastDownloadedPath.value) return 'COMPLETE'
+  if (videoInfo.value) return 'RESOLVED'
+  return 'READY'
+})
+const activeStatusIndex = computed(() => Math.max(0, statusKeys.indexOf(parserState.value)))
+const showStatusSection = computed(() => parserState.value !== 'READY' || Boolean(error.value || success.value))
+const showResolvedModules = computed(() => Boolean(videoInfo.value))
+const showOutlineModule = computed(() => ['noSubtitles', 'insufficient', 'subtitlesAvailable', 'generating', 'success', 'failed'].includes(outlineState.value))
+const showOutputPathSection = computed(() => Boolean(lastDownloadedPath.value))
+const outputPath = computed(() => lastDownloadedPath.value || downloadDirOverride.value || defaultDownloadDir.value || t('videoParser.notSet'))
+const hasOutputPath = computed(() => Boolean(lastDownloadedPath.value || downloadDirOverride.value || defaultDownloadDir.value))
+
+const parseVideo = async () => {
+  const url = videoUrl.value.trim()
+  if (!url) {
+    error.value = t('videoParser.errors.emptyUrl')
+    return
+  }
+  if (!isValidVideoUrl(url)) {
+    error.value = t('videoParser.errors.invalidUrl')
+    return
+  }
+  loading.value = true
+  error.value = ''
+  success.value = ''
+  videoInfo.value = null
+  resetDownloads()
+  resetOutline()
+  try {
+    const response = await axios.post('/api/parse', { url })
+    videoInfo.value = response.data
+    videoUrl.value = response.data?.source_url || url
+    console.info('[VideoParser] Transcript parsed', {
+      transcriptStatus: response.data?.transcript_status,
+      transcriptValid: response.data?.transcript_is_valid,
+      transcriptLanguage: response.data?.transcript_language,
+      transcriptSource: response.data?.transcript_source,
+      transcriptFormat: response.data?.transcript_format,
+      transcriptLength: response.data?.transcript_char_count,
+      transcriptCompactLength: response.data?.transcript_compact_length,
+      transcriptPreview: response.data?.transcript_preview
+    })
+  } catch (err) {
+    if (err.response?.data?.code === 'NO_VISIBLE_FORMATS') {
+      error.value = t('videoParser.errors.noVisibleFormats')
+    } else {
+      error.value = err.response?.data?.error || t('videoParser.errors.parseFailed', { message: err.message })
+    }
+  } finally {
+    loading.value = false
   }
 }
 
@@ -771,79 +477,6 @@ const revealOutputPath = () => {
   const url = path.startsWith('/') ? `file://${encodeURI(path)}` : path
   window.open(url, '_blank')
 }
-
-const copyOutline = async () => {
-  if (outlineState.value !== 'success') return
-  const text = outlineNodes
-    .value
-    .map((node) => {
-      const children = node.children
-        .map((child) => `- ${child.title}${child.summary ? `: ${child.summary}` : ''}`)
-        .join('\n')
-      return `${node.title}${node.summary ? `\n${node.summary}` : ''}${children ? `\n${children}` : ''}`
-    })
-    .join('\n\n')
-  await copyToClipboard(`${outlineTitle.value}\n${outlineSummary.value}\n\n${text}`.trim())
-  const message = t('videoParser.outline.copied')
-  if (outlineCopyTimer) window.clearTimeout(outlineCopyTimer)
-  outlineCopyStatus.value = message
-  outlineCopyTimer = window.setTimeout(() => {
-    if (outlineCopyStatus.value === message) outlineCopyStatus.value = ''
-    outlineCopyTimer = 0
-  }, 1800)
-}
-
-const outlineLanguage = computed(() => (String(locale.value).toLowerCase().startsWith('zh') ? 'zh' : 'en'))
-
-const generateOutline = async () => {
-  const transcript = String(videoInfo.value?.transcript || '').trim()
-  if (!isUsableTranscript(videoInfo.value)) {
-    outlineError.value = t('videoParser.outline.states.insufficient.description')
-    outlineGenerationState.value = 'idle'
-    return
-  }
-  outlineGenerationState.value = 'generating'
-  generatedOutline.value = null
-  outlineError.value = ''
-  try {
-    const response = await axios.post('/api/video/outline', {
-      title: videoInfo.value?.title || '',
-      platform: sourcePlatform.value,
-      duration: videoInfo.value?.duration ? formatDuration(videoInfo.value.duration) : '',
-      language: outlineLanguage.value,
-      transcript
-    })
-    if (!response.data?.success || !response.data?.outline) {
-      throw new Error(response.data?.error || t('videoParser.errors.outlineFailed'))
-    }
-    generatedOutline.value = response.data.outline
-    outlineGenerationState.value = 'success'
-  } catch (err) {
-    console.error('[VideoParser] Outline generation failed', {
-      endpoint: '/api/video/outline',
-      status: err.response?.status,
-      response: err.response?.data,
-      message: err.message,
-      request: {
-        title: videoInfo.value?.title || '',
-        platform: sourcePlatform.value,
-        duration: videoInfo.value?.duration ? formatDuration(videoInfo.value.duration) : '',
-        language: outlineLanguage.value,
-        transcriptLength: transcript.length
-      }
-    })
-    outlineError.value = err.response?.data?.error || t('videoParser.errors.outlineFailed')
-    outlineGenerationState.value = 'failed'
-  }
-}
-
-loadSettings()
-
-onBeforeUnmount(() => {
-  downloadTimers.forEach((timer) => window.clearInterval(timer))
-  downloadTimers.clear()
-  if (outlineCopyTimer) window.clearTimeout(outlineCopyTimer)
-})
 </script>
 
 <style scoped>
