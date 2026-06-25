@@ -4,7 +4,8 @@
       class="relative flex h-16 items-center justify-between px-5 transition-colors duration-500 md:px-8"
       :class="scrolled ? 'border-b border-line bg-background backdrop-blur-md' : 'border-b border-transparent'"
     >
-      <router-link to="/" class="group flex items-baseline gap-3" @click="mobileMenuOpen = false">
+      <router-link to="/" class="group flex items-center gap-3" @click="mobileMenuOpen = false">
+        <img :src="jacoryLogo" alt="" class="h-6 w-6 shrink-0 object-contain" />
         <span class="font-mono text-sm tracking-[0.14em] text-foreground transition-colors group-hover:text-blue">
           Jacory Space
         </span>
@@ -123,6 +124,7 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import jacoryLogo from '../assets/jacory-logo.png'
 import LanguageSwitcher from './LanguageSwitcher.vue'
 
 const mobileMenuOpen = ref(false)
