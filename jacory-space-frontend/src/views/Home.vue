@@ -83,17 +83,9 @@ import { CustomEase } from 'gsap/CustomEase'
 gsap.registerPlugin(CustomEase)
 
 const heroRoot = ref(null)
-const { locale } = useI18n()
-const heroDescription = computed(() => (
-  locale.value === 'en-US'
-    ? 'A digital space built for personal works, tools, notes, and archives.'
-    : '一个为个人创作、工具、笔记与档案建立的数字空间。'
-))
-const heroKeywords = computed(() => (
-  locale.value === 'en-US'
-    ? 'Works · Tools · Notes · Archive'
-    : '作品 · 工具 · 笔记 · 档案'
-))
+const { t } = useI18n()
+const heroDescription = computed(() => t('home.hero.description'))
+const heroKeywords = computed(() => t('home.hero.keywords'))
 let heroContext
 let reducedMotionQuery
 
