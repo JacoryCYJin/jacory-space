@@ -63,53 +63,16 @@
               </div>
             </section>
 
-            <section v-if="showStatusSection" class="grid gap-5 border-b border-line py-10 md:grid-cols-[96px_minmax(0,1fr)]">
-              <div>
-                <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">02</p>
-                <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.status') }}</p>
-              </div>
-              <div>
-                <div class="flex flex-col gap-5 xl:flex-row xl:items-start">
-                  <div class="min-w-0 flex-1 overflow-x-auto pb-2">
-                    <div class="grid min-w-[760px] grid-cols-6 gap-y-6">
-                      <div
-                        v-for="(item, index) in statusRail"
-                        :key="item.key"
-                        class="status-step relative min-w-0 pr-4"
-                        :class="{
-                          'is-active': parserState === item.key,
-                          'is-reached': index <= activeStatusIndex,
-                          'is-failed': parserState === 'FAILED' && item.key === 'FAILED'
-                        }"
-                      >
-                        <span class="status-dot"></span>
-                        <p class="mt-4 whitespace-nowrap text-sm text-muted-foreground">
-                          {{ item.label }}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <p
-                  v-if="isCookiesRequiredError"
-                  class="mt-4 border-l border-line-strong pl-4 text-sm leading-relaxed text-muted-foreground"
-                >
-                  {{ t('videoParser.cookieEntry.hint') }}
-                </p>
-                <p
-                  v-else-if="loading"
-                  class="mt-4 border-l border-line-strong pl-4 text-sm leading-relaxed text-muted-foreground"
-                >
-                  {{ t('videoParser.messages.readingMetadata') }}
-                </p>
-                <p v-if="error" class="mt-6 border-l border-line-strong pl-4 text-sm leading-relaxed text-muted-foreground">
-                  {{ error }}
-                </p>
-                <p v-else-if="success" class="mt-6 border-l border-line-strong pl-4 text-sm leading-relaxed text-muted-foreground">
-                  {{ success }}
-                </p>
-              </div>
-            </section>
+            <VideoParserStatus
+              v-if="showStatusSection"
+              :status-rail="statusRail"
+              :parser-state="parserState"
+              :active-status-index="activeStatusIndex"
+              :is-cookies-required-error="isCookiesRequiredError"
+              :loading="loading"
+              :error="error"
+              :success="success"
+            />
 
             <div
               v-if="showResolvedModules || showOutlineModule || showOutputPathSection"
@@ -170,84 +133,19 @@
                   </div>
                 </section>
 
-                <section v-if="showResolvedModules" class="grid gap-5 py-10 md:grid-cols-[96px_minmax(0,1fr)]">
-                  <div>
-                    <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">04</p>
-                    <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.downloadRegistry') }}</p>
-                  </div>
-                  <div class="min-w-0">
-                    <div class="mb-3 flex items-center">
-                      <span class="tech">{{ t('videoParser.registry.items', { count: registryRows.length }) }}</span>
-                    </div>
-                    <div class="overflow-x-auto border border-line">
-                      <table class="w-full table-fixed border-collapse text-left">
-                        <colgroup>
-                          <col class="w-[8%]" />
-                          <col class="w-[17%]" />
-                          <col class="w-[23%]" />
-                          <col class="w-[13%]" />
-                          <col class="w-[22%]" />
-                          <col class="w-[17%]" />
-                        </colgroup>
-                        <thead class="border-b border-line bg-muted/40">
-                          <tr class="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                            <th class="px-3 py-3 font-medium">№</th>
-                            <th class="px-3 py-3 font-medium">{{ t('videoParser.registry.resolution') }}</th>
-                            <th class="px-3 py-3 font-medium">{{ t('videoParser.registry.format') }}</th>
-                            <th class="px-3 py-3 font-medium">{{ t('videoParser.registry.size') }}</th>
-                            <th class="px-3 py-3 font-medium">{{ t('videoParser.registry.status') }}</th>
-                            <th class="px-3 py-3 text-right font-medium">{{ t('videoParser.registry.action') }}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr
-                            v-for="(format, index) in registryRows"
-                            :key="formatKey(format)"
-                            class="border-b border-line last:border-b-0"
-                          >
-                            <td class="px-3 py-4 font-mono text-xs text-blue">{{ String(index + 1).padStart(2, '0') }}</td>
-                            <td class="px-3 py-4 font-mono text-sm text-foreground">{{ format.resolution }}</td>
-                            <td class="truncate px-3 py-4 font-mono text-xs text-muted-foreground" :title="formatLabel(format)">{{ formatLabel(format) }}</td>
-                            <td class="truncate px-3 py-4 font-mono text-xs text-muted-foreground">{{ format.filesize_mb || '--' }} MB</td>
-                            <td class="px-3 py-4">
-                              <div class="flex items-center gap-2">
-                                <span class="h-1.5 w-1.5 rounded-full" :class="rowStatusClass(format).dot"></span>
-                                <span class="font-mono text-[11px] uppercase tracking-[0.14em]" :class="rowStatusClass(format).text">
-                                  {{ rowStatusLabel(format) }}
-                                </span>
-                                <template v-if="rowStatus(format) === 'DOWNLOADING'">
-                                  <span class="font-mono text-[11px] text-muted-foreground">{{ rowProgress(format) }}%</span>
-                                  <span class="h-px w-10 bg-line">
-                                    <span class="block h-px bg-blue transition-all duration-300" :style="{ width: `${rowProgress(format)}%` }"></span>
-                                  </span>
-                                </template>
-                              </div>
-                            </td>
-                            <td class="px-3 py-4 text-right">
-                              <button
-                                type="button"
-                                class="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-blue transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:text-haze"
-                                :disabled="downloading[format.resolution] || rowStatus(format) === 'UNAVAILABLE'"
-                                @click="downloadVideo(format)"
-                              >
-                                {{ rowActionLabel(format) }}
-                                <ArrowRight v-if="rowStatus(format) === 'READY'" class="h-3.5 w-3.5" />
-                                <Pause v-else-if="rowStatus(format) === 'DOWNLOADING'" class="h-3.5 w-3.5" />
-                                <ExternalLink v-else-if="rowStatus(format) === 'COMPLETE'" class="h-3.5 w-3.5" />
-                                <RefreshCw v-else-if="rowStatus(format) === 'FAILED'" class="h-3.5 w-3.5" />
-                              </button>
-                            </td>
-                          </tr>
-                          <tr v-if="!registryRows.length">
-                            <td colspan="6" class="px-3 py-10 text-base text-muted-foreground">
-                              {{ t('videoParser.registry.empty') }}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </section>
+                <VideoParserRegistry
+                  v-if="showResolvedModules"
+                  :registry-rows="registryRows"
+                  :downloading="downloading"
+                  :format-key="formatKey"
+                  :format-label="formatLabel"
+                  :row-status="rowStatus"
+                  :row-status-label="rowStatusLabel"
+                  :row-progress="rowProgress"
+                  :row-status-class="rowStatusClass"
+                  :row-action-label="rowActionLabel"
+                  @download="downloadVideo"
+                />
 
                 <section v-if="showOutputPathSection" class="grid gap-5 py-10 md:grid-cols-[96px_minmax(0,1fr)]">
                   <div>
@@ -286,260 +184,41 @@
                 </section>
               </div>
 
-              <aside v-if="showOutlineModule" class="py-10 lg:pl-8">
-                <div class="flex items-center justify-between">
-                  <div>
-                    <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">05</p>
-                    <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.outlineMap') }}</p>
-                  </div>
-                  <button
-                    v-if="outlineState === 'success'"
-                    type="button"
-                    class="font-mono text-[11px] uppercase tracking-[0.16em] text-blue transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:text-haze"
-                    @click="copyOutline"
-                  >
-                    {{ t('videoParser.outline.copyOutline') }}
-                  </button>
-                  <button
-                    v-else-if="outlineState === 'subtitlesAvailable' || outlineState === 'failed'"
-                    type="button"
-                    class="font-mono text-[11px] uppercase tracking-[0.16em] text-blue transition-colors hover:text-foreground"
-                    @click="generateOutline"
-                  >
-                    {{ outlineState === 'failed' ? t('videoParser.outline.retry') : t('videoParser.outline.generate') }}
-                  </button>
-                </div>
-
-                <div v-if="outlineState === 'success'" class="mt-7 overflow-x-auto pb-2">
-                  <div class="outline-map">
-                    <div class="outline-root">
-                      <span class="outline-root-kicker">ROOT</span>
-                      <span class="outline-root-title">{{ outlineTitle }}</span>
-                    </div>
-                    <div class="outline-trunk"></div>
-                    <div class="outline-branches">
-                      <article v-for="item in outlineNodes" :key="item.id" class="outline-branch">
-                        <div class="outline-node">
-                          <span class="outline-node-index">{{ item.id }}</span>
-                          <span class="outline-node-title">{{ item.title }}</span>
-                          <span v-if="item.summary" class="outline-node-summary">{{ item.summary }}</span>
-                        </div>
-                        <ul class="outline-children">
-                          <li v-for="child in item.children" :key="child.id">
-                            <span class="outline-child-index">{{ child.id }}</span>
-                            <span class="outline-child-content">
-                              <span class="outline-child-title">{{ child.title }}</span>
-                              <span v-if="child.summary" class="outline-child-summary">{{ child.summary }}</span>
-                            </span>
-                          </li>
-                        </ul>
-                      </article>
-                    </div>
-                  </div>
-                  <p v-if="outlineSummary" class="mt-5 border-l border-line-strong pl-4 text-sm leading-relaxed text-muted-foreground">
-                    {{ outlineSummary }}
-                  </p>
-                </div>
-
-                <div
-                  v-else
-                  class="outline-state-panel mt-7"
-                  :class="{ 'is-generating': outlineState === 'generating' }"
-                >
-                  <div>
-                    <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                      {{ outlineStateMeta.title }}
-                    </p>
-                    <p class="mt-4 max-w-md text-base leading-relaxed text-muted-foreground">
-                      {{ outlineState === 'failed' && outlineError ? outlineError : outlineStateMeta.description }}
-                    </p>
-                    <div v-if="outlineState === 'generating'" class="outline-loading-system">
-                      <div class="outline-loading-meta">
-                        <span>TRANSCRIPT</span>
-                        <span>MODEL</span>
-                        <span>OUTLINE</span>
-                      </div>
-                      <div class="outline-scan-track">
-                        <span></span>
-                      </div>
-                      <div class="outline-loading-grid" aria-hidden="true">
-                        <span v-for="index in 18" :key="index"></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </aside>
+              <VideoOutlinePanel
+                v-if="showOutlineModule"
+                :outline-state="outlineState"
+                :outline-state-meta="outlineStateMeta"
+                :outline-nodes="outlineNodes"
+                :outline-title="outlineTitle"
+                :outline-summary="outlineSummary"
+                :outline-error="outlineError"
+                @copy="copyOutline"
+                @generate="generateOutline"
+              />
             </div>
           </div>
 
-          <aside v-if="showSettingsRail" class="settings-rail border-line xl:border-l xl:pl-8">
-            <div class="sticky top-24 space-y-10">
-              <section class="pb-9">
-                <div class="mb-7 flex items-center justify-between">
-                  <div>
-                    <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.cookiesSettings') }}</p>
-                  </div>
-                  <button type="button" class="text-muted-foreground hover:text-foreground" @click="showSettingsRail = false">
-                    <X class="h-4 w-4" />
-                  </button>
-                </div>
-
-                <div class="space-y-7">
-                  <div>
-                    <p class="tech">{{ t('videoParser.settings.mode') }}</p>
-                    <div class="mt-3 flex flex-wrap items-center gap-2">
-                      <button
-                        v-for="mode in cookieModes"
-                        :key="mode"
-                        type="button"
-                        class="settings-choice"
-                        :class="{ 'is-selected': cookieMode === mode }"
-                        @click="cookieMode = mode"
-                      >
-                        {{ t(`videoParser.settings.cookieModes.${mode}`) }}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <p class="tech">{{ t('videoParser.settings.browserSource') }}</p>
-                    <div class="mt-3 flex flex-wrap items-center gap-2">
-                      <button
-                        v-for="source in browserSources"
-                        :key="source.value"
-                        type="button"
-                        class="settings-choice"
-                        :class="{ 'is-selected': browserCookieSource === source.value }"
-                        :disabled="cookieMode !== 'browser'"
-                        @click="browserCookieSource = source.value"
-                      >
-                        {{ source.label }}
-                      </button>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    class="inline-flex h-10 items-center border border-line px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted disabled:text-haze"
-                    :disabled="savingCookieSettings"
-                    @click="saveCookieSettings"
-                  >
-                    {{ savingCookieSettings ? t('videoParser.saving') : t('videoParser.saveUsage') }}
-                  </button>
-
-                  <p class="text-xs leading-relaxed text-muted-foreground">
-                    {{ t('videoParser.settings.cookiesUsageNote') }}
-                  </p>
-
-                  <p
-                    v-if="cookieSettingsStatus"
-                    class="border-l border-line-strong pl-3 text-xs leading-relaxed text-muted-foreground"
-                  >
-                    {{ cookieSettingsStatus.message }}
-                  </p>
-
-                  <div>
-                    <div class="mb-3 flex items-center justify-between">
-                      <p class="tech">{{ t('videoParser.settings.platformCookies') }}</p>
-                      <button
-                        type="button"
-                        class="inline-flex items-center gap-1 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:text-foreground"
-                        @click="showAddPlatform = true"
-                      >
-                        <Plus class="h-3.5 w-3.5" />
-                        {{ t('videoParser.settings.custom') }}
-                      </button>
-                    </div>
-
-                    <div class="border-t border-line">
-                      <div
-                        v-for="platform in cookiePlatformRows"
-                        :key="platform.key"
-                        class="grid grid-cols-[minmax(0,1fr)_auto] gap-3 border-b border-line py-4"
-                      >
-                        <div class="min-w-0">
-                          <div class="flex items-center gap-3">
-                            <span class="h-1.5 w-1.5 rounded-full" :class="cookiesInfo[platform.key]?.has_cookies ? 'bg-blue' : 'bg-haze'"></span>
-                            <span class="font-medium text-foreground">{{ platform.label }}</span>
-                          </div>
-                          <p class="mt-1 font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                            {{ cookiesInfo[platform.key]?.has_cookies ? t('videoParser.settings.set') : t('videoParser.settings.notSet') }}
-                          </p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                          <button type="button" class="settings-link" @click="editPlatform(platform.key)">
-                            {{ cookiesInfo[platform.key]?.has_cookies ? t('videoParser.settings.edit') : t('videoParser.settings.set') }}
-                          </button>
-                          <button
-                            v-if="cookiesInfo[platform.key]?.has_cookies || platform.custom"
-                            type="button"
-                            class="settings-link"
-                            @click="deletePlatformCookies(platform.key)"
-                          >
-                            {{ t('videoParser.settings.delete') }}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </section>
-
-              <section>
-                <div class="mb-7">
-                  <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.directorySettings') }}</p>
-                </div>
-
-                <div class="space-y-6">
-                  <div>
-                    <p class="tech">{{ t('videoParser.settings.defaultDownloadDirectory') }}</p>
-                    <div class="mt-3 flex border border-line bg-card">
-                      <div class="flex min-w-0 flex-1 items-center gap-3 px-3 py-3">
-                        <Folder class="h-4 w-4 shrink-0 text-muted-foreground" />
-                        <span class="truncate font-mono text-xs text-foreground">{{ defaultDownloadDir || t('videoParser.notSet') }}</span>
-                      </div>
-                      <button
-                        type="button"
-                        class="border-l border-line px-3 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted disabled:text-haze"
-                        :disabled="savingSettings"
-                        @click="chooseFolderAndSaveDefault"
-                      >
-                        {{ t('videoParser.settings.change') }}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <p class="tech">{{ t('videoParser.settings.temporaryDirectory') }}</p>
-                    <div class="mt-3 flex border border-line bg-card">
-                      <div class="flex min-w-0 flex-1 items-center gap-3 px-3 py-3">
-                        <Folder class="h-4 w-4 shrink-0 text-muted-foreground" />
-                        <span class="truncate font-mono text-xs text-foreground">{{ downloadDirOverride || t('videoParser.settings.useDefaultDirectory') }}</span>
-                      </div>
-                      <button
-                        type="button"
-                        class="border-l border-line px-3 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted"
-                        @click="chooseFolderForOnce"
-                      >
-                        {{ t('videoParser.settings.change') }}
-                      </button>
-                    </div>
-                    <button
-                      v-if="downloadDirOverride"
-                      type="button"
-                      class="mt-3 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground hover:text-blue"
-                      @click="downloadDirOverride = ''"
-                    >
-                      {{ t('videoParser.clearOneTimeDirectory') }}
-                    </button>
-                    <p class="mt-3 text-xs leading-relaxed text-muted-foreground">
-                      {{ t('videoParser.settings.temporaryDirectoryNote') }}
-                    </p>
-                  </div>
-                </div>
-              </section>
-            </div>
-          </aside>
+          <VideoParserSettingsRail
+            v-if="showSettingsRail"
+            v-model:cookie-mode="cookieMode"
+            v-model:browser-cookie-source="browserCookieSource"
+            v-model:download-dir-override="downloadDirOverride"
+            :cookie-modes="cookieModes"
+            :browser-sources="browserSources"
+            :saving-cookie-settings="savingCookieSettings"
+            :cookie-settings-status="cookieSettingsStatus"
+            :cookie-platform-rows="cookiePlatformRows"
+            :cookies-info="cookiesInfo"
+            :default-download-dir="defaultDownloadDir"
+            :saving-settings="savingSettings"
+            @close="showSettingsRail = false"
+            @save-cookie-settings="saveCookieSettings"
+            @add-platform="showAddPlatform = true"
+            @edit-platform="editPlatform"
+            @delete-platform="deletePlatformCookies"
+            @choose-default-folder="chooseFolderAndSaveDefault"
+            @choose-temporary-folder="chooseFolderForOnce"
+          />
         </div>
       </div>
     </section>
@@ -550,84 +229,17 @@
       type="success"
     />
 
-    <div
-      v-if="showAddPlatform"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 p-4"
-      @click.self="showAddPlatform = false"
-    >
-      <div class="w-full max-w-md border border-line bg-card p-6">
-        <h3 class="font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.addPlatformTitle') }}</h3>
-        <input
-          v-model="newPlatformName"
-          type="text"
-          :placeholder="t('videoParser.platformPlaceholder')"
-          class="mt-5 h-12 w-full border border-line bg-transparent px-4 font-mono text-sm outline-none focus:border-line-strong"
-          @keypress.enter="addCustomPlatform"
-        />
-        <div class="mt-5 flex gap-3">
-          <button
-            type="button"
-            class="h-10 flex-1 border border-line px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted disabled:text-haze"
-            :disabled="!newPlatformName.trim()"
-            @click="addCustomPlatform"
-          >
-            {{ t('videoParser.actions.add') }}
-          </button>
-          <button
-            type="button"
-            class="h-10 border border-line px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground hover:bg-muted"
-            @click="showAddPlatform = false"
-          >
-            {{ t('videoParser.actions.cancel') }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div
-      v-if="showEditCookies"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-foreground/20 p-4"
-      @click.self="showEditCookies = false"
-    >
-      <div class="w-full max-w-2xl border border-line bg-card p-6">
-        <div class="mb-5 flex items-center justify-between">
-          <h3 class="font-mono text-xs uppercase tracking-[0.18em] text-blue">
-            {{ t('videoParser.setCookiesTitle', { platform: editingPlatform }) }}
-          </h3>
-          <button type="button" class="text-muted-foreground hover:text-foreground" @click="showEditCookies = false">
-            <X class="h-4 w-4" />
-          </button>
-        </div>
-        <p class="mb-4 border-l border-line-strong pl-3 text-xs leading-relaxed text-muted-foreground">
-          {{ t('videoParser.cookiesSavedTip') }}
-        </p>
-        <textarea
-          v-model="cookiesText"
-          :placeholder="t('videoParser.cookiesPlaceholder', { platform: editingPlatform })"
-          class="h-64 w-full border border-line bg-transparent px-4 py-3 font-mono text-sm outline-none focus:border-line-strong"
-        ></textarea>
-        <div class="mt-5 flex gap-3">
-          <button
-            type="button"
-            class="h-10 flex-1 border border-line px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted disabled:text-haze"
-            :disabled="!cookiesText.trim() || savingCookies"
-            @click="saveCookies"
-          >
-            {{ savingCookies ? t('videoParser.saving') : t('videoParser.actions.save') }}
-          </button>
-          <button
-            type="button"
-            class="h-10 border border-line px-4 font-mono text-[11px] uppercase tracking-[0.16em] text-muted-foreground hover:bg-muted"
-            @click="showEditCookies = false"
-          >
-            {{ t('videoParser.actions.cancel') }}
-          </button>
-        </div>
-        <p v-if="cookiesStatus" class="mt-4 border-l border-line-strong pl-3 text-xs leading-relaxed text-muted-foreground">
-          {{ cookiesStatus.message }}
-        </p>
-      </div>
-    </div>
+    <VideoParserCookieDialogs
+      v-model:show-add-platform="showAddPlatform"
+      v-model:new-platform-name="newPlatformName"
+      v-model:show-edit-cookies="showEditCookies"
+      v-model:cookies-text="cookiesText"
+      :editing-platform="editingPlatform"
+      :saving-cookies="savingCookies"
+      :cookies-status="cookiesStatus"
+      @add-platform="addCustomPlatform"
+      @save-cookies="saveCookies"
+    />
   </main>
 </template>
 
@@ -636,18 +248,18 @@ import { computed, onBeforeUnmount, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import StatusToast from '../components/StatusToast.vue'
+import VideoOutlinePanel from '../components/video-parser/VideoOutlinePanel.vue'
+import VideoParserCookieDialogs from '../components/video-parser/VideoParserCookieDialogs.vue'
+import VideoParserRegistry from '../components/video-parser/VideoParserRegistry.vue'
+import VideoParserSettingsRail from '../components/video-parser/VideoParserSettingsRail.vue'
+import VideoParserStatus from '../components/video-parser/VideoParserStatus.vue'
 import {
   ArrowRight,
   Clapperboard,
   Copy,
-  ExternalLink,
   Folder,
   FolderOpen,
-  Link as LinkIcon,
-  Pause,
-  Plus,
-  RefreshCw,
-  X
+  Link as LinkIcon
 } from 'lucide-vue-next'
 
 const { t, locale } = useI18n()
@@ -1235,90 +847,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.status-step {
-  color: var(--muted-foreground);
-}
-
-.status-step::before {
-  position: absolute;
-  top: 3px;
-  right: 0;
-  left: 0;
-  height: 1px;
-  content: "";
-  background: var(--line-strong);
-}
-
-.status-step::after {
-  position: absolute;
-  top: 3px;
-  right: 0;
-  left: 0;
-  height: 1px;
-  content: "";
-  background: var(--blue);
-  transform: scaleX(0);
-  transform-origin: left center;
-}
-
-.status-step.is-reached::after {
-  transform: scaleX(1);
-}
-
-.status-step.is-active::after {
-  transform: scaleX(0);
-}
-
-.status-step:last-child::after,
-.status-step:last-child::before {
-  display: none;
-}
-
-.status-dot {
-  position: relative;
-  z-index: 1;
-  display: block;
-  width: 9px;
-  height: 9px;
-  border: 1px solid var(--haze);
-  border-radius: 9999px;
-  background: var(--background);
-}
-
-.status-step.is-reached {
-  color: var(--blue);
-}
-
-.status-step.is-reached .status-dot {
-  border-color: var(--blue);
-  background: var(--blue);
-}
-
-.status-step.is-active {
-  color: var(--blue);
-}
-
-.status-step.is-active .status-dot {
-  border-color: var(--blue);
-  background: var(--blue);
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--blue) 12%, transparent);
-}
-
-.status-step.is-reached p,
-.status-step.is-active p {
-  color: var(--blue);
-}
-
-.status-step.is-failed .status-dot {
-  border-color: var(--destructive);
-  background: var(--destructive);
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive) 10%, transparent);
-}
-
-.status-step.is-failed p {
-  color: var(--destructive);
-}
-
 .video-info-resolved {
   display: grid;
   grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
@@ -1352,299 +880,4 @@ onBeforeUnmount(() => {
   }
 }
 
-.outline-map {
-  --outline-map-top: 30px;
-  --outline-root-width: 220px;
-  --outline-trunk-width: 48px;
-  --outline-branch-gutter: 34px;
-  --outline-branch-gap: 18px;
-  --outline-line-y: 25px;
-  --outline-trunk-x: calc(var(--outline-root-width) - 1px);
-  --outline-branch-x: calc(var(--outline-root-width) + var(--outline-trunk-width));
-  --outline-line-absolute-y: calc(var(--outline-map-top) + var(--outline-line-y));
-  position: relative;
-  min-width: 680px;
-  padding: var(--outline-map-top) 0 18px;
-}
-
-.outline-root {
-  position: absolute;
-  top: var(--outline-map-top);
-  left: 0;
-  z-index: 2;
-  display: inline-grid;
-  width: var(--outline-root-width);
-  border: 1px solid var(--line-strong);
-  background: var(--card);
-  padding: 0.7rem 0.8rem;
-}
-
-.outline-root-kicker,
-.outline-node-index,
-.outline-child-index {
-  font-family: theme("fontFamily.mono");
-  font-size: 0.625rem;
-  letter-spacing: 0.16em;
-  color: var(--blue);
-}
-
-.outline-root-title {
-  margin-top: 0.3rem;
-  font-size: 0.82rem;
-  line-height: 1.2;
-  color: var(--foreground);
-}
-
-.outline-trunk {
-  position: absolute;
-  top: var(--outline-line-absolute-y);
-  left: var(--outline-trunk-x);
-  width: calc(var(--outline-trunk-width) + 2px);
-  height: 1px;
-  background: var(--line-strong);
-}
-
-.outline-branches {
-  position: relative;
-  display: grid;
-  gap: var(--outline-branch-gap);
-  margin-left: var(--outline-branch-x);
-  padding-left: var(--outline-branch-gutter);
-}
-
-.outline-branch {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(150px, 190px) minmax(250px, 1fr);
-  gap: 24px;
-  align-items: start;
-}
-
-.outline-branch::before {
-  position: absolute;
-  top: var(--outline-line-y);
-  left: calc((var(--outline-branch-gutter) * -1) - 1px);
-  width: calc(var(--outline-branch-gutter) + 2px);
-  height: 1px;
-  content: "";
-  background: var(--line-strong);
-}
-
-.outline-branch:not(:last-child)::after {
-  position: absolute;
-  top: var(--outline-line-y);
-  left: calc(var(--outline-branch-gutter) * -1);
-  width: 1px;
-  height: calc(100% + var(--outline-branch-gap));
-  content: "";
-  background: var(--line-strong);
-}
-
-.outline-node {
-  display: grid;
-  gap: 0.35rem;
-  border: 1px solid var(--line);
-  background: var(--card);
-  padding: 0.62rem 0.72rem;
-  transition:
-    border-color 220ms var(--ease-premium),
-    color 220ms var(--ease-premium);
-}
-
-.outline-branch:hover .outline-node {
-  border-color: var(--line-strong);
-}
-
-.outline-node-title {
-  font-size: 0.8rem;
-  line-height: 1.25;
-  color: var(--foreground);
-}
-
-.outline-node-summary {
-  font-size: 0.72rem;
-  line-height: 1.45;
-  color: var(--muted-foreground);
-}
-
-.outline-children {
-  display: grid;
-  gap: 9px;
-  margin: 0;
-  padding: 0.2rem 0 0;
-  list-style: none;
-}
-
-.outline-children li {
-  display: grid;
-  grid-template-columns: 42px minmax(0, 1fr);
-  gap: 10px;
-  border-top: 1px solid var(--line);
-  padding-top: 9px;
-  font-size: 0.74rem;
-  line-height: 1.4;
-  color: var(--muted-foreground);
-}
-
-.outline-children li:first-child {
-  border-top-color: transparent;
-  padding-top: 0;
-}
-
-.outline-child-index {
-  color: var(--haze);
-}
-
-.outline-child-content {
-  display: grid;
-  gap: 0.2rem;
-}
-
-.outline-child-title {
-  color: var(--foreground);
-}
-
-.outline-child-summary {
-  color: var(--haze);
-}
-
-.outline-state-panel {
-  position: relative;
-  display: flex;
-  min-height: 430px;
-  align-items: center;
-  border: 1px solid var(--line);
-  background: var(--card);
-  padding: 2.5rem 2rem;
-}
-
-.outline-state-panel > div {
-  max-width: 460px;
-}
-
-.outline-state-panel.is-generating {
-  align-items: flex-start;
-  justify-content: center;
-}
-
-.outline-state-panel.is-generating > div {
-  position: absolute;
-  top: 42%;
-  left: 50%;
-  width: clamp(380px, 72%, 460px);
-  max-width: calc(100% - 4rem);
-  transform: translate(-50%, -50%);
-}
-
-.outline-loading-system {
-  margin-top: 1.65rem;
-  width: 100%;
-}
-
-.outline-loading-meta {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-  font-family: theme("fontFamily.mono");
-  font-size: 0.625rem;
-  letter-spacing: 0.16em;
-  color: var(--muted-foreground);
-}
-
-.outline-scan-track {
-  position: relative;
-  margin-top: 0.75rem;
-  height: 1px;
-  overflow: hidden;
-  background: var(--line);
-}
-
-.outline-scan-track span {
-  position: absolute;
-  inset-block: 0;
-  left: 0;
-  display: block;
-  width: 72px;
-  background: var(--blue);
-  animation: outline-scan 2.6s var(--ease-premium) infinite;
-}
-
-.outline-loading-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 8px;
-  margin-top: 1rem;
-}
-
-.outline-loading-grid span {
-  height: 1px;
-  background: var(--line);
-}
-
-@keyframes outline-scan {
-  0% {
-    transform: translateX(-80px);
-    opacity: 0;
-  }
-  18% {
-    opacity: 1;
-  }
-  82% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(370px);
-    opacity: 0;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .outline-scan-track span {
-    animation: none;
-  }
-}
-
-.settings-choice {
-  border-bottom: 1px solid transparent;
-  padding: 0.35rem 0.25rem;
-  font-family: theme("fontFamily.mono");
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-  transition:
-    color 200ms var(--ease-premium),
-    border-color 200ms var(--ease-premium);
-}
-
-.settings-choice:hover,
-.settings-choice.is-selected {
-  border-color: var(--blue);
-  color: var(--blue);
-}
-
-.settings-choice:disabled {
-  cursor: not-allowed;
-  border-color: transparent;
-  color: var(--haze);
-}
-
-.settings-link {
-  font-family: theme("fontFamily.mono");
-  font-size: 0.6875rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--blue);
-  transition: color 200ms var(--ease-premium);
-}
-
-.settings-link:hover {
-  color: var(--foreground);
-}
-
-@media (max-width: 1023px) {
-  .outline-map {
-    min-width: 520px;
-  }
-}
 </style>
