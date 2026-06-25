@@ -9,11 +9,16 @@ export default {
   language: {
     label: '切换语言',
     zh: '中文',
-    en: 'English'
+    en: 'English',
+    ja: '日本語'
   },
   home: {
     title: '欢迎来到 Jacory Space',
     subtitle: '分享技术、记录生活、探索可能',
+    hero: {
+      description: '一个为个人创作、工具、笔记与档案建立的数字空间。',
+      keywords: '作品 · 工具 · 笔记 · 档案'
+    },
     actions: {
       videoParser: '试试视频解析工具',
       about: '了解更多'

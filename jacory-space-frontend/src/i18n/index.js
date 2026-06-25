@@ -1,16 +1,18 @@
 import { createI18n } from 'vue-i18n'
 import zhCN from './locales/zh-CN'
 import enUS from './locales/en-US'
+import jaJP from './locales/ja-JP'
 
 const STORAGE_KEY = 'jacory_locale'
 
-export const supportedLocales = ['zh-CN', 'en-US']
+export const supportedLocales = ['zh-CN', 'en-US', 'ja-JP']
 
 const normalizeLocale = (value) => {
   if (supportedLocales.includes(value)) return value
   const shortLocale = value?.split('-')[0]
   if (shortLocale === 'zh') return 'zh-CN'
   if (shortLocale === 'en') return 'en-US'
+  if (shortLocale === 'ja') return 'ja-JP'
   return 'zh-CN'
 }
 
@@ -40,6 +42,7 @@ export const i18n = createI18n({
   fallbackLocale: 'zh-CN',
   messages: {
     'zh-CN': zhCN,
-    'en-US': enUS
+    'en-US': enUS,
+    'ja-JP': jaJP
   }
 })
