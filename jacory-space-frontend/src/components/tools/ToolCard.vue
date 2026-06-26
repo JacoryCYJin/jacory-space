@@ -100,6 +100,6 @@ defineProps({
 
 <style scoped>
 .tool-card-hover {
-  box-shadow: 0 8px 24px color-mix(in oklab, var(--foreground) 4%, transparent);
+  box-shadow: 0 8px 24px rgb(29 33 39 / 0.04);
 }
 </style>

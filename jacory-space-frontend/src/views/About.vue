@@ -10,20 +10,20 @@
         </header>
 
         <div class="relative mt-8 lg:mt-10">
-          <div class="relative grid grid-cols-12 gap-y-12 lg:min-h-[31rem]">
+          <div class="relative grid grid-cols-12 gap-y-12 lg:min-h-[38rem] lg:overflow-visible">
             <figure
-              class="about-identity-illustration about-reveal reveal relative col-span-12 flex min-h-[22rem] items-center justify-center overflow-hidden border-b border-line pb-8 lg:col-span-3 lg:min-h-0 lg:border-b-0 lg:pb-0 lg:pr-7"
+              class="about-identity-illustration about-reveal reveal relative col-span-12 flex min-h-[22rem] items-center justify-center overflow-hidden border-b border-line pb-8 lg:pointer-events-none lg:absolute lg:left-[-10rem] lg:z-0 lg:-translate-y-1/2 lg:overflow-visible lg:border-b-0 lg:pb-0"
             >
               <img
                 :src="identityIllustration"
                 alt=""
-                class="relative h-auto max-h-[40rem] w-[125%] max-w-none object-contain opacity-80 mix-blend-multiply lg:-translate-x-4"
+                class="relative z-0 h-auto max-h-[40rem] w-[125%] max-w-none object-contain opacity-80 mix-blend-multiply lg:max-h-[44rem] lg:w-full lg:translate-x-0"
               />
               <figcaption class="sr-only">{{ t('about.sheet.identityIllustrationAlt') }}</figcaption>
             </figure>
 
             <section
-              class="about-reveal reveal col-span-12 flex flex-col justify-center lg:col-span-5 lg:px-[clamp(2rem,4vw,4.75rem)]"
+              class="about-reveal reveal relative z-10 col-span-12 flex flex-col justify-center lg:col-span-5 lg:col-start-4 lg:px-[clamp(2rem,4vw,4.75rem)]"
               style="transition-delay: 80ms"
             >
               <h1
@@ -43,7 +43,7 @@
             </section>
 
             <aside
-              class="about-side-panel about-reveal reveal relative col-span-12 overflow-hidden border-t border-line pt-8 lg:-top-5 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0"
+              class="about-side-panel about-reveal reveal relative z-10 col-span-12 overflow-hidden border-t border-line pt-8 lg:-top-5 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0"
               style="transition-delay: 160ms"
             >
               <section aria-labelledby="identity-heading" class="relative">

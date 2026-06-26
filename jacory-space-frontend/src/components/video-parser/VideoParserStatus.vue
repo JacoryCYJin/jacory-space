@@ -115,13 +115,13 @@ const { t } = useI18n()
 }
 
 .status-step.is-active .status-dot {
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--blue) 12%, transparent);
+  box-shadow: 0 0 0 3px rgb(14 102 200 / 0.12);
 }
 
 .status-step.is-failed .status-dot {
   border-color: var(--destructive);
   background: var(--destructive);
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive) 10%, transparent);
+  box-shadow: 0 0 0 3px rgb(231 0 11 / 0.1);
 }
 
 .status-step.is-failed p {
