@@ -152,25 +152,40 @@ export default {
     }
   },
   about: {
-    role: 'UP主 / 开发者 / 创作者',
-    introTitle: '关于我',
-    intro: '你好！我是 Jacory，一名热爱技术和创作的 UP 主。这个网站是我的个人空间，用来分享我开发的工具、技术文章和生活感悟。',
-    projectsTitle: '我的项目',
-    projects: {
-      video: {
-        title: '视频解析工具',
-        description: '支持多平台视频下载'
-      },
-      blog: {
-        title: '技术博客',
-        description: '分享开发经验和学习笔记（开发中）'
-      },
-      tools: {
-        title: '更多工具',
-        description: '持续更新中...'
-      }
+    sheet: {
+      subtitle: 'Jacory',
+      revision: '档案 03 / 修订 01',
+      identityIllustrationAlt: 'Jacory 身份线稿'
     },
-    contactTitle: '联系方式'
+    slogan: {
+      line1: '大海',
+      line2Prefix: '',
+      line2Emphasis: '辽阔',
+      line2Suffix: '如初'
+    },
+    statement: '这里是我的个人数字空间。\n记录作品、沉淀工具、整理笔记，\n也是持续思考和构建的开放系统。\n长期迭代，持续进化。',
+    identity: {
+      roleLabel: '身份',
+      role: '设计者 · 开发者 · 写作者 · 创作者',
+      baseLabel: '实践方向',
+      base: '软件开发 · Web 体验设计 · Agent 系统 · 视频创作',
+      focusLabel: '系统',
+      focus: '个人网站 · 视频 · 知识库 · 工作流',
+      statusLabel: '状态',
+      status: '公开构建中'
+    },
+    principles: {
+      courage: '勇气',
+      order: '秩序',
+      curiosity: '好奇',
+      expression: '表达',
+      refinement: '打磨'
+    },
+    contact: {
+      ariaLabel: '联系方式',
+      rssStatus: '待开放',
+      thanks: 'THANKS FOR VISITING.'
+    },
   },
   videoParser: {
     title: '视频解析下载工具',
