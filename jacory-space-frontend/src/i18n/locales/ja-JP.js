@@ -152,25 +152,40 @@ export default {
     }
   },
   about: {
-    role: 'クリエイター / 開発者 / メイカー',
-    introTitle: 'プロフィール',
-    intro: 'Jacoryです。技術に触れ、ものをつくることを楽しんでいます。このサイトでは、自作ツールや技術記事、日々の記録を公開しています。',
-    projectsTitle: 'プロジェクト',
-    projects: {
-      video: {
-        title: '動画解析ツール',
-        description: '複数プラットフォームの動画をダウンロード'
-      },
-      blog: {
-        title: '技術ブログ',
-        description: '開発ノートと学びの記録（制作中）'
-      },
-      tools: {
-        title: 'そのほかのツール',
-        description: '順次公開予定'
-      }
+    sheet: {
+      subtitle: 'Jacory',
+      revision: 'ファイル 03 / 改訂 01',
+      identityIllustrationAlt: 'Jacory のアイデンティティ線画'
     },
-    contactTitle: 'お問い合わせ'
+    slogan: {
+      line1: '海は',
+      line2Prefix: 'いまも',
+      line2Emphasis: 'はるかに広い',
+      line2Suffix: '。'
+    },
+    statement: 'ここは、私の個人的なデジタル空間です。\n作品を記録し、ツールを磨き、ノートを整理する。\n考え、つくり続けるための開かれたシステムでもあります。\n長く更新し、進化し続けます。',
+    identity: {
+      roleLabel: '自己定義',
+      role: 'デザイナー · 開発者 · 書き手 · クリエイター',
+      baseLabel: '実践領域',
+      base: 'ソフトウェア開発 · Web体験設計 · Agentシステム · 動画制作',
+      focusLabel: 'システム',
+      focus: '個人サイト · 動画 · ナレッジベース · ワークフロー',
+      statusLabel: '状態',
+      status: '公開しながら構築中'
+    },
+    principles: {
+      courage: '勇気',
+      order: '秩序',
+      curiosity: '好奇心',
+      expression: '表現',
+      refinement: '磨き上げ'
+    },
+    contact: {
+      ariaLabel: '連絡先',
+      rssStatus: '準備中',
+      thanks: 'THANKS FOR VISITING.'
+    },
   },
   videoParser: {
     title: '動画解析・ダウンロード',

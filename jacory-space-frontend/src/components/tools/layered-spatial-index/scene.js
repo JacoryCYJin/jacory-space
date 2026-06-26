@@ -32,38 +32,8 @@ function getCssColor(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
 }
 
-function linearToSrgb(channel) {
-  const value = Math.max(0, Math.min(1, channel))
-  return value <= 0.0031308 ? value * 12.92 : 1.055 * value ** (1 / 2.4) - 0.055
-}
-
-function oklchToRgb(style) {
-  const match = style.match(/oklch\(\s*([\d.]+%?)\s+([\d.]+)\s+([\d.]+)\s*\)/)
-  if (!match) return null
-
-  const l = match[1].endsWith('%') ? Number.parseFloat(match[1]) / 100 : Number.parseFloat(match[1])
-  const c = Number.parseFloat(match[2])
-  const h = (Number.parseFloat(match[3]) * Math.PI) / 180
-  const a = Math.cos(h) * c
-  const b = Math.sin(h) * c
-  const lPrime = l + 0.3963377774 * a + 0.2158037573 * b
-  const mPrime = l - 0.1055613458 * a - 0.0638541728 * b
-  const sPrime = l - 0.0894841775 * a - 1.291485548 * b
-  const lmsL = lPrime ** 3
-  const lmsM = mPrime ** 3
-  const lmsS = sPrime ** 3
-
-  return {
-    r: linearToSrgb(4.0767416621 * lmsL - 3.3077115913 * lmsM + 0.2309699292 * lmsS),
-    g: linearToSrgb(-1.2684380046 * lmsL + 2.6097574011 * lmsM - 0.3413193965 * lmsS),
-    b: linearToSrgb(-0.0041960863 * lmsL - 0.7034186147 * lmsM + 1.707614701 * lmsS)
-  }
-}
-
 function colorToThree(name) {
   const style = getCssColor(name)
-  const rgb = oklchToRgb(style)
-  if (rgb) return new THREE.Color(rgb.r, rgb.g, rgb.b)
   return new THREE.Color(style)
 }
 

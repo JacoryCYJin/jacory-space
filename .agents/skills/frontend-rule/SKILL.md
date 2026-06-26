@@ -27,3 +27,10 @@ Use this skill when editing files under `jacory-space-frontend/`.
 ```
 
 When adding a new icon dependency, prefer a lightweight library that works well with Tailwind. Do not handwrite large SVG blocks for a single icon unless the project already has a unified icon component pattern.
+
+## Illustrations And Grain
+
+- The canonical page background color is `#f6f8fa`.
+- When a page already uses the global `grain` layer, do not add another local `grain` layer to illustration containers.
+- Illustrations should sit beneath the existing page-level `grain::after` overlay, for example with `relative z-0` on the image when the stacking order needs to be explicit.
+- Do not duplicate grain on a `<figure>` or illustration wrapper just to blend an image into the page; that makes the local texture heavier than the surrounding background.
