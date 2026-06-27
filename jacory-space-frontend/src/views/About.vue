@@ -1,6 +1,6 @@
 <template>
   <main ref="pageRoot" class="grain min-h-screen bg-background pt-16">
-    <section class="px-5 pb-8 pt-5 md:px-8 md:pb-10 md:pt-7">
+    <section class="px-5 pb-8 md:px-8 md:pb-10">
       <div class="mx-auto max-w-[1440px]">
         <header class="about-reveal reveal flex items-end justify-between">
           <div>
@@ -10,7 +10,7 @@
         </header>
 
         <div class="relative mt-8 lg:mt-10">
-          <div class="relative grid grid-cols-12 gap-y-12 lg:min-h-[38rem] lg:overflow-visible">
+          <div class="relative grid grid-cols-12 gap-y-12 lg:grid-cols-[repeat(13,minmax(0,1fr))] lg:min-h-[38rem] lg:overflow-visible">
             <figure
               class="about-identity-illustration about-reveal reveal relative col-span-12 flex min-h-[22rem] items-center justify-center overflow-hidden border-b border-line pb-8 lg:pointer-events-none lg:absolute lg:left-[-10rem] lg:z-0 lg:-translate-y-1/2 lg:overflow-visible lg:border-b-0 lg:pb-0"
             >
@@ -23,7 +23,7 @@
             </figure>
 
             <section
-              class="about-reveal reveal relative z-10 col-span-12 flex flex-col justify-center lg:col-span-5 lg:col-start-4 lg:px-[clamp(2rem,4vw,4.75rem)]"
+              class="about-reveal reveal relative z-10 col-span-12 flex flex-col justify-center lg:col-span-5 lg:col-start-5 lg:pl-[clamp(2rem,4vw,4.75rem)]"
               style="transition-delay: 80ms"
             >
               <h1
@@ -43,7 +43,7 @@
             </section>
 
             <aside
-              class="about-side-panel about-reveal reveal relative z-10 col-span-12 overflow-hidden border-t border-line pt-8 lg:-top-5 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0"
+              class="about-side-panel about-reveal reveal relative z-10 col-span-12 overflow-hidden border-t border-line pt-8 lg:-top-5 lg:col-span-4 lg:border-l lg:border-t-0 lg:pl-6 lg:pt-0 xl:pl-8"
               style="transition-delay: 160ms"
             >
               <section aria-labelledby="identity-heading" class="relative">
