@@ -8,7 +8,7 @@ LOG_DIR="$RUNTIME_DIR/logs"
 
 # name|directory|start command|port
 SERVICES=(
-  "video-backend|video-backend|npm run dev|5001"
+  "video-backend|jacory-space-backend/video-backend|npm run dev|5001"
   "jacory-space-frontend|jacory-space-frontend|npm run dev|3001"
 )
 

@@ -37,11 +37,11 @@ jacory-space-frontend/design-reference/
 .dev/
 
 # Backend runtime data
-video-backend/downloads/
-video-backend/data/users/
+jacory-space-backend/video-backend/downloads/
+jacory-space-backend/video-backend/data/users/
 
 # Keep backend cookie/runtime dirs out of git
-video-backend/data/cookies/
+jacory-space-backend/video-backend/data/cookies/
 
 # Python cache (if ever used)
 __pycache__/
