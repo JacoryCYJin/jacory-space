@@ -123,7 +123,7 @@
 
         <div class="mt-12 flex items-center justify-between border-t border-line pt-5">
           <span class="tech">© MMXXVI</span>
-          <span class="tech">39.9°N — 116.4°E</span>
+          <span class="tech">31.2°N — 121.5°E</span>
         </div>
       </div>
     </footer>

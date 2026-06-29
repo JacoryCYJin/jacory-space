@@ -9,7 +9,7 @@
       >
 
       <div class="relative z-10 grid w-full grid-cols-[minmax(0,1fr)] border-line lg:grid-cols-[360px_minmax(0,1fr)] lg:px-4 xl:grid-cols-[372px_minmax(0,1fr)] xl:px-8 2xl:grid-cols-[380px_minmax(0,1fr)] 2xl:px-20">
-        <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:flex lg:h-[calc(100svh-var(--navbar-height))] lg:flex-col lg:border-b-0 lg:border-r lg:px-[2.35rem] lg:pb-6 lg:pt-5 xl:px-10 2xl:px-12">
+        <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:flex lg:h-[calc(100svh-var(--navbar-height))] lg:flex-col lg:border-b-0 lg:border-r lg:px-[2.35rem] lg:pb-6 lg:pt-4 xl:px-10 2xl:px-12">
           <section data-tools-enter class="sidebar-hero-section">
             <div class="grid gap-8 lg:gap-4 xl:gap-6">
               <div class="grid gap-10 lg:gap-4 xl:gap-7">
@@ -202,13 +202,13 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .sidebar-hero-section {
-  @apply border-b border-line py-10 lg:shrink-0 lg:pb-5 lg:pt-5 xl:pb-7 xl:pt-8;
+  @apply border-b border-line py-10 lg:shrink-0 lg:pb-5 lg:pt-0 xl:pb-7 xl:pt-0;
 }
 
 .sidebar-index-section {
   --sidebar-border-gap: 1.5rem;
   --sidebar-copy-gap: 1rem;
-  --sidebar-update-gap: 1.5rem;
+  --sidebar-update-gap: 0.5rem;
 
   @apply border-b-0 py-10 lg:min-h-0 lg:flex-1 lg:py-3 xl:py-5;
 }

@@ -288,8 +288,52 @@ onMounted(() => {
           0.18,
         )
 
-      gsap.fromTo(
-        '.about-contact-item',
+      const contactTargets = select('.about-contact-item')
+      const contactSection = pageRoot.value.querySelector('.about-contact')
+      let contactRevealed = false
+      let contactFallbackFrame = 0
+      let contactFallbackTimer = 0
+      let contactTween
+
+      const isContactInViewport = () => {
+        if (!contactSection) return false
+
+        const rect = contactSection.getBoundingClientRect()
+        return rect.top <= window.innerHeight && rect.bottom >= 0
+      }
+
+      const revealContactFallback = () => {
+        if (contactRevealed || !contactTargets.length) return
+
+        contactRevealed = true
+        contactTween?.scrollTrigger?.kill(false)
+        gsap.killTweensOf(contactTargets)
+        gsap.to(contactTargets, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.65,
+          ease: 'power3.out',
+          stagger: 0.07,
+          overwrite: true,
+        })
+      }
+
+      const checkContactFallback = () => {
+        window.cancelAnimationFrame(contactFallbackFrame)
+        window.clearTimeout(contactFallbackTimer)
+        contactFallbackFrame = window.requestAnimationFrame(() => {
+          if (!isContactInViewport()) return
+
+          contactFallbackTimer = window.setTimeout(() => {
+            if (isContactInViewport()) {
+              revealContactFallback()
+            }
+          }, 160)
+        })
+      }
+
+      contactTween = gsap.fromTo(
+        contactTargets,
         { autoAlpha: 0, y: 8 },
         {
           autoAlpha: 1,
@@ -297,13 +341,49 @@ onMounted(() => {
           duration: 0.65,
           ease: 'power3.out',
           stagger: 0.07,
+          onStart: () => {
+            contactRevealed = true
+          },
           scrollTrigger: {
             trigger: '.about-contact',
             start: 'top 90%',
             once: true,
+            onRefresh: checkContactFallback,
           },
         },
       )
+
+      window.addEventListener('scroll', checkContactFallback, { passive: true })
+      window.addEventListener('resize', checkContactFallback)
+
+      const refreshAfterLayoutAsset = () => {
+        window.requestAnimationFrame(() => {
+          ScrollTrigger.refresh()
+          checkContactFallback()
+        })
+      }
+
+      const imageCleanups = Array.from(pageRoot.value.querySelectorAll('img'))
+        .filter((image) => !image.complete)
+        .flatMap((image) => {
+          image.addEventListener('load', refreshAfterLayoutAsset, { once: true })
+          image.addEventListener('error', refreshAfterLayoutAsset, { once: true })
+
+          return [
+            () => image.removeEventListener('load', refreshAfterLayoutAsset),
+            () => image.removeEventListener('error', refreshAfterLayoutAsset),
+          ]
+        })
+
+      refreshAfterLayoutAsset()
+
+      return () => {
+        window.cancelAnimationFrame(contactFallbackFrame)
+        window.clearTimeout(contactFallbackTimer)
+        window.removeEventListener('scroll', checkContactFallback)
+        window.removeEventListener('resize', checkContactFallback)
+        imageCleanups.forEach((cleanup) => cleanup())
+      }
     },
     pageRoot.value,
   )

@@ -46,7 +46,7 @@
 
       <div class="hidden items-center gap-5 md:flex">
         <div class="text-right">
-          <span class="tech block text-xs">39.9°N — 116.4°E</span>
+          <span class="tech block text-xs">31.2°N — 121.5°E</span>
         </div>
         <LanguageSwitcher />
       </div>
