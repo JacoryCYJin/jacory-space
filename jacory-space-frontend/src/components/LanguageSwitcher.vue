@@ -16,7 +16,7 @@
     <div
       v-if="isOpen"
       id="language-menu"
-      class="absolute right-0 top-full z-50 mt-2 min-w-40 border border-line bg-background py-1 text-muted-foreground"
+      class="absolute right-0 top-full z-50 mt-2 w-max border border-line bg-background py-1 text-muted-foreground"
       role="menu"
       :aria-label="t('language.label')"
     >
@@ -24,7 +24,7 @@
         v-for="option in languageOptions"
         :key="option.value"
         type="button"
-        class="grid w-full grid-cols-[0.5rem_1fr_auto] items-center gap-3 px-3 py-2.5 text-left transition-colors duration-300 hover:bg-card hover:text-foreground"
+        class="grid w-full grid-cols-[0.5rem_1fr] items-center gap-3 px-3 py-2.5 text-left transition-colors duration-300 hover:bg-card hover:text-foreground"
         :class="locale === option.value ? 'text-foreground' : 'text-muted-foreground'"
         role="menuitemradio"
         :aria-checked="locale === option.value"
@@ -36,7 +36,6 @@
           aria-hidden="true"
         />
         <span class="font-sans text-xs tracking-normal">{{ option.label }}</span>
-        <span class="text-haze">{{ option.index }}</span>
       </button>
     </div>
   </div>
@@ -67,11 +66,10 @@ const languageDetails = {
   }
 }
 
-const languageOptions = computed(() => supportedLocales.map((value, index) => ({
+const languageOptions = computed(() => supportedLocales.map((value) => ({
   value,
   shortLabel: languageDetails[value]?.shortLabel ?? value.slice(0, 2).toUpperCase(),
-  label: languageDetails[value]?.label ?? value,
-  index: String(index + 1).padStart(2, '0')
+  label: languageDetails[value]?.label ?? value
 })))
 
 const currentLanguage = computed(
