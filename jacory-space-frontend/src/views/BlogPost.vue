@@ -1,6 +1,12 @@
 <template>
   <main class="grain min-h-screen bg-background">
-    <template v-if="post">
+    <section v-if="isLoading || loadError" class="px-5 pt-40 md:px-8">
+      <div class="mx-auto max-w-screen-xl">
+        <span class="tech text-haze">{{ loadError || t('blog.post.fieldNote') }}</span>
+      </div>
+    </section>
+
+    <template v-else-if="post">
       <section class="px-5 pt-28 md:px-8 md:pt-32">
         <div class="mx-auto max-w-screen-xl">
           <div class="grid grid-cols-12 gap-x-10">
@@ -134,7 +140,10 @@ const route = useRoute()
 const { t } = useI18n()
 const post = ref(null)
 const activeId = ref('')
+const isLoading = ref(true)
+const loadError = ref('')
 let headingObserver
+let loadToken = 0
 
 const frontmatter = computed(() => post.value?.frontmatter ?? {})
 
@@ -188,11 +197,30 @@ function setupObserver() {
   targets.forEach((target) => headingObserver.observe(target))
 }
 
-function loadPost(slug) {
-  post.value = getPost(slug)
+async function loadPost(slug) {
+  const token = (loadToken += 1)
+  teardownObserver()
+  post.value = null
   activeId.value = ''
+  isLoading.value = true
+  loadError.value = ''
+
+  try {
+    const loadedPost = await getPost(slug)
+    if (token !== loadToken) return
+    post.value = loadedPost
+  } catch (error) {
+    if (token !== loadToken) return
+    loadError.value = error instanceof Error ? error.message : String(error)
+  } finally {
+    if (token !== loadToken) return
+    isLoading.value = false
+  }
+
   nextTick(() => {
-    window.scrollTo({ top: 0 })
+    if (typeof window !== 'undefined') {
+      window.scrollTo({ top: 0 })
+    }
     setupObserver()
   })
 }

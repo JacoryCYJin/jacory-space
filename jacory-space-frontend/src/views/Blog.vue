@@ -22,7 +22,11 @@
 
     <section class="px-5 py-20 md:px-8 md:py-28">
       <div class="mx-auto max-w-screen-xl">
-        <div v-if="lead" class="reveal blog-reveal">
+        <div v-if="isLoading || loadError" class="reveal blog-reveal border-y border-line py-10">
+          <p class="tech text-haze">{{ loadError || t('blog.fieldNotes.archiveOpen', { count: 0 }) }}</p>
+        </div>
+
+        <div v-else-if="lead" class="reveal blog-reveal">
           <RouterLink
             :to="`/blog/${lead.slug}`"
             class="group grid gap-8 border-y border-line py-10 lg:grid-cols-12 lg:gap-10"
@@ -106,7 +110,7 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import Footer from '../components/Footer.vue'
@@ -114,6 +118,9 @@ import { listPosts } from '../lib/blog'
 
 const pageRoot = ref(null)
 const { t } = useI18n()
+const posts = ref([])
+const isLoading = ref(true)
+const loadError = ref('')
 let revealObserver
 
 function categoryLabel(category) {
@@ -131,12 +138,13 @@ const toEntry = (post) => ({
   read: post.readTime
 })
 
-const allPosts = computed(() => listPosts().map(toEntry))
+const allPosts = computed(() => posts.value.map(toEntry))
 const lead = computed(() => allPosts.value[0] ?? null)
 const entries = computed(() => allPosts.value.slice(1))
 const entryCount = computed(() => allPosts.value.length)
 
-onMounted(() => {
+function setupRevealObserver() {
+  revealObserver?.disconnect()
   const revealItems = pageRoot.value?.querySelectorAll('.blog-reveal') ?? []
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
@@ -157,6 +165,18 @@ onMounted(() => {
   )
 
   revealItems.forEach((item) => revealObserver.observe(item))
+}
+
+onMounted(async () => {
+  try {
+    posts.value = await listPosts()
+  } catch (error) {
+    loadError.value = error instanceof Error ? error.message : String(error)
+  } finally {
+    isLoading.value = false
+    await nextTick()
+    setupRevealObserver()
+  }
 })
 
 onBeforeUnmount(() => {
