@@ -113,33 +113,6 @@
       </div>
     </section>
 
-    <footer class="about-contact px-5 py-7 md:px-8">
-      <div class="mx-auto flex max-w-[1440px] flex-col gap-6 md:flex-row md:items-center">
-        <p class="about-contact-item font-mono text-xs tracking-[0.14em] text-blue">{{ t('about.contact.label') }}</p>
-
-        <nav :aria-label="t('about.contact.ariaLabel')" class="about-contact-item flex flex-wrap items-center gap-x-8 gap-y-3">
-          <component
-            :is="link.href ? 'a' : 'span'"
-            v-for="link in contactLinks"
-            :key="link.label"
-            :href="link.href"
-            :target="link.external ? '_blank' : undefined"
-            :rel="link.external ? 'noopener noreferrer' : undefined"
-            class="group flex items-baseline gap-3 font-mono text-xs"
-          >
-            <span class="text-foreground transition-colors duration-300 group-hover:text-blue">
-              {{ link.label }}
-            </span>
-            <span class="text-muted-foreground">{{ link.value }}</span>
-          </component>
-        </nav>
-
-        <div class="about-contact-item hidden h-px flex-1 bg-line md:block">
-          <span class="ml-auto block h-1.5 w-1.5 -translate-y-[0.1875rem] rounded-full bg-blue" />
-        </div>
-        <p class="about-contact-item tech md:text-right">{{ t('about.contact.thanks') }}</p>
-      </div>
-    </footer>
   </main>
 </template>
 
@@ -192,20 +165,6 @@ const principles = computed(() => [
   { label: t('about.principles.refinement') },
 ])
 
-const contactLinks = computed(() => [
-  {
-    label: 'Email',
-    value: 'chengyue.jin@outlook.com',
-    href: 'mailto:chengyue.jin@outlook.com',
-  },
-  {
-    label: 'GitHub',
-    value: '@JacoryCYJin',
-    href: 'https://github.com/JacoryCYJin',
-    external: true,
-  },
-])
-
 onMounted(() => {
   if (!pageRoot.value) return
 
@@ -233,7 +192,6 @@ onMounted(() => {
         '.about-axioms-label',
         '.about-axioms-line',
         '.about-axiom',
-        '.about-contact-item',
       ].join(', '))
 
       if (reduceMotion) {
@@ -288,78 +246,9 @@ onMounted(() => {
           0.18,
         )
 
-      const contactTargets = select('.about-contact-item')
-      const contactSection = pageRoot.value.querySelector('.about-contact')
-      let contactRevealed = false
-      let contactFallbackFrame = 0
-      let contactFallbackTimer = 0
-      let contactTween
-
-      const isContactInViewport = () => {
-        if (!contactSection) return false
-
-        const rect = contactSection.getBoundingClientRect()
-        return rect.top <= window.innerHeight && rect.bottom >= 0
-      }
-
-      const revealContactFallback = () => {
-        if (contactRevealed || !contactTargets.length) return
-
-        contactRevealed = true
-        contactTween?.scrollTrigger?.kill(false)
-        gsap.killTweensOf(contactTargets)
-        gsap.to(contactTargets, {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.65,
-          ease: 'power3.out',
-          stagger: 0.07,
-          overwrite: true,
-        })
-      }
-
-      const checkContactFallback = () => {
-        window.cancelAnimationFrame(contactFallbackFrame)
-        window.clearTimeout(contactFallbackTimer)
-        contactFallbackFrame = window.requestAnimationFrame(() => {
-          if (!isContactInViewport()) return
-
-          contactFallbackTimer = window.setTimeout(() => {
-            if (isContactInViewport()) {
-              revealContactFallback()
-            }
-          }, 160)
-        })
-      }
-
-      contactTween = gsap.fromTo(
-        contactTargets,
-        { autoAlpha: 0, y: 8 },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.65,
-          ease: 'power3.out',
-          stagger: 0.07,
-          onStart: () => {
-            contactRevealed = true
-          },
-          scrollTrigger: {
-            trigger: '.about-contact',
-            start: 'top 90%',
-            once: true,
-            onRefresh: checkContactFallback,
-          },
-        },
-      )
-
-      window.addEventListener('scroll', checkContactFallback, { passive: true })
-      window.addEventListener('resize', checkContactFallback)
-
       const refreshAfterLayoutAsset = () => {
         window.requestAnimationFrame(() => {
           ScrollTrigger.refresh()
-          checkContactFallback()
         })
       }
 
@@ -378,10 +267,6 @@ onMounted(() => {
       refreshAfterLayoutAsset()
 
       return () => {
-        window.cancelAnimationFrame(contactFallbackFrame)
-        window.clearTimeout(contactFallbackTimer)
-        window.removeEventListener('scroll', checkContactFallback)
-        window.removeEventListener('resize', checkContactFallback)
         imageCleanups.forEach((cleanup) => cleanup())
       }
     },

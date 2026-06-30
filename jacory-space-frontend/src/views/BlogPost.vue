@@ -102,7 +102,7 @@
         </div>
       </section>
 
-      <div class="h-24"></div>
+      <Footer />
     </template>
 
     <section v-else class="px-5 pt-40 md:px-8">
@@ -128,6 +128,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { getPost } from '../lib/blog'
 import MarkdownArticle from '../components/blog/MarkdownArticle.vue'
+import Footer from '../components/Footer.vue'
 
 const route = useRoute()
 const { t } = useI18n()
