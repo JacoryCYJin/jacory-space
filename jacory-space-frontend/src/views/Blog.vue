@@ -106,17 +106,30 @@
         <div class="reveal blog-reveal flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
           <div>
             <p class="font-sans text-3xl font-medium tracking-tight text-foreground md:text-4xl">
-              {{ t('blog.fieldNotes.endOfIndex') }}<span class="text-blue">.</span>
+              {{ footerBrandLead }}<span class="text-blue">{{ footerBrandAccent }}</span>
             </p>
             <p class="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
               {{ t('blog.fieldNotes.footerNote') }}
             </p>
           </div>
 
-          <dl class="grid grid-cols-2 gap-x-10 gap-y-3 font-mono text-xs">
-            <div v-for="item in footerMeta" :key="item.key" class="flex flex-col gap-1">
+          <dl class="grid grid-cols-2 gap-x-8 gap-y-7 font-mono text-xs md:grid-cols-4 md:gap-x-12">
+            <div v-for="item in footerMeta" :key="item.key" class="flex flex-col gap-2">
               <dt class="tracking-[0.14em] text-muted-foreground">{{ item.key }}</dt>
-              <dd class="text-foreground">{{ item.value }}</dd>
+              <dd class="flex flex-col gap-1 leading-relaxed text-foreground">
+                <component
+                  :is="line.to ? RouterLink : line.href ? 'a' : 'span'"
+                  v-for="line in item.valueLines"
+                  :key="line.label"
+                  :to="line.to"
+                  :href="line.href"
+                  :target="line.external ? '_blank' : undefined"
+                  :rel="line.external ? 'noopener noreferrer' : undefined"
+                  :class="line.to || line.href ? 'transition-colors duration-300 hover:text-blue' : undefined"
+                >
+                  {{ line.label }}
+                </component>
+              </dd>
             </div>
           </dl>
         </div>
@@ -133,6 +146,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
 import { listPosts } from '../lib/blog'
 
 const pageRoot = ref(null)
@@ -158,12 +172,40 @@ const allPosts = computed(() => listPosts().map(toEntry))
 const lead = computed(() => allPosts.value[0] ?? null)
 const entries = computed(() => allPosts.value.slice(1))
 const entryCount = computed(() => allPosts.value.length)
+const footerBrandLead = computed(() => {
+  const title = t('blog.fieldNotes.endOfIndex')
+  const lastSpaceIndex = title.lastIndexOf(' ')
+  return lastSpaceIndex === -1 ? title : `${title.slice(0, lastSpaceIndex)} `
+})
+const footerBrandAccent = computed(() => {
+  const title = t('blog.fieldNotes.endOfIndex')
+  const lastSpaceIndex = title.lastIndexOf(' ')
+  return lastSpaceIndex === -1 ? '' : title.slice(lastSpaceIndex + 1)
+})
+
+const footerValueLines = (value, links = []) => value
+  .split('/')
+  .map((line, index) => ({ label: line.trim(), ...links[index] }))
+  .filter((line) => line.label)
 
 const footerMeta = computed(() => [
-  { key: t('blog.fieldNotes.footer.system'), value: t('blog.fieldNotes.footer.systemValue') },
-  { key: t('blog.fieldNotes.footer.surface'), value: t('blog.fieldNotes.footer.surfaceValue') },
-  { key: t('blog.fieldNotes.footer.accent'), value: t('blog.fieldNotes.footer.accentValue') },
-  { key: t('blog.fieldNotes.footer.status'), value: t('blog.fieldNotes.footer.statusValue') }
+  { key: t('blog.fieldNotes.footer.system'), valueLines: footerValueLines(t('blog.fieldNotes.footer.systemValue')) },
+  {
+    key: t('blog.fieldNotes.footer.surface'),
+    valueLines: footerValueLines(t('blog.fieldNotes.footer.surfaceValue'), [
+      { to: '/tools' },
+      { to: '/blog' },
+      { to: '/about' },
+    ]),
+  },
+  {
+    key: t('blog.fieldNotes.footer.accent'),
+    valueLines: footerValueLines(t('blog.fieldNotes.footer.accentValue'), [
+      { href: 'mailto:chengyue.jin@outlook.com' },
+      { href: 'https://github.com/JacoryCYJin', external: true },
+    ]),
+  },
+  { key: t('blog.fieldNotes.footer.status'), valueLines: footerValueLines(t('blog.fieldNotes.footer.statusValue')) }
 ])
 
 onMounted(() => {

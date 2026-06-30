@@ -118,17 +118,17 @@ export default {
       readEntry: '阅读全文',
       archiveAll: '归档 — 全部条目',
       scrollHint: '↓ 继续浏览',
-      endOfIndex: 'End of index',
+      endOfIndex: 'Jacory Space',
       footerNote: '这套系统就绪后，下一步才是具体的页面：写作、工具、作品集——都将活在这套冷白的语言里。',
       footer: {
-        system: 'System',
+        system: '系统',
         systemValue: 'Personal OS / v.01',
-        surface: 'Surface',
-        surfaceValue: 'Cool White',
-        accent: 'Accent',
-        accentValue: 'Cool Blue',
-        status: 'Status',
-        statusValue: 'Foundation'
+        surface: '入口',
+        surfaceValue: '工具库 / 博客 / 关于我',
+        accent: '联系',
+        accentValue: 'Email / GitHub',
+        status: '状态',
+        statusValue: '持续构建中'
       }
     },
     post: {
@@ -183,8 +183,9 @@ export default {
     },
     contact: {
       ariaLabel: '联系方式',
+      label: '/ 联系',
       rssStatus: '待开放',
-      thanks: 'THANKS FOR VISITING.'
+      thanks: '感谢来访。'
     },
   },
   videoParser: {

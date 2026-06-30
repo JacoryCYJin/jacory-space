@@ -118,17 +118,17 @@ export default {
       readEntry: '記事を読む',
       archiveAll: 'アーカイブ — すべての記事',
       scrollHint: '↓ スクロール',
-      endOfIndex: 'End of index',
+      endOfIndex: 'Jacory Space',
       footerNote: '仕組みが整ったら、次はページそのものへ。文章、ツール、ポートフォリオを、このクールホワイトの言語でひとつにつないでいきます。',
       footer: {
-        system: 'System',
+        system: 'システム',
         systemValue: 'Personal OS / v.01',
-        surface: 'Surface',
-        surfaceValue: 'Cool White',
-        accent: 'Accent',
-        accentValue: 'Cool Blue',
-        status: 'Status',
-        statusValue: 'Foundation'
+        surface: '入口',
+        surfaceValue: 'ツール / ブログ / プロフィール',
+        accent: '連絡',
+        accentValue: 'Email / GitHub',
+        status: '状態',
+        statusValue: '公開しながら構築中'
       }
     },
     post: {
@@ -183,8 +183,9 @@ export default {
     },
     contact: {
       ariaLabel: '連絡先',
+      label: '/ 連絡',
       rssStatus: '準備中',
-      thanks: 'THANKS FOR VISITING.'
+      thanks: 'ご訪問ありがとうございます。'
     },
   },
   videoParser: {
