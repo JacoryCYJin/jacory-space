@@ -58,3 +58,10 @@ alwaysApply: false
 .label { letter-spacing: 0.16em; color: var(--muted-foreground); }
 </style>
 ```
+
+## 插图 / Grain
+
+- 标准页面背景色是 `#f6f8fa`。
+- 页面已经使用全局 `grain` 层时，不要在插图容器里再叠一层局部 `grain`。
+- 插图应位于页面级 `grain::after` 下方；需要明确层级时，可在图片上使用 `relative z-0`。
+- 不要为了让图片融入页面而在 `<figure>` 或插图 wrapper 上重复 grain，这会让局部纹理比周围背景更重。

@@ -1,0 +1,65 @@
+---
+description: Personal Operating System 视觉风格：冷白档案、克制技术感、冷蓝点缀、hairline、Geist 字体、细微动效，禁止 SaaS/card/template 风格
+globs: jacory-space-frontend/**/*
+alwaysApply: false
+---
+
+# personal-operating-system-visual-style
+
+编辑任何 UI、布局、页面、组件、样式、动画或 theme token 时适用。
+
+## 项目路径
+
+- 共享 token：`jacory-space-frontend/src/style.css`
+- Tailwind token 映射：`jacory-space-frontend/tailwind.config.js`
+- Vue 组件：`jacory-space-frontend/src/components/`
+- 页面视图：`jacory-space-frontend/src/views/`
+- 路由：`jacory-space-frontend/src/router/`
+
+## 风格基线
+
+- 整体必须像个人数字空间 / 数字档案 / personal operating system，不像 SaaS 后台或营销模板。
+- 基调：冷白、克制、干净、有秩序、轻微技术感。
+- 用结构做装饰：grid、hairline、编号、索引、metadata，而不是重卡片、阴影、渐变和装饰图形。
+- 留白优先，accent 少量使用。
+
+## 颜色
+
+- 背景：`--background` / `#f6f8fa`
+- 纸面：`--card` / `#fafbfc`
+- 主文本：`--foreground` / `--ink` / `#1d2127`
+- 次文本：`--muted-foreground` / `#73787f`
+- 边线：`--border` / `--line` / `#dcdfe3`
+- 强边线：`--line-strong` / `#c4c9ce`
+- 点缀蓝：`--blue` / `#0e66c8`
+- 柔和蓝：`--blue-soft` / `#6f9ad6`
+
+在 Vue 模板和共享 CSS 中优先使用语义 token：`bg-background`、`text-foreground`、`text-muted-foreground`、`text-blue`、`border-border`、`border-line`、`.hairline`。不要在组件里硬编码 hex/rgb，除非是在 `src/style.css` 新增 token 并同步 `tailwind.config.js`。
+
+## 字体与排版
+
+- 只使用 Geist Sans 和 Geist Mono。
+- `font-sans` 用于正文和标题，`font-mono` 用于编号、坐标、状态和 meta。
+- 大标题可紧凑，mono 标签使用大写、较大 tracking。
+- 正文行高 1.4-1.6，宽度控制在约 66 字符内。
+
+## 动效
+
+- 基准 easing：`cubic-bezier(0.16, 1, 0.3, 1)`，约 600-900ms。
+- 默认 reveal 以 opacity + 小幅 translate（约 14px）为主。
+- 允许 GSAP 风格的 scroll reveal、mask reveal、轻 parallax、hover reveal，但必须克制。
+- 必须尊重 `prefers-reduced-motion`。
+
+## 禁止
+
+- 禁止暖色奢华、米色、奶油色、黄色暖调。
+- 禁止重阴影、大圆角、重卡片、彩色大渐变。
+- 禁止随机装饰元素、blob、glow、gradient circle、emoji icon。
+- 禁止每个页面一套不同风格。
+- 禁止引入第三字体或第二个强主色。
+
+## 验证
+
+- 前端 UI 改动后运行 `cd jacory-space-frontend && npm run build`。
+- 视觉行为变更时，启动服务前先运行 `bash scripts/dev.sh status`。
+- 浏览器检查桌面约 1440px 和移动宽度，确认页面读起来是有序冷白档案，而不是 SaaS panel。

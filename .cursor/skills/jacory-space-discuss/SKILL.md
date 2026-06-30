@@ -5,7 +5,6 @@ description: >-
   在当前分支直接改文件，绝不主动 commit/push/PR，直到用户明确说「提交」。
   Use when the user says 研讨、梳理、调研、先看看、走查、登记发现、探针走查，
   or the task is read-only exploration with doc updates but no code to land yet.
-disable-model-invocation: true
 ---
 
 # jacory-space-discuss
@@ -14,13 +13,13 @@ disable-model-invocation: true
 
 - 梳理 `docs/overview/*-issues-overview.md`
 - 主题研究、架构取舍、问题全景
-- 探针走查攒发现（尚无代码要落地）
+- 只读探查、探针走查攒发现（尚无代码要落地）
 
-**判别**：这次只是「读 + 整理 + 探查」，没有要合并的代码产物 → 本 skill。有代码要落地 → `@jacory-space-dev-main`（默认）或用户点名 `@jacory-space-dev-worktree`（并行）。
+**判别**：这次只是「读 + 整理 + 探查」，没有要合并的代码产物 → 本 skill。有代码要落地 → `@jacory-space-dev-main`（默认）。
 
 ## 在哪改
 
-- **直接在当前分支的文件上改**——不开 linked worktree、不开 PR、不 fork chat
+- **直接在当前分支的文件上改**——不开 PR、不 fork chat
 - 产物：`docs/overview/`、调研/方案笔记、`docs/agent/` 草稿（执行级方案全文仍等开发模式再定稿提交）
 
 ## 提交节奏（硬）
@@ -31,9 +30,11 @@ disable-model-invocation: true
 
 ## 探针 / live
 
-- **栈由用户起**（`dev.sh` + Electron `--remote-debugging-port=9222` 等）——Agent **不自行启停 live stack**，避免和用户手动起的单例运行时冲突
-- Agent 只做：端口侦察（9222 CDP / API 口 / `cli.sock`）、CDP 驱动 composer、读画板 DOM、`manage.py shell` 查落库
-- 三层对齐：**UI 显示 == 落库 == Agent 自述**
+- **栈默认由用户起**——Agent **不自行启停 live stack**，避免和用户手动起的单例运行时冲突
+- 启动或检查服务前先运行 `bash scripts/dev.sh status` 或 `bash scripts/dev.sh ls`
+- 当前项目的 live 目标是 Vue 前端 `3001`、Express 后端 `5001`、前端 `/api` 代理到 `http://localhost:5001`
+- Agent 只做：端口侦察、读 DOM、检查 Express API 响应、查看本地配置或日志等只读/低风险探查
+- 三层对齐：**UI 显示 == API/服务状态 == Agent 自述**
 
 ## 顺手登记
 
@@ -41,4 +42,4 @@ disable-model-invocation: true
 
 ## 切到开发
 
-用户说「开干 / 修 XX / 可以提交了」→ 切 `@jacory-space-dev-main`（默认）或 `@jacory-space-dev-worktree`（并行）。
+用户说「开干 / 修 XX / 可以提交了」→ 切 `@jacory-space-dev-main`（默认）。

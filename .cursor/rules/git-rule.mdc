@@ -9,6 +9,7 @@ alwaysApply: true
 
 - 不在 `main` 上直接提交代码改动；先创建任务分支。
 - 分支格式：`<type>/<short-kebab-desc>`。
+- 使用完整分支前缀；不要用 `feat/` 作为分支前缀。
 - 常用前缀：
   - `feature/`：新增功能或明显能力增强
   - `fix/`：修复 bug、异常、回归问题
@@ -34,6 +35,7 @@ alwaysApply: true
 ## Workflow
 
 - 提交前先看 `git status`，不要把本地运行时数据、下载文件、个人文档提交进仓库。
+- 不提交 `jacory-space-backend/video-backend/data/users/`、`jacory-space-backend/video-backend/downloads/`、`.dev/`，除非用户明确要求。
 - 用户说“提交”“提交这个分支”“commit”“submit this branch”时，默认含义是 **commit + push 当前分支**。
 - 只有用户明确说“只提交”“只本地提交”“不要 push”时，才允许停在本地 commit。
 - 每次成功 commit 后，如属于分支工作流，必须立即执行 `git push -u origin HEAD`；不要在 commit 和 push 之间结束回合，除非 push 失败或用户明确禁止 push。
