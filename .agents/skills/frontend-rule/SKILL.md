@@ -7,6 +7,12 @@ description: Jacory Space frontend UI rule for files under jacory-space-frontend
 
 Use this skill when editing files under `jacory-space-frontend/`.
 
+## Styles
+
+- Prefer Tailwind utility classes directly in Vue template `class` attributes for colors, spacing, layout, positioning, and typography.
+- Use scoped CSS classes only when a style block is reused by multiple elements/components, or when Tailwind cannot express the property cleanly, such as complex transforms, letter spacing, pseudo-elements, or keyframes.
+- Do not create a one-off `.xxx` class just to wrap a few utility classes used once.
+
 ## Icons
 
 - Do not use emoji as UI icons, such as `🎬`, `📺`, `🔑`, `📁`, or `✓`.
@@ -27,6 +33,14 @@ Use this skill when editing files under `jacory-space-frontend/`.
 ```
 
 When adding a new icon dependency, prefer a lightweight library that works well with Tailwind. Do not handwrite large SVG blocks for a single icon unless the project already has a unified icon component pattern.
+
+## Typography
+
+- Use Tailwind named font sizes (`text-xs`, `text-sm`, `text-base`, etc.) and choose the closest standard step.
+- Do not use arbitrary text sizes such as `text-[0.78rem]` or `text-[11px]`; do not write `font-size` in `<style>`.
+- For 10px/11px-like labels, converge to `text-xs`; use `text-sm` for stronger hierarchy.
+- Use `font-sans` for body/headings and `font-mono` for numbers, coordinates, status, and meta.
+- Keep `<style>` for properties Tailwind cannot express cleanly (`letter-spacing`, `transform`, positioning, token color, `text-transform`). Use semantic token classes or CSS variables for color.
 
 ## Illustrations And Grain
 

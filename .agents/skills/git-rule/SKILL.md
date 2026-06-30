@@ -1,6 +1,6 @@
 ---
 name: git-rule
-description: MUST use before any git branch, commit, push, PR, merge, checkout, or status workflow in this repository. Jacory Space Git rules require task branches before code commits, Chinese one-line conventional commit messages in the format `<type>: 中文描述`, immediate push after requested commits, exclusion of local runtime data, and no PR merge unless the user explicitly asks.
+description: "MUST use before any git branch, commit, push, PR, merge, checkout, or status workflow in this repository. Jacory Space Git rules require task branches before code commits, Chinese one-line conventional commit messages, immediate push after requested commits, exclusion of local runtime data, and no PR merge unless the user explicitly asks."
 ---
 
 # git-rule
@@ -36,7 +36,7 @@ description: MUST use before any git branch, commit, push, PR, merge, checkout, 
 
 - Run `git status` before committing.
 - Do not commit local runtime data, downloads, or personal documents.
-- Keep `video-backend/data/users/`, `video-backend/downloads/`, and `.dev/` out of commits unless the user explicitly says otherwise.
+- Keep `jacory-space-backend/video-backend/data/users/`, `jacory-space-backend/video-backend/downloads/`, and `.dev/` out of commits unless the user explicitly says otherwise.
 - Treat user requests like “提交”, “提交这个分支”, “commit”, or “submit this branch” as **commit + push** by default.
 - Only stop after a local commit when the user explicitly says “只提交”, “只本地提交”, “不要 push”, or equivalent.
 - After every successful commit that is meant for a branch workflow, immediately run `git push -u origin HEAD`; do not end the turn between commit and push unless push fails or the user explicitly forbids pushing.

@@ -7,14 +7,14 @@ description: Jacory Space discussion, research, and read-only exploration workfl
 
 ## 适用
 
-用于梳理 overview、主题研究、架构取舍、问题全景、探针走查攒发现等任务。
+用于梳理 overview、主题研究、架构取舍、问题全景、只读探查、探针走查攒发现等任务。
 
-判别规则：这次只是读、整理、探查，没有要合并的代码产物时用本模式。有代码要落地时，切到 `dev-main`；用户点名并行时切到 `dev-worktree`。
+判别规则：这次只是读、整理、探查，没有要合并的代码产物时用本模式。有代码要落地时，切到 `dev-main`。
 
 ## 在哪改
 
 - 直接在当前分支文件上改。
-- 不开 linked worktree。
+- 始终在当前 checkout 工作。
 - 不主动开 PR。
 - 产物通常是 `docs/overview/`、调研/方案笔记、`docs/agent/` 草稿。
 
@@ -28,8 +28,10 @@ description: Jacory Space discussion, research, and read-only exploration workfl
 ## 探针 / live
 
 - live stack 默认由用户起，Agent 不自行启停，避免和用户手动起的单例运行时冲突。
-- Agent 只做端口侦察、CDP 驱动、读 DOM、查服务或数据库等只读/低风险探查。
-- 汇报时对齐 UI 显示、落库状态和 Agent 自述。
+- 启动或检查服务前先运行 `bash scripts/dev.sh status` 或 `bash scripts/dev.sh ls`。
+- 当前项目的 live 目标是 Vue 前端 `3001`、Express 后端 `5001`、前端 `/api` 代理到 `http://localhost:5001`。
+- Agent 只做端口侦察、读 DOM、检查 Express API 响应、查看本地配置或日志等只读/低风险探查。
+- 汇报时对齐 UI 显示、API/服务状态和 Agent 自述。
 
 ## 顺手登记
 
@@ -37,4 +39,4 @@ description: Jacory Space discussion, research, and read-only exploration workfl
 
 ## 切到开发
 
-用户说「开干 / 修 XX / 可以提交了」时，切到 `jacory-space-dev-main`；用户明确要求并行或 worktree 时，切到 `jacory-space-dev-worktree`。
+用户说「开干 / 修 XX / 可以提交了」时，切到 `dev-main`。
