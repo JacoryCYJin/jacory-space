@@ -118,17 +118,17 @@ export default {
       readEntry: 'Read entry',
       archiveAll: 'Archive — All Entries',
       scrollHint: '↓ scroll',
-      endOfIndex: 'End of index',
+      endOfIndex: 'Jacory Space',
       footerNote: 'Once the system is in place, the pages can follow: writing, tools, and a portfolio, all held together by the same cool-white language.',
       footer: {
         system: 'System',
         systemValue: 'Personal OS / v.01',
-        surface: 'Surface',
-        surfaceValue: 'Cool White',
-        accent: 'Accent',
-        accentValue: 'Cool Blue',
+        surface: 'Explore',
+        surfaceValue: 'Tools / Blog / About',
+        accent: 'Contact',
+        accentValue: 'Email / GitHub',
         status: 'Status',
-        statusValue: 'Foundation'
+        statusValue: 'Building in public'
       }
     },
     post: {
@@ -183,6 +183,7 @@ export default {
     },
     contact: {
       ariaLabel: 'Contact links',
+      label: '/ CONTACT',
       rssStatus: 'Coming soon',
       thanks: 'THANKS FOR VISITING.'
     },

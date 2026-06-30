@@ -115,7 +115,7 @@
 
     <footer class="about-contact px-5 py-7 md:px-8">
       <div class="mx-auto flex max-w-[1440px] flex-col gap-6 md:flex-row md:items-center">
-        <p class="about-contact-item font-mono text-xs tracking-[0.14em] text-blue">/ CONTACT</p>
+        <p class="about-contact-item font-mono text-xs tracking-[0.14em] text-blue">{{ t('about.contact.label') }}</p>
 
         <nav :aria-label="t('about.contact.ariaLabel')" class="about-contact-item flex flex-wrap items-center gap-x-8 gap-y-3">
           <component
