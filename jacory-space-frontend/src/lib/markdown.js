@@ -236,16 +236,13 @@ function finalizeFigures(blocks) {
 
 function buildToc(blocks) {
   const toc = []
-  let index = 0
   for (const block of blocks) {
     if (block.type !== 'heading') continue
     if (block.level < 2 || block.level > 3) continue
-    index += 1
     toc.push({
       id: block.id,
       level: block.level,
       text: block.text,
-      index: pad2(index),
     })
   }
   return toc

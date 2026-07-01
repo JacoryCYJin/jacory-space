@@ -137,7 +137,7 @@ export default {
       previousEntry: 'Previous Entry',
       nextEntry: 'Next Entry',
       fieldNote: 'FIELD NOTE',
-      headerLabel: '№ {index} — {category} / {fieldNote}',
+      headerLabel: '№ {index} — {category}',
       navAria: 'Article navigation',
       notFoundBadge: 'Error 404 / entry not found',
       notFoundTitle: 'This entry does not exist'
