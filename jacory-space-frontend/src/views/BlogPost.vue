@@ -1,14 +1,14 @@
 <template>
   <main class="grain min-h-screen bg-background">
-    <section v-if="isLoading || loadError" class="px-5 pt-40 md:px-8">
-      <div class="mx-auto max-w-screen-xl">
+    <section v-if="isLoading || loadError" class="page-gutter pt-40">
+      <div class="page-frame">
         <span class="tech text-haze">{{ loadError || t('blog.post.fieldNote') }}</span>
       </div>
     </section>
 
     <template v-else-if="post">
-      <section class="px-5 pt-28 md:px-8 md:pt-32">
-        <div class="mx-auto max-w-screen-xl">
+      <section class="page-gutter pt-28 md:pt-32">
+        <div class="page-frame">
           <div class="grid grid-cols-12 gap-x-10">
             <article class="col-span-12 lg:order-2 lg:col-span-9">
               <div class="flex items-center justify-between border-b border-line pb-4">
@@ -111,8 +111,8 @@
       <Footer />
     </template>
 
-    <section v-else class="px-5 pt-40 md:px-8">
-      <div class="mx-auto max-w-screen-xl">
+    <section v-else class="page-gutter pt-40">
+      <div class="page-frame">
         <span class="tech text-haze">{{ t('blog.post.notFoundBadge') }}</span>
         <h1 class="mt-6 font-sans text-4xl font-medium tracking-tight text-foreground">
           {{ t('blog.post.notFoundTitle') }}<span class="text-blue">.</span>

@@ -1,7 +1,7 @@
 <template>
   <main ref="pageRoot" class="grain min-h-screen bg-background">
-    <section class="px-5 pt-28 md:px-8 md:pt-36">
-      <div class="mx-auto max-w-screen-xl">
+    <section class="page-gutter pt-28 md:pt-36">
+      <div class="page-frame">
         <div class="reveal blog-reveal flex items-center justify-between border-b border-line pb-4">
           <span class="font-mono text-xs tracking-[0.16em] text-blue">{{ t('blog.fieldNotes.journalLabel') }}</span>
           <span class="tech">{{ t('blog.fieldNotes.archiveOpen', { count: entryCount }) }}</span>
@@ -20,8 +20,8 @@
       </div>
     </section>
 
-    <section class="px-5 py-20 md:px-8 md:py-28">
-      <div class="mx-auto max-w-screen-xl">
+    <section class="page-gutter py-20 md:py-28">
+      <div class="page-frame">
         <div v-if="isLoading || loadError" class="reveal blog-reveal border-y border-line py-10">
           <p class="tech text-haze">{{ loadError || t('blog.fieldNotes.archiveOpen', { count: 0 }) }}</p>
         </div>
@@ -60,8 +60,8 @@
       </div>
     </section>
 
-    <section class="px-5 pb-28 md:px-8">
-      <div class="mx-auto max-w-screen-xl">
+    <section class="page-gutter pb-28">
+      <div class="page-frame">
         <div class="reveal blog-reveal mb-4 flex items-center justify-between">
           <span class="tech">{{ t('blog.fieldNotes.archiveAll') }}</span>
           <span class="tech">{{ t('blog.fieldNotes.scrollHint') }}</span>

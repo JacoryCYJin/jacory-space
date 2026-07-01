@@ -1,7 +1,7 @@
 <template>
   <main ref="pageRoot" class="grain min-h-screen bg-background pt-16">
-    <section class="px-5 pb-8 md:px-8 md:pb-10">
-      <div class="mx-auto max-w-[1440px]">
+    <section class="page-gutter pb-8 md:pb-10">
+      <div class="page-frame">
         <header class="about-sheet-header flex items-end justify-between">
           <div>
             <p class="font-mono text-xs tracking-[0.16em] text-blue">03 — IDENTITY.SHEET</p>
@@ -12,7 +12,7 @@
         <div class="relative mt-8 lg:mt-10">
           <div class="relative grid grid-cols-12 gap-y-12 lg:grid-cols-[repeat(13,minmax(0,1fr))] lg:min-h-[38rem] lg:overflow-visible">
             <figure
-              class="about-identity-illustration relative col-span-12 flex min-h-[22rem] items-center justify-center overflow-hidden border-b border-line pb-8 lg:pointer-events-none lg:absolute lg:left-[-10rem] lg:z-0 lg:overflow-visible lg:border-b-0 lg:pb-0"
+              class="about-identity-illustration relative col-span-12 flex min-h-[22rem] items-center justify-center overflow-hidden border-b border-line pb-8 lg:pointer-events-none lg:absolute lg:left-[clamp(-9rem,-7vw,-5rem)] lg:z-0 lg:overflow-visible lg:border-b-0 lg:pb-0 xl:left-[clamp(-7rem,-5vw,-3rem)] 2xl:left-[clamp(-3rem,-1.5vw,1rem)]"
             >
               <div class="about-identity-media flex w-full items-center justify-center">
                 <img
@@ -89,8 +89,8 @@
       </div>
     </section>
 
-    <section class="about-axioms px-5 md:px-8">
-      <div class="mx-auto grid max-w-[1440px] py-5 lg:grid-cols-[17rem_1fr] lg:py-0">
+    <section class="about-axioms page-gutter">
+      <div class="page-frame grid py-5 lg:grid-cols-[17rem_1fr] lg:py-0">
         <div class="about-axioms-label flex items-center py-5 lg:pr-8">
           <h2 class="font-mono text-xs tracking-[0.14em] text-blue">// PERSONAL AXIOMS</h2>
         </div>
@@ -113,8 +113,8 @@
       </div>
     </section>
 
-    <footer class="about-contact px-5 py-7 md:px-8">
-      <div class="mx-auto flex max-w-[1440px] flex-col gap-6 md:flex-row md:items-center">
+    <footer class="about-contact page-gutter py-7">
+      <div class="page-frame flex flex-col gap-6 md:flex-row md:items-center">
         <p class="about-contact-item font-mono text-xs tracking-[0.14em] text-blue">/ CONTACT</p>
 
         <nav :aria-label="t('about.contact.ariaLabel')" class="about-contact-item flex flex-wrap items-center gap-x-8 gap-y-3">
