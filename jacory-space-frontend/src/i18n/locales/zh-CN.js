@@ -137,7 +137,7 @@ export default {
       previousEntry: '上一篇',
       nextEntry: '下一篇',
       fieldNote: '现场笔记',
-      headerLabel: '№ {index} — {category} / {fieldNote}',
+      headerLabel: '№ {index} — {category}',
       navAria: '文章导航',
       notFoundBadge: 'Error 404 / 条目未找到',
       notFoundTitle: '这篇笔记不存在'

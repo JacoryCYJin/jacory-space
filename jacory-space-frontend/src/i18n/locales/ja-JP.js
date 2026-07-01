@@ -137,7 +137,7 @@ export default {
       previousEntry: '前の記事',
       nextEntry: '次の記事',
       fieldNote: 'FIELD NOTE',
-      headerLabel: '№ {index} — {category} / {fieldNote}',
+      headerLabel: '№ {index} — {category}',
       navAria: '記事ナビゲーション',
       notFoundBadge: 'Error 404 / 記事が見つかりません',
       notFoundTitle: 'この記事は存在しません'

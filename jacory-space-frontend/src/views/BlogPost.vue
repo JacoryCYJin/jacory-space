@@ -89,15 +89,9 @@
                   >
                     <a
                       :href="`#${item.id}`"
-                      class="group flex gap-3 font-mono text-xs leading-relaxed transition-colors"
+                      class="group block font-mono text-xs leading-relaxed transition-colors"
                       :class="activeId === item.id ? 'text-blue' : 'text-muted-foreground hover:text-foreground'"
                     >
-                      <span
-                        class="shrink-0 tabular-nums"
-                        :class="activeId === item.id ? 'text-blue' : 'text-haze'"
-                      >
-                        {{ item.index }}
-                      </span>
                       <span>{{ item.text }}</span>
                     </a>
                   </li>
@@ -157,7 +151,6 @@ const headerLabel = computed(() => {
   return t('blog.post.headerLabel', {
     index: fm.index || '—',
     category: categoryLabel(meta),
-    fieldNote: t('blog.post.fieldNote'),
   })
 })
 
