@@ -39,6 +39,8 @@ Jacory Space 是个人网站项目。所有 Agent 在本仓库工作时优先遵
 - 不在 `main` 上直接提交代码改动；先建任务分支。
 - 分支前缀使用 `feature/`、`fix/`、`chore/` 或 `docs/`；不要用缩写 `feat/` 作为分支前缀。
 - Commit message 必须使用一行中文 Conventional Commit：`<type>: 中文描述`，例如 `feat: 微调首页 Hero 与选中文本样式`。
+- `pr` / `pr open` 表示提交、push、创建 PR 并返回链接，不合并；`pr合` / `pr merge` 表示提交、push、创建 PR、squash merge、切回 `main` 并 `git pull origin main`。
+- 用户明确要求合并 PR 时，默认使用 GitHub squash merge，保持 `main` 线性历史，并保留 GitHub 自动生成的 squash commit 标题格式：`<type>: 中文描述 (#PR号)`；除非用户明确要求，不使用普通 merge commit。
 
 ## Do Not
 
