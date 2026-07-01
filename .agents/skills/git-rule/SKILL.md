@@ -40,7 +40,10 @@ description: "MUST use before any git branch, commit, push, PR, merge, checkout,
 - Treat user requests like “提交”, “提交这个分支”, “commit”, or “submit this branch” as **commit + push** by default.
 - Only stop after a local commit when the user explicitly says “只提交”, “只本地提交”, “不要 push”, or equivalent.
 - After every successful commit that is meant for a branch workflow, immediately run `git push -u origin HEAD`; do not end the turn between commit and push unless push fails or the user explicitly forbids pushing.
+- Treat “pr” and “pr open” as **commit + push + create PR**. Return the PR link and do not merge.
+- Treat “pr合” and “pr merge” as **commit + push + create PR + squash merge + switch back to `main` + `git pull origin main`**.
 - When creating a PR, summarize the main changes and validation.
 - If opening a PR is requested, push first with `git push -u origin HEAD`, then create the PR and return the PR link for user review.
 - Do not auto-merge PRs. Only run `gh pr merge` when the user explicitly says to merge now.
+- When merging a PR after explicit user approval, use GitHub squash merge by default to keep `main` linear and preserve GitHub's default squash commit title format: `<type>: 中文描述 (#PR号)`. Do not use a normal merge commit unless the user explicitly asks for it.
 - After a PR is merged, switch back to `main` and run `git pull origin main`.
