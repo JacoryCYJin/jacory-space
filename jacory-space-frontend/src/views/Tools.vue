@@ -110,9 +110,14 @@ const projects = [
     stack: ['Vue', 'GSAP', 'Design System'], version: 'v1.5.0', updated: '2026.06.15', href: '/'
   },
   {
-    id: '007', no: '007', title: 'Agent Library', layer: 'TOOLS', category: 'tool', status: 'wip',
+    id: '007', no: '007', title: 'Agent Library', layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
     pos: [7.0, 1.3], description: '集中管理和组织可复用的 Skills、Rules 与 Prompts，形成个人 AI 工作流资产库。',
     stack: ['Skills', 'Rules', 'Prompts'], version: 'v0.1.0', updated: '2026.06.24', href: '/tools'
+  },
+  {
+    id: '009', no: '009', title: 'Workflow', layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
+    pos: [1.6, 2.4], description: '沉淀可复用的任务流程、执行顺序与验证节点，把重复工作组织成稳定的工作流。',
+    stack: ['Process', 'Automation', 'Validation'], version: 'v0.1.0', updated: '2026.06.24', href: '/tools'
   }
 ]
 
