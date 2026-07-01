@@ -66,7 +66,14 @@
                     class="about-identity-row grid grid-cols-[5.5rem_1fr] gap-4 border-b border-line py-3.5 last:border-b-0"
                   >
                     <dt class="tech text-[0.625rem]">{{ item.label }}</dt>
-                    <dd class="font-mono text-xs leading-relaxed text-foreground">{{ item.value }}</dd>
+                    <dd class="inline-flex items-center gap-2 font-mono text-xs leading-relaxed text-foreground">
+                      <span>{{ item.value }}</span>
+                      <span
+                        v-if="item.hasProgressDot"
+                        aria-hidden="true"
+                        class="h-1.5 w-1.5 shrink-0 rounded-full bg-blue"
+                      />
+                    </dd>
                   </div>
                 </dl>
               </section>
@@ -182,7 +189,7 @@ const identityRows = computed(() => [
   { label: t('about.identity.roleLabel'), value: t('about.identity.role') },
   { label: t('about.identity.baseLabel'), value: t('about.identity.base') },
   { label: t('about.identity.focusLabel'), value: t('about.identity.focus') },
-  { label: t('about.identity.statusLabel'), value: t('about.identity.status') },
+  { label: t('about.identity.statusLabel'), value: t('about.identity.status'), hasProgressDot: true },
 ])
 
 const principles = computed(() => [
