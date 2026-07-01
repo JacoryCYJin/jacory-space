@@ -2,7 +2,7 @@
 title: "Harness 框架调研：组织 Agent 的工作区骨架"
 description: "Harness 是把 Agent 的规则、配置、工具、上下文、运行记录组织起来的工作区，不一定是代码工程。通用 Agent Harness 和 Coding Agent Harness 应该分开设计。"
 date: "2026.06.18"
-category: "RESEARCH"
+category: "research"
 index: "007"
 readTime: "10 MIN"
 修改时间: 2026-06-18

@@ -2,7 +2,7 @@
 title: "GitHub 每周资讯 · 2026.06.13 – 06.19"
 description: "本周 GitHub 热点高度集中在 AI 代理生态：Fable 5 催生「Fable 化」浪潮，Loop Engineering 被同期命名并整理为橙皮书，ChatGPT 本地编码代理与离线镜像、Kubernetes TUI 等工具各自补位。"
 date: "2026.06.19"
-category: "WEEKLY"
+category: "weekly"
 index: "008"
 readTime: "12 MIN"
 period: "2026-06-13 至 2026-06-19"

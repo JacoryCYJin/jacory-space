@@ -2,7 +2,7 @@
 title: "结构化 Prompt 方法论：用模块框定 AI 的行为"
 description: "用一套明确的模块（背景、目标、范围、约束、禁止、验收、输出格式）来框定 AI 编程助手的行为，让它理解需求更准确、改码更可靠。"
 date: "2026.06.21"
-category: "METHOD"
+category: "method"
 index: "009"
 readTime: "14 MIN"
 修改时间: 2026-06-21

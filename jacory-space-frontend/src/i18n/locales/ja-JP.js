@@ -146,9 +146,7 @@ export default {
       WEEKLY: '週刊',
       RESEARCH: 'リサーチ',
       ESSAY: 'エッセイ',
-      METHOD: 'メソッド',
-      REVIEW: 'レビュー',
-      NOTE: 'ノート'
+      METHOD: 'メソッド'
     }
   },
   about: {

@@ -2,7 +2,7 @@
 title: "GitHub 每周资讯 · 2026.06.06 – 06.12"
 description: "本周热点集中在三个方向：AI Agent 技能生态持续扩张、AI 编码助手赛道新增重量级参与者，以及安全领域两个高关注度漏洞项目；消费级项目方面 NoopApp 与 enableMacosAI 跻身前列。"
 date: "2026.06.12"
-category: "WEEKLY"
+category: "weekly"
 index: "001"
 readTime: "9 MIN"
 period: "2026-06-06 至 2026-06-12"

@@ -2,7 +2,7 @@
 title: "Hermes 简评：一个可长期运行的个人 AI Agent"
 description: "Hermes 主要指 Nous Research 的 Hermes Agent：一个可长期运行的个人 AI Agent，重点是记忆、自动化、多平台入口、工具调用和多模型使用，而不是单纯的聊天或编程工具。"
 date: "2026.06.17"
-category: "REVIEW"
+category: "research"
 index: "003"
 readTime: "3 MIN"
 ---
