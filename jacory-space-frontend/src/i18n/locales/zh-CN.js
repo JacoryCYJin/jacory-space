@@ -146,9 +146,7 @@ export default {
       WEEKLY: '周刊',
       RESEARCH: '调研',
       ESSAY: '随笔',
-      METHOD: '方法',
-      REVIEW: '简评',
-      NOTE: '笔记'
+      METHOD: '方法'
     }
   },
   about: {

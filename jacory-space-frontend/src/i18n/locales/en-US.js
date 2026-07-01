@@ -146,9 +146,7 @@ export default {
       WEEKLY: 'WEEKLY',
       RESEARCH: 'RESEARCH',
       ESSAY: 'ESSAY',
-      METHOD: 'METHOD',
-      REVIEW: 'REVIEW',
-      NOTE: 'NOTE'
+      METHOD: 'METHOD'
     }
   },
   about: {

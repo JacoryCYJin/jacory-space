@@ -123,9 +123,8 @@ const isLoading = ref(true)
 const loadError = ref('')
 let revealObserver
 
-function categoryLabel(category) {
-  const key = category || 'NOTE'
-  return t(`blog.entryCategories.${key}`, key)
+function categoryLabel(post) {
+  return t(post.categoryLabelKey, post.categoryKey || post.category)
 }
 
 const toEntry = (post) => ({
@@ -133,7 +132,7 @@ const toEntry = (post) => ({
   no: `№ ${post.index}`,
   title: post.title,
   excerpt: post.description,
-  cat: categoryLabel(post.category),
+  cat: categoryLabel(post),
   date: post.date,
   read: post.readTime
 })

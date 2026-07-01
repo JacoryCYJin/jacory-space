@@ -2,7 +2,7 @@
 title: "关于冷白：为什么我把整个数字空间建立在留白之上"
 description: "留白让人沉静，冷白让人专注。一个安静却高效的数字空间，不需要靠装饰——而是依靠对「不占据视线」的克制。所有留白，只为留下结构与思考。"
 date: "2026.06"
-category: "ESSAY"
+category: "essay"
 index: "010"
 readTime: "8 MIN"
 ---

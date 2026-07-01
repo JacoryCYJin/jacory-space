@@ -4,6 +4,7 @@
 // article blocks are parsed only when a detail route requests a specific slug.
 
 import { parseDocument } from './markdown'
+import { getBlogCategory, listBlogCategorySlugs } from '../content/blog-categories'
 
 const postModules = import.meta.glob('../content/blog/*.md', {
   query: '?raw',
@@ -11,17 +12,6 @@ const postModules = import.meta.glob('../content/blog/*.md', {
 })
 
 const REQUIRED_FIELDS = ['title', 'description', 'date', 'category', 'index']
-const ALLOWED_CATEGORIES = new Set([
-  'NOTE',
-  'ESSAY',
-  'WEEKLY',
-  'LOG',
-  'ARTICLE',
-  'RESEARCH',
-  'METHOD',
-  'REVIEW',
-])
-
 let metaPromise
 let metasBySlug
 let metasAscending
@@ -145,8 +135,10 @@ function validateFrontmatter(frontmatter, { fileName }) {
     blogError(`${fileName} invalid date: ${frontmatter.date}`)
   }
 
-  if (!ALLOWED_CATEGORIES.has(frontmatter.category)) {
-    blogError(`${fileName} invalid category: ${frontmatter.category}`)
+  if (!getBlogCategory(frontmatter.category)) {
+    blogError(
+      `${fileName} invalid category: ${frontmatter.category}. Expected one of: ${listBlogCategorySlugs().join(', ')}`,
+    )
   }
 
   if (!Array.isArray(frontmatter.tags)) {
@@ -159,13 +151,17 @@ function compareByIndexAsc(a, b) {
 }
 
 function toMeta(slug, frontmatter) {
+  const category = getBlogCategory(frontmatter.category)
   return {
     slug,
     index: frontmatter.index,
     title: frontmatter.title,
     description: frontmatter.description,
     date: frontmatter.date,
-    category: frontmatter.category,
+    category: category.slug,
+    categoryKey: category.key,
+    categoryLabelKey: category.labelKey,
+    categorySortOrder: category.sortOrder,
     readTime: frontmatter.readTime || '',
     tags: frontmatter.tags,
   }
@@ -260,7 +256,9 @@ export async function getPostBySlug(slug) {
 
 export async function getPostsByCategory(category) {
   const metas = await getAllPostMeta()
-  return metas.filter((meta) => meta.category === category)
+  const resolvedCategory = getBlogCategory(category)
+  if (!resolvedCategory) return []
+  return metas.filter((meta) => meta.category === resolvedCategory.slug)
 }
 
 export async function getPostsByTag(tag) {

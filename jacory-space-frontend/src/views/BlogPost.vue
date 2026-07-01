@@ -147,16 +147,16 @@ let loadToken = 0
 
 const frontmatter = computed(() => post.value?.frontmatter ?? {})
 
-function categoryLabel(category) {
-  const key = category || 'NOTE'
-  return t(`blog.entryCategories.${key}`, key)
+function categoryLabel(meta) {
+  return t(meta?.categoryLabelKey, meta?.categoryKey || meta?.category || 'NOTE')
 }
 
 const headerLabel = computed(() => {
   const fm = frontmatter.value
+  const meta = post.value?.meta
   return t('blog.post.headerLabel', {
     index: fm.index || '—',
-    category: categoryLabel(fm.category),
+    category: categoryLabel(meta),
     fieldNote: t('blog.post.fieldNote'),
   })
 })

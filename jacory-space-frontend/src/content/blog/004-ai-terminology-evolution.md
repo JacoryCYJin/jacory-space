@@ -2,7 +2,7 @@
 title: "AI 名词演化调研：从一句 prompt 到一个 agent 系统"
 description: "梳理 AI 使用方式从「写一句 prompt」到「搭一个 agent 系统」的名词变化，重点看每个名词解决什么问题，以及它和相邻概念的区别。"
 date: "2026.06.18"
-category: "RESEARCH"
+category: "research"
 index: "004"
 readTime: "6 MIN"
 修改时间: 2026-06-18
