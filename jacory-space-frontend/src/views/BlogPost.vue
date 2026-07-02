@@ -126,7 +126,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { getPost } from '../lib/blog'
+import { getPost } from '../lib/blog/index.js'
 import MarkdownArticle from '../components/blog/MarkdownArticle.vue'
 import Footer from '../components/Footer.vue'
 
