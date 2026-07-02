@@ -262,7 +262,7 @@ export function parseBlocks(body) {
       buffer.push(lines[i].trim())
       i++
     }
-    blocks.push({ type: 'paragraph', inlines: parseInline(buffer.join(' ')) })
+    blocks.push({ type: 'paragraph', inlines: parseInline(buffer.join('\n')) })
   }
 
   return blocks

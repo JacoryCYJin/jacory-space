@@ -32,6 +32,12 @@ export function parseInline(text) {
       continue
     }
 
+    if (rest[0] === '\n') {
+      tokens.push({ type: 'break' })
+      cursor += 1
+      continue
+    }
+
     const code = /^`([^`]+)`/.exec(rest)
     if (code) {
       tokens.push({ type: 'code', value: code[1] })
