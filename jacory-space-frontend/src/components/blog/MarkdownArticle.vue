@@ -53,6 +53,8 @@ function renderInline(tokens) {
       }
       case 'code':
         return h('code', { class: INLINE_CODE_CLASS }, token.value)
+      case 'break':
+        return h('br')
       case 'link': {
         const external = /^https?:\/\//.test(token.href)
         return h(
