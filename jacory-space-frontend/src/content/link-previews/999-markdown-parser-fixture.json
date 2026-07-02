@@ -1,0 +1,26 @@
+{
+  "source": "999-markdown-parser-fixture.md",
+  "updatedAt": "2026-07-02T05:05:21.196Z",
+  "links": {
+    "https://github.com/JacoryCYJin/jacory-space": {
+      "url": "https://github.com/JacoryCYJin/jacory-space",
+      "resolvedUrl": "https://github.com/JacoryCYJin/jacory-space",
+      "title": "GitHub - JacoryCYJin/jacory-space",
+      "description": "Contribute to JacoryCYJin/jacory-space development by creating an account on GitHub.",
+      "siteName": "GitHub",
+      "favicon": "https://github.com/fluidicon.png",
+      "image": "https://opengraph.githubassets.com/7891a006e7abe7db817564575c0a9683557d9daef4ae520e815e057dc9fc715f/JacoryCYJin/jacory-space",
+      "fetchedAt": "2026-07-02T05:05:22.173Z"
+    },
+    "https://popicon.life/remembering-russi-taylor-as-mcdonalds-birdie-the-early-bird/": {
+      "url": "https://popicon.life/remembering-russi-taylor-as-mcdonalds-birdie-the-early-bird/",
+      "resolvedUrl": "https://popicon.life/remembering-russi-taylor-as-mcdonalds-birdie-the-early-bird/",
+      "title": "Remembering Russi Taylor As McDonald’s Birdie The Early Bird",
+      "description": "The world lost a very special character talent this weekend with the passing of Russi Taylor.",
+      "siteName": "PopIcon.life",
+      "favicon": "https://popicon.life/wp-content/uploads/2018/06/PopIcon_logo_v2.jpg",
+      "image": "https://popicon.life/wp-content/uploads/2019/07/169birdie.jpg",
+      "fetchedAt": "2026-07-02T05:05:22.791Z"
+    }
+  }
+}

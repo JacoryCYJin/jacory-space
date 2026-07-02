@@ -114,7 +114,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import Footer from '../components/Footer.vue'
-import { listPosts } from '../lib/blog'
+import { listPosts } from '../lib/blog/index.js'
 
 const pageRoot = ref(null)
 const { t } = useI18n()

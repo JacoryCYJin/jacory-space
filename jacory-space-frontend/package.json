@@ -6,6 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "link-previews": "node scripts/link-previews.mjs",
+    "lp": "node scripts/link-previews.mjs",
+    "lp:all": "node scripts/link-previews.mjs --all",
     "preview": "vite preview"
   },
   "dependencies": {

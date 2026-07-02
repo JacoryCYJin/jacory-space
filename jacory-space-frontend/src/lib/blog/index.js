@@ -3,15 +3,20 @@
 // Markdown files stay in src/content/blog. Metadata is indexed on demand, while
 // article blocks are parsed only when a detail route requests a specific slug.
 
-import { parseDocument } from './markdown'
-import { getBlogCategory, listBlogCategorySlugs } from '../content/blog-categories'
+import { getBlogCategory, listBlogCategorySlugs } from '../../content/blog-categories'
+import { parseDocument } from '../markdown/index.js'
 
-const postModules = import.meta.glob('../content/blog/*.md', {
+const postModules = import.meta.glob('../../content/blog/*.md', {
   query: '?raw',
   import: 'default',
 })
 
+const linkPreviewModules = import.meta.glob('../../content/link-previews/*.json', {
+  import: 'default',
+})
+
 const REQUIRED_FIELDS = ['title', 'description', 'date', 'category', 'index']
+const shouldCachePosts = !import.meta.env.DEV
 let metaPromise
 let metasBySlug
 let metasAscending
@@ -22,7 +27,7 @@ function fileNameFromPath(path) {
 }
 
 function slugFromPath(path) {
-  return fileNameFromPath(path).replace(/\.md$/, '')
+  return fileNameFromPath(path).replace(/\.(md|json)$/, '')
 }
 
 function blogError(message) {
@@ -217,6 +222,17 @@ function findPathBySlug(slug) {
   return Object.keys(postModules).find((path) => slugFromPath(path) === slug)
 }
 
+function findPreviewPathBySlug(slug) {
+  return Object.keys(linkPreviewModules).find((path) => slugFromPath(path) === slug)
+}
+
+async function getLinkPreviewsBySlug(slug) {
+  const path = findPreviewPathBySlug(slug)
+  if (!path) return {}
+  const preview = await linkPreviewModules[path]()
+  return preview.links || {}
+}
+
 export async function getAllPostMeta() {
   const metas = await ensureMetaIndex()
   return metas.map((meta) => ({ ...meta, tags: [...meta.tags] }))
@@ -228,7 +244,7 @@ export async function getPostBySlug(slug) {
   const path = findPathBySlug(slug)
   if (!path) return null
 
-  if (postCache.has(slug)) {
+  if (shouldCachePosts && postCache.has(slug)) {
     return postCache.get(slug)
   }
 
@@ -237,7 +253,8 @@ export async function getPostBySlug(slug) {
   const frontmatter = parseFrontmatter(raw, fileName)
   validateFrontmatter(frontmatter, { fileName })
 
-  const { blocks, toc } = parseDocument(raw)
+  const linkPreviews = await getLinkPreviewsBySlug(slug)
+  const { blocks, toc } = parseDocument(raw, { linkPreviews })
   const position = metasAscending.findIndex((meta) => meta.slug === slug)
   const post = {
     slug,
@@ -250,7 +267,9 @@ export async function getPostBySlug(slug) {
     next: position < metasAscending.length - 1 ? metasAscending[position + 1] : null,
   }
 
-  postCache.set(slug, post)
+  if (shouldCachePosts) {
+    postCache.set(slug, post)
+  }
   return post
 }
 

@@ -13,6 +13,10 @@ function renderInline(tokens) {
         return h('strong', { class: 'font-medium text-foreground' }, token.value)
       case 'em':
         return h('em', { class: 'italic' }, token.value)
+      case 'strike':
+        return h('del', { class: 'text-haze decoration-line' }, token.value)
+      case 'mark':
+        return h('mark', { class: 'bg-blue/10 px-1 text-foreground' }, token.value)
       case 'code':
         return h('code', { class: INLINE_CODE_CLASS }, token.value)
       case 'link': {
@@ -27,10 +31,53 @@ function renderInline(tokens) {
           token.value,
         )
       }
+      case 'linkMention':
+        return renderLinkMention(token)
       default:
         return token.value
     }
   })
+}
+
+function renderLinkMention(token) {
+  if (!token.url) return null
+  const host = linkHost(token.url)
+  const title = token.title || token.url
+  const siteName = token.siteName && token.siteName !== title ? token.siteName : ''
+  const favicon = token.favicon
+
+  return h(
+    'a',
+    {
+      href: token.url,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      class:
+        'inline-flex max-w-full items-center gap-2 align-middle text-foreground transition-colors hover:text-blue',
+    },
+    [
+      h(
+        'span',
+        {
+          class:
+            'inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden bg-card font-mono text-xs leading-none text-blue',
+          'aria-hidden': 'true',
+        },
+        favicon
+          ? h('img', {
+              src: favicon,
+              alt: '',
+              loading: 'lazy',
+              class: 'h-full w-full object-contain',
+            })
+          : host.slice(0, 2).toUpperCase(),
+      ),
+      h('span', { class: 'min-w-0 truncate' }, [
+        siteName ? h('span', { class: 'mr-1.5 text-muted-foreground' }, siteName) : null,
+        h('span', { class: 'underline decoration-line decoration-1 underline-offset-4' }, title),
+      ]),
+    ],
+  )
 }
 
 function renderFigure(block, { floated } = {}) {
@@ -77,16 +124,23 @@ function renderCode(block) {
 }
 
 function renderTable(block) {
+  const alignClass = (align) =>
+    align === 'center' ? 'text-center' : align === 'right' ? 'text-right' : 'text-left'
+
   return h('div', { class: 'my-8 overflow-x-auto' }, [
-    h('table', { class: 'w-full border-collapse text-left text-sm' }, [
+    h('table', { class: 'w-full border-collapse text-sm' }, [
       h('thead', [
         h(
           'tr',
           { class: 'border-b border-line-strong' },
-          block.header.map((cell) =>
+          block.header.map((cell, idx) =>
             h(
               'th',
-              { class: 'py-2.5 pr-6 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-haze' },
+              {
+                class: `py-2.5 pr-6 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-haze ${alignClass(
+                  block.align?.[idx],
+                )}`,
+              },
               renderInline(cell),
             ),
           ),
@@ -102,7 +156,7 @@ function renderTable(block) {
               h(
                 'td',
                 {
-                  class: `py-3 pr-6 align-top text-[0.9rem] leading-relaxed ${
+                  class: `py-3 pr-6 align-top text-[0.9rem] leading-relaxed ${alignClass(block.align?.[idx])} ${
                     idx === 0 ? 'text-foreground' : 'text-muted-foreground'
                   }`,
                 },
@@ -114,6 +168,141 @@ function renderTable(block) {
       ),
     ]),
   ])
+}
+
+function renderList(block, { nested = false } = {}) {
+  const tag = block.ordered ? 'ol' : 'ul'
+  return h(
+    tag,
+    {
+      class: `${nested ? 'mt-2 space-y-1 pl-5' : 'my-5 space-y-2 pl-5'} text-[0.95rem] leading-[1.8] text-muted-foreground ${
+        block.ordered ? 'list-decimal' : block.items.some((item) => item.task !== null) ? 'list-none' : 'list-disc'
+      } marker:text-blue-soft`,
+    },
+    block.items.map((item) =>
+      h('li', { class: item.task !== null ? 'pl-0' : 'pl-1' }, [
+        h('span', { class: item.task !== null ? 'flex items-start gap-3' : '' }, [
+          item.task !== null
+            ? h('input', {
+                type: 'checkbox',
+                checked: item.task,
+                disabled: true,
+                class: 'mt-2 h-3 w-3 shrink-0 accent-blue',
+              })
+            : null,
+          h('span', renderInline(item.inlines)),
+        ]),
+        ...(item.children || []).map((child) => renderList(child, { nested: true })),
+      ]),
+    ),
+  )
+}
+
+function renderCallout(block) {
+  const isWarning = block.variant === 'warning'
+  const labelClass = isWarning ? 'text-red-700' : 'text-blue'
+  const borderClass = isWarning ? 'border-red-200' : 'border-line'
+  return h(
+    'aside',
+    { class: `my-8 border-y py-5 ${borderClass}` },
+    [
+      h('p', { class: `tech mb-3 ${labelClass}` }, isWarning ? 'WARNING' : 'NOTE'),
+      h('div', { class: 'space-y-1' }, block.blocks.map(renderBlock)),
+    ],
+  )
+}
+
+function linkHost(url) {
+  try {
+    return new URL(url).host
+  } catch {
+    return url
+  }
+}
+
+function renderLinkPreview(block) {
+  if (!block.url) return null
+  const title = block.title || block.url
+  const host = linkHost(block.url)
+  const favicon = block.favicon
+  const image = block.image
+  const description = block.description
+  const displayUrl = block.resolvedUrl || block.url
+
+  return h(
+    'a',
+    {
+      href: block.url,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      class:
+        'group relative my-8 grid overflow-hidden rounded-md border border-line bg-card transition-colors hover:border-line-strong md:grid-cols-[minmax(0,1fr)_minmax(180px,34%)]',
+    },
+    [
+      h(
+        'span',
+        { class: 'min-w-0 p-5 md:p-6' },
+        [
+          h(
+            'span',
+            {
+              class:
+                'block truncate text-base font-medium leading-snug text-foreground transition-colors group-hover:text-blue',
+            },
+            title,
+          ),
+          description
+            ? h(
+                'span',
+                { class: 'mt-3 line-clamp-2 block text-sm leading-relaxed text-muted-foreground' },
+                description,
+              )
+            : null,
+          h('span', { class: 'mt-4 flex min-w-0 items-center gap-2 text-sm text-foreground' }, [
+            h(
+              'span',
+              {
+                class:
+                  'inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden bg-background font-mono text-xs leading-none text-blue',
+                'aria-hidden': 'true',
+              },
+              favicon
+                ? h('img', {
+                    src: favicon,
+                    alt: '',
+                    loading: 'lazy',
+                    class: 'h-full w-full object-contain',
+                  })
+                : host.slice(0, 2).toUpperCase(),
+            ),
+            h('span', { class: 'truncate' }, displayUrl),
+          ]),
+        ],
+      ),
+      image
+        ? h('span', { class: 'relative hidden overflow-hidden border-l border-line md:block' }, [
+            h('img', {
+              src: image,
+              alt: '',
+              loading: 'lazy',
+              class: 'absolute inset-0 h-full w-full object-cover',
+            }),
+          ])
+        : h('span', {
+            class: 'hidden border-l border-line bg-background md:block',
+            'aria-hidden': 'true',
+          }),
+      h(
+        'span',
+        {
+          class:
+            'absolute right-4 top-4 font-mono text-sm text-haze transition-all group-hover:translate-x-1 group-hover:text-blue',
+          'aria-hidden': 'true',
+        },
+        '↗',
+      ),
+    ],
+  )
 }
 
 function renderBlock(block) {
@@ -144,17 +333,12 @@ function renderBlock(block) {
           : null,
       ])
     case 'list': {
-      const tag = block.ordered ? 'ol' : 'ul'
-      return h(
-        tag,
-        {
-          class: `my-5 space-y-2 pl-5 text-[0.95rem] leading-[1.8] text-muted-foreground ${
-            block.ordered ? 'list-decimal' : 'list-disc'
-          } marker:text-blue-soft`,
-        },
-        block.items.map((item) => h('li', { class: 'pl-1' }, renderInline(item))),
-      )
+      return renderList(block)
     }
+    case 'callout':
+      return renderCallout(block)
+    case 'linkPreview':
+      return renderLinkPreview(block)
     case 'code':
       return renderCode(block)
     case 'table':
