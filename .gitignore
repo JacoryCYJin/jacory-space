@@ -33,6 +33,10 @@ node_modules/
 jacory-space-frontend/dist/
 jacory-space-frontend/design-reference/
 
+# Local blog parser fixture
+jacory-space-frontend/src/content/blog/999-markdown-parser-fixture.md
+jacory-space-frontend/src/content/link-previews/999-markdown-parser-fixture.json
+
 # Local dev runtime
 .dev/
 
