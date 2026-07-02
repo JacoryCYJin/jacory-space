@@ -1,6 +1,6 @@
 <template>
   <main ref="pageRoot" class="grain min-h-screen bg-background">
-    <section class="page-gutter pt-28 md:pt-36">
+    <section class="page-gutter pt-20 md:pt-24">
       <div class="page-frame">
         <div class="reveal blog-reveal flex items-center justify-between border-b border-line pb-4">
           <span class="font-mono text-xs tracking-[0.16em] text-blue">{{ t('blog.fieldNotes.journalLabel') }}</span>
@@ -20,7 +20,7 @@
       </div>
     </section>
 
-    <section class="page-gutter py-20 md:py-28">
+    <section class="page-gutter pb-20 pt-12 md:pb-28 md:pt-16">
       <div class="page-frame">
         <div v-if="isLoading || loadError" class="reveal blog-reveal border-y border-line py-10">
           <p class="tech text-haze">{{ loadError || t('blog.fieldNotes.archiveOpen', { count: 0 }) }}</p>
@@ -41,7 +41,7 @@
 
             <div class="lg:col-span-8">
               <h2
-                class="text-balance font-sans text-3xl font-medium leading-tight tracking-tight text-foreground transition-transform duration-500 ease-out group-hover:translate-x-1 md:text-4xl"
+                class="text-balance font-sans text-3xl font-medium leading-tight tracking-tight text-foreground transition-all duration-500 ease-out group-hover:translate-x-1 group-hover:text-blue md:text-4xl"
               >
                 {{ lead.title }}
               </h2>
@@ -62,9 +62,39 @@
 
     <section class="page-gutter pb-28">
       <div class="page-frame">
-        <div class="reveal blog-reveal mb-4 flex items-center justify-between">
+        <div class="reveal blog-reveal mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <span class="tech">{{ t('blog.fieldNotes.archiveAll') }}</span>
-          <span class="tech">{{ t('blog.fieldNotes.scrollHint') }}</span>
+          <div class="flex flex-wrap items-center gap-3" :aria-label="t('blog.fieldNotes.filterAria')">
+            <span class="tech mr-1 text-haze">{{ t('blog.fieldNotes.filterLabel') }}</span>
+
+            <label class="relative inline-flex items-center">
+              <span class="sr-only">{{ t('blog.fieldNotes.filterCategory') }}</span>
+              <select
+                v-model="activeCategoryFilter"
+                class="h-9 w-24 appearance-none border border-line bg-background py-0 pl-4 pr-9 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze transition-colors duration-300 hover:border-line-strong hover:text-muted-foreground focus:border-blue focus:text-muted-foreground focus:outline-none"
+              >
+                <option value="all">{{ t('blog.fieldNotes.filterCategory') }}</option>
+                <option v-for="category in categoryOptions" :key="category.id" :value="category.id">
+                  {{ category.label }}
+                </option>
+              </select>
+              <ChevronDown class="pointer-events-none absolute right-3 h-4 w-4 text-haze" aria-hidden="true" />
+            </label>
+
+            <label class="relative inline-flex items-center">
+              <span class="sr-only">{{ t('blog.fieldNotes.filterYear') }}</span>
+              <select
+                v-model="activeYearFilter"
+                class="h-9 w-24 appearance-none border border-line bg-background py-0 pl-4 pr-9 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze transition-colors duration-300 hover:border-line-strong hover:text-muted-foreground focus:border-blue focus:text-muted-foreground focus:outline-none"
+              >
+                <option value="all">{{ t('blog.fieldNotes.filterYear') }}</option>
+                <option v-for="year in yearOptions" :key="year" :value="year">
+                  {{ year }}
+                </option>
+              </select>
+              <ChevronDown class="pointer-events-none absolute right-3 h-4 w-4 text-haze" aria-hidden="true" />
+            </label>
+          </div>
         </div>
 
         <ul class="border-t border-line">
@@ -82,7 +112,7 @@
                 {{ entry.no }}
               </span>
               <span
-                class="col-span-9 text-balance text-base font-medium tracking-tight text-foreground transition-transform duration-300 group-hover:translate-x-1 md:col-span-6 md:text-lg"
+                class="col-span-9 text-balance text-base font-medium tracking-tight text-foreground transition-all duration-300 group-hover:translate-x-1 group-hover:text-blue md:col-span-6 md:text-lg"
               >
                 {{ entry.title }}
               </span>
@@ -110,15 +140,19 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
+import { ChevronDown } from 'lucide-vue-next'
 import Footer from '../components/Footer.vue'
+import { blogCategories } from '../content/blog-categories.js'
 import { listPosts } from '../lib/blog/index.js'
 
 const pageRoot = ref(null)
 const { t } = useI18n()
 const posts = ref([])
+const activeCategoryFilter = ref('all')
+const activeYearFilter = ref('all')
 const isLoading = ref(true)
 const loadError = ref('')
 let revealObserver
@@ -133,14 +167,36 @@ const toEntry = (post) => ({
   title: post.title,
   excerpt: post.description,
   cat: categoryLabel(post),
+  category: post.category,
   date: post.date,
   read: post.readTime
 })
 
+function yearFromDate(date) {
+  return String(date).match(/^\d{4}/)?.[0] ?? ''
+}
+
 const allPosts = computed(() => posts.value.map(toEntry))
 const lead = computed(() => allPosts.value[0] ?? null)
-const entries = computed(() => allPosts.value.slice(1))
+const archiveEntries = computed(() => allPosts.value.slice(1))
+const entries = computed(() => {
+  return archiveEntries.value.filter((entry) => {
+    const categoryMatches = activeCategoryFilter.value === 'all' || entry.category === activeCategoryFilter.value
+    const yearMatches = activeYearFilter.value === 'all' || yearFromDate(entry.date) === activeYearFilter.value
+    return categoryMatches && yearMatches
+  })
+})
 const entryCount = computed(() => allPosts.value.length)
+const categoryOptions = computed(() =>
+  blogCategories.map((category) => ({
+    id: category.slug,
+    label: t(category.labelKey, category.key)
+  }))
+)
+const yearOptions = computed(() => {
+  const years = archiveEntries.value.map((entry) => yearFromDate(entry.date)).filter(Boolean)
+  return Array.from(new Set(years)).sort((a, b) => Number(b) - Number(a))
+})
 
 function setupRevealObserver() {
   revealObserver?.disconnect()
@@ -176,6 +232,11 @@ onMounted(async () => {
     await nextTick()
     setupRevealObserver()
   }
+})
+
+watch([activeCategoryFilter, activeYearFilter], async () => {
+  await nextTick()
+  setupRevealObserver()
 })
 
 onBeforeUnmount(() => {
