@@ -69,10 +69,16 @@ tags:
 https://example.com/path
 ```
 
-提及：
+外链提及：
 
 ```md
 @link[https://popicon.life/remembering-russi-taylor-as-mcdonalds-birdie-the-early-bird/]
+```
+
+站内文章提及：
+
+```md
+@post[011-ai-clarity-before-efficiency]
 ```
 
 书签：
@@ -196,6 +202,14 @@ Warning：
 ```md
 :::warning
 这是 warning 内容。
+:::
+```
+
+Highlight：
+
+```md
+:::highlight
+这是 highlight 内容。
 :::
 ```
 
