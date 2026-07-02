@@ -117,7 +117,10 @@ export default {
       subtitle: 'Notes on interfaces, systems, and time. Frequency is secondary; only entries worth keeping belong here.',
       readEntry: 'Read entry',
       archiveAll: 'Archive — All Entries',
-      scrollHint: '↓ scroll',
+      filterLabel: 'Filter',
+      filterCategory: 'Category',
+      filterYear: 'Year',
+      filterAria: 'Filter blog archive',
       endOfIndex: 'Jacory Space',
       footerNote: 'Once the system is in place, the pages can follow: writing, tools, and a portfolio, all held together by the same cool-white language.',
       footer: {

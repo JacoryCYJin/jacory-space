@@ -117,7 +117,10 @@ export default {
       subtitle: 'インターフェース、システム、時間についての記録。頻度ではなく、残しておきたいものだけを。',
       readEntry: '記事を読む',
       archiveAll: 'アーカイブ — すべての記事',
-      scrollHint: '↓ スクロール',
+      filterLabel: 'フィルター',
+      filterCategory: '分類',
+      filterYear: '年',
+      filterAria: 'ブログアーカイブを絞り込む',
       endOfIndex: 'Jacory Space',
       footerNote: '仕組みが整ったら、次はページそのものへ。文章、ツール、ポートフォリオを、このクールホワイトの言語でひとつにつないでいきます。',
       footer: {

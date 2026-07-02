@@ -117,7 +117,10 @@ export default {
       subtitle: '关于界面、系统与时间的记录。不追求频率，只追求每一篇都值得被归档。',
       readEntry: '阅读全文',
       archiveAll: '归档 — 全部条目',
-      scrollHint: '↓ 继续浏览',
+      filterLabel: '筛选',
+      filterCategory: '分类',
+      filterYear: '年份',
+      filterAria: '筛选博客归档',
       endOfIndex: 'Jacory Space',
       footerNote: '这套系统就绪后，下一步才是具体的页面：写作、工具、作品集——都将活在这套冷白的语言里。',
       footer: {
