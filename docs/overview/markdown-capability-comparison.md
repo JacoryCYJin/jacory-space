@@ -31,7 +31,8 @@
 | 标题 | 支持 | 支持 | 支持 | Jacory Space 支持 `##` / `###` 进入目录 |
 | 粗体 / 斜体 / 行内代码 | 支持 | 支持 | 支持 | Jacory Space 支持 `**`、`*`、反引号 |
 | 删除线 | 支持 | 支持 | 支持 | Jacory Space 支持 `~~text~~` |
-| 行内文本高亮 | 支持 | 支持 | 支持 | Jacory Space 支持 `==text==` |
+| 行内文本高亮 | 支持 | 支持 | 支持 | Jacory Space 支持 `==text==` 和 `@mark[token][text]` |
+| 语义强调色 | 部分 | 部分 | 支持 | Jacory Space 支持 `@color[token][text]`，`@accent[text]` 是蓝色简写 |
 | 高亮块 | 部分 | 支持 | 支持 | Jacory Space 支持 `:::highlight` |
 | 普通链接 | 支持 | 支持 | 支持 | Jacory Space 支持 `[text](url)` |
 | 裸 URL 自动链接 | 支持 | 支持 | 支持 | Jacory Space 自动识别 `http(s)` |

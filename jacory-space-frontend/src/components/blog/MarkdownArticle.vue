@@ -5,6 +5,36 @@ const LINK_CLASS =
   'text-blue underline decoration-line decoration-1 underline-offset-4 transition-colors hover:decoration-blue'
 const INLINE_CODE_CLASS =
   'rounded-sm border border-line bg-card px-1.5 py-0.5 font-mono text-[0.85em] text-foreground'
+const COLOR_CLASSES = {
+  default: 'text-[var(--blog-color-default)]',
+  gray: 'text-[var(--blog-color-gray)]',
+  blue: 'text-[var(--blog-color-blue)]',
+  green: 'text-[var(--blog-color-green)]',
+  yellow: 'text-[var(--blog-color-yellow)]',
+  orange: 'text-[var(--blog-color-orange)]',
+  red: 'text-[var(--blog-color-red)]',
+  purple: 'text-[var(--blog-color-purple)]',
+  pink: 'text-[var(--blog-color-pink)]',
+}
+const MARK_CLASSES = {
+  default: 'bg-[var(--blog-mark-default)]',
+  gray: 'bg-[var(--blog-mark-gray)]',
+  blue: 'bg-[var(--blog-mark-blue)]',
+  green: 'bg-[var(--blog-mark-green)]',
+  yellow: 'bg-[var(--blog-mark-yellow)]',
+  orange: 'bg-[var(--blog-mark-orange)]',
+  red: 'bg-[var(--blog-mark-red)]',
+  purple: 'bg-[var(--blog-mark-purple)]',
+  pink: 'bg-[var(--blog-mark-pink)]',
+}
+
+function colorClass(token) {
+  return COLOR_CLASSES[token] || ''
+}
+
+function markClass(token) {
+  return MARK_CLASSES[token] || MARK_CLASSES.default
+}
 
 function renderInline(tokens) {
   return (tokens || []).map((token) => {
@@ -16,7 +46,11 @@ function renderInline(tokens) {
       case 'strike':
         return h('del', { class: 'text-haze decoration-line' }, token.value)
       case 'mark':
-        return h('mark', { class: 'bg-blue/10 px-1 text-foreground' }, token.value)
+        return h('mark', { class: `${markClass(token.token)} px-1 text-foreground` }, token.value)
+      case 'color': {
+        const cls = colorClass(token.token)
+        return cls ? h('span', { class: `font-medium ${cls}` }, token.value) : token.value
+      }
       case 'code':
         return h('code', { class: INLINE_CODE_CLASS }, token.value)
       case 'link': {
