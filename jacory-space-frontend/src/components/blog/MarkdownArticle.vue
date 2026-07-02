@@ -33,6 +33,8 @@ function renderInline(tokens) {
       }
       case 'linkMention':
         return renderLinkMention(token)
+      case 'postMention':
+        return renderPostMention(token)
       default:
         return token.value
     }
@@ -76,6 +78,33 @@ function renderLinkMention(token) {
         siteName ? h('span', { class: 'mr-1.5 text-muted-foreground' }, siteName) : null,
         h('span', { class: 'underline decoration-line decoration-1 underline-offset-4' }, title),
       ]),
+    ],
+  )
+}
+
+function renderPostMention(token) {
+  const href = token.href || `/blog/${token.slug}`
+  const title = token.title || token.slug
+  const index = token.index || ''
+
+  return h(
+    'a',
+    {
+      href,
+      class:
+        'inline-flex max-w-full items-center gap-2 align-middle text-foreground transition-colors hover:text-blue',
+    },
+    [
+      h(
+        'span',
+        {
+          class:
+            'inline-flex h-5 min-w-5 shrink-0 items-center justify-center border border-line bg-card px-1 font-mono text-xs leading-none text-blue',
+          'aria-hidden': 'true',
+        },
+        index ? String(index).slice(-2) : 'P',
+      ),
+      h('span', { class: 'truncate underline decoration-line decoration-1 underline-offset-4' }, title),
     ],
   )
 }
@@ -199,6 +228,10 @@ function renderList(block, { nested = false } = {}) {
 }
 
 function renderCallout(block) {
+  if (block.variant === 'highlight') {
+    return renderHighlight(block)
+  }
+
   const isWarning = block.variant === 'warning'
   const labelClass = isWarning ? 'text-red-700' : 'text-blue'
   const borderClass = isWarning ? 'border-red-200' : 'border-line'
@@ -210,6 +243,13 @@ function renderCallout(block) {
       h('div', { class: 'space-y-1' }, block.blocks.map(renderBlock)),
     ],
   )
+}
+
+function renderHighlight(block) {
+  return h('aside', { class: 'my-8 border border-blue/30 bg-blue/5 px-5 py-5' }, [
+    h('p', { class: 'tech mb-3 text-blue' }, 'HIGHLIGHT'),
+    h('div', { class: 'space-y-1' }, block.blocks.map(renderBlock)),
+  ])
 }
 
 function linkHost(url) {

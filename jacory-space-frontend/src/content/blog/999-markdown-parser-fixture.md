@@ -27,6 +27,8 @@ tags:
 
 这是裸链接，应该自动变成链接：https://example.com/path.
 
+这是站内文章提及：@post[011-ai-clarity-before-efficiency]。
+
 这是转义测试：\*这里不应该变成斜体\*，\`这里不应该变成代码\`。
 
 ## 03. 引用
@@ -105,13 +107,21 @@ function shipWithAI(scope) {
 它适合放重要提醒、限制、风险或不要忽略的规则。
 :::
 
-## 13. 分隔线
+## 13. Highlight 高亮块
+
+:::highlight
+这是一个 highlight 块。
+
+它适合放需要整段强调、但不一定是风险或警告的内容。
+:::
+
+## 14. 分隔线
 
 ---
 
 分隔线之后的段落。这里用于确认 `---` 会被渲染成文章内部分隔线。
 
-## 14. 外链预览块
+## 15. 外链预览块
 
 这是提及链接：@link[https://popicon.life/remembering-russi-taylor-as-mcdonalds-birdie-the-early-bird/]。它应该以内联形式显示 logo 和标题。
 

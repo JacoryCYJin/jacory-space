@@ -17,7 +17,7 @@ function trimTrailingUrlPunctuation(value) {
 }
 
 // Handles escapes, `code`, **strong**, *em*, ~~del~~, ==mark==,
-// @link[href], [text](href), and bare http(s) URLs.
+// @link[href], @post[slug], [text](href), and bare http(s) URLs.
 export function parseInline(text) {
   const tokens = []
   let cursor = 0
@@ -42,6 +42,13 @@ export function parseInline(text) {
     if (linkMention) {
       tokens.push({ type: 'linkMention', url: linkMention[1] })
       cursor += linkMention[0].length
+      continue
+    }
+
+    const postMention = /^@post\[([^\]\s]+)\]/.exec(rest)
+    if (postMention) {
+      tokens.push({ type: 'postMention', slug: postMention[1] })
+      cursor += postMention[0].length
       continue
     }
 

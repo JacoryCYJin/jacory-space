@@ -1,4 +1,4 @@
-export const CALLOUT_START_RE = /^:::(note|warning|link)\s*$/i
+export const CALLOUT_START_RE = /^:::(note|warning|highlight|link)\s*$/i
 export const CALLOUT_END_RE = /^:::\s*$/
 export const FIGURE_MARKER_RE = /^figure:(right|wide|inline)\s+/
 
@@ -58,35 +58,52 @@ function hydrateLinkPreview(block, previews) {
   }
 }
 
-function hydrateInlineToken(token, previews) {
-  if (token.type !== 'linkMention' || !token.url) return token
-  const preview = linkPreviewForUrl(previews, token.url)
-  return {
-    ...token,
-    title: token.title || preview.title || '',
-    siteName: token.siteName || preview.siteName || '',
-    favicon: token.favicon || preview.favicon || '',
-    resolvedUrl: preview.resolvedUrl || token.url,
+function hydrateInlineToken(token, context) {
+  if (token.type === 'linkMention' && token.url) {
+    const preview = linkPreviewForUrl(context.linkPreviews, token.url)
+    return {
+      ...token,
+      title: token.title || preview.title || '',
+      siteName: token.siteName || preview.siteName || '',
+      favicon: token.favicon || preview.favicon || '',
+      resolvedUrl: preview.resolvedUrl || token.url,
+    }
   }
+
+  if (token.type === 'postMention' && token.slug) {
+    const post = context.postMentions?.[token.slug] || {}
+    return {
+      ...token,
+      title: token.title || post.title || token.slug,
+      description: post.description || '',
+      date: post.date || '',
+      category: post.category || '',
+      categoryLabelKey: post.categoryLabelKey || '',
+      index: post.index || '',
+      href: `/blog/${token.slug}`,
+    }
+  }
+
+  return token
 }
 
-function hydrateInlines(inlines, previews) {
-  return (inlines || []).map((token) => hydrateInlineToken(token, previews))
+function hydrateInlines(inlines, context) {
+  return (inlines || []).map((token) => hydrateInlineToken(token, context))
 }
 
-function hydrateListItems(items, previews) {
+function hydrateListItems(items, context) {
   return items.map((item) => ({
     ...item,
-    inlines: hydrateInlines(item.inlines, previews),
-    children: (item.children || []).map((child) => hydrateBlock(child, previews)),
+    inlines: hydrateInlines(item.inlines, context),
+    children: (item.children || []).map((child) => hydrateBlock(child, context)),
   }))
 }
 
-function hydrateTable(block, previews) {
+function hydrateTable(block, context) {
   return {
     ...block,
-    header: block.header.map((cell) => hydrateInlines(cell, previews)),
-    rows: block.rows.map((row) => row.map((cell) => hydrateInlines(cell, previews))),
+    header: block.header.map((cell) => hydrateInlines(cell, context)),
+    rows: block.rows.map((row) => row.map((cell) => hydrateInlines(cell, context))),
   }
 }
 
@@ -127,25 +144,25 @@ function urlVariants(url) {
   return [...variants]
 }
 
-function hydrateBlock(block, previews) {
-  if (block.type === 'linkPreview') return hydrateLinkPreview(block, previews)
+function hydrateBlock(block, context) {
+  if (block.type === 'linkPreview') return hydrateLinkPreview(block, context.linkPreviews)
   if (block.type === 'callout') {
-    return { ...block, blocks: hydrateBlocks(block.blocks, previews) }
+    return { ...block, blocks: hydrateBlocks(block.blocks, context) }
   }
   if (block.type === 'list') {
-    return { ...block, items: hydrateListItems(block.items, previews) }
+    return { ...block, items: hydrateListItems(block.items, context) }
   }
   if (block.type === 'table') {
-    return hydrateTable(block, previews)
+    return hydrateTable(block, context)
   }
   if (block.inlines) {
-    return { ...block, inlines: hydrateInlines(block.inlines, previews) }
+    return { ...block, inlines: hydrateInlines(block.inlines, context) }
   }
   return block
 }
 
-export function hydrateBlocks(blocks, previews) {
-  return blocks.map((block) => hydrateBlock(block, previews))
+export function hydrateBlocks(blocks, context = {}) {
+  return blocks.map((block) => hydrateBlock(block, context))
 }
 
 function pad2(n) {

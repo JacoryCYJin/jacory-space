@@ -226,6 +226,10 @@ function findPreviewPathBySlug(slug) {
   return Object.keys(linkPreviewModules).find((path) => slugFromPath(path) === slug)
 }
 
+function buildPostMentions() {
+  return Object.fromEntries(metasAscending.map((meta) => [meta.slug, meta]))
+}
+
 async function getLinkPreviewsBySlug(slug) {
   const path = findPreviewPathBySlug(slug)
   if (!path) return {}
@@ -254,7 +258,10 @@ export async function getPostBySlug(slug) {
   validateFrontmatter(frontmatter, { fileName })
 
   const linkPreviews = await getLinkPreviewsBySlug(slug)
-  const { blocks, toc } = parseDocument(raw, { linkPreviews })
+  const { blocks, toc } = parseDocument(raw, {
+    linkPreviews,
+    postMentions: buildPostMentions(),
+  })
   const position = metasAscending.findIndex((meta) => meta.slug === slug)
   const post = {
     slug,
