@@ -10,6 +10,7 @@ description: "Use this skill for any UI, visual design, layout, styling, animati
 * Applies **globally** to the entire project (every page, route, and UI component).
 * Governs only the **overall website style, mood, color, typography, layout language, and motion baseline**.
 * Does NOT prescribe how any individual page (journal, tools, portfolio, etc.) is laid out — only the shared visual system every page must inherit.
+* Does NOT own Vue/Tailwind implementation mechanics, icon library choices, or whether a style belongs in a template class vs. scoped CSS. Those belong in `frontend-rule`.
 * Shared tokens live in `jacory-space-frontend/src/style.css`; Tailwind token mappings live in `jacory-space-frontend/tailwind.config.js`.
 * Shared Vue surfaces live under `jacory-space-frontend/src/components/`, route views live under `jacory-space-frontend/src/views/`, and routes live in `jacory-space-frontend/src/router/`.
 

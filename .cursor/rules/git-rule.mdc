@@ -7,15 +7,15 @@ alwaysApply: true
 
 ## Branch Naming
 
-- 不在 `main` 上直接提交代码改动；先创建任务分支。
-- 分支格式：`<type>/<short-kebab-desc>`。
-- 使用完整分支前缀；不要用 `feat/` 作为分支前缀。
-- 常用前缀：
-  - `feature/`：新增功能或明显能力增强
-  - `fix/`：修复 bug、异常、回归问题
-  - `chore/`：脚本、配置、依赖、工具维护
-  - `docs/`：只改文档或说明
-- 示例：
+- Do not commit code changes directly on `main`; create or use a task branch first.
+- Branch format: `<type>/<short-kebab-desc>`.
+- Use the full branch prefix names below; do not use `feat/` as a branch prefix.
+- Common prefixes:
+  - `feature/`: new features or meaningful capability improvements.
+  - `fix/`: bug, exception, or regression fixes.
+  - `chore/`: scripts, config, dependencies, or tooling maintenance.
+  - `docs/`: documentation-only changes.
+- Examples:
   - `feature/browser-cookie-mode`
   - `fix/bilibili-parse-timeout`
   - `chore/dev-script`
@@ -23,10 +23,10 @@ alwaysApply: true
 
 ## Commit Message
 
-- 使用一行提交信息。
-- 格式：`<type>: 中文描述`。
-- 常用类型：`feat`、`fix`、`chore`、`docs`。
-- 示例：
+- Use a single-line commit message.
+- Format: `<type>: 中文描述`.
+- Common types: `feat`, `fix`, `chore`, `docs`.
+- Examples:
   - `feat: 支持浏览器 Cookie 模式`
   - `fix: 修复哔哩哔哩解析失败`
   - `chore: 新增开发服务脚本`
@@ -34,15 +34,16 @@ alwaysApply: true
 
 ## Workflow
 
-- 提交前先看 `git status`，不要把本地运行时数据、下载文件、个人文档提交进仓库。
-- 不提交 `jacory-space-backend/video-backend/data/users/`、`jacory-space-backend/video-backend/downloads/`、`.dev/`，除非用户明确要求。
-- 用户说“提交”“提交这个分支”“commit”“submit this branch”时，默认含义是 **commit + push 当前分支**。
-- 只有用户明确说“只提交”“只本地提交”“不要 push”时，才允许停在本地 commit。
-- 每次成功 commit 后，如属于分支工作流，必须立即执行 `git push -u origin HEAD`；不要在 commit 和 push 之间结束回合，除非 push 失败或用户明确禁止 push。
-- 用户说 `pr` 或 `pr open` 时，默认含义是 **commit + push + 创建 PR**；返回 PR 链接，不合并。
-- 用户说 `pr合` 或 `pr merge` 时，默认含义是 **commit + push + 创建 PR + squash merge + 切回 `main` + `git pull origin main`**。
-- 创建 PR 时总结主要改动和验证方式。
-- 如需提 PR：先 `git push -u origin HEAD`，再创建 PR，并把 PR 链接返回给用户手动检查。
-- **禁止自动合并 PR**：Agent 不得自行执行 `gh pr merge`；只有用户明确发出“现在合并”指令后才可执行。
-- 用户明确要求合并 PR 后，默认使用 GitHub squash merge，保持 `main` 线性历史，并保留 GitHub 自动生成的 squash commit 标题格式：`<type>: 中文描述 (#PR号)`。除非用户明确要求普通 merge commit，否则不要使用普通合并提交。
-- PR 合并完成后切回 `main` 并 `git pull origin main`。
+- Run `git status` before committing.
+- Do not commit local runtime data, downloads, or personal documents.
+- Keep `jacory-space-backend/video-backend/data/users/`, `jacory-space-backend/video-backend/downloads/`, and `.dev/` out of commits unless the user explicitly says otherwise.
+- Treat user requests like “提交”, “提交这个分支”, “commit”, or “submit this branch” as **commit + push** by default.
+- Only stop after a local commit when the user explicitly says “只提交”, “只本地提交”, “不要 push”, or equivalent.
+- After every successful commit that is meant for a branch workflow, immediately run `git push -u origin HEAD`; do not end the turn between commit and push unless push fails or the user explicitly forbids pushing.
+- Treat “pr” and “pr open” as **commit + push + create PR**. Return the PR link and do not merge.
+- Treat “pr合” and “pr merge” as **commit + push + create PR + squash merge + switch back to `main` + `git pull origin main`**.
+- When creating a PR, summarize the main changes and validation.
+- If opening a PR is requested, push first with `git push -u origin HEAD`, then create the PR and return the PR link for user review.
+- Do not auto-merge PRs. Only run `gh pr merge` when the user explicitly says to merge now.
+- When merging a PR after explicit user approval, use GitHub squash merge by default to keep `main` linear and preserve GitHub's default squash commit title format: `<type>: 中文描述 (#PR号)`. Do not use a normal merge commit unless the user explicitly asks for it.
+- After a PR is merged, switch back to `main` and run `git pull origin main`.
