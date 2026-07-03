@@ -12,6 +12,7 @@ Use this skill when editing files under `jacory-space-frontend/`.
 - Prefer Tailwind utility classes directly in Vue template `class` attributes for colors, spacing, layout, positioning, and typography.
 - Use scoped CSS classes only when a style block is reused by multiple elements/components, or when Tailwind cannot express the property cleanly, such as complex transforms, letter spacing, pseudo-elements, or keyframes.
 - Do not create a one-off `.xxx` class just to wrap a few utility classes used once.
+- For visual direction, color palette, motion baseline, layout mood, and page-level surface decisions, also use `personal-operating-system-visual-style`.
 
 ## Icons
 
@@ -44,7 +45,7 @@ When adding a new icon dependency, prefer a lightweight library that works well 
 
 ## Illustrations And Grain
 
-- The canonical page background color is `#f6f8fa`.
+- The visual system defines the canonical background and texture usage; do not restate those values here.
 - When a page already uses the global `grain` layer, do not add another local `grain` layer to illustration containers.
 - Illustrations should sit beneath the existing page-level `grain::after` overlay, for example with `relative z-0` on the image when the stacking order needs to be explicit.
 - Do not duplicate grain on a `<figure>` or illustration wrapper just to blend an image into the page; that makes the local texture heavier than the surrounding background.

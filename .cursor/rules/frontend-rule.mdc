@@ -4,23 +4,22 @@ globs: jacory-space-frontend/**/*
 alwaysApply: false
 ---
 
-# frontend-rule
+# jacory-space-frontend-rule
 
-编辑 `jacory-space-frontend/` 时适用。
+Use this skill when editing files under `jacory-space-frontend/`.
 
-## 样式写法
+## Styles
 
-- **默认**：样式直接用 Tailwind 工具类写在模板 `class` 上（颜色、间距、布局、定位、字体等）。
-- **只在以下情况写 scoped `.xxx {}`**：
-  1. 同一套样式被多个元素/组件**重复使用**，需要复用。
-  2. Tailwind 难以表达的属性（复杂 `transform`、`letter-spacing`、伪元素、关键帧等）。
-- **禁止**为「只用一次的几个工具类」单独包一个 `.xxx` 类。
+- Prefer Tailwind utility classes directly in Vue template `class` attributes for colors, spacing, layout, positioning, and typography.
+- Use scoped CSS classes only when a style block is reused by multiple elements/components, or when Tailwind cannot express the property cleanly, such as complex transforms, letter spacing, pseudo-elements, or keyframes.
+- Do not create a one-off `.xxx` class just to wrap a few utility classes used once.
+- For visual direction, color palette, motion baseline, layout mood, and page-level surface decisions, also use `personal-operating-system-visual-style`.
 
-## 图标
+## Icons
 
-- **禁止**在 UI 里用 emoji 充当图标（如 🎬 📺 🔑 📁 ✓）
-- **使用 icon**：SVG 组件或 icon 库（如 `@heroicons/vue`、`lucide-vue-next`）
-- 按钮、导航、卡片装饰、状态提示等，一律走 icon
+- Do not use emoji as UI icons, such as `🎬`, `📺`, `🔑`, `📁`, or `✓`.
+- Use icons instead: SVG components or an icon library such as `@heroicons/vue` or `lucide-vue-next`.
+- Buttons, navigation, decorative card icons, and status hints should all use icon components.
 
 ```vue
 <!-- BAD -->
@@ -35,33 +34,19 @@ alwaysApply: false
 <MonitorPlayIcon class="w-6 h-6" />
 ```
 
-- 新增 icon 依赖时，优先选轻量、与 Tailwind 搭配好的库；不要为单个图标手写大段 SVG，除非项目已有统一 icon 组件
+When adding a new icon dependency, prefer a lightweight library that works well with Tailwind. Do not handwrite large SVG blocks for a single icon unless the project already has a unified icon component pattern.
 
-## 字体 / 字号
+## Typography
 
-- 字号用 Tailwind 命名档位（`text-xs` / `text-sm` / `text-base` …），按最接近的标准档选取。
-- **禁止**任意值 `text-[0.78rem]` / `text-[11px]`，**禁止**在 `<style>` 写 `font-size`。
-- 无 10px/11px 命名档，统一收敛到 `text-xs`；更显眼的层级用 `text-sm`。
-- 字体族用 `font-sans`（正文/标题）、`font-mono`（编号/坐标/状态/meta）；**禁止** `<style>` 里 `font-family: theme("fontFamily.mono")`。
-- `<style>` 只保留 Tailwind 难表达的属性（`letter-spacing`、`transform`、定位、`color` token、`text-transform` 等）；颜色用语义 token 类。
+- Use Tailwind named font sizes (`text-xs`, `text-sm`, `text-base`, etc.) and choose the closest standard step.
+- Do not use arbitrary text sizes such as `text-[0.78rem]` or `text-[11px]`; do not write `font-size` in `<style>`.
+- For 10px/11px-like labels, converge to `text-xs`; use `text-sm` for stronger hierarchy.
+- Use `font-sans` for body/headings and `font-mono` for numbers, coordinates, status, and meta.
+- Keep `<style>` for properties Tailwind cannot express cleanly (`letter-spacing`, `transform`, positioning, token color, `text-transform`). Use semantic token classes or CSS variables for color.
 
-```vue
-<!-- BAD -->
-<span class="text-[11px]" style="font-size:0.78rem">{{ no }}</span>
-<style scoped>
-.label { font-family: theme("fontFamily.mono"); font-size: 0.625rem; }
-</style>
+## Illustrations And Grain
 
-<!-- GOOD -->
-<span class="font-mono text-xs">{{ no }}</span>
-<style scoped>
-.label { letter-spacing: 0.16em; color: var(--muted-foreground); }
-</style>
-```
-
-## 插图 / Grain
-
-- 标准页面背景色是 `#f6f8fa`。
-- 页面已经使用全局 `grain` 层时，不要在插图容器里再叠一层局部 `grain`。
-- 插图应位于页面级 `grain::after` 下方；需要明确层级时，可在图片上使用 `relative z-0`。
-- 不要为了让图片融入页面而在 `<figure>` 或插图 wrapper 上重复 grain，这会让局部纹理比周围背景更重。
+- The visual system defines the canonical background and texture usage; do not restate those values here.
+- When a page already uses the global `grain` layer, do not add another local `grain` layer to illustration containers.
+- Illustrations should sit beneath the existing page-level `grain::after` overlay, for example with `relative z-0` on the image when the stacking order needs to be explicit.
+- Do not duplicate grain on a `<figure>` or illustration wrapper just to blend an image into the page; that makes the local texture heavier than the surrounding background.
