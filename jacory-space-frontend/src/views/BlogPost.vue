@@ -35,17 +35,9 @@
               <MarkdownArticle :blocks="post.blocks" />
 
               <nav
-                class="mt-20 grid grid-cols-1 gap-8 border-t border-line pt-8 md:grid-cols-3"
+                class="mt-20 grid grid-cols-1 gap-8 border-t border-line py-8 md:grid-cols-2"
                 :aria-label="t('blog.post.navAria')"
               >
-                <RouterLink
-                  to="/blog"
-                  class="group inline-flex items-center gap-2 font-mono text-xs tracking-[0.14em] text-foreground transition-colors hover:text-blue"
-                >
-                  <span class="transition-transform duration-500 ease-out group-hover:-translate-x-1">←</span>
-                  {{ t('blog.post.backToFieldNotes') }}
-                </RouterLink>
-
                 <RouterLink
                   v-if="post.prev"
                   :to="`/blog/${post.prev.slug}`"
