@@ -8,7 +8,7 @@
 
 - 找到公开可访问的单集音频
 - 优先读取播客源提供的 transcript
-- 没有 transcript 时进入转写任务
+- 没有公开 transcript 时标记状态，不默认进入转写任务
 - 基于 transcript 或转写结果生成摘要、章节和要点
 
 ## 背景
@@ -21,7 +21,8 @@
 - Apple Podcasts 链接应通过 iTunes Search / Lookup API 回到 `feedUrl` 或 `episodeUrl`。
 - 小宇宙单集页可从页面元信息获取音频地址，也常能通过 Apple / iTunes 目录找到 RSS。
 - Apple Podcasts App 内 transcript 不适合作为通用网页后端抓取来源。
-- 中文播客通常不能依赖 Apple 自动 transcript，应准备 STT 转写。
+- 中文播客通常不能依赖 Apple 自动 transcript；如果来源不提供公开字幕，后续需要通过 STT Provider 补全文本。
+- STT 是 Speech To Text 的产品能力，本质仍属于语音识别。当前阶段不接入具体 provider，只保留可插拔方案。
 
 ## 范围
 
@@ -34,7 +35,7 @@
 - 从 RSS 中提取单集列表、标题、描述、发布时间、时长、封面、音频 URL
 - 优先读取 RSS `podcast:transcript`
 - 支持 VTT、SRT、HTML、JSON、纯文本 transcript 的规范化
-- 没有 transcript 时创建转写任务
+- 没有公开 transcript 时返回明确状态：`marker_only` 或 `missing`
 - 基于 transcript 生成总结、章节、关键观点和可复制摘要
 - 在前端提供播客解析入口和结果视图
 
@@ -55,8 +56,9 @@
 - 系统识别链接类型：RSS、Apple Podcasts、小宇宙、直接音频或不支持
 - 页面显示播客节目和单集基础信息
 - 如果存在公开 transcript，直接显示 transcript 状态为可用
-- 如果没有 transcript，提示可启动转写任务
-- 转写完成后可生成总结
+- 如果来源只有 transcript 标记但没有公开内容，显示 `marker_only`
+- 如果没有任何公开 transcript 字段或标记，显示 `missing`
+- 转写和总结作为后续阶段，不在解析阶段默认启动
 - 总结结果展示为结构化内容，而不是一整段长文本
 
 结果页应展示：
@@ -235,7 +237,9 @@ jacory-space-backend/media-backend/app/
 }
 ```
 
-### `POST /api/podcast/transcribe`
+### `POST /api/podcast/transcribe`（后续预留）
+
+当前不实现该接口。需要等播客解析与前端体验稳定后，再单独进入 STT 实验分支。
 
 请求：
 
@@ -320,14 +324,22 @@ jacory-space-backend/media-backend/app/
 
 Transcript：
 
-- `status`: `available` / `missing` / `insufficient` / `transcribing` / `failed`
-- `source`: `rss` / `apple` / `stt` / `none`
+- `status`: `available` / `marker_only` / `missing` / `insufficient` / `transcribing` / `failed`
+- `source`: `rss` / `xiaoyuzhou` / `apple` / `stt` / `none`
 - `format`: `vtt` / `srt` / `html` / `json` / `txt`
 - `language`
 - `text`
 - `char_count`
 - `preview`
 - `segments`
+
+状态定义：
+
+- `available`: 已经拿到可访问的字幕内容，或拿到可访问的公开字幕 URL。
+- `marker_only`: 来源存在字幕标记，但没有公开字幕文本或字幕 URL。例如小宇宙公开页面里只有 `transcriptMediaId`。
+- `missing`: 没有任何公开 transcript 字段，也没有 transcript 标记。RSS description 中出现“逐字稿 / transcript”等普通文字不算 transcript。
+- `insufficient`: 找到了公开 transcript，但内容太短或噪声太多，暂时不可用于总结。
+- `transcribing` / `failed`: 后续 STT 任务阶段使用。
 
 转写任务：
 
@@ -374,9 +386,11 @@ Transcript：
 
 ### M3: STT 转写任务
 
+当前先保留方案，不在 M1/M2 默认接入。目标是在后续单独实验分支里做可插拔 Provider，而不是把某一个服务写死进解析流程。
+
 - 新增转写任务模型
 - 支持队列、进度、失败状态
-- 接入一个 STT provider
+- 支持可配置 STT provider
 - 支持长音频基础错误恢复
 
 验收：
@@ -384,6 +398,24 @@ Transcript：
 - 无 transcript 的播客能启动转写
 - 转写中可轮询进度
 - 转写完成后返回可用于总结的文本
+
+Provider 候选保留：
+
+| Provider | 类型 | 适用场景 | 当前决策 |
+| --- | --- | --- | --- |
+| OpenAI Speech to Text | 云端 STT API | 希望转写后直接进入 OpenAI 总结链路 | 保留 |
+| Deepgram | 云端 STT API | 长音频、预录音频、实时流转写 | 保留 |
+| AssemblyAI | 云端 STT API | 需要说话人分离、格式化、关键词等完整转写能力 | 保留 |
+| Google Cloud Speech-to-Text | 云端 STT API | 已经使用 Google Cloud 或需要企业云能力 | 保留 |
+| faster-whisper / whisper.cpp | 本地 STT | 不想按量调用云 API，接受本地模型和算力成本 | 后续实验分支 |
+
+Provider 抽象建议：
+
+- 后端只暴露统一 `transcribe(audio_url, language, options)` 能力。
+- provider 通过环境变量选择，例如 `PODCAST_STT_PROVIDER=openai|deepgram|assemblyai|google|local`。
+- 默认关闭 STT：未配置 provider 时，解析结果只返回 `marker_only` 或 `missing`。
+- 不在解析接口里自动启动转写，避免一次解析触发长任务和费用。
+- 不做登录态抓取、隐藏 API 猜测或绕过平台限制。
 
 ### M4: 播客总结
 
@@ -437,11 +469,10 @@ Transcript：
 
 - `POST /api/podcast/parse` 支持 RSS、Apple Podcasts、小宇宙、直接音频链接
 - 有公开 transcript 时优先使用 transcript
-- 没有 transcript 时能进入转写任务
-- 转写完成后能生成结构化总结
+- 没有公开 transcript 时返回 `marker_only` 或 `missing`
+- STT 与总结作为后续阶段单独验收
 - 视频解析 `/api/parse` 和 `/api/video/parse` 不回归
 - 下载、Cookie、设置接口不回归
 - 后端 Python 编译通过
 - 前端 build 通过
 - 文档与 `media-backend` 目录结构保持一致
-
