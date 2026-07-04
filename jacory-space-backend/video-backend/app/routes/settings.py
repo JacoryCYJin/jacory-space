@@ -1,3 +1,4 @@
+import platform
 import subprocess
 from pathlib import Path
 
@@ -13,6 +14,57 @@ from app.services.user_data import (
 )
 
 router = APIRouter()
+
+
+def run_macos_folder_dialog() -> JSONResponse | dict:
+    script = 'POSIX path of (choose folder with prompt "请选择下载文件夹")'
+    completed = subprocess.run(
+        ["osascript", "-e", script],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0:
+        err = completed.stderr.strip()
+        if "User canceled" in err:
+            return {"cancelled": True}
+        return JSONResponse({"error": f"选取目录失败: {err or 'unknown error'}"}, status_code=500)
+
+    selected = completed.stdout.strip()
+    if not selected:
+        return {"cancelled": True}
+    return {"cancelled": False, "path": str(Path(selected).resolve())}
+
+
+def run_windows_folder_dialog() -> JSONResponse | dict:
+    script = r'''
+Add-Type -AssemblyName System.Windows.Forms
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$dialog = New-Object System.Windows.Forms.FolderBrowserDialog
+$dialog.Description = "请选择下载文件夹"
+$dialog.ShowNewFolderButton = $true
+if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
+  Write-Output $dialog.SelectedPath
+  exit 0
+}
+exit 2
+'''
+    completed = subprocess.run(
+        ["powershell", "-NoProfile", "-STA", "-Command", script],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode == 2:
+        return {"cancelled": True}
+    if completed.returncode != 0:
+        err = completed.stderr.strip()
+        return JSONResponse({"error": f"选取目录失败: {err or 'unknown error'}"}, status_code=500)
+
+    selected = completed.stdout.strip()
+    if not selected:
+        return {"cancelled": True}
+    return {"cancelled": False, "path": str(Path(selected).resolve())}
 
 
 @router.get("/settings")
@@ -44,22 +96,11 @@ async def save_settings(request: Request):
 @router.post("/folder-dialog")
 async def folder_dialog():
     try:
-        script = 'POSIX path of (choose folder with prompt "请选择下载文件夹")'
-        completed = subprocess.run(
-            ["osascript", "-e", script],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if completed.returncode != 0:
-            err = completed.stderr.strip()
-            if "User canceled" in err:
-                return {"cancelled": True}
-            return JSONResponse({"error": f"选取目录失败: {err or 'unknown error'}"}, status_code=500)
-
-        selected = completed.stdout.strip()
-        if not selected:
-            return {"cancelled": True}
-        return {"cancelled": False, "path": str(Path(selected).resolve())}
+        system = platform.system().lower()
+        if system == "darwin":
+            return run_macos_folder_dialog()
+        if system == "windows":
+            return run_windows_folder_dialog()
+        return JSONResponse({"error": "当前系统暂不支持目录选择，请手动填写路径"}, status_code=501)
     except Exception as error:
         return JSONResponse({"error": f"打开目录选择失败: {error}"}, status_code=500)

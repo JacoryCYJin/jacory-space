@@ -1,4 +1,5 @@
 import asyncio
+import platform
 import subprocess
 import threading
 from pathlib import Path
@@ -24,6 +25,19 @@ from app.services.ytdlp import (
 router = APIRouter()
 
 
+def reveal_path_command(target_path: Path) -> list[str] | None:
+    system = platform.system().lower()
+    if system == "darwin":
+        if target_path.is_file():
+            return ["open", "-R", str(target_path)]
+        return ["open", str(target_path)]
+    if system == "windows":
+        if target_path.is_file():
+            return ["explorer", f"/select,{target_path}"]
+        return ["explorer", str(target_path)]
+    return None
+
+
 @router.post("/reveal")
 async def reveal_download(request: Request):
     body = await request.json()
@@ -37,9 +51,9 @@ async def reveal_download(request: Request):
         return JSONResponse({"error": "文件或目录不存在"}, status_code=404)
 
     try:
-        command = ["open", str(target_path)]
-        if target_path.is_file():
-            command = ["open", "-R", str(target_path)]
+        command = reveal_path_command(target_path)
+        if not command:
+            return JSONResponse({"error": "当前系统暂不支持自动打开本地路径"}, status_code=501)
         completed = subprocess.run(command, capture_output=True, text=True, check=False)
         if completed.returncode != 0:
             return JSONResponse({"error": completed.stderr.strip() or "无法打开本地路径"}, status_code=500)
