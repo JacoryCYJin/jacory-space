@@ -1,6 +1,6 @@
 <template>
-  <footer class="border-t border-line px-5 py-12 md:px-8">
-    <div class="mx-auto max-w-screen-xl">
+  <footer class="page-gutter border-t border-line py-12">
+    <div class="page-frame">
       <div class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <div>
           <p class="font-sans text-3xl font-medium tracking-tight text-foreground md:text-4xl">

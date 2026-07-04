@@ -40,9 +40,6 @@
                   <span class="font-mono text-[11px] uppercase tracking-[0.14em]" :class="rowStatusClass(format).text">{{ rowStatusLabel(format) }}</span>
                   <template v-if="rowStatus(format) === 'DOWNLOADING'">
                     <span class="font-mono text-[11px] text-muted-foreground">{{ rowProgress(format) }}%</span>
-                    <span class="h-px w-10 bg-line">
-                      <span class="block h-px bg-blue transition-all duration-300" :style="{ width: `${rowProgress(format)}%` }"></span>
-                    </span>
                   </template>
                 </div>
               </td>
