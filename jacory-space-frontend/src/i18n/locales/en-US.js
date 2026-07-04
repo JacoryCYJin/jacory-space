@@ -189,6 +189,66 @@ export default {
       thanks: 'THANKS FOR VISITING.'
     },
   },
+  podcastParser: {
+    sections: {
+      toolIndex: '01 — TOOL',
+      input: 'INPUT',
+      result: 'RESULT'
+    },
+    hero: {
+      titleLead: 'Podcast',
+      titleAccent: 'parser',
+      description: 'Parse Apple Podcasts, Xiaoyuzhou, RSS feeds, and audio links to extract show, episode, audio source, and transcript status.',
+      editionLabel: 'EDITION'
+    },
+    input: {
+      placeholder: 'Paste Apple Podcasts, Xiaoyuzhou, RSS or audio URL',
+      parse: 'PARSE',
+      parsing: 'PARSING',
+      supported: 'SUPPORTED'
+    },
+    status: {
+      ready: 'READY',
+      resolving: 'RESOLVING',
+      resolved: 'RESOLVED',
+      partial: 'PARTIAL',
+      failed: 'PARSE FAILED',
+      failedShort: 'FAILED',
+      resolvingSource: 'RESOLVING SOURCE',
+      missing: 'missing',
+      unknown: 'unknown'
+    },
+    trail: {
+      loading: 'reading source / checking transcript',
+      failed: 'parse failed',
+      audioFound: 'audio found',
+      audioMissing: 'audio missing'
+    },
+    result: {
+      coverAlt: 'Podcast cover',
+      untitledEpisode: 'Untitled episode',
+      source: 'SOURCE',
+      audio: 'AUDIO',
+      audioSource: 'AUDIO SOURCE',
+      audioSize: 'AUDIO SIZE',
+      transcript: 'TRANSCRIPT',
+      summary: 'SUMMARY'
+    },
+    messages: {
+      resolvingSource: 'Reading the podcast source, episode metadata, and public transcript status.',
+      noAudio: 'No public audio source returned.',
+      transcriptAvailable: 'Public transcript found in the source and ready for later summarization.',
+      transcriptMarkerOnly: 'The source has a transcript marker, but no public transcript content is available.',
+      transcriptInsufficient: 'A public transcript was found, but it is too short or too noisy to use.',
+      transcriptMissing: 'No public transcript found in this source.',
+      summaryReserved: 'Summary and local transcription are reserved for a later version.'
+    },
+    errors: {
+      emptyUrl: 'Paste a podcast, RSS, or audio URL first.',
+      invalidUrl: 'The input is not a valid URL.',
+      parseFailed: 'Podcast parse failed: {message}'
+    }
+  },
   videoParser: {
     title: 'Video Parser and Downloader',
     subtitle: 'Parse and download videos from Bilibili, YouTube, and other platforms.',

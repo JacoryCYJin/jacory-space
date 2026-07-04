@@ -189,6 +189,66 @@ export default {
       thanks: 'ご訪問ありがとうございます。'
     },
   },
+  podcastParser: {
+    sections: {
+      toolIndex: '01 — ツール',
+      input: '入力',
+      result: '結果'
+    },
+    hero: {
+      titleLead: 'Podcast',
+      titleAccent: 'parser',
+      description: 'Apple Podcasts、小宇宙、RSS Feed、音声リンクを解析し、番組、エピソード、音声ソース、字幕状態を取得します。',
+      editionLabel: '版'
+    },
+    input: {
+      placeholder: 'Apple Podcasts、小宇宙、RSS、または音声 URL を貼り付けてください',
+      parse: '解析',
+      parsing: '解析中',
+      supported: '対応'
+    },
+    status: {
+      ready: '準備完了',
+      resolving: '解析中',
+      resolved: '解析済み',
+      partial: '一部取得',
+      failed: '解析失敗',
+      failedShort: '失敗',
+      resolvingSource: 'ソースを解析中',
+      missing: 'なし',
+      unknown: 'unknown'
+    },
+    trail: {
+      loading: 'ソース取得 / 字幕確認',
+      failed: '解析失敗',
+      audioFound: '音声あり',
+      audioMissing: '音声なし'
+    },
+    result: {
+      coverAlt: 'Podcast カバー',
+      untitledEpisode: '無題のエピソード',
+      source: 'ソース',
+      audio: '音声',
+      audioSource: '音声ソース',
+      audioSize: '音声サイズ',
+      transcript: '字幕',
+      summary: '要約'
+    },
+    messages: {
+      resolvingSource: 'Podcast のソース、エピソード情報、公開字幕の状態を読み込んでいます。',
+      noAudio: '公開されている音声ソースは返されませんでした。',
+      transcriptAvailable: '公開字幕が見つかりました。後続の要約で利用できます。',
+      transcriptMarkerOnly: 'ソースに字幕マーカーはありますが、公開字幕の内容はありません。',
+      transcriptInsufficient: '公開字幕は見つかりましたが、短すぎるかノイズが多いため利用できません。',
+      transcriptMissing: 'このソースには公開字幕が見つかりませんでした。',
+      summaryReserved: '要約とローカル文字起こしは今後のバージョンで対応します。'
+    },
+    errors: {
+      emptyUrl: 'Podcast、RSS、または音声 URL を先に貼り付けてください。',
+      invalidUrl: '有効な URL を入力してください。',
+      parseFailed: 'Podcast を解析できませんでした：{message}'
+    }
+  },
   videoParser: {
     title: '動画解析・ダウンロード',
     subtitle: 'Bilibili、YouTube などの動画を解析してダウンロードできます。',

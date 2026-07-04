@@ -97,7 +97,12 @@ const projects = [
   {
     id: '001', no: '001', title: 'Video Parser', layer: 'TOOLS', category: 'tool', status: 'live',
     pos: [-7.0, -1.6], description: '解析 Bilibili、YouTube 等平台视频，提取字幕、总结大纲、生成结构化笔记。',
-    stack: ['Vue', 'Express', 'yt-dlp'], version: 'v1.0.0', updated: '2026.06.20', href: '/video-parser'
+    stack: ['Vue', 'FastAPI', 'yt-dlp'], version: 'v1.0.0', updated: '2026.06.20', href: '/video-parser'
+  },
+  {
+    id: '002', no: '002', title: 'Podcast Parser', layer: 'TOOLS', category: 'tool', status: 'wip',
+    pos: [-2.5, -2.2], description: '解析 Apple Podcasts、小宇宙、RSS Feed 与音频链接，提取单集信息、音频源和公开字幕状态。',
+    stack: ['Vue', 'FastAPI', 'RSS'], version: 'v0.1.0', updated: '2026.07.04', href: '/podcast-parser'
   },
   {
     id: '003', no: '003', title: 'Cool Palette', layer: 'TOOLS', category: 'tool', status: 'wip',

@@ -189,6 +189,66 @@ export default {
       thanks: '感谢来访。'
     },
   },
+  podcastParser: {
+    sections: {
+      toolIndex: '01 — 工具',
+      input: '输入',
+      result: '结果'
+    },
+    hero: {
+      titleLead: 'Podcast',
+      titleAccent: 'parser',
+      description: '解析 Apple Podcasts、小宇宙、RSS Feed 与音频链接，提取节目、单集、音频源与字幕状态。',
+      editionLabel: '版本'
+    },
+    input: {
+      placeholder: '粘贴 Apple Podcasts、小宇宙、RSS 或音频链接',
+      parse: '解析',
+      parsing: '解析中',
+      supported: '支持'
+    },
+    status: {
+      ready: '就绪',
+      resolving: '解析中',
+      resolved: '已解析',
+      partial: '部分结果',
+      failed: '解析失败',
+      failedShort: '失败',
+      resolvingSource: '正在解析来源',
+      missing: '缺失',
+      unknown: 'unknown'
+    },
+    trail: {
+      loading: '读取来源 / 检查字幕',
+      failed: '解析失败',
+      audioFound: '已找到音频',
+      audioMissing: '未找到音频'
+    },
+    result: {
+      coverAlt: '播客封面',
+      untitledEpisode: '未命名单集',
+      source: '来源',
+      audio: '音频',
+      audioSource: '音频源',
+      audioSize: '音频大小',
+      transcript: '字幕',
+      summary: '总结'
+    },
+    messages: {
+      resolvingSource: '正在读取播客来源、单集信息和公开字幕状态。',
+      noAudio: '未返回公开音频源。',
+      transcriptAvailable: '已找到公开字幕。',
+      transcriptMarkerOnly: '来源存在字幕标记，但没有公开字幕内容。',
+      transcriptInsufficient: '找到了公开字幕，但内容太短或噪声过多，暂时不可用。',
+      transcriptMissing: '未找到公开字幕。',
+      summaryReserved: '总结与本地转写将在后续版本中支持。'
+    },
+    errors: {
+      emptyUrl: '请先粘贴播客、RSS 或音频链接。',
+      invalidUrl: '请输入有效链接。',
+      parseFailed: '播客解析失败：{message}'
+    }
+  },
   videoParser: {
     title: '视频解析下载工具',
     subtitle: '支持 Bilibili、YouTube 等多平台视频解析',
