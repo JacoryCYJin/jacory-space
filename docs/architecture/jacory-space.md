@@ -5,7 +5,7 @@
 ```txt
 jacory-space/
   jacory-space-frontend/              # Vite + Vue 3 + Tailwind
-  jacory-space-backend/video-backend/ # Express video parser backend
+  jacory-space-backend/media-backend/ # FastAPI media parser backend
   docs/                               # project docs
   scripts/dev.sh                      # local service runner
 ```
@@ -19,15 +19,15 @@ frontend 3001 -> /api proxy -> backend 5001
 ```bash
 bash scripts/dev.sh
 bash scripts/dev.sh status
-bash scripts/dev.sh stop video-backend
+bash scripts/dev.sh stop media-backend
 ```
 
 Runtime files:
 
 ```txt
 .dev/                                      # local pids/logs
-jacory-space-backend/video-backend/data/  # local user settings/cookies
-jacory-space-backend/video-backend/downloads/
+jacory-space-backend/media-backend/data/  # local user settings/cookies
+jacory-space-backend/media-backend/downloads/
 ```
 
 ## Frontend
@@ -150,16 +150,16 @@ npm run lp -- <blog-slug>
 npm run lp:all
 ```
 
-## Video Parser
+## Media Backend
 
 ```txt
-jacory-space-backend/video-backend/server.js
+jacory-space-backend/media-backend/app/main.py
 ```
 
 Main dependencies:
 
 ```txt
-express
+fastapi
 yt-dlp
 ffmpeg recommended for merge/download
 SiliconFlow optional for outline
@@ -187,6 +187,7 @@ manage cookies
 call yt-dlp
 proxy thumbnails
 download media
+parse podcast targets
 generate video outline
 ```
 

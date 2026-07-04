@@ -1,10 +1,12 @@
-# Jacory Space Video Backend
+# Jacory Space Media Backend
 
-用于配合 `jacory-space-frontend` 的视频解析/下载后端。
+用于配合 `jacory-space-frontend` 的媒体解析/下载后端。
 
 ## 功能
 
-- `POST /api/parse`: 输入视频链接，返回可选分辨率
+- `POST /api/parse`: 兼容视频解析入口，返回可选分辨率
+- `POST /api/video/parse`: 视频解析入口
+- `POST /api/podcast/parse`: 播客解析入口骨架
 - `POST /api/download`: 选择分辨率下载
 - `GET/POST/DELETE /api/cookies`: 管理不同平台 cookies
 - `GET/POST /api/settings`: 默认下载目录配置
@@ -33,7 +35,7 @@ brew install yt-dlp ffmpeg
 ## 启动
 
 ```bash
-cd jacory-space-backend/video-backend
+cd jacory-space-backend/media-backend
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 npm run dev
@@ -45,7 +47,7 @@ npm run dev
 
 下载文件保存到：
 
-- `jacory-space-backend/video-backend/downloads/`
+- `jacory-space-backend/media-backend/downloads/`
 
 ## 说明
 

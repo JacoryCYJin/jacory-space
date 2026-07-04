@@ -7,7 +7,7 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, Response
 
 from app.services.transcript import fetch_transcript_from_info, get_subtitle_info
-from app.services.ytdlp import (
+from app.services.video.ytdlp import (
     build_thumbnail_proxy_url,
     detect_platform,
     get_ytdlp_args,
@@ -101,6 +101,11 @@ async def parse_video(request: Request):
                 status_code=500,
             )
         return JSONResponse({"error": f"解析失败: {msg}"}, status_code=500)
+
+
+@router.post("/video/parse")
+async def parse_video_v2(request: Request):
+    return await parse_video(request)
 
 
 @router.get("/thumbnail")

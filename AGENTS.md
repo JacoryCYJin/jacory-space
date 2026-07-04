@@ -4,9 +4,9 @@ Jacory Space 是个人网站项目。所有 Agent 在本仓库工作时优先遵
 
 ## Context
 
-- 项目包含 Vue 前端和 Node/Express 视频解析后端。
+- 项目包含 Vue 前端和 FastAPI 媒体解析后端。
 - `jacory-space-frontend/`: Vite + Vue 3 + Tailwind CSS 前端，页面在 `src/views/`，路由在 `src/router/`。
-- `jacory-space-backend/video-backend/`: Express 后端，负责视频解析、下载、Cookie 设置和下载目录设置，默认端口 `5001`。
+- `jacory-space-backend/media-backend/`: FastAPI 后端，负责视频/播客等媒体解析、下载、Cookie 设置和下载目录设置，默认端口 `5001`。
 - `scripts/dev.sh`: 本地开发服务脚本，可启动、停止、列出和查看前后端服务状态。
 - `.agents/skills/`: Codex 项目 skill。默认开发用 `dev-main`；Git 操作前用 `git-rule`；前端视觉/UI 改动用 `frontend-rule` 和 `personal-operating-system-visual-style`。
 - `.cursor/rules/`: Cursor 项目规则，例如 Git 规范和前端图标规范。
@@ -51,7 +51,7 @@ Jacory Space 是个人网站项目。所有 Agent 在本仓库工作时优先遵
 ### Files
 
 - 不要提交本地运行时数据、下载文件、个人文档或环境文件。
-- `jacory-space-backend/video-backend/data/users/`、`jacory-space-backend/video-backend/downloads/`、`.dev/` 属于本地运行数据，不应进入提交。
+- `jacory-space-backend/media-backend/data/users/`、`jacory-space-backend/media-backend/downloads/`、`.dev/` 属于本地运行数据，不应进入提交。
 
 ### Runtime And PRs
 
@@ -63,7 +63,7 @@ Jacory Space 是个人网站项目。所有 Agent 在本仓库工作时优先遵
 ### Checks
 
 - 前端改动后运行 `npm run build`。
-- 后端改动后运行 `node --check server.js`。
+- 后端改动后运行 `python3 -m compileall app`。
 - 脚本改动后运行 `bash -n scripts/dev.sh`，并至少验证 `bash scripts/dev.sh ls`。
 - 修改后检查 IDE diagnostics / linter；不要提交已知报错。
 - 提交前执行 `git status`，确认没有把本地运行时数据、下载文件、个人文档或环境文件加入提交。
@@ -77,13 +77,13 @@ Jacory Space 是个人网站项目。所有 Agent 在本仓库工作时优先遵
 bash scripts/dev.sh
 
 # 启动单个服务
-bash scripts/dev.sh video-backend
+bash scripts/dev.sh media-backend
 bash scripts/dev.sh jacory-space-frontend
 
 # 查看和停止服务
 bash scripts/dev.sh ls
 bash scripts/dev.sh status
-bash scripts/dev.sh stop video-backend
+bash scripts/dev.sh stop media-backend
 ```
 
 前端也可单独运行：
@@ -97,6 +97,6 @@ npm run build
 后端也可单独运行：
 
 ```bash
-cd jacory-space-backend/video-backend
+cd jacory-space-backend/media-backend
 npm run dev
 ```

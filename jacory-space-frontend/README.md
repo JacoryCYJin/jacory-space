@@ -66,7 +66,7 @@ jacory-space-frontend/
 确保后端服务已启动：
 
 ```bash
-cd ../jacory-space-backend/video-backend
+cd ../jacory-space-backend/media-backend
 npm install
 npm run dev
 ```

@@ -7,7 +7,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from app.config import YTDLP_BIN
-from app.services.ytdlp import detect_platform, get_ytdlp_args
+from app.services.video.ytdlp import detect_platform, get_ytdlp_args
 
 
 download_tasks: dict[str, dict] = {}

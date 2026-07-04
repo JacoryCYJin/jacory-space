@@ -45,12 +45,12 @@ jacory-space-frontend/src/content/link-previews/999-markdown-parser-fixture.json
 .dev/
 
 # Backend runtime data
-jacory-space-backend/video-backend/downloads/
-jacory-space-backend/video-backend/data/users/
+jacory-space-backend/media-backend/downloads/
+jacory-space-backend/media-backend/data/users/
 
 # Keep backend cookie/runtime dirs out of git
-jacory-space-backend/video-backend/data/cookies/
-jacory-space-backend/video-backend/.venv/
+jacory-space-backend/media-backend/data/cookies/
+jacory-space-backend/media-backend/.venv/
 
 # Python cache (if ever used)
 __pycache__/
