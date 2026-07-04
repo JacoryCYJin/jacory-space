@@ -54,9 +54,6 @@
             </button>
 
             <p class="text-xs leading-relaxed text-muted-foreground">{{ t('videoParser.settings.cookiesUsageNote') }}</p>
-            <p v-if="cookieSettingsStatus" class="text-xs leading-relaxed text-muted-foreground">
-              {{ cookieSettingsStatus.message }}
-            </p>
           </div>
 
           <div class="border-t border-line pt-7">
@@ -141,7 +138,6 @@ defineProps({
   browserSources: { type: Array, required: true },
   browserCookieSource: { type: String, required: true },
   savingCookieSettings: { type: Boolean, required: true },
-  cookieSettingsStatus: { type: Object, default: null },
   cookiePlatformRows: { type: Array, required: true },
   cookiesInfo: { type: Object, required: true },
   defaultDownloadDir: { type: String, default: '' },

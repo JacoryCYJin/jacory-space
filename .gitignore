@@ -24,6 +24,10 @@ pnpm-debug.log*
 # Node dependencies
 node_modules/
 
+# Python virtual environments
+.venv/
+venv/
+
 # Build outputs
 /dist/
 /build/
@@ -46,6 +50,7 @@ jacory-space-backend/video-backend/data/users/
 
 # Keep backend cookie/runtime dirs out of git
 jacory-space-backend/video-backend/data/cookies/
+jacory-space-backend/video-backend/.venv/
 
 # Python cache (if ever used)
 __pycache__/
