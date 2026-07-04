@@ -238,16 +238,23 @@ export default {
       size: '大小',
       status: '状态',
       action: '操作',
+      processing: '处理中',
       rowStatus: {
         READY: '就绪',
         DOWNLOADING: '下载中',
+        PAUSED: '已暂停',
         COMPLETE: '完成',
         FAILED: '失败',
+        CANCELLED: '已取消',
         UNAVAILABLE: '不可用'
       },
       actions: {
         download: '下载',
+        processing: '处理中',
         pause: '暂停',
+        resume: '继续',
+        cancel: '取消',
+        redownload: '重新下载',
         retry: '重试',
         reveal: '显示',
         open: '打开'
@@ -382,6 +389,7 @@ export default {
       loadSettingsFailed: '加载设置失败',
       saveDefaultDirFailed: '保存默认下载目录失败',
       folderDialogFailed: '打开系统文件夹选择失败',
+      revealFailed: '打开本地路径失败',
       outlineFailed: '生成大纲失败',
       saveCookieSettingsFailed: '保存 Cookie 使用方式失败',
       loadCookiesFailed: '加载 cookies 状态失败',
@@ -393,6 +401,7 @@ export default {
       readingMetadata: '正在读取视频元数据…',
       downloadingResolution: '正在下载 {resolution} 版本...',
       downloadComplete: '下载完成！文件保存在: {path}',
+      revealComplete: '已打开本地路径',
       defaultDirSaved: '默认下载目录已保存: {path}',
       cookieUsageSaved: 'Cookie 使用方式已保存',
       confirmDeleteCookies: '确定要删除 {platform} 的 Cookies 吗？'

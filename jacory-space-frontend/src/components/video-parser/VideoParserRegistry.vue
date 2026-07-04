@@ -12,11 +12,11 @@
         <table class="w-full table-fixed border-collapse text-left">
           <colgroup>
             <col class="w-[8%]" />
-            <col class="w-[17%]" />
-            <col class="w-[23%]" />
-            <col class="w-[13%]" />
-            <col class="w-[22%]" />
-            <col class="w-[17%]" />
+            <col class="w-[18%]" />
+            <col class="w-[16%]" />
+            <col class="w-[16%]" />
+            <col class="w-[18%]" />
+            <col class="w-[24%]" />
           </colgroup>
           <thead class="border-b border-line bg-muted/40">
             <tr class="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
@@ -35,8 +35,8 @@
               <td class="truncate px-3 py-4 font-mono text-xs text-muted-foreground" :title="formatLabel(format)">{{ formatLabel(format) }}</td>
               <td class="truncate px-3 py-4 font-mono text-xs text-muted-foreground">{{ format.filesize_mb || '--' }} MB</td>
               <td class="px-3 py-4">
-                <div class="flex items-center gap-2">
-                  <span class="h-1.5 w-1.5 rounded-full" :class="rowStatusClass(format).dot"></span>
+                <div class="flex items-center gap-2 whitespace-nowrap">
+                  <span class="h-1.5 w-1.5 shrink-0 rounded-full" :class="rowStatusClass(format).dot"></span>
                   <span class="font-mono text-[11px] uppercase tracking-[0.14em]" :class="rowStatusClass(format).text">{{ rowStatusLabel(format) }}</span>
                   <template v-if="rowStatus(format) === 'DOWNLOADING'">
                     <span class="font-mono text-[11px] text-muted-foreground">{{ rowProgress(format) }}%</span>
@@ -46,19 +46,53 @@
                   </template>
                 </div>
               </td>
-              <td class="px-3 py-4 text-right">
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-blue transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:text-haze"
-                  :disabled="downloading[format.resolution] || rowStatus(format) === 'UNAVAILABLE'"
-                  @click="emit('download', format)"
-                >
-                  {{ rowActionLabel(format) }}
-                  <ArrowRight v-if="rowStatus(format) === 'READY'" class="h-3.5 w-3.5" />
-                  <Pause v-else-if="rowStatus(format) === 'DOWNLOADING'" class="h-3.5 w-3.5" />
-                  <ExternalLink v-else-if="rowStatus(format) === 'COMPLETE'" class="h-3.5 w-3.5" />
-                  <RefreshCw v-else-if="rowStatus(format) === 'FAILED'" class="h-3.5 w-3.5" />
-                </button>
+              <td class="px-3 py-4">
+                <div class="flex justify-end gap-4 whitespace-nowrap">
+                  <template v-if="rowStatus(format) === 'DOWNLOADING'">
+                    <button type="button" class="registry-action text-blue hover:text-foreground" @click="emit('pause', format)">
+                      {{ t('videoParser.registry.actions.pause') }}
+                      <Pause class="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" class="registry-action text-muted-foreground hover:text-foreground" @click="emit('cancel', format)">
+                      {{ t('videoParser.registry.actions.cancel') }}
+                      <X class="h-3.5 w-3.5" />
+                    </button>
+                  </template>
+                  <template v-else-if="rowStatus(format) === 'PAUSED'">
+                    <button type="button" class="registry-action text-blue hover:text-foreground" @click="emit('resume', format)">
+                      {{ t('videoParser.registry.actions.resume') }}
+                      <Play class="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" class="registry-action text-muted-foreground hover:text-foreground" @click="emit('cancel', format)">
+                      {{ t('videoParser.registry.actions.cancel') }}
+                      <X class="h-3.5 w-3.5" />
+                    </button>
+                  </template>
+                  <template v-else-if="rowStatus(format) === 'COMPLETE'">
+                    <button type="button" class="registry-action text-green-700 hover:text-foreground" @click="emit('reveal', format)">
+                      {{ t('videoParser.registry.actions.reveal') }}
+                      <ExternalLink class="h-3.5 w-3.5" />
+                    </button>
+                    <button type="button" class="registry-action text-blue hover:text-foreground" @click="emit('download', format)">
+                      {{ t('videoParser.registry.actions.redownload') }}
+                      <RefreshCw class="h-3.5 w-3.5" />
+                    </button>
+                  </template>
+                  <button
+                    v-else
+                    type="button"
+                    :class="[
+                      'registry-action disabled:cursor-not-allowed disabled:text-haze',
+                      ['FAILED', 'CANCELLED'].includes(rowStatus(format)) ? 'text-red-700 hover:text-foreground' : 'text-blue hover:text-foreground'
+                    ]"
+                    :disabled="rowStatus(format) === 'UNAVAILABLE'"
+                    @click="emit('download', format)"
+                  >
+                    {{ rowActionLabel(format) }}
+                    <RefreshCw v-if="['FAILED', 'CANCELLED'].includes(rowStatus(format))" class="h-3.5 w-3.5" />
+                    <ArrowRight v-else class="h-3.5 w-3.5" />
+                  </button>
+                </div>
               </td>
             </tr>
             <tr v-if="!registryRows.length">
@@ -73,7 +107,7 @@
 
 <script setup>
 import { useI18n } from 'vue-i18n'
-import { ArrowRight, ExternalLink, Pause, RefreshCw } from 'lucide-vue-next'
+import { ArrowRight, ExternalLink, Pause, Play, RefreshCw, X } from 'lucide-vue-next'
 
 defineProps({
   registryRows: { type: Array, required: true },
@@ -87,6 +121,12 @@ defineProps({
   rowActionLabel: { type: Function, required: true }
 })
 
-const emit = defineEmits(['download'])
+const emit = defineEmits(['download', 'reveal', 'pause', 'resume', 'cancel'])
 const { t } = useI18n()
 </script>
+
+<style scoped>
+.registry-action {
+  @apply inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.16em] transition-colors;
+}
+</style>

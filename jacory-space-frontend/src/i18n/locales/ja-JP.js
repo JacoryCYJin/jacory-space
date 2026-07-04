@@ -238,16 +238,23 @@ export default {
       size: 'サイズ',
       status: '状態',
       action: '操作',
+      processing: '処理中',
       rowStatus: {
         READY: '準備完了',
         DOWNLOADING: 'ダウンロード中',
+        PAUSED: '一時停止',
         COMPLETE: '完了',
         FAILED: '失敗',
+        CANCELLED: 'キャンセル済み',
         UNAVAILABLE: '利用不可'
       },
       actions: {
         download: 'ダウンロード',
+        processing: '処理中',
         pause: '一時停止',
+        resume: '再開',
+        cancel: 'キャンセル',
+        redownload: '再ダウンロード',
         retry: '再試行',
         reveal: '場所を表示',
         open: '開く'
@@ -382,6 +389,7 @@ export default {
       loadSettingsFailed: '設定を読み込めませんでした',
       saveDefaultDirFailed: '既定の保存先を保存できませんでした',
       folderDialogFailed: 'フォルダ選択画面を開けませんでした',
+      revealFailed: 'ローカルパスを開けませんでした',
       outlineFailed: 'アウトラインを生成できませんでした',
       saveCookieSettingsFailed: 'Cookie の利用方法を保存できませんでした',
       loadCookiesFailed: 'Cookie の状態を読み込めませんでした',
@@ -393,6 +401,7 @@ export default {
       readingMetadata: '動画情報を取得しています…',
       downloadingResolution: '{resolution} 版をダウンロードしています…',
       downloadComplete: 'ダウンロードが完了しました。保存先：{path}',
+      revealComplete: 'ローカルパスを開きました',
       defaultDirSaved: '既定の保存先を変更しました：{path}',
       cookieUsageSaved: 'Cookie の利用方法を保存しました',
       confirmDeleteCookies: '{platform} の Cookie を削除しますか？'

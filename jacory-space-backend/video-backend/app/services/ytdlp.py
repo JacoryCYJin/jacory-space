@@ -133,8 +133,7 @@ def format_size_mb(size: dict) -> str:
     bytes_value = float(size.get("bytes") or 0)
     if bytes_value <= 0:
         return "未知"
-    size_mb = f"{bytes_value / 1024 / 1024:.2f}"
-    return f"约 {size_mb}" if size.get("estimated") else size_mb
+    return f"{bytes_value / 1024 / 1024:.2f}"
 
 
 def find_downloadable_format(formats: list[dict], format_id: str) -> dict | None:
@@ -154,10 +153,13 @@ def assert_allowed_download_format(client_id: str, url: str, format_id: str) -> 
     has_video = bool((selected or {}).get("vcodec")) and selected.get("vcodec") != "none"
     has_audio = bool((selected or {}).get("acodec")) and selected.get("acodec") != "none"
 
-    if not selected or ext != "mp4":
-        raise ApiError("该格式不可用：仅支持包含视频流的 MP4 下载", status_code=400)
+    if not selected or ext not in {"mp4", "m4a"}:
+        raise ApiError("该格式不可用：仅支持 MP4 视频或 M4A 音频下载", status_code=400)
 
-    if not has_video:
+    if ext == "m4a" and (has_video or not has_audio):
+        raise ApiError("该音频格式不可用", status_code=400)
+
+    if ext == "mp4" and not has_video:
         raise ApiError("该视频格式不可用", status_code=400)
 
     return {"ext": ext, "hasVideo": has_video, "hasAudio": has_audio}
@@ -165,13 +167,32 @@ def assert_allowed_download_format(client_id: str, url: str, format_id: str) -> 
 
 def to_unique_formats(formats: list[dict], duration: int | float | None = 0) -> list[dict]:
     by_resolution: dict[str, dict] = {}
+    best_audio: dict | None = None
 
     for format_info in formats or []:
         if not format_info or not format_info.get("ext"):
             continue
         ext = str(format_info.get("ext") or "").lower()
         has_video = bool(format_info.get("vcodec")) and format_info.get("vcodec") != "none"
+        has_audio = bool(format_info.get("acodec")) and format_info.get("acodec") != "none"
         size = estimate_size_bytes(format_info, duration)
+
+        if ext == "m4a" and has_audio and not has_video:
+            score = float(format_info.get("abr") or format_info.get("tbr") or 0)
+            if not best_audio or score > best_audio["score"]:
+                best_audio = {
+                    "score": score,
+                    "value": {
+                        "format_id": format_info.get("format_id"),
+                        "resolution": "Audio",
+                        "format_note": format_info.get("format_note") or "audio",
+                        "ext": format_info.get("ext"),
+                        "filesize_mb": format_size_mb(size),
+                        "has_audio": True,
+                        "has_video": False,
+                    },
+                }
+            continue
 
         if ext != "mp4":
             continue
@@ -197,13 +218,16 @@ def to_unique_formats(formats: list[dict], duration: int | float | None = 0) -> 
                     "format_note": format_info.get("format_note") or "",
                     "ext": format_info.get("ext"),
                     "filesize_mb": format_size_mb(size),
-                    "has_audio": bool(format_info.get("acodec")) and format_info.get("acodec") != "none",
+                    "has_audio": has_audio,
                     "has_video": bool(format_info.get("vcodec")) and format_info.get("vcodec") != "none",
                 },
             }
 
-    return sorted(
+    visible_formats = sorted(
         (item["value"] for item in by_resolution.values()),
         key=lambda item: int(re.sub(r"\D", "", item["resolution"]) or 0),
         reverse=True,
     )
+    if best_audio:
+        visible_formats.append(best_audio["value"])
+    return visible_formats

@@ -1,20 +1,53 @@
 import asyncio
+import subprocess
+import threading
 from pathlib import Path
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from app.errors import ApiError
+from app.services.download_tasks import (
+    MAX_ACTIVE_TASKS_PER_CLIENT,
+    active_task_count,
+    control_download_task,
+    create_download_task,
+    download_task_worker,
+    read_download_task,
+)
 from app.services.user_data import get_user_settings, normalize_output_dir
 from app.services.ytdlp import (
     assert_allowed_download_format,
-    detect_platform,
-    get_ytdlp_args,
     normalize_video_input,
-    run_ytdlp,
 )
 
 router = APIRouter()
+
+
+@router.post("/reveal")
+async def reveal_download(request: Request):
+    body = await request.json()
+    raw_path = str(body.get("path") or "").strip()
+
+    if not raw_path:
+        return JSONResponse({"error": "缺少 path 参数"}, status_code=400)
+
+    target_path = Path(raw_path).expanduser()
+    if not target_path.exists():
+        return JSONResponse({"error": "文件或目录不存在"}, status_code=404)
+
+    try:
+        command = ["open", str(target_path)]
+        if target_path.is_file():
+            command = ["open", "-R", str(target_path)]
+        completed = subprocess.run(command, capture_output=True, text=True, check=False)
+        if completed.returncode != 0:
+            return JSONResponse({"error": completed.stderr.strip() or "无法打开本地路径"}, status_code=500)
+        return {"message": "已打开本地路径", "path": str(target_path)}
+    except FileNotFoundError:
+        return JSONResponse({"error": "当前系统不支持自动打开本地路径"}, status_code=500)
+    except Exception as error:
+        return JSONResponse({"error": f"打开本地路径失败: {error}"}, status_code=500)
 
 
 @router.post("/download")
@@ -36,6 +69,9 @@ async def download_video(request: Request):
         user_settings = get_user_settings(request.state.client_id)
         target_dir = normalize_output_dir(body.get("output_dir") or user_settings["default_download_dir"], request.state.client_id)
         target_dir.mkdir(parents=True, exist_ok=True)
+
+        if active_task_count(request.state.client_id) >= MAX_ACTIVE_TASKS_PER_CLIENT:
+            return JSONResponse({"error": f"同时最多下载 {MAX_ACTIVE_TASKS_PER_CLIENT} 个任务"}, status_code=429)
 
         selected_format = await asyncio.to_thread(assert_allowed_download_format, request.state.client_id, url, format_id)
         if format_id:
@@ -60,65 +96,28 @@ async def download_video(request: Request):
 
         output_template = str(Path(target_dir) / "%(title).140B-%(id)s.%(ext)s")
         base_args = [
+            "--newline",
+            "--progress",
+            "--progress-template",
+            "[download] %(progress._percent_str)s of %(progress._total_bytes_str)s at %(progress._speed_str)s ETA %(progress._eta_str)s",
             "-f",
             format_selector,
-            "--merge-output-format",
-            "mp4",
             "-o",
             output_template,
             "--print",
             "after_move:filepath",
         ]
+        if not is_audio_only:
+            base_args.extend(["--merge-output-format", "mp4"])
 
-        stdout = ""
-        is_youtube = detect_platform(url) == "youtube"
-        try:
-            result = await asyncio.to_thread(run_ytdlp, get_ytdlp_args(request.state.client_id, url, base_args))
-            stdout = result["stdout"]
-        except Exception as first_error:
-            msg = str(first_error)
-            is_403 = "HTTP Error 403" in msg or "Forbidden" in msg
-            is_bot_gate = "Sign in to confirm you’re not a bot" in msg
-            if not (is_youtube and (is_403 or is_bot_gate)):
-                raise
-
-            try:
-                retry_no_cookies = await asyncio.to_thread(
-                    run_ytdlp,
-                    get_ytdlp_args(request.state.client_id, url, base_args, {"useCookies": False}),
-                )
-                stdout = retry_no_cookies["stdout"]
-            except Exception as second_error:
-                second_msg = str(second_error)
-                still_blocked = "Sign in to confirm you’re not a bot" in second_msg or "HTTP Error 403" in second_msg
-                if not still_blocked:
-                    raise
-
-                try:
-                    retry_safari = await asyncio.to_thread(
-                        run_ytdlp,
-                        get_ytdlp_args(
-                            request.state.client_id,
-                            url,
-                            base_args,
-                            {"useCookies": False, "cookiesFromBrowser": "safari"},
-                        ),
-                    )
-                    stdout = retry_safari["stdout"]
-                except Exception:
-                    retry_chrome = await asyncio.to_thread(
-                        run_ytdlp,
-                        get_ytdlp_args(
-                            request.state.client_id,
-                            url,
-                            base_args,
-                            {"useCookies": False, "cookiesFromBrowser": "chrome"},
-                        ),
-                    )
-                    stdout = retry_chrome["stdout"]
-
-        saved_path = next((line.strip() for line in reversed(stdout.splitlines()) if line.strip()), "")
-        return {"message": "下载完成", "path": saved_path or str(target_dir), "output_dir": str(target_dir)}
+        task_id = create_download_task(request.state.client_id)
+        worker = threading.Thread(
+            target=download_task_worker,
+            args=(task_id, request.state.client_id, url, base_args, target_dir),
+            daemon=True,
+        )
+        worker.start()
+        return read_download_task(task_id)
     except ApiError as error:
         return JSONResponse({"error": error.message}, status_code=error.status_code)
     except Exception as error:
@@ -129,3 +128,21 @@ async def download_video(request: Request):
                 status_code=500,
             )
         return JSONResponse({"error": f"下载失败: {msg}"}, status_code=500)
+
+
+@router.get("/download/tasks/{task_id}")
+async def get_download_task(task_id: str):
+    task = read_download_task(task_id)
+    if not task:
+        return JSONResponse({"error": "下载任务不存在"}, status_code=404)
+    return task
+
+
+@router.post("/download/tasks/{task_id}/{action}")
+async def control_download(task_id: str, action: str):
+    task, error = control_download_task(task_id, action)
+    if not task:
+        return JSONResponse({"error": error}, status_code=404)
+    if error:
+        return JSONResponse({"error": error, **task}, status_code=400)
+    return task

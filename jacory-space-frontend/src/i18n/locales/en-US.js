@@ -238,16 +238,23 @@ export default {
       size: 'SIZE',
       status: 'STATUS',
       action: 'ACTION',
+      processing: 'Processing',
       rowStatus: {
         READY: 'READY',
         DOWNLOADING: 'DOWNLOADING',
+        PAUSED: 'PAUSED',
         COMPLETE: 'COMPLETE',
         FAILED: 'FAILED',
+        CANCELLED: 'CANCELLED',
         UNAVAILABLE: 'UNAVAILABLE'
       },
       actions: {
         download: 'DOWNLOAD',
+        processing: 'PROCESSING',
         pause: 'PAUSE',
+        resume: 'RESUME',
+        cancel: 'CANCEL',
+        redownload: 'DOWNLOAD AGAIN',
         retry: 'RETRY',
         reveal: 'REVEAL',
         open: 'OPEN'
@@ -382,6 +389,7 @@ export default {
       loadSettingsFailed: 'Could not load settings',
       saveDefaultDirFailed: 'Could not save the default download directory',
       folderDialogFailed: 'Could not open the system folder picker',
+      revealFailed: 'Could not reveal the local path',
       outlineFailed: 'Could not generate the outline',
       saveCookieSettingsFailed: 'Could not save the cookie mode',
       loadCookiesFailed: 'Could not load cookie status',
@@ -393,6 +401,7 @@ export default {
       readingMetadata: 'Reading video metadata…',
       downloadingResolution: 'Downloading the {resolution} version…',
       downloadComplete: 'Download complete. Saved to: {path}',
+      revealComplete: 'Local path opened',
       defaultDirSaved: 'Default download location updated: {path}',
       cookieUsageSaved: 'Cookie mode updated',
       confirmDeleteCookies: 'Delete cookies for {platform}?'

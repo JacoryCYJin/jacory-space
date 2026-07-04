@@ -64,7 +64,7 @@ def normalize_output_dir(dir_input: str | None, client_id: str) -> Path:
 
 def normalize_cookie_mode(mode: str | None) -> str:
     normalized = str(mode or "").strip().lower()
-    return normalized if normalized in COOKIE_MODES else "manual"
+    return normalized if normalized in COOKIE_MODES else "browser"
 
 
 def normalize_browser_cookie_source(source: str | None) -> str:
@@ -79,7 +79,7 @@ def get_user_settings(client_id: str) -> dict:
     if not settings_file.exists():
         return {
             "default_download_dir": str(user_default_downloads_dir(client_id)),
-            "cookie_mode": "manual",
+            "cookie_mode": "browser",
             "browser_cookie_source": "chrome",
         }
 
@@ -93,7 +93,7 @@ def get_user_settings(client_id: str) -> dict:
     except Exception:
         return {
             "default_download_dir": str(user_default_downloads_dir(client_id)),
-            "cookie_mode": "manual",
+            "cookie_mode": "browser",
             "browser_cookie_source": "chrome",
         }
 
