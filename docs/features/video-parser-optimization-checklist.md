@@ -36,9 +36,9 @@
   - 当前问题：YouTube 失败时后端可能自动尝试无 Cookie、Safari、Chrome，但前端不知道实际使用了哪个来源。
   - 期望结果：解析/下载结果或错误提示里能说明本次使用的 Cookie 来源，方便排查。
 
-- [ ] 标注目录选择的系统边界
-  - 当前问题：目录选择依赖 macOS `osascript`，不是跨系统通用能力。
-  - 期望结果：UI 或文档明确这是本机 macOS 能力；如果后续需要跨平台，再补 Windows/Linux 方案。
+- [ ] 目录选择适配 macOS / Windows
+  - 当前问题：目录选择和本地路径显示原本主要依赖 macOS 命令，不适合 Windows 本机使用。
+  - 期望结果：macOS 可用系统目录选择和 Finder 显示；Windows 可用系统目录选择和 Explorer 显示；其他系统明确提示暂不支持并允许手动填写路径。
 
 ## P3
 
