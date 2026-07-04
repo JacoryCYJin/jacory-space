@@ -22,7 +22,7 @@ def resolve_media_target(url: str) -> MediaParseTarget:
         platform = "apple-podcasts" if host == "podcasts.apple.com" else "xiaoyuzhou"
         return {"type": "podcast", "platform": platform, "url": raw}
 
-    if path.endswith((".xml", ".rss")) or "rss" in path.split("/"):
+    if path.endswith((".xml", ".rss")) or "rss" in path.split("/") or host.startswith("feed."):
         return {"type": "podcast", "platform": "rss", "url": raw}
 
     if path.endswith(AUDIO_EXTENSIONS):
