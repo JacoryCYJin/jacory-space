@@ -75,7 +75,7 @@
             />
 
             <div
-              v-if="showResolvedModules || showOutlineModule || showOutputPathSection"
+              v-if="showResolvedModules || showOutlineModule"
               class="grid border-b border-line"
               :class="showOutlineModule ? 'lg:grid-cols-[minmax(0,1.08fr)_minmax(430px,0.92fr)]' : ''"
             >
@@ -145,43 +145,11 @@
                   :row-status-class="rowStatusClass"
                   :row-action-label="rowActionLabel"
                   @download="downloadVideo"
+                  @reveal="revealDownloaded"
+                  @pause="pauseDownload"
+                  @resume="resumeDownload"
+                  @cancel="cancelDownload"
                 />
-
-                <section v-if="showOutputPathSection" class="grid gap-5 py-10 md:grid-cols-[96px_minmax(0,1fr)]">
-                  <div>
-                    <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">06</p>
-                    <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('videoParser.sections.outputPath') }}</p>
-                  </div>
-                  <div>
-                    <p v-if="copyStatus" class="mb-3 border-l border-line-strong pl-3 text-sm leading-relaxed text-muted-foreground">
-                      {{ copyStatus }}
-                    </p>
-                    <div class="flex flex-col border border-line bg-card sm:flex-row sm:items-center">
-                    <div class="flex min-w-0 flex-1 items-center gap-3 px-5 py-4">
-                      <Folder class="h-4 w-4 shrink-0 text-muted-foreground" />
-                      <span class="truncate font-mono text-xs text-foreground">{{ outputPath }}</span>
-                    </div>
-                    <div class="flex shrink-0 border-t border-line sm:border-l sm:border-t-0">
-                      <button
-                        type="button"
-                        class="inline-flex h-12 items-center gap-2 px-5 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted"
-                        @click="copyOutputPath"
-                      >
-                        <Copy class="h-3.5 w-3.5" />
-                        {{ t('videoParser.output.copyPath') }}
-                      </button>
-                      <button
-                        type="button"
-                        class="inline-flex h-12 items-center gap-2 border-l border-line px-5 font-mono text-[11px] uppercase tracking-[0.16em] text-blue hover:bg-muted"
-                        @click="revealOutputPath"
-                      >
-                        <FolderOpen class="h-3.5 w-3.5" />
-                        {{ t('videoParser.output.revealInFinder') }}
-                      </button>
-                    </div>
-                    </div>
-                  </div>
-                </section>
               </div>
 
               <VideoOutlinePanel
@@ -222,6 +190,8 @@
       </div>
     </section>
 
+    <Footer />
+
     <StatusToast
       :visible="Boolean(toastMessage)"
       :message="toastMessage"
@@ -246,6 +216,7 @@
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
+import Footer from '../components/Footer.vue'
 import StatusToast from '../components/StatusToast.vue'
 import VideoOutlinePanel from '../components/video-parser/VideoOutlinePanel.vue'
 import VideoParserCookieDialogs from '../components/video-parser/VideoParserCookieDialogs.vue'
@@ -255,7 +226,7 @@ import VideoParserStatus from '../components/video-parser/VideoParserStatus.vue'
 import { useVideoDownloads } from '../components/video-parser/useVideoDownloads'
 import { useVideoOutline } from '../components/video-parser/useVideoOutline'
 import { useVideoParserSettings } from '../components/video-parser/useVideoParserSettings'
-import { ArrowRight, Clapperboard, Copy, Folder, FolderOpen, Link as LinkIcon } from 'lucide-vue-next'
+import { ArrowRight, Clapperboard, Link as LinkIcon } from 'lucide-vue-next'
 
 const { t, locale } = useI18n()
 
@@ -275,7 +246,6 @@ const loading = ref(false)
 const error = ref('')
 const success = ref('')
 const videoInfo = ref(null)
-const copyStatus = ref('')
 
 const formatDuration = (seconds) => {
   const total = Math.max(0, Math.round(Number(seconds) || 0))
@@ -372,7 +342,12 @@ const {
   rowStatusClass,
   rowActionLabel,
   downloadVideo,
-  resetDownloads
+  pauseDownload,
+  resumeDownload,
+  cancelDownload,
+  revealDownloaded,
+  resetDownloads,
+  restoreDownloadTasks
 } = useVideoDownloads({ axios, t, videoInfo, videoUrl, downloadDirOverride, error, success })
 
 const sourcePlatform = computed(() => {
@@ -423,9 +398,6 @@ const activeStatusIndex = computed(() => Math.max(0, statusKeys.indexOf(parserSt
 const showStatusSection = computed(() => parserState.value !== 'READY' || Boolean(error.value || success.value))
 const showResolvedModules = computed(() => Boolean(videoInfo.value))
 const showOutlineModule = computed(() => ['noSubtitles', 'insufficient', 'subtitlesAvailable', 'generating', 'success', 'failed'].includes(outlineState.value))
-const showOutputPathSection = computed(() => Boolean(lastDownloadedPath.value))
-const outputPath = computed(() => lastDownloadedPath.value || downloadDirOverride.value || defaultDownloadDir.value || t('videoParser.notSet'))
-const hasOutputPath = computed(() => Boolean(lastDownloadedPath.value || downloadDirOverride.value || defaultDownloadDir.value))
 const toastMessage = computed(() => outlineCopyStatus.value || cookieSettingsStatus.value?.message || '')
 const toastType = computed(() => {
   if (outlineCopyStatus.value) return 'success'
@@ -454,6 +426,7 @@ const parseVideo = async () => {
     const response = await axios.post('/api/parse', { url })
     videoInfo.value = response.data
     videoUrl.value = response.data?.source_url || url
+    restoreDownloadTasks()
     console.info('[VideoParser] Transcript parsed', {
       transcriptStatus: response.data?.transcript_status,
       transcriptValid: response.data?.transcript_is_valid,
@@ -475,24 +448,6 @@ const parseVideo = async () => {
   }
 }
 
-const markCopied = (message) => {
-  copyStatus.value = message
-  window.setTimeout(() => {
-    if (copyStatus.value === message) copyStatus.value = ''
-  }, 1800)
-}
-
-const copyOutputPath = async () => {
-  await copyToClipboard(outputPath.value)
-  if (hasOutputPath.value) markCopied(t('videoParser.output.copied'))
-}
-
-const revealOutputPath = () => {
-  const path = outputPath.value
-  if (!path || path === t('videoParser.notSet')) return
-  const url = path.startsWith('/') ? `file://${encodeURI(path)}` : path
-  window.open(url, '_blank')
-}
 </script>
 
 <style scoped>

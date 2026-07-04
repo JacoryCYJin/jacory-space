@@ -4,7 +4,7 @@ export function useVideoParserSettings({ axios, t, error, success }) {
   const defaultDownloadDir = ref('')
   const downloadDirOverride = ref('')
   const savingSettings = ref(false)
-  const cookieMode = ref('manual')
+  const cookieMode = ref('browser')
   const browserCookieSource = ref('chrome')
   const savingCookieSettings = ref(false)
   const cookieSettingsStatus = ref(null)
@@ -20,7 +20,7 @@ export function useVideoParserSettings({ axios, t, error, success }) {
   const cookiesInfo = ref({ youtube: {}, bilibili: {} })
   let cookieSettingsTimer = 0
 
-  const cookieModes = ['manual', 'browser']
+  const cookieModes = ['browser', 'manual']
   const browserSources = [
     { value: 'chrome', label: 'Chrome' },
     { value: 'safari', label: 'Safari' },
@@ -33,11 +33,22 @@ export function useVideoParserSettings({ axios, t, error, success }) {
     ...customPlatforms.value.map((platform) => ({ key: platform, label: platform, custom: true }))
   ])
 
+  function setCookieSettingsStatus(status) {
+    if (cookieSettingsTimer) window.clearTimeout(cookieSettingsTimer)
+    cookieSettingsStatus.value = status
+    if (status) {
+      cookieSettingsTimer = window.setTimeout(() => {
+        if (cookieSettingsStatus.value === status) cookieSettingsStatus.value = null
+        cookieSettingsTimer = 0
+      }, 1800)
+    }
+  }
+
   async function loadSettings() {
     try {
       const response = await axios.get('/api/settings')
       defaultDownloadDir.value = response.data.default_download_dir || ''
-      cookieMode.value = response.data.cookie_mode || 'manual'
+      cookieMode.value = response.data.cookie_mode || 'browser'
       browserCookieSource.value = response.data.browser_cookie_source || 'chrome'
     } catch (err) {
       console.error(t('videoParser.errors.loadSettingsFailed'), err)
@@ -219,13 +230,3 @@ export function useVideoParserSettings({ axios, t, error, success }) {
     toggleSettingsRail
   }
 }
-  function setCookieSettingsStatus(status) {
-    if (cookieSettingsTimer) window.clearTimeout(cookieSettingsTimer)
-    cookieSettingsStatus.value = status
-    if (status) {
-      cookieSettingsTimer = window.setTimeout(() => {
-        if (cookieSettingsStatus.value === status) cookieSettingsStatus.value = null
-        cookieSettingsTimer = 0
-      }, 1800)
-    }
-  }
