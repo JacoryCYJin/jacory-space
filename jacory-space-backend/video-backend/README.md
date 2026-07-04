@@ -20,7 +20,7 @@
 
 ## 运行前准备
 
-1. 安装 Node.js 18+
+1. 安装 Python 3.11+
 2. 安装 `yt-dlp`
 3. 建议安装 `ffmpeg`（用于音视频合并）
 
@@ -34,7 +34,8 @@ brew install yt-dlp ffmpeg
 
 ```bash
 cd jacory-space-backend/video-backend
-npm install
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
 npm run dev
 ```
 

@@ -1,7 +1,7 @@
 <template>
   <main class="grain min-h-screen bg-background text-foreground">
-    <section class="px-5 pb-20 pt-28 md:px-8 md:pt-32">
-      <div class="mx-auto max-w-screen-2xl">
+    <section class="page-gutter pb-20 pt-28 md:pt-32">
+      <div class="page-frame">
         <header class="border-b border-line pb-9">
           <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
             <div>
@@ -206,7 +206,6 @@
             :cookie-modes="cookieModes"
             :browser-sources="browserSources"
             :saving-cookie-settings="savingCookieSettings"
-            :cookie-settings-status="cookieSettingsStatus"
             :cookie-platform-rows="cookiePlatformRows"
             :cookies-info="cookiesInfo"
             :default-download-dir="defaultDownloadDir"
@@ -224,9 +223,9 @@
     </section>
 
     <StatusToast
-      :visible="Boolean(outlineCopyStatus)"
-      :message="outlineCopyStatus"
-      type="success"
+      :visible="Boolean(toastMessage)"
+      :message="toastMessage"
+      :type="toastType"
     />
 
     <VideoParserCookieDialogs
@@ -294,7 +293,17 @@ const formatUploadDate = (value) => {
   return raw
 }
 
+const normalizeVideoUrlInput = (value) => {
+  const raw = String(value || '').trim()
+  if (!raw) return ''
+  if (/^(BV[0-9A-Za-z]{10}|av\d+)$/i.test(raw)) return raw
+  if (/^https?:\/\//i.test(raw)) return raw
+  if (/^(?:www\.)?[\w-]+(?:\.[\w-]+)+(?:[/:?#].*)?$/i.test(raw)) return `https://${raw}`
+  return raw
+}
+
 const isValidVideoUrl = (value) => {
+  if (/^(BV[0-9A-Za-z]{10}|av\d+)$/i.test(value)) return true
   try {
     const parsed = new URL(value)
     return parsed.protocol === 'http:' || parsed.protocol === 'https:'
@@ -417,17 +426,24 @@ const showOutlineModule = computed(() => ['noSubtitles', 'insufficient', 'subtit
 const showOutputPathSection = computed(() => Boolean(lastDownloadedPath.value))
 const outputPath = computed(() => lastDownloadedPath.value || downloadDirOverride.value || defaultDownloadDir.value || t('videoParser.notSet'))
 const hasOutputPath = computed(() => Boolean(lastDownloadedPath.value || downloadDirOverride.value || defaultDownloadDir.value))
+const toastMessage = computed(() => outlineCopyStatus.value || cookieSettingsStatus.value?.message || '')
+const toastType = computed(() => {
+  if (outlineCopyStatus.value) return 'success'
+  return cookieSettingsStatus.value?.type || 'info'
+})
 
 const parseVideo = async () => {
-  const url = videoUrl.value.trim()
-  if (!url) {
+  const rawUrl = videoUrl.value.trim()
+  if (!rawUrl) {
     error.value = t('videoParser.errors.emptyUrl')
     return
   }
+  const url = normalizeVideoUrlInput(rawUrl)
   if (!isValidVideoUrl(url)) {
     error.value = t('videoParser.errors.invalidUrl')
     return
   }
+  videoUrl.value = url
   loading.value = true
   error.value = ''
   success.value = ''

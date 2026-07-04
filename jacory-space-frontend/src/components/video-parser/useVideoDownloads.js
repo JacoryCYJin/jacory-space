@@ -17,7 +17,9 @@ export function useVideoDownloads({ axios, t, videoInfo, videoUrl, downloadDirOv
   const formatKey = (format) => format?.format_id || format?.resolution || 'unknown'
   const formatLabel = (format) => {
     const ext = String(format?.ext || 'file').toUpperCase()
-    const note = format?.format_note ? ` · ${format.format_note}` : ''
+    const formatNote = String(format?.format_note || '').trim()
+    const resolution = String(format?.resolution || '').trim()
+    const note = formatNote && formatNote !== resolution ? ` · ${formatNote}` : ''
     return `${ext}${note}`
   }
   const rowData = (format) => downloadRows[formatKey(format)] || null

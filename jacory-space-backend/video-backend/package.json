@@ -2,13 +2,8 @@
   "name": "video-backend",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "dev": "sh -c 'PYTHON_BIN=python3; if [ -x .venv/bin/python ]; then PYTHON_BIN=.venv/bin/python; fi; PYTHONPATH=. $PYTHON_BIN run_dev.py'",
+    "start": "sh -c 'PYTHON_BIN=python3; if [ -x .venv/bin/python ]; then PYTHON_BIN=.venv/bin/python; fi; PYTHONPATH=. $PYTHON_BIN run_dev.py'"
   }
 }

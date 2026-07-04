@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 
 export function useVideoParserSettings({ axios, t, error, success }) {
   const defaultDownloadDir = ref('')
@@ -18,6 +18,7 @@ export function useVideoParserSettings({ axios, t, error, success }) {
   const newPlatformName = ref('')
   const customPlatforms = ref([])
   const cookiesInfo = ref({ youtube: {}, bilibili: {} })
+  let cookieSettingsTimer = 0
 
   const cookieModes = ['manual', 'browser']
   const browserSources = [
@@ -62,15 +63,15 @@ export function useVideoParserSettings({ axios, t, error, success }) {
 
   async function saveCookieSettings() {
     savingCookieSettings.value = true
-    cookieSettingsStatus.value = null
+    setCookieSettingsStatus(null)
     try {
       await axios.post('/api/settings', {
         cookie_mode: cookieMode.value,
         browser_cookie_source: browserCookieSource.value
       })
-      cookieSettingsStatus.value = { type: 'success', message: t('videoParser.messages.cookieUsageSaved') }
+      setCookieSettingsStatus({ type: 'success', message: t('videoParser.messages.cookieUsageSaved') })
     } catch (err) {
-      cookieSettingsStatus.value = { type: 'error', message: err.response?.data?.error || t('videoParser.errors.saveCookieSettingsFailed') }
+      setCookieSettingsStatus({ type: 'error', message: err.response?.data?.error || t('videoParser.errors.saveCookieSettingsFailed') })
     } finally {
       savingCookieSettings.value = false
     }
@@ -177,12 +178,16 @@ export function useVideoParserSettings({ axios, t, error, success }) {
   async function toggleSettingsRail() {
     showSettingsRail.value = !showSettingsRail.value
     if (showSettingsRail.value) {
-      cookieSettingsStatus.value = null
+      setCookieSettingsStatus(null)
       await Promise.all([loadCookiesInfo(), loadSettings()])
     }
   }
 
   loadSettings()
+
+  onBeforeUnmount(() => {
+    if (cookieSettingsTimer) window.clearTimeout(cookieSettingsTimer)
+  })
 
   return {
     defaultDownloadDir,
@@ -214,3 +219,13 @@ export function useVideoParserSettings({ axios, t, error, success }) {
     toggleSettingsRail
   }
 }
+  function setCookieSettingsStatus(status) {
+    if (cookieSettingsTimer) window.clearTimeout(cookieSettingsTimer)
+    cookieSettingsStatus.value = status
+    if (status) {
+      cookieSettingsTimer = window.setTimeout(() => {
+        if (cookieSettingsStatus.value === status) cookieSettingsStatus.value = null
+        cookieSettingsTimer = 0
+      }, 1800)
+    }
+  }
