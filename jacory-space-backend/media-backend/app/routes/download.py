@@ -17,7 +17,7 @@ from app.services.download_tasks import (
     read_download_task,
 )
 from app.services.user_data import get_user_settings, normalize_output_dir
-from app.services.ytdlp import (
+from app.services.video.ytdlp import (
     assert_allowed_download_format,
     normalize_video_input,
 )
