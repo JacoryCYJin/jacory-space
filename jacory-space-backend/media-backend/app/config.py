@@ -29,6 +29,10 @@ DATA_DIR = BACKEND_ROOT / "data"
 USERS_DIR = DATA_DIR / "users"
 DOWNLOADS_ROOT_DIR = BACKEND_ROOT / "downloads"
 SYSTEM_DOWNLOADS_DIR = Path.home() / "Downloads"
+LOCAL_STT_MODEL = os.environ.get("LOCAL_STT_MODEL", "small").strip() or "small"
+LOCAL_STT_DEVICE = os.environ.get("LOCAL_STT_DEVICE", "cpu").strip() or "cpu"
+LOCAL_STT_COMPUTE_TYPE = os.environ.get("LOCAL_STT_COMPUTE_TYPE", "int8").strip() or "int8"
+LOCAL_STT_MAX_AUDIO_BYTES = int(os.environ.get("LOCAL_STT_MAX_AUDIO_BYTES", str(300 * 1024 * 1024)))
 
 PREFERRED_YTDLP_BINS = [
     os.environ.get("YTDLP_BIN"),

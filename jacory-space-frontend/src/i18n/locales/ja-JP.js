@@ -204,8 +204,7 @@ export default {
     input: {
       placeholder: 'Apple Podcasts、小宇宙、RSS、または音声 URL を貼り付けてください',
       parse: '解析',
-      parsing: '解析中',
-      supported: '対応'
+      parsing: '解析中'
     },
     status: {
       ready: '準備完了',
@@ -240,13 +239,27 @@ export default {
       transcriptAvailable: '公開字幕が見つかりました。後続の要約で利用できます。',
       transcriptMarkerOnly: 'ソースに字幕マーカーはありますが、公開字幕の内容はありません。',
       transcriptInsufficient: '公開字幕は見つかりましたが、短すぎるかノイズが多いため利用できません。',
-      transcriptMissing: 'このソースには公開字幕が見つかりませんでした。',
-      summaryReserved: '要約とローカル文字起こしは今後のバージョンで対応します。'
+      transcriptMissing: 'このソースには公開字幕が見つかりませんでした。'
+    },
+    actions: {
+      showMore: 'すべて表示',
+      showLess: '閉じる'
+    },
+    localStt: {
+      action: 'ローカル文字起こし',
+      transcribing: '文字起こし中',
+      running: 'ローカル文字起こしを実行中です。完了後、既定のダウンロード先に保存します。',
+      complete: 'ローカル文字起こしが完了しました。字幕ファイルは既定のダウンロード先に保存されました。',
+      savedTo: '既定の保存先',
+      reveal: 'Finder で表示',
+      revealComplete: 'ローカルパスを開きました'
     },
     errors: {
       emptyUrl: 'Podcast、RSS、または音声 URL を先に貼り付けてください。',
       invalidUrl: '有効な URL を入力してください。',
-      parseFailed: 'Podcast を解析できませんでした：{message}'
+      parseFailed: 'Podcast を解析できませんでした：{message}',
+      localSttFailed: 'ローカル文字起こしに失敗しました：{message}',
+      revealFailed: 'ローカルパスを開けませんでした'
     }
   },
   videoParser: {

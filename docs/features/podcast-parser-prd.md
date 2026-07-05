@@ -417,6 +417,19 @@ Provider 抽象建议：
 - 不在解析接口里自动启动转写，避免一次解析触发长任务和费用。
 - 不做登录态抓取、隐藏 API 猜测或绕过平台限制。
 
+本地实验接口：
+
+- 路径：`POST /api/transcript/local-stt`
+- Provider：`faster-whisper`
+- 默认模型：`small`
+- 默认设备：`cpu`
+- 默认计算类型：`int8`
+- 输入：`audio_url`、可选 `title`、`language`、`model`、`device`、`compute_type`
+- 输出：接口响应返回 `text`、`preview`、`segments`、`duration`、`elapsed_seconds`。
+- 保存：转写完成后自动保存到当前用户默认下载目录下的 `<title-or-audio-name>-<hash>/transcript.txt`，并在响应中返回 `output_dir` 和 `files.txt`。
+- 约束：仅用于手动实验，不接 UI，不由播客解析或视频解析自动触发。
+- 运行成本：首次调用会下载模型到本机缓存；模型文件不进入 Git。
+
 ### M4: 播客总结
 
 - 新增播客总结服务

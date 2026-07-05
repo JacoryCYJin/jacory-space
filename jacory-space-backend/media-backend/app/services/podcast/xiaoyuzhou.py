@@ -100,6 +100,24 @@ def _series_name(json_ld_items: list[dict], next_data: dict) -> str:
     return ""
 
 
+def _episode_next_data(next_data: dict) -> dict:
+    page_props = ((next_data.get("props") or {}).get("pageProps") or {}) if isinstance(next_data, dict) else {}
+    episode = page_props.get("episode") if isinstance(page_props, dict) else None
+    return episode if isinstance(episode, dict) else {}
+
+
+def _episode_description(json_ld_items: list[dict], next_data: dict) -> str:
+    for item in json_ld_items:
+        if isinstance(item, dict) and item.get("@type") == "PodcastEpisode" and item.get("description"):
+            return strip_html(str(item["description"]))
+
+    episode = _episode_next_data(next_data)
+    for key in ["description", "shownotes"]:
+        if episode.get(key):
+            return strip_html(str(episode[key]))
+    return ""
+
+
 def _published_at(json_ld_items: list[dict], next_data: dict) -> str | None:
     for item in json_ld_items:
         if item.get("datePublished"):
@@ -148,7 +166,7 @@ def parse_xiaoyuzhou_page(url: str) -> tuple[dict, dict]:
         "id": _episode_id(url),
         "title": _meta_content(html, "og:title") or str(_first_by_keys(next_data, {"title", "name"}) or "").strip(),
         "show_title": _series_name(json_ld_items, next_data),
-        "description": _meta_content(html, "og:description") or strip_html(str(_first_by_keys(next_data, {"description", "shownotes"}) or "")),
+        "description": _episode_description(json_ld_items, next_data),
         "thumbnail": normalize_url(_meta_content(html, "og:image"), url) or _thumbnail(next_data, url),
         "published_at": _published_at(json_ld_items, next_data),
         "duration": _duration(json_ld_items, next_data),
