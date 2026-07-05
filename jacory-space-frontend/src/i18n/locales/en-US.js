@@ -204,8 +204,7 @@ export default {
     input: {
       placeholder: 'Paste Apple Podcasts, Xiaoyuzhou, RSS or audio URL',
       parse: 'PARSE',
-      parsing: 'PARSING',
-      supported: 'SUPPORTED'
+      parsing: 'PARSING'
     },
     status: {
       ready: 'READY',
@@ -240,13 +239,27 @@ export default {
       transcriptAvailable: 'Public transcript found in the source and ready for later summarization.',
       transcriptMarkerOnly: 'The source has a transcript marker, but no public transcript content is available.',
       transcriptInsufficient: 'A public transcript was found, but it is too short or too noisy to use.',
-      transcriptMissing: 'No public transcript found in this source.',
-      summaryReserved: 'Summary and local transcription are reserved for a later version.'
+      transcriptMissing: 'No public transcript found in this source.'
+    },
+    actions: {
+      showMore: 'SHOW ALL',
+      showLess: 'COLLAPSE'
+    },
+    localStt: {
+      action: 'LOCAL TRANSCRIBE',
+      transcribing: 'TRANSCRIBING',
+      running: 'Local transcription is running. Files will be saved to the default download folder.',
+      complete: 'Local transcription completed. Subtitle files were saved to the default download folder.',
+      savedTo: 'DEFAULT OUTPUT PATH',
+      reveal: 'REVEAL IN FINDER',
+      revealComplete: 'Local path opened'
     },
     errors: {
       emptyUrl: 'Paste a podcast, RSS, or audio URL first.',
       invalidUrl: 'The input is not a valid URL.',
-      parseFailed: 'Podcast parse failed: {message}'
+      parseFailed: 'Podcast parse failed: {message}',
+      localSttFailed: 'Local transcription failed: {message}',
+      revealFailed: 'Could not reveal the local path'
     }
   },
   videoParser: {

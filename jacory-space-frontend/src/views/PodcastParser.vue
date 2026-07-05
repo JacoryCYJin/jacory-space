@@ -53,20 +53,10 @@
               </button>
             </div>
 
-            <div class="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
-              <span class="text-foreground">{{ t('podcastParser.input.supported') }}</span>
-              <span>Apple Podcasts</span>
-              <span>/</span>
-              <span>Xiaoyuzhou</span>
-              <span>/</span>
-              <span>RSS Feed</span>
-              <span>/</span>
-              <span>Audio URL</span>
-            </div>
           </div>
         </section>
 
-        <section v-if="loading || error || podcastInfo" class="grid gap-5 border-b border-line py-10 md:grid-cols-[140px_minmax(0,1fr)]">
+        <section v-if="loading || error || podcastInfo" class="grid gap-5 py-10 md:grid-cols-[140px_minmax(0,1fr)]">
           <div>
             <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">03</p>
             <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('podcastParser.sections.result') }}</p>
@@ -134,9 +124,19 @@
                     </template>
                   </div>
 
-                  <p v-if="episode.description" class="mt-7 max-w-2xl whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-                    {{ shortDescription }}
-                  </p>
+                  <div v-if="episode.description" class="mt-7 max-w-2xl">
+                    <p class="whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
+                      {{ displayedDescription }}
+                    </p>
+                    <button
+                      v-if="descriptionExpandable"
+                      type="button"
+                      class="mt-3 font-mono text-xs uppercase tracking-[0.16em] text-blue transition-colors hover:text-foreground"
+                      @click="descriptionExpanded = !descriptionExpanded"
+                    >
+                      {{ descriptionExpanded ? t('podcastParser.actions.showLess') : t('podcastParser.actions.showMore') }}
+                    </button>
+                  </div>
 
                   <div class="mt-9 border-t border-line pt-6">
                     <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ t('podcastParser.result.source') }}</p>
@@ -189,7 +189,6 @@
 
                 <section class="mt-8">
                   <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ t('podcastParser.result.transcript') }}</p>
-                  <p class="mt-4 font-mono text-sm lowercase text-foreground">{{ transcriptStatus }}</p>
                   <div class="mt-4 flex items-start gap-3 text-sm leading-relaxed text-muted-foreground">
                     <Info class="mt-0.5 h-4 w-4 shrink-0 text-haze" />
                     <p>{{ transcriptMessage }}</p>
@@ -197,15 +196,37 @@
                   <p v-if="transcriptPreview" class="mt-5 max-h-40 overflow-auto whitespace-pre-line border-l border-line pl-4 text-sm leading-relaxed text-muted-foreground">
                     {{ transcriptPreview }}
                   </p>
+                  <div v-if="episode.audio_url" class="mt-5">
+                    <div class="flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        class="inline-flex h-10 items-center gap-2 border border-line px-4 font-mono text-xs uppercase tracking-[0.16em] text-blue transition-colors hover:bg-muted disabled:cursor-not-allowed disabled:text-haze"
+                        :disabled="localSttLoading"
+                        @click="transcribeEpisode"
+                      >
+                        <FileText class="h-4 w-4" />
+                        {{ localSttLoading ? t('podcastParser.localStt.transcribing') : t('podcastParser.localStt.action') }}
+                      </button>
+                      <button
+                        v-if="localSttOutputDir"
+                        type="button"
+                        class="inline-flex h-10 items-center gap-2 border border-line px-4 font-mono text-xs uppercase tracking-[0.16em] text-foreground transition-colors hover:bg-muted"
+                        @click="revealLocalSttOutput"
+                      >
+                        <FolderOpen class="h-4 w-4" />
+                        {{ t('podcastParser.localStt.reveal') }}
+                      </button>
+                    </div>
+
+                    <div v-if="localSttOutputDir" class="mt-4 border-l border-line pl-4">
+                      <p class="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">{{ t('podcastParser.localStt.savedTo') }}</p>
+                      <p class="mt-2 break-all font-mono text-xs leading-relaxed text-foreground">{{ localSttOutputDir }}</p>
+                    </div>
+                    <p v-if="localSttMessage" class="mt-4 text-sm leading-relaxed text-muted-foreground">{{ localSttMessage }}</p>
+                    <p v-if="localSttError" class="mt-4 text-sm leading-relaxed text-foreground">{{ localSttError }}</p>
+                  </div>
                 </section>
 
-                <section class="mt-8 border-t border-line pt-8">
-                  <p class="font-mono text-xs uppercase tracking-[0.18em] text-muted-foreground">{{ t('podcastParser.result.summary') }}</p>
-                  <p class="mt-4 font-mono text-sm lowercase text-foreground">{{ summaryStatus }}</p>
-                  <p class="mt-3 text-sm leading-relaxed text-muted-foreground">
-                    {{ t('podcastParser.messages.summaryReserved') }}
-                  </p>
-                </section>
               </aside>
             </div>
           </div>
@@ -222,7 +243,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import Footer from '../components/Footer.vue'
-import { ArrowRight, ExternalLink, Info, Link as LinkIcon, Podcast } from 'lucide-vue-next'
+import { ArrowRight, ExternalLink, FileText, FolderOpen, Info, Link as LinkIcon, Podcast } from 'lucide-vue-next'
 
 const { t } = useI18n()
 
@@ -242,10 +263,14 @@ const loading = ref(false)
 const error = ref('')
 const podcastInfo = ref(null)
 const detectedAudioDuration = ref(0)
+const descriptionExpanded = ref(false)
+const localSttLoading = ref(false)
+const localSttResult = ref(null)
+const localSttError = ref('')
+const localSttMessage = ref('')
 
 const episode = computed(() => podcastInfo.value?.episode || {})
 const transcript = computed(() => podcastInfo.value?.transcript || {})
-const summary = computed(() => podcastInfo.value?.summary || {})
 
 const normalizeUrlInput = (value) => {
   const raw = String(value || '').trim()
@@ -280,6 +305,8 @@ const parsePodcast = async () => {
   error.value = ''
   podcastInfo.value = null
   detectedAudioDuration.value = 0
+  descriptionExpanded.value = false
+  resetLocalStt()
 
   try {
     const response = await axios.post('/api/podcast/parse', { url: normalized })
@@ -342,8 +369,8 @@ const formattedDate = computed(() => {
 
 const episodeMetaItems = computed(() => [formattedDate.value, formattedDuration.value].filter(Boolean))
 const transcriptStatus = computed(() => transcript.value.status || 'missing')
-const summaryStatus = computed(() => summary.value.status || 'pending_transcript')
 const transcriptPreview = computed(() => transcript.value.preview || '')
+const localSttOutputDir = computed(() => localSttResult.value?.output_dir || '')
 
 const formattedAudioSize = computed(() => {
   const bytes = Number(episode.value.audio_size_bytes || 0)
@@ -359,9 +386,11 @@ const formattedAudioSize = computed(() => {
   return `${value.toFixed(digits)} ${units[unitIndex]}`
 })
 
-const shortDescription = computed(() => {
-  const text = String(episode.value.description || '').trim()
-  if (text.length <= 180) return text
+const descriptionText = computed(() => String(episode.value.description || '').trim())
+const descriptionExpandable = computed(() => descriptionText.value.length > 180)
+const displayedDescription = computed(() => {
+  const text = descriptionText.value
+  if (!descriptionExpandable.value || descriptionExpanded.value) return text
   return `${text.slice(0, 180)}...`
 })
 
@@ -372,4 +401,45 @@ const transcriptMessage = computed(() => {
   if (status === 'insufficient') return t('podcastParser.messages.transcriptInsufficient')
   return t('podcastParser.messages.transcriptMissing')
 })
+
+const resetLocalStt = () => {
+  localSttLoading.value = false
+  localSttResult.value = null
+  localSttError.value = ''
+  localSttMessage.value = ''
+}
+
+const transcribeEpisode = async () => {
+  if (!episode.value.audio_url || localSttLoading.value) return
+  localSttLoading.value = true
+  localSttError.value = ''
+  localSttMessage.value = t('podcastParser.localStt.running')
+
+  try {
+    const response = await axios.post('/api/transcript/local-stt', {
+      audio_url: episode.value.audio_url,
+      title: episode.value.title || podcastInfo.value?.title || t('podcastParser.result.untitledEpisode'),
+      language: 'zh',
+      model: 'small'
+    })
+    localSttResult.value = response.data
+    localSttMessage.value = t('podcastParser.localStt.complete')
+  } catch (err) {
+    localSttError.value = err.response?.data?.error || t('podcastParser.errors.localSttFailed', { message: err.message })
+    localSttMessage.value = ''
+  } finally {
+    localSttLoading.value = false
+  }
+}
+
+const revealLocalSttOutput = async () => {
+  if (!localSttOutputDir.value) return
+  localSttError.value = ''
+  try {
+    const response = await axios.post('/api/reveal', { path: localSttOutputDir.value })
+    localSttMessage.value = response.data?.message || t('podcastParser.localStt.revealComplete')
+  } catch (err) {
+    localSttError.value = err.response?.data?.error || t('podcastParser.errors.revealFailed')
+  }
+}
 </script>

@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import ensure_runtime_dirs
 from app.middleware.client_id import client_id_middleware
-from app.routes import cookies, download, outline, podcast, settings, video
+from app.routes import cookies, download, outline, podcast, settings, transcript, video
 
 ensure_runtime_dirs()
 
@@ -28,5 +28,6 @@ app.include_router(settings.router, prefix="/api")
 app.include_router(cookies.router, prefix="/api")
 app.include_router(video.router, prefix="/api")
 app.include_router(podcast.router, prefix="/api")
+app.include_router(transcript.router, prefix="/api")
 app.include_router(download.router, prefix="/api")
 app.include_router(outline.router, prefix="/api")

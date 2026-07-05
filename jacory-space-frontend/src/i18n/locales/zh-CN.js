@@ -204,8 +204,7 @@ export default {
     input: {
       placeholder: '粘贴 Apple Podcasts、小宇宙、RSS 或音频链接',
       parse: '解析',
-      parsing: '解析中',
-      supported: '支持'
+      parsing: '解析中'
     },
     status: {
       ready: '就绪',
@@ -240,13 +239,27 @@ export default {
       transcriptAvailable: '已找到公开字幕。',
       transcriptMarkerOnly: '来源存在字幕标记，但没有公开字幕内容。',
       transcriptInsufficient: '找到了公开字幕，但内容太短或噪声过多，暂时不可用。',
-      transcriptMissing: '未找到公开字幕。',
-      summaryReserved: '总结与本地转写将在后续版本中支持。'
+      transcriptMissing: '未找到公开字幕。'
+    },
+    actions: {
+      showMore: '展开全部',
+      showLess: '收起'
+    },
+    localStt: {
+      action: '本地转写',
+      transcribing: '转写中',
+      running: '正在本地转写，完成后会保存到默认下载目录。',
+      complete: '本地转写完成，字幕已保存到默认下载目录。',
+      savedTo: '默认保存路径',
+      reveal: '在 Finder 中显示',
+      revealComplete: '已打开本地路径'
     },
     errors: {
       emptyUrl: '请先粘贴播客、RSS 或音频链接。',
       invalidUrl: '请输入有效链接。',
-      parseFailed: '播客解析失败：{message}'
+      parseFailed: '播客解析失败：{message}',
+      localSttFailed: '本地转写失败：{message}',
+      revealFailed: '打开本地路径失败'
     }
   },
   videoParser: {
