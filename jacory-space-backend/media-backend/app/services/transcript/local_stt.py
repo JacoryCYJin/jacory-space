@@ -1,8 +1,10 @@
 import hashlib
+import json
 import re
 import tempfile
 import time
 import urllib.request
+from functools import lru_cache
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -22,6 +24,23 @@ DEFAULT_USER_AGENT = (
 )
 
 _MODEL_CACHE: dict[tuple[str, str, str], object] = {}
+
+
+@lru_cache(maxsize=1)
+def _simplified_converter():
+    try:
+        from opencc import OpenCC
+    except ModuleNotFoundError as error:
+        raise RuntimeError("缺少 opencc-python-reimplemented 依赖，请先在 media-backend 环境安装 requirements.txt") from error
+
+    return OpenCC("t2s")
+
+
+def _to_simplified(value: str) -> str:
+    text = str(value or "")
+    if not text:
+        return ""
+    return _simplified_converter().convert(text)
 
 
 def _load_model(model_name: str, device: str, compute_type: str):
@@ -91,7 +110,7 @@ def _title_from_url(url: str) -> str:
     return _safe_name(stem, "local-stt")
 
 
-def _save_transcript_files(result: dict, *, client_id: str, title: str, audio_url: str) -> dict:
+def _save_transcript_files(result: dict, *, client_id: str, title: str, source: str, audio_url: str) -> dict:
     user_settings = get_user_settings(client_id)
     base_dir = normalize_output_dir(user_settings.get("default_download_dir"), client_id)
     source_hash = hashlib.sha256(audio_url.encode("utf-8")).hexdigest()[:10]
@@ -100,10 +119,18 @@ def _save_transcript_files(result: dict, *, client_id: str, title: str, audio_ur
     output_dir.mkdir(parents=True, exist_ok=True)
 
     files = {
-        "txt": output_dir / "transcript.txt",
+        "json": output_dir / "transcript.json",
+    }
+    transcript_payload = {
+        "播客标题": _to_simplified(str(title or "").strip() or _title_from_url(audio_url)),
+        "播客来源 / 节目名": _to_simplified(str(source or "").strip()),
+        "字幕内容": _to_simplified(str(result.get("text") or "")),
     }
 
-    files["txt"].write_text(str(result.get("text") or ""), encoding="utf-8")
+    files["json"].write_text(
+        json.dumps(transcript_payload, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     result["saved"] = True
     result["output_dir"] = str(output_dir)
     result["files"] = {key: str(path) for key, path in files.items()}
@@ -115,6 +142,7 @@ def transcribe_audio_url(
     *,
     client_id: str = "",
     title: str = "",
+    source: str = "",
     language: str = "",
     model_name: str = "",
     device: str = "",
@@ -158,7 +186,7 @@ def transcribe_audio_url(
         segments = []
         text_parts = []
         for segment in segments_iter:
-            text = normalize_transcript_text(segment.text)
+            text = _to_simplified(normalize_transcript_text(segment.text))
             if text:
                 text_parts.append(text)
             segments.append(
@@ -173,7 +201,7 @@ def transcribe_audio_url(
                 segment_end = float(segment.end or 0)
                 progress_callback(20 + min(75, int(segment_end / duration * 75)))
 
-    text = normalize_transcript_text("\n".join(text_parts))
+    text = _to_simplified(normalize_transcript_text("\n".join(text_parts)))
     elapsed = round(time.time() - started_at, 3)
     detected_language = getattr(info, "language", "") or ""
 
@@ -201,7 +229,7 @@ def transcribe_audio_url(
             stage_callback("saving")
         if progress_callback:
             progress_callback(98)
-        return _save_transcript_files(result, client_id=client_id, title=title, audio_url=normalized_url)
+        return _save_transcript_files(result, client_id=client_id, title=title, source=source, audio_url=normalized_url)
 
     result["saved"] = False
     return result

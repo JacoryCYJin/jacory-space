@@ -32,6 +32,13 @@ Jacory Space 是个人网站项目。所有 Agent 在本仓库工作时优先遵
 - UI 图标不要使用 emoji，使用 SVG 组件或 icon 库。
 - 任何 UI、布局、页面、组件、样式、动画或 theme-token 工作，都必须遵循 Personal Operating System visual style；如果 skill 系统可用，在进行视觉改动前必须使用 `personal-operating-system-visual-style` skill。
 
+### Python Runtime
+
+- 本仓库所有 Python 相关命令、依赖安装、脚本运行和验证，都默认优先使用对应项目内的 `.venv`，不要使用 Anaconda `(base)` 或系统 Python。
+- `media-backend` 使用 `jacory-space-backend/media-backend/.venv`；安装依赖时使用 `.venv/bin/python -m pip install -r requirements.txt`，运行验证时使用 `.venv/bin/python ...`。
+- 如果新增或处理其他 Python 子项目，先确认或创建该子项目自己的 `.venv`，再安装依赖和运行脚本。
+- `scripts/dev.sh` 启动 `media-backend` 时调用 `.venv/bin/python run_dev.py --daemon`；如果依赖导入异常，先检查并安装到对应 `.venv`。
+
 ### Git
 
 - 分支、commit 和 PR 规范见 `.agents/skills/git-rule/SKILL.md` 和 `.cursor/rules/git-rule.mdc`。
