@@ -43,7 +43,7 @@ def _extension_from_url(url: str) -> str:
     return ".audio"
 
 
-def _download_audio(url: str, target: Path, max_bytes: int) -> dict:
+def _download_audio(url: str, target: Path, max_bytes: int, progress_callback=None) -> dict:
     request = urllib.request.Request(
         url,
         headers={
@@ -54,7 +54,8 @@ def _download_audio(url: str, target: Path, max_bytes: int) -> dict:
 
     with urllib.request.urlopen(request, timeout=60) as response:
         content_length = response.headers.get("Content-Length")
-        if content_length and content_length.isdigit() and int(content_length) > max_bytes:
+        total_bytes = int(content_length) if content_length and content_length.isdigit() else 0
+        if total_bytes > max_bytes:
             raise ValueError(f"音频文件过大，超过限制 {max_bytes} bytes")
 
         downloaded = 0
@@ -67,6 +68,11 @@ def _download_audio(url: str, target: Path, max_bytes: int) -> dict:
                 if downloaded > max_bytes:
                     raise ValueError(f"音频文件过大，超过限制 {max_bytes} bytes")
                 file.write(chunk)
+                if progress_callback:
+                    if total_bytes > 0:
+                        progress_callback(1 + min(19, int(downloaded / total_bytes * 19)))
+                    else:
+                        progress_callback(10)
 
         return {
             "bytes": downloaded,
@@ -114,6 +120,7 @@ def transcribe_audio_url(
     device: str = "",
     compute_type: str = "",
     stage_callback=None,
+    progress_callback=None,
 ) -> dict:
     normalized_url = str(audio_url or "").strip()
     if not normalized_url.startswith(("http://", "https://")):
@@ -129,15 +136,25 @@ def transcribe_audio_url(
         audio_path = Path(tmpdir) / f"source{_extension_from_url(normalized_url)}"
         if stage_callback:
             stage_callback("downloading")
-        download_info = _download_audio(normalized_url, audio_path, LOCAL_STT_MAX_AUDIO_BYTES)
+        if progress_callback:
+            progress_callback(1)
+        download_info = _download_audio(
+            normalized_url,
+            audio_path,
+            LOCAL_STT_MAX_AUDIO_BYTES,
+            progress_callback=progress_callback,
+        )
         if stage_callback:
             stage_callback("transcribing")
+        if progress_callback:
+            progress_callback(20)
         model = _load_model(selected_model, selected_device, selected_compute)
         segments_iter, info = model.transcribe(
             str(audio_path),
             language=selected_language,
             vad_filter=True,
         )
+        duration = float(getattr(info, "duration", 0) or 0)
         segments = []
         text_parts = []
         for segment in segments_iter:
@@ -152,11 +169,13 @@ def transcribe_audio_url(
                     "text": text,
                 }
             )
+            if progress_callback and duration > 0:
+                segment_end = float(segment.end or 0)
+                progress_callback(20 + min(75, int(segment_end / duration * 75)))
 
     text = normalize_transcript_text("\n".join(text_parts))
     elapsed = round(time.time() - started_at, 3)
     detected_language = getattr(info, "language", "") or ""
-    duration = float(getattr(info, "duration", 0) or 0)
 
     result = {
         "status": "completed",
@@ -180,6 +199,8 @@ def transcribe_audio_url(
     if client_id:
         if stage_callback:
             stage_callback("saving")
+        if progress_callback:
+            progress_callback(98)
         return _save_transcript_files(result, client_id=client_id, title=title, audio_url=normalized_url)
 
     result["saved"] = False

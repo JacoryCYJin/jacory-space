@@ -33,12 +33,22 @@ def _update_task(task_id: str, **updates) -> None:
         task["updated_at"] = _now()
 
 
+def _progress_value(value) -> int:
+    try:
+        return max(0, min(100, int(value)))
+    except (TypeError, ValueError):
+        return 0
+
+
 def _run_task(task_id: str, payload: dict) -> None:
     try:
-        _update_task(task_id, status="downloading", stage="downloading")
+        _update_task(task_id, status="downloading", stage="downloading", progress=1)
 
         def update_stage(stage: str) -> None:
             _update_task(task_id, status=stage, stage=stage)
+
+        def update_progress(progress) -> None:
+            _update_task(task_id, progress=_progress_value(progress))
 
         result = transcribe_audio_url(
             payload["source_url"],
@@ -49,8 +59,9 @@ def _run_task(task_id: str, payload: dict) -> None:
             device=payload.get("device") or "",
             compute_type=payload.get("compute_type") or "",
             stage_callback=update_stage,
+            progress_callback=update_progress,
         )
-        _update_task(task_id, status="completed", stage="completed", result=result, error="")
+        _update_task(task_id, status="completed", stage="completed", progress=100, result=result, error="")
     except Exception as error:
         _update_task(task_id, status="failed", stage="failed", error=str(error))
 
@@ -76,6 +87,7 @@ def create_transcript_task(
         "title": title,
         "status": "queued",
         "stage": "queued",
+        "progress": 0,
         "error": "",
         "result": None,
         "created_at": created_at,

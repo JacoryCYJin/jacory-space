@@ -247,9 +247,10 @@ export default {
     },
     localStt: {
       action: 'LOCAL TRANSCRIBE',
+      retry: 'RETRANSCRIBE',
       transcribing: 'TRANSCRIBING',
-      running: 'Local transcription is running. Files will be saved to the default download folder.',
-      complete: 'Local transcription completed. Subtitle files were saved to the default download folder.',
+      running: 'Local transcription is running. The subtitle file will be saved when complete.',
+      complete: 'Local transcription completed. The subtitle file has been saved.',
       savedTo: 'DEFAULT OUTPUT PATH',
       reveal: 'REVEAL IN FINDER',
       revealComplete: 'Local path opened',
