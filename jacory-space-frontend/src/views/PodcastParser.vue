@@ -513,6 +513,7 @@ const transcribeEpisode = async () => {
     const response = await axios.post('/api/transcript/local-stt/tasks', {
       source_url: episode.value.audio_url,
       title: episode.value.title || podcastInfo.value?.title || t('podcastParser.result.untitledEpisode'),
+      source: podcastInfo.value?.title || '',
       language: 'zh',
       model: 'small',
       source_type: 'podcast'
