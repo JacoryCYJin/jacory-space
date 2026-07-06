@@ -205,7 +205,7 @@
                         @click="transcribeEpisode"
                       >
                         <FileText class="h-4 w-4" />
-                        {{ localSttLoading ? t('podcastParser.localStt.transcribing') : t('podcastParser.localStt.action') }}
+                        {{ localSttButtonLabel }}
                       </button>
                       <button
                         v-if="localSttOutputDir"
@@ -217,17 +217,13 @@
                         {{ t('podcastParser.localStt.reveal') }}
                       </button>
                       <span
-                        v-if="localSttStageVisible"
+                        v-if="localSttProgressVisible"
                         class="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground"
                       >
-                        {{ localSttStageLabel }}
+                        {{ localSttProgressLabel }}
                       </span>
                     </div>
 
-                    <div v-if="localSttOutputDir" class="mt-4 border-l border-line pl-4">
-                      <p class="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">{{ t('podcastParser.localStt.savedTo') }}</p>
-                      <p class="mt-2 break-all font-mono text-xs leading-relaxed text-foreground">{{ localSttOutputDir }}</p>
-                    </div>
                     <p v-if="localSttMessage" class="mt-4 text-sm leading-relaxed text-muted-foreground">{{ localSttMessage }}</p>
                     <p v-if="localSttError" class="mt-4 text-sm leading-relaxed text-foreground">{{ localSttError }}</p>
                   </div>
@@ -241,6 +237,12 @@
     </section>
 
     <Footer />
+
+    <StatusToast
+      :visible="Boolean(localSttToastMessage)"
+      :message="localSttToastMessage"
+      type="success"
+    />
   </main>
 </template>
 
@@ -249,6 +251,7 @@ import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import Footer from '../components/Footer.vue'
+import StatusToast from '../components/StatusToast.vue'
 import { ArrowRight, ExternalLink, FileText, FolderOpen, Info, Link as LinkIcon, Podcast } from 'lucide-vue-next'
 
 const { t } = useI18n()
@@ -276,7 +279,10 @@ const localSttError = ref('')
 const localSttMessage = ref('')
 const localSttTaskId = ref('')
 const localSttStatus = ref('')
+const localSttProgress = ref(0)
+const localSttToastMessage = ref('')
 let localSttPoller = null
+let localSttToastTimer = null
 
 const episode = computed(() => podcastInfo.value?.episode || {})
 const transcript = computed(() => podcastInfo.value?.transcript || {})
@@ -380,11 +386,13 @@ const episodeMetaItems = computed(() => [formattedDate.value, formattedDuration.
 const transcriptStatus = computed(() => transcript.value.status || 'missing')
 const transcriptPreview = computed(() => transcript.value.preview || '')
 const localSttOutputDir = computed(() => localSttResult.value?.output_dir || '')
-const localSttStageVisible = computed(() => localSttLoading.value && localSttStatus.value)
-const localSttStageLabel = computed(() => {
-  if (!localSttStatus.value) return ''
-  return t(`podcastParser.localStt.stages.${localSttStatus.value}`)
+const localSttButtonLabel = computed(() => {
+  if (localSttLoading.value) return t('podcastParser.localStt.transcribing')
+  if (localSttResult.value) return t('podcastParser.localStt.retry')
+  return t('podcastParser.localStt.action')
 })
+const localSttProgressVisible = computed(() => localSttLoading.value && localSttProgress.value > 0)
+const localSttProgressLabel = computed(() => `${Math.max(0, Math.min(100, Math.round(localSttProgress.value)))}%`)
 
 const formattedAudioSize = computed(() => {
   const bytes = Number(episode.value.audio_size_bytes || 0)
@@ -418,12 +426,14 @@ const transcriptMessage = computed(() => {
 
 const resetLocalStt = () => {
   stopLocalSttPolling()
+  clearLocalSttToast()
   localSttLoading.value = false
   localSttResult.value = null
   localSttError.value = ''
   localSttMessage.value = ''
   localSttTaskId.value = ''
   localSttStatus.value = ''
+  localSttProgress.value = 0
 }
 
 const stopLocalSttPolling = () => {
@@ -433,17 +443,37 @@ const stopLocalSttPolling = () => {
   }
 }
 
+const clearLocalSttToast = () => {
+  if (localSttToastTimer) {
+    window.clearTimeout(localSttToastTimer)
+    localSttToastTimer = null
+  }
+  localSttToastMessage.value = ''
+}
+
+const showLocalSttToast = (message) => {
+  clearLocalSttToast()
+  localSttToastMessage.value = message
+  localSttToastTimer = window.setTimeout(() => {
+    localSttToastMessage.value = ''
+    localSttToastTimer = null
+  }, 3200)
+}
+
 const refreshLocalSttTask = async () => {
   if (!localSttTaskId.value) return
   const response = await axios.get(`/api/transcript/local-stt/tasks/${localSttTaskId.value}`)
   const task = response.data || {}
   localSttStatus.value = task.status || task.stage || ''
+  localSttProgress.value = Number(task.progress || 0)
 
   if (task.status === 'completed') {
     stopLocalSttPolling()
     localSttResult.value = task.result
     localSttLoading.value = false
-    localSttMessage.value = t('podcastParser.localStt.complete')
+    localSttProgress.value = 100
+    localSttMessage.value = ''
+    showLocalSttToast(t('podcastParser.localStt.complete'))
     return
   }
 
@@ -455,7 +485,7 @@ const refreshLocalSttTask = async () => {
     return
   }
 
-  localSttMessage.value = t('podcastParser.localStt.running')
+  localSttMessage.value = ''
 }
 
 const startLocalSttPolling = () => {
@@ -474,9 +504,10 @@ const transcribeEpisode = async () => {
   if (!episode.value.audio_url || localSttLoading.value) return
   localSttLoading.value = true
   localSttError.value = ''
-  localSttMessage.value = t('podcastParser.localStt.running')
+  localSttMessage.value = ''
   localSttResult.value = null
   localSttStatus.value = 'queued'
+  localSttProgress.value = 0
 
   try {
     const response = await axios.post('/api/transcript/local-stt/tasks', {
@@ -488,6 +519,7 @@ const transcribeEpisode = async () => {
     })
     localSttTaskId.value = response.data?.task_id || ''
     localSttStatus.value = response.data?.status || 'queued'
+    localSttProgress.value = Number(response.data?.progress || 0)
     startLocalSttPolling()
     await refreshLocalSttTask()
   } catch (err) {
@@ -510,5 +542,6 @@ const revealLocalSttOutput = async () => {
 
 onBeforeUnmount(() => {
   stopLocalSttPolling()
+  clearLocalSttToast()
 })
 </script>

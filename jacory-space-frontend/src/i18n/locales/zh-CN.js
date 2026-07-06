@@ -247,9 +247,10 @@ export default {
     },
     localStt: {
       action: '本地转写',
+      retry: '重新转写',
       transcribing: '转写中',
-      running: '正在本地转写，完成后会保存到默认下载目录。',
-      complete: '本地转写完成，字幕已保存到默认下载目录。',
+      running: '正在本地转写，完成后会保存字幕。',
+      complete: '本地转写完成，字幕已保存。',
       savedTo: '默认保存路径',
       reveal: '在 Finder 中显示',
       revealComplete: '已打开本地路径',
