@@ -420,14 +420,16 @@ Provider 抽象建议：
 本地实验接口：
 
 - 路径：`POST /api/transcript/local-stt`
+- 任务路径：`POST /api/transcript/local-stt/tasks` 创建通用转写任务，`GET /api/transcript/local-stt/tasks/{task_id}` 查询任务阶段。
 - Provider：`faster-whisper`
 - 默认模型：`small`
 - 默认设备：`cpu`
 - 默认计算类型：`int8`
-- 输入：`audio_url`、可选 `title`、`language`、`model`、`device`、`compute_type`
+- 输入：`source_url` / `audio_url`、可选 `title`、`language`、`model`、`device`、`compute_type`、`source_type`
 - 输出：接口响应返回 `text`、`preview`、`segments`、`duration`、`elapsed_seconds`。
 - 保存：转写完成后自动保存到当前用户默认下载目录下的 `<title-or-audio-name>-<hash>/transcript.txt`，并在响应中返回 `output_dir` 和 `files.txt`。
-- 约束：仅用于手动实验，不接 UI，不由播客解析或视频解析自动触发。
+- 阶段：`queued`、`downloading`、`transcribing`、`saving`、`completed`、`failed`；当前只展示阶段，不展示假百分比。
+- 约束：仅用于手动触发，不由播客解析或视频解析自动触发。
 - 运行成本：首次调用会下载模型到本机缓存；模型文件不进入 Git。
 
 ### M4: 播客总结

@@ -135,7 +135,7 @@ export function useVideoDownloads({ axios, t, videoInfo, videoUrl, downloadDirOv
         error.value = err.response?.data?.error || t('videoParser.errors.downloadFailed', { message: err.message })
         success.value = ''
       }
-    }, 800)
+    }, 3000)
     downloadPollers.set(key, poller)
   }
 

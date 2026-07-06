@@ -113,6 +113,7 @@ def transcribe_audio_url(
     model_name: str = "",
     device: str = "",
     compute_type: str = "",
+    stage_callback=None,
 ) -> dict:
     normalized_url = str(audio_url or "").strip()
     if not normalized_url.startswith(("http://", "https://")):
@@ -126,7 +127,11 @@ def transcribe_audio_url(
     started_at = time.time()
     with tempfile.TemporaryDirectory(prefix="jacory-local-stt-") as tmpdir:
         audio_path = Path(tmpdir) / f"source{_extension_from_url(normalized_url)}"
+        if stage_callback:
+            stage_callback("downloading")
         download_info = _download_audio(normalized_url, audio_path, LOCAL_STT_MAX_AUDIO_BYTES)
+        if stage_callback:
+            stage_callback("transcribing")
         model = _load_model(selected_model, selected_device, selected_compute)
         segments_iter, info = model.transcribe(
             str(audio_path),
@@ -173,6 +178,8 @@ def transcribe_audio_url(
     }
 
     if client_id:
+        if stage_callback:
+            stage_callback("saving")
         return _save_transcript_files(result, client_id=client_id, title=title, audio_url=normalized_url)
 
     result["saved"] = False

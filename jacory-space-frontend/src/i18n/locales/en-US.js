@@ -252,7 +252,15 @@ export default {
       complete: 'Local transcription completed. Subtitle files were saved to the default download folder.',
       savedTo: 'DEFAULT OUTPUT PATH',
       reveal: 'REVEAL IN FINDER',
-      revealComplete: 'Local path opened'
+      revealComplete: 'Local path opened',
+      stages: {
+        queued: 'QUEUED',
+        downloading: 'DOWNLOADING AUDIO',
+        transcribing: 'TRANSCRIBING',
+        saving: 'SAVING',
+        completed: 'COMPLETED',
+        failed: 'FAILED'
+      }
     },
     errors: {
       emptyUrl: 'Paste a podcast, RSS, or audio URL first.',
