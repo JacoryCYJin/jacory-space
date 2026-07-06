@@ -252,7 +252,15 @@ export default {
       complete: 'ローカル文字起こしが完了しました。字幕ファイルは既定のダウンロード先に保存されました。',
       savedTo: '既定の保存先',
       reveal: 'Finder で表示',
-      revealComplete: 'ローカルパスを開きました'
+      revealComplete: 'ローカルパスを開きました',
+      stages: {
+        queued: '待機中',
+        downloading: '音声をダウンロード中',
+        transcribing: '文字起こし中',
+        saving: '保存中',
+        completed: '完了',
+        failed: '失敗'
+      }
     },
     errors: {
       emptyUrl: 'Podcast、RSS、または音声 URL を先に貼り付けてください。',

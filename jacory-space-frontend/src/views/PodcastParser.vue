@@ -216,6 +216,12 @@
                         <FolderOpen class="h-4 w-4" />
                         {{ t('podcastParser.localStt.reveal') }}
                       </button>
+                      <span
+                        v-if="localSttStageVisible"
+                        class="font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground"
+                      >
+                        {{ localSttStageLabel }}
+                      </span>
                     </div>
 
                     <div v-if="localSttOutputDir" class="mt-4 border-l border-line pl-4">
@@ -239,7 +245,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import axios from 'axios'
 import Footer from '../components/Footer.vue'
@@ -268,6 +274,9 @@ const localSttLoading = ref(false)
 const localSttResult = ref(null)
 const localSttError = ref('')
 const localSttMessage = ref('')
+const localSttTaskId = ref('')
+const localSttStatus = ref('')
+let localSttPoller = null
 
 const episode = computed(() => podcastInfo.value?.episode || {})
 const transcript = computed(() => podcastInfo.value?.transcript || {})
@@ -371,6 +380,11 @@ const episodeMetaItems = computed(() => [formattedDate.value, formattedDuration.
 const transcriptStatus = computed(() => transcript.value.status || 'missing')
 const transcriptPreview = computed(() => transcript.value.preview || '')
 const localSttOutputDir = computed(() => localSttResult.value?.output_dir || '')
+const localSttStageVisible = computed(() => localSttLoading.value && localSttStatus.value)
+const localSttStageLabel = computed(() => {
+  if (!localSttStatus.value) return ''
+  return t(`podcastParser.localStt.stages.${localSttStatus.value}`)
+})
 
 const formattedAudioSize = computed(() => {
   const bytes = Number(episode.value.audio_size_bytes || 0)
@@ -403,10 +417,57 @@ const transcriptMessage = computed(() => {
 })
 
 const resetLocalStt = () => {
+  stopLocalSttPolling()
   localSttLoading.value = false
   localSttResult.value = null
   localSttError.value = ''
   localSttMessage.value = ''
+  localSttTaskId.value = ''
+  localSttStatus.value = ''
+}
+
+const stopLocalSttPolling = () => {
+  if (localSttPoller) {
+    window.clearInterval(localSttPoller)
+    localSttPoller = null
+  }
+}
+
+const refreshLocalSttTask = async () => {
+  if (!localSttTaskId.value) return
+  const response = await axios.get(`/api/transcript/local-stt/tasks/${localSttTaskId.value}`)
+  const task = response.data || {}
+  localSttStatus.value = task.status || task.stage || ''
+
+  if (task.status === 'completed') {
+    stopLocalSttPolling()
+    localSttResult.value = task.result
+    localSttLoading.value = false
+    localSttMessage.value = t('podcastParser.localStt.complete')
+    return
+  }
+
+  if (task.status === 'failed') {
+    stopLocalSttPolling()
+    localSttLoading.value = false
+    localSttError.value = task.error || t('podcastParser.errors.localSttFailed', { message: '' })
+    localSttMessage.value = ''
+    return
+  }
+
+  localSttMessage.value = t('podcastParser.localStt.running')
+}
+
+const startLocalSttPolling = () => {
+  stopLocalSttPolling()
+  localSttPoller = window.setInterval(() => {
+    refreshLocalSttTask().catch((err) => {
+      stopLocalSttPolling()
+      localSttLoading.value = false
+      localSttError.value = err.response?.data?.error || t('podcastParser.errors.localSttFailed', { message: err.message })
+      localSttMessage.value = ''
+    })
+  }, 3000)
 }
 
 const transcribeEpisode = async () => {
@@ -414,20 +475,24 @@ const transcribeEpisode = async () => {
   localSttLoading.value = true
   localSttError.value = ''
   localSttMessage.value = t('podcastParser.localStt.running')
+  localSttResult.value = null
+  localSttStatus.value = 'queued'
 
   try {
-    const response = await axios.post('/api/transcript/local-stt', {
-      audio_url: episode.value.audio_url,
+    const response = await axios.post('/api/transcript/local-stt/tasks', {
+      source_url: episode.value.audio_url,
       title: episode.value.title || podcastInfo.value?.title || t('podcastParser.result.untitledEpisode'),
       language: 'zh',
-      model: 'small'
+      model: 'small',
+      source_type: 'podcast'
     })
-    localSttResult.value = response.data
-    localSttMessage.value = t('podcastParser.localStt.complete')
+    localSttTaskId.value = response.data?.task_id || ''
+    localSttStatus.value = response.data?.status || 'queued'
+    startLocalSttPolling()
+    await refreshLocalSttTask()
   } catch (err) {
     localSttError.value = err.response?.data?.error || t('podcastParser.errors.localSttFailed', { message: err.message })
     localSttMessage.value = ''
-  } finally {
     localSttLoading.value = false
   }
 }
@@ -442,4 +507,8 @@ const revealLocalSttOutput = async () => {
     localSttError.value = err.response?.data?.error || t('podcastParser.errors.revealFailed')
   }
 }
+
+onBeforeUnmount(() => {
+  stopLocalSttPolling()
+})
 </script>

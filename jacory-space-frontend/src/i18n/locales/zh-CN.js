@@ -252,7 +252,15 @@ export default {
       complete: '本地转写完成，字幕已保存到默认下载目录。',
       savedTo: '默认保存路径',
       reveal: '在 Finder 中显示',
-      revealComplete: '已打开本地路径'
+      revealComplete: '已打开本地路径',
+      stages: {
+        queued: '排队中',
+        downloading: '下载音频中',
+        transcribing: '转写中',
+        saving: '保存中',
+        completed: '已完成',
+        failed: '失败'
+      }
     },
     errors: {
       emptyUrl: '请先粘贴播客、RSS 或音频链接。',
