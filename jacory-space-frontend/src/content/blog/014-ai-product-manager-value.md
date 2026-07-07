@@ -3,6 +3,7 @@ title: "AI 让产品经理重新面对自己的价值"
 description: "AI 最先改变的不是产品经理这个岗位，而是把很多执行工作拿走之后，逼我们重新回答自己真正负责什么。"
 date: "2026.07.07"
 category: "essay"
+topic: "product"
 index: "014"
 readTime: "5 MIN"
 tags:

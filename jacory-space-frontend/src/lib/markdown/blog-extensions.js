@@ -79,6 +79,8 @@ function hydrateInlineToken(token, context) {
       date: post.date || '',
       category: post.category || '',
       categoryLabelKey: post.categoryLabelKey || '',
+      topic: post.topic || '',
+      topicLabelKey: post.topicLabelKey || '',
       index: post.index || '',
       href: `/blog/${token.slug}`,
     }

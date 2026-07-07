@@ -2,7 +2,9 @@
   <main class="grain min-h-screen bg-background">
     <section v-if="isLoading || loadError" class="page-gutter pt-40">
       <div class="page-frame">
-        <span class="tech text-haze">{{ loadError || t('blog.post.fieldNote') }}</span>
+        <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+          {{ loadError || t('blog.post.fieldNote') }}
+        </span>
       </div>
     </section>
 
@@ -13,7 +15,9 @@
             <article class="col-span-12 lg:order-2 lg:col-span-9">
               <div class="flex items-center justify-between border-b border-line pb-4">
                 <span class="font-mono text-xs tracking-[0.16em] text-blue">{{ headerLabel }}</span>
-                <span class="tech">{{ headerMeta }}</span>
+                <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
+                  {{ headerMeta }}
+                </span>
               </div>
 
               <header class="pt-10">
@@ -24,7 +28,7 @@
                 </h1>
                 <p
                   v-if="frontmatter.description"
-                  class="mt-6 max-w-2xl text-pretty text-[0.95rem] leading-relaxed text-muted-foreground"
+                  class="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground"
                 >
                   {{ frontmatter.description }}
                 </p>
@@ -43,7 +47,9 @@
                   :to="`/blog/${post.prev.slug}`"
                   class="group md:text-left"
                 >
-                  <span class="tech block text-haze">{{ t('blog.post.previousEntry') }}</span>
+                  <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+                    {{ t('blog.post.previousEntry') }}
+                  </span>
                   <span class="mt-1 block font-mono text-xs text-blue">№ {{ post.prev.index }}</span>
                   <span
                     class="mt-1 block text-sm leading-snug text-muted-foreground transition-colors group-hover:text-foreground"
@@ -58,7 +64,9 @@
                   :to="`/blog/${post.next.slug}`"
                   class="group md:text-right"
                 >
-                  <span class="tech block text-haze">{{ t('blog.post.nextEntry') }}</span>
+                  <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+                    {{ t('blog.post.nextEntry') }}
+                  </span>
                   <span class="mt-1 block font-mono text-xs text-blue">№ {{ post.next.index }}</span>
                   <span
                     class="mt-1 block text-sm leading-snug text-muted-foreground transition-colors group-hover:text-foreground"
@@ -72,7 +80,11 @@
 
             <aside class="col-span-12 mt-12 lg:order-1 lg:mt-0 lg:col-span-3">
               <div v-if="post.toc.length" class="lg:sticky lg:top-28">
-                <p class="tech border-b border-line pb-3 text-foreground">{{ t('blog.post.onThisNote') }}</p>
+                <p
+                  class="border-b border-line pb-3 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-foreground"
+                >
+                  {{ t('blog.post.onThisNote') }}
+                </p>
                 <ul class="mt-4 space-y-3">
                   <li
                     v-for="item in post.toc"
@@ -99,7 +111,9 @@
 
     <section v-else class="page-gutter pt-40">
       <div class="page-frame">
-        <span class="tech text-haze">{{ t('blog.post.notFoundBadge') }}</span>
+        <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+          {{ t('blog.post.notFoundBadge') }}
+        </span>
         <h1 class="mt-6 font-sans text-4xl font-medium tracking-tight text-foreground">
           {{ t('blog.post.notFoundTitle') }}<span class="text-blue">.</span>
         </h1>
@@ -137,12 +151,18 @@ function categoryLabel(meta) {
   return t(meta?.categoryLabelKey, meta?.categoryKey || meta?.category || 'NOTE')
 }
 
+function topicLabel(meta) {
+  if (!meta?.topic) return ''
+  return t(meta.topicLabelKey, meta.topicKey || meta.topic)
+}
+
 const headerLabel = computed(() => {
   const fm = frontmatter.value
   const meta = post.value?.meta
+  const labels = [categoryLabel(meta), topicLabel(meta)].filter(Boolean).join('  ')
   return t('blog.post.headerLabel', {
     index: fm.index || '—',
-    category: categoryLabel(meta),
+    category: labels,
   })
 })
 

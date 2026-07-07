@@ -119,6 +119,7 @@ export default {
       archiveAll: 'アーカイブ — すべての記事',
       filterLabel: 'フィルター',
       filterCategory: '分類',
+      filterTopic: 'テーマ',
       filterYear: '年',
       filterAria: 'ブログアーカイブを絞り込む',
       endOfIndex: 'Jacory Space',
@@ -150,6 +151,9 @@ export default {
       RESEARCH: 'リサーチ',
       ESSAY: 'エッセイ',
       METHOD: 'メソッド'
+    },
+    entryTopics: {
+      PRODUCT: 'プロダクト'
     }
   },
   about: {

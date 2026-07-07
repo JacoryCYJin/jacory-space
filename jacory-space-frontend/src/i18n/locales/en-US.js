@@ -119,6 +119,7 @@ export default {
       archiveAll: 'Archive — All Entries',
       filterLabel: 'Filter',
       filterCategory: 'Category',
+      filterTopic: 'Topic',
       filterYear: 'Year',
       filterAria: 'Filter blog archive',
       endOfIndex: 'Jacory Space',
@@ -150,6 +151,9 @@ export default {
       RESEARCH: 'RESEARCH',
       ESSAY: 'ESSAY',
       METHOD: 'METHOD'
+    },
+    entryTopics: {
+      PRODUCT: 'PRODUCT'
     }
   },
   about: {

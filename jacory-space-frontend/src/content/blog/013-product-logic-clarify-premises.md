@@ -3,6 +3,7 @@ title: "产品经理的逻辑感，首先是把前提说清楚"
 description: "产品经理需要的逻辑能力，不是把话说得漂亮，而是能把判断背后的前提、推理和边界讲清楚。"
 date: "2026.07.06"
 category: "essay"
+topic: "product"
 index: "013"
 readTime: "5 MIN"
 tags:

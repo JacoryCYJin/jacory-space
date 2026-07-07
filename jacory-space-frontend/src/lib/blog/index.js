@@ -4,6 +4,7 @@
 // article blocks are parsed only when a detail route requests a specific slug.
 
 import { getBlogCategory, listBlogCategorySlugs } from '../../content/blog-categories'
+import { getBlogTopic, listBlogTopicSlugs } from '../../content/blog-topics'
 import { parseDocument } from '../markdown/index.js'
 
 const postModules = import.meta.glob('../../content/blog/*.md', {
@@ -146,6 +147,12 @@ function validateFrontmatter(frontmatter, { fileName }) {
     )
   }
 
+  if (frontmatter.topic && !getBlogTopic(frontmatter.topic)) {
+    blogError(
+      `${fileName} invalid topic: ${frontmatter.topic}. Expected one of: ${listBlogTopicSlugs().join(', ')}`,
+    )
+  }
+
   if (!Array.isArray(frontmatter.tags)) {
     blogError(`${fileName} invalid tags frontmatter: expected an array`)
   }
@@ -157,6 +164,7 @@ function compareByIndexAsc(a, b) {
 
 function toMeta(slug, frontmatter) {
   const category = getBlogCategory(frontmatter.category)
+  const topic = getBlogTopic(frontmatter.topic)
   return {
     slug,
     index: frontmatter.index,
@@ -167,6 +175,10 @@ function toMeta(slug, frontmatter) {
     categoryKey: category.key,
     categoryLabelKey: category.labelKey,
     categorySortOrder: category.sortOrder,
+    topic: topic?.slug || '',
+    topicKey: topic?.key || '',
+    topicLabelKey: topic?.labelKey || '',
+    topicSortOrder: topic?.sortOrder || 0,
     readTime: frontmatter.readTime || '',
     tags: frontmatter.tags,
   }
@@ -290,6 +302,13 @@ export async function getPostsByCategory(category) {
 export async function getPostsByTag(tag) {
   const metas = await getAllPostMeta()
   return metas.filter((meta) => meta.tags.includes(tag))
+}
+
+export async function getPostsByTopic(topic) {
+  const metas = await getAllPostMeta()
+  const resolvedTopic = getBlogTopic(topic)
+  if (!resolvedTopic) return []
+  return metas.filter((meta) => meta.topic === resolvedTopic.slug)
 }
 
 // Compatibility API for existing callers.

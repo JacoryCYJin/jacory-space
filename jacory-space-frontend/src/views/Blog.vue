@@ -4,7 +4,9 @@
       <div class="page-frame">
         <div class="reveal blog-reveal flex items-center justify-between border-b border-line pb-4">
           <span class="font-mono text-xs tracking-[0.16em] text-blue">{{ t('blog.fieldNotes.journalLabel') }}</span>
-          <span class="tech">{{ t('blog.fieldNotes.archiveOpen', { count: entryCount }) }}</span>
+          <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
+            {{ t('blog.fieldNotes.archiveOpen', { count: entryCount }) }}
+          </span>
         </div>
 
         <div class="reveal blog-reveal" style="transition-delay: 80ms">
@@ -23,7 +25,9 @@
     <section class="page-gutter pb-20 pt-12 md:pb-28 md:pt-16">
       <div class="page-frame">
         <div v-if="isLoading || loadError" class="reveal blog-reveal border-y border-line py-10">
-          <p class="tech text-haze">{{ loadError || t('blog.fieldNotes.archiveOpen', { count: 0 }) }}</p>
+          <p class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+            {{ loadError || t('blog.fieldNotes.archiveOpen', { count: 0 }) }}
+          </p>
         </div>
 
         <div v-else-if="lead" class="reveal blog-reveal">
@@ -34,8 +38,18 @@
             <div class="flex items-start justify-between lg:col-span-4 lg:flex-col lg:gap-6">
               <span class="font-mono text-xs text-blue">{{ lead.no }}</span>
               <div class="text-right lg:text-left">
-                <span class="tech block">{{ lead.cat }}</span>
-                <span class="tech block">{{ lead.date }} / {{ lead.read }}</span>
+                <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
+                  {{ lead.cat }}
+                </span>
+                <span
+                  v-if="lead.topic"
+                  class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze"
+                >
+                  {{ lead.topic }}
+                </span>
+                <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
+                  {{ lead.date }} / {{ lead.read }}
+                </span>
               </div>
             </div>
 
@@ -63,9 +77,13 @@
     <section class="page-gutter pb-28">
       <div class="page-frame">
         <div class="reveal blog-reveal mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <span class="tech">{{ t('blog.fieldNotes.archiveAll') }}</span>
+          <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
+            {{ t('blog.fieldNotes.archiveAll') }}
+          </span>
           <div class="flex flex-wrap items-center gap-3" :aria-label="t('blog.fieldNotes.filterAria')">
-            <span class="tech mr-1 text-haze">{{ t('blog.fieldNotes.filterLabel') }}</span>
+            <span class="mr-1 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+              {{ t('blog.fieldNotes.filterLabel') }}
+            </span>
 
             <label class="relative inline-flex items-center">
               <span class="sr-only">{{ t('blog.fieldNotes.filterCategory') }}</span>
@@ -76,6 +94,20 @@
                 <option value="all">{{ t('blog.fieldNotes.filterCategory') }}</option>
                 <option v-for="category in categoryOptions" :key="category.id" :value="category.id">
                   {{ category.label }}
+                </option>
+              </select>
+              <ChevronDown class="pointer-events-none absolute right-3 h-4 w-4 text-haze" aria-hidden="true" />
+            </label>
+
+            <label class="relative inline-flex items-center">
+              <span class="sr-only">{{ t('blog.fieldNotes.filterTopic') }}</span>
+              <select
+                v-model="activeTopicFilter"
+                class="h-9 w-24 appearance-none border border-line bg-background py-0 pl-4 pr-9 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze transition-colors duration-300 hover:border-line-strong hover:text-muted-foreground focus:border-blue focus:text-muted-foreground focus:outline-none"
+              >
+                <option value="all">{{ t('blog.fieldNotes.filterTopic') }}</option>
+                <option v-for="topic in topicOptions" :key="topic.id" :value="topic.id">
+                  {{ topic.label }}
                 </option>
               </select>
               <ChevronDown class="pointer-events-none absolute right-3 h-4 w-4 text-haze" aria-hidden="true" />
@@ -116,11 +148,19 @@
               >
                 {{ entry.title }}
               </span>
-              <span class="tech col-span-6 mt-1 md:col-span-2 md:mt-0">
-                {{ entry.cat }}
+              <span class="col-span-6 mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 md:col-span-2 md:mt-0">
+                <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
+                  {{ entry.cat }}
+                </span>
+                <span
+                  v-if="entry.topic"
+                  class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze"
+                >
+                  {{ entry.topic }}
+                </span>
               </span>
               <span
-                class="col-span-5 mt-1 text-right font-mono text-[11px] tracking-[0.12em] text-muted-foreground md:col-span-1 md:mt-0"
+                class="col-span-5 mt-1 text-right font-mono text-xs tracking-[0.12em] text-muted-foreground md:col-span-1 md:mt-0"
               >
                 {{ entry.date }}
               </span>
@@ -146,12 +186,14 @@ import { RouterLink } from 'vue-router'
 import { ChevronDown } from 'lucide-vue-next'
 import Footer from '../components/Footer.vue'
 import { blogCategories } from '../content/blog-categories.js'
+import { blogTopics } from '../content/blog-topics.js'
 import { listPosts } from '../lib/blog/index.js'
 
 const pageRoot = ref(null)
 const { t } = useI18n()
 const posts = ref([])
 const activeCategoryFilter = ref('all')
+const activeTopicFilter = ref('all')
 const activeYearFilter = ref('all')
 const isLoading = ref(true)
 const loadError = ref('')
@@ -161,12 +203,19 @@ function categoryLabel(post) {
   return t(post.categoryLabelKey, post.categoryKey || post.category)
 }
 
+function topicLabel(post) {
+  if (!post.topic) return ''
+  return t(post.topicLabelKey, post.topicKey || post.topic)
+}
+
 const toEntry = (post) => ({
   slug: post.slug,
   no: `№ ${post.index}`,
   title: post.title,
   excerpt: post.description,
   cat: categoryLabel(post),
+  topic: topicLabel(post),
+  topicId: post.topic,
   category: post.category,
   date: post.date,
   read: post.readTime
@@ -182,8 +231,9 @@ const archiveEntries = computed(() => allPosts.value.slice(1))
 const entries = computed(() => {
   return archiveEntries.value.filter((entry) => {
     const categoryMatches = activeCategoryFilter.value === 'all' || entry.category === activeCategoryFilter.value
+    const topicMatches = activeTopicFilter.value === 'all' || entry.topicId === activeTopicFilter.value
     const yearMatches = activeYearFilter.value === 'all' || yearFromDate(entry.date) === activeYearFilter.value
-    return categoryMatches && yearMatches
+    return categoryMatches && topicMatches && yearMatches
   })
 })
 const entryCount = computed(() => allPosts.value.length)
@@ -191,6 +241,12 @@ const categoryOptions = computed(() =>
   blogCategories.map((category) => ({
     id: category.slug,
     label: t(category.labelKey, category.key)
+  }))
+)
+const topicOptions = computed(() =>
+  blogTopics.map((topic) => ({
+    id: topic.slug,
+    label: t(topic.labelKey, topic.key)
   }))
 )
 const yearOptions = computed(() => {
