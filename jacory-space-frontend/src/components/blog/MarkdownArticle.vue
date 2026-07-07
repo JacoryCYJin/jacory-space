@@ -4,7 +4,9 @@ import { h } from 'vue'
 const LINK_CLASS =
   'text-blue underline decoration-line decoration-1 underline-offset-4 transition-colors hover:decoration-blue'
 const INLINE_CODE_CLASS =
-  'rounded-sm border border-line bg-card px-1.5 py-0.5 font-mono text-[0.85em] text-foreground'
+  'rounded-sm border border-line bg-card px-1.5 py-0.5 font-mono text-sm text-foreground'
+const META_LABEL_CLASS =
+  'font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em]'
 const COLOR_CLASSES = {
   default: 'text-[var(--blog-color-default)]',
   gray: 'text-[var(--blog-color-gray)]',
@@ -164,7 +166,7 @@ function renderFigure(block, { floated } = {}) {
         class: 'block w-full',
       }),
     ]),
-    h('figcaption', { class: 'tech mt-3 text-haze' }, caption),
+    h('figcaption', { class: `${META_LABEL_CLASS} mt-3 text-haze` }, caption),
   ])
 }
 
@@ -179,9 +181,9 @@ function renderCode(block) {
 
   return h('figure', { class: 'relative my-8 overflow-hidden border border-line bg-card' }, [
     block.lang
-      ? h('span', { class: 'tech absolute right-4 top-3 text-haze' }, block.lang.toUpperCase())
+      ? h('span', { class: `${META_LABEL_CLASS} absolute right-4 top-3 text-haze` }, block.lang.toUpperCase())
       : null,
-    h('div', { class: 'flex gap-4 overflow-x-auto px-4 py-4 font-mono text-[0.8rem] leading-[1.7]' }, [
+    h('div', { class: 'flex gap-4 overflow-x-auto px-4 py-4 font-mono text-sm leading-relaxed' }, [
       h('div', { class: 'select-none border-r border-line pr-4', 'aria-hidden': 'true' }, numbers),
       h('div', { class: 'min-w-0' }, codeLines),
     ]),
@@ -202,7 +204,7 @@ function renderTable(block) {
             h(
               'th',
               {
-                class: `py-2.5 pr-6 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-haze ${alignClass(
+                class: `py-2.5 pr-6 font-mono text-xs uppercase tracking-[0.12em] text-haze ${alignClass(
                   block.align?.[idx],
                 )}`,
               },
@@ -221,7 +223,7 @@ function renderTable(block) {
               h(
                 'td',
                 {
-                  class: `py-3 pr-6 align-top text-[0.9rem] leading-relaxed ${alignClass(block.align?.[idx])} ${
+                  class: `py-3 pr-6 align-top text-sm leading-relaxed ${alignClass(block.align?.[idx])} ${
                     idx === 0 ? 'text-foreground' : 'text-muted-foreground'
                   }`,
                 },
@@ -240,7 +242,7 @@ function renderList(block, { nested = false } = {}) {
   return h(
     tag,
     {
-      class: `${nested ? 'mt-2 space-y-1 pl-5' : 'my-5 space-y-2 pl-5'} text-[0.95rem] leading-[1.8] text-muted-foreground ${
+      class: `${nested ? 'mt-2 space-y-1 pl-5' : 'my-5 space-y-2 pl-5'} text-base leading-relaxed text-muted-foreground ${
         block.ordered ? 'list-decimal' : block.items.some((item) => item.task !== null) ? 'list-none' : 'list-disc'
       } marker:text-blue-soft`,
     },
@@ -275,7 +277,7 @@ function renderCallout(block) {
     'aside',
     { class: `my-8 border-y py-5 ${borderClass}` },
     [
-      h('p', { class: `tech mb-3 ${labelClass}` }, isWarning ? 'WARNING' : 'NOTE'),
+      h('p', { class: `${META_LABEL_CLASS} mb-3 ${labelClass}` }, isWarning ? 'WARNING' : 'NOTE'),
       h('div', { class: 'space-y-1' }, block.blocks.map(renderBlock)),
     ],
   )
@@ -283,7 +285,7 @@ function renderCallout(block) {
 
 function renderHighlight(block) {
   return h('aside', { class: 'my-8 border border-blue/30 bg-blue/5 px-5 py-5' }, [
-    h('p', { class: 'tech mb-3 text-blue' }, 'HIGHLIGHT'),
+    h('p', { class: `${META_LABEL_CLASS} mb-3 text-blue` }, 'HIGHLIGHT'),
     h('div', { class: 'space-y-1' }, block.blocks.map(renderBlock)),
   ])
 }
@@ -394,18 +396,18 @@ function renderBlock(block) {
     case 'paragraph':
       return h(
         'p',
-        { class: 'my-5 text-[0.95rem] leading-[1.9] text-muted-foreground' },
+        { class: 'my-5 text-base leading-relaxed text-muted-foreground' },
         renderInline(block.inlines),
       )
     case 'blockquote':
       return h('blockquote', { class: 'my-8 border-l border-line-strong pl-5' }, [
         h(
           'p',
-          { class: 'text-[0.95rem] italic leading-[1.8] text-foreground' },
+          { class: 'text-base italic leading-relaxed text-foreground' },
           renderInline(block.inlines),
         ),
         block.attribution
-          ? h('cite', { class: 'tech mt-2 block not-italic text-haze' }, `— ${block.attribution}`)
+          ? h('cite', { class: `${META_LABEL_CLASS} mt-2 block not-italic text-haze` }, `— ${block.attribution}`)
           : null,
       ])
     case 'list': {
