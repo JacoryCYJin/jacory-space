@@ -119,6 +119,7 @@ export default {
       archiveAll: '归档 — 全部条目',
       filterLabel: '筛选',
       filterCategory: '分类',
+      filterTopic: '主题',
       filterYear: '年份',
       filterAria: '筛选博客归档',
       endOfIndex: 'Jacory Space',
@@ -150,6 +151,9 @@ export default {
       RESEARCH: '调研',
       ESSAY: '随笔',
       METHOD: '方法'
+    },
+    entryTopics: {
+      PRODUCT: '产品'
     }
   },
   about: {
