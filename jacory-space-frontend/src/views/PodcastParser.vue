@@ -6,9 +6,9 @@
           <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-end">
             <div>
               <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">{{ t('podcastParser.sections.toolIndex') }}</p>
-              <h1 class="mt-7 text-6xl font-medium leading-[0.92] tracking-tight text-foreground md:text-8xl lg:text-9xl">
+              <h1 class="mt-7 text-5xl font-medium leading-none tracking-tight text-foreground md:text-7xl">
                 {{ t('podcastParser.hero.titleLead') }}
-                <span class="block italic">{{ t('podcastParser.hero.titleAccent') }}</span>
+                <span class="italic text-blue">{{ t('podcastParser.hero.titleAccent') }}</span>
               </h1>
               <p class="mt-7 max-w-xl text-base leading-relaxed text-muted-foreground">
                 {{ t('podcastParser.hero.description') }}

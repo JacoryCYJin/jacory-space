@@ -201,7 +201,7 @@ export default {
     },
     hero: {
       titleLead: 'Podcast',
-      titleAccent: 'parser',
+      titleAccent: 'Parser',
       description: 'Apple Podcasts、小宇宙、RSS Feed、音声リンクを解析し、番組、エピソード、音声ソース、字幕状態を取得します。',
       editionLabel: '版'
     },
