@@ -201,7 +201,7 @@ export default {
     },
     hero: {
       titleLead: 'Podcast',
-      titleAccent: 'parser',
+      titleAccent: 'Parser',
       description: '解析 Apple Podcasts、小宇宙、RSS Feed 与音频链接，提取节目、单集、音频源与字幕状态。',
       editionLabel: '版本'
     },
