@@ -11,24 +11,24 @@
     <template v-else-if="post">
       <section class="page-gutter pt-28 md:pt-32">
         <div class="page-frame">
-          <div class="grid grid-cols-12 gap-x-10">
-            <article class="col-span-12 lg:order-2 lg:col-span-9">
-              <div class="flex items-center justify-between border-b border-line pb-4">
-                <span class="font-mono text-xs tracking-[0.16em] text-blue">{{ headerLabel }}</span>
-                <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
+          <div class="grid min-w-0 grid-cols-12 gap-x-0 lg:gap-x-10">
+            <article class="col-span-12 min-w-0 lg:order-2 lg:col-span-9">
+              <div class="flex flex-wrap items-start justify-between gap-x-6 gap-y-2 border-b border-line pb-4">
+                <span class="min-w-0 break-words font-mono text-xs tracking-[0.16em] text-blue">{{ headerLabel }}</span>
+                <span class="min-w-0 break-words text-left font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground sm:text-right">
                   {{ headerMeta }}
                 </span>
               </div>
 
               <header class="pt-10">
                 <h1
-                  class="max-w-3xl text-balance font-sans text-4xl font-medium leading-[1.08] tracking-tight text-foreground md:text-5xl"
+                  class="max-w-3xl break-words text-balance font-sans text-4xl font-medium leading-[1.08] tracking-tight text-foreground md:text-5xl"
                 >
                   {{ frontmatter.title }}
                 </h1>
                 <p
                   v-if="frontmatter.description"
-                  class="mt-6 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground"
+                  class="mt-6 max-w-2xl break-words text-pretty text-base leading-relaxed text-muted-foreground"
                 >
                   {{ frontmatter.description }}
                 </p>
@@ -45,14 +45,14 @@
                 <RouterLink
                   v-if="post.prev"
                   :to="`/blog/${post.prev.slug}`"
-                  class="group md:text-left"
+                  class="group min-w-0 md:text-left"
                 >
-                  <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+                  <span class="block break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
                     {{ t('blog.post.previousEntry') }}
                   </span>
                   <span class="mt-1 block font-mono text-xs text-blue">№ {{ post.prev.index }}</span>
                   <span
-                    class="mt-1 block text-sm leading-snug text-muted-foreground transition-colors group-hover:text-foreground"
+                    class="mt-1 block break-words text-sm leading-snug text-muted-foreground transition-colors group-hover:text-foreground"
                   >
                     {{ post.prev.title }}
                   </span>
@@ -62,14 +62,14 @@
                 <RouterLink
                   v-if="post.next"
                   :to="`/blog/${post.next.slug}`"
-                  class="group md:text-right"
+                  class="group min-w-0 md:text-right"
                 >
-                  <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+                  <span class="block break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
                     {{ t('blog.post.nextEntry') }}
                   </span>
                   <span class="mt-1 block font-mono text-xs text-blue">№ {{ post.next.index }}</span>
                   <span
-                    class="mt-1 block text-sm leading-snug text-muted-foreground transition-colors group-hover:text-foreground"
+                    class="mt-1 block break-words text-sm leading-snug text-muted-foreground transition-colors group-hover:text-foreground"
                   >
                     {{ post.next.title }}
                   </span>
@@ -78,7 +78,7 @@
               </nav>
             </article>
 
-            <aside class="col-span-12 mt-12 lg:order-1 lg:mt-0 lg:col-span-3">
+            <aside class="col-span-12 mt-12 hidden min-w-0 lg:order-1 lg:mt-0 lg:block lg:col-span-3">
               <div v-if="post.toc.length" class="lg:sticky lg:top-28">
                 <p
                   class="border-b border-line pb-3 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-foreground"
@@ -93,7 +93,7 @@
                   >
                     <a
                       :href="`#${item.id}`"
-                      class="group block font-mono text-xs leading-relaxed transition-colors"
+                      class="group block break-words font-mono text-xs leading-relaxed transition-colors"
                       :class="activeId === item.id ? 'text-blue' : 'text-muted-foreground hover:text-foreground'"
                     >
                       <span>{{ item.text }}</span>
