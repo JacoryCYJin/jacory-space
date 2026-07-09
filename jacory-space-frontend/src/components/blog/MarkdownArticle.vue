@@ -37,7 +37,7 @@ const MARKER_HIGHLIGHT_STYLES = {
   archive: {
     drawingMode: 'highlight',
     animate: false,
-    animationTrigger: 'scrollIntoView',
+    animationTrigger: 'load',
     animationSpeed: 1200,
     height: 1,
     offset: 0.2,
@@ -53,7 +53,7 @@ const MARKER_HIGHLIGHT_STYLES = {
   underline: {
     drawingMode: 'highlight',
     animate: false,
-    animationTrigger: 'scrollIntoView',
+    animationTrigger: 'load',
     animationSpeed: 620,
     height: 0.1,
     offset: 0.82,
@@ -607,7 +607,7 @@ export default {
         this.markerHighlighter = new MarkerHighlighter(root, {
           drawingMode: 'highlight',
           animate: false,
-          animationTrigger: 'scrollIntoView',
+          animationTrigger: 'load',
           animationSpeed: 1200,
           height: 0.72,
           offset: 0.22,
