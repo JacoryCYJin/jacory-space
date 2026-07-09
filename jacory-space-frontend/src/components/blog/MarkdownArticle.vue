@@ -1,8 +1,9 @@
 <script>
-import { h } from 'vue'
+import { h, nextTick } from 'vue'
+import { MarkerHighlighter } from 'markerhighlight'
 
 const LINK_CLASS =
-  'break-words text-blue underline decoration-line decoration-1 underline-offset-4 transition-colors hover:decoration-blue'
+  'article-link break-words text-blue no-underline transition-colors'
 const INLINE_CODE_CLASS =
   'break-words rounded-sm border border-line bg-card px-1.5 py-0.5 font-mono text-sm text-foreground'
 const META_LABEL_CLASS =
@@ -19,24 +20,78 @@ const COLOR_CLASSES = {
   purple: 'text-[var(--blog-color-purple)]',
   pink: 'text-[var(--blog-color-pink)]',
 }
-const MARK_CLASSES = {
-  default: 'bg-[var(--blog-mark-default)]',
-  gray: 'bg-[var(--blog-mark-gray)]',
-  blue: 'bg-[var(--blog-mark-blue)]',
-  green: 'bg-[var(--blog-mark-green)]',
-  yellow: 'bg-[var(--blog-mark-yellow)]',
-  orange: 'bg-[var(--blog-mark-orange)]',
-  red: 'bg-[var(--blog-mark-red)]',
-  purple: 'bg-[var(--blog-mark-purple)]',
-  pink: 'bg-[var(--blog-mark-pink)]',
+const MARKER_COLOR_CLASSES = {
+  default: 'article-marker-default',
+  gray: 'article-marker-gray',
+  blue: 'article-marker-blue',
+  green: 'article-marker-green',
+  yellow: 'article-marker-yellow',
+  orange: 'article-marker-orange',
+  red: 'article-marker-red',
+  purple: 'article-marker-purple',
+  pink: 'article-marker-pink',
+  underline: 'article-marker-underline',
+}
+
+const MARKER_HIGHLIGHT_STYLES = {
+  archive: {
+    drawingMode: 'highlight',
+    animate: false,
+    animationTrigger: 'scrollIntoView',
+    animationSpeed: 1200,
+    height: 1,
+    offset: 0.2,
+    padding: 0.12,
+    multiLineDelay: 0.16,
+    skewX: 0.1,
+    highlight: {
+      amplitude: 0.55,
+      wavelength: 5,
+      roughEnds: 0.35,
+    },
+  },
+  underline: {
+    drawingMode: 'highlight',
+    animate: false,
+    animationTrigger: 'scrollIntoView',
+    animationSpeed: 620,
+    height: 0.1,
+    offset: 0.82,
+    padding: 0,
+    multiLineDelay: 0.12,
+    highlight: {
+      amplitude: 0.02,
+      wavelength: 10,
+      roughEnds: 0,
+    },
+  },
+}
+
+let markerStylesDefined = false
+
+function defineMarkerStyles() {
+  if (markerStylesDefined) return
+  Object.entries(MARKER_HIGHLIGHT_STYLES).forEach(([name, options]) => {
+    MarkerHighlighter.defineStyle(name, options)
+  })
+  markerStylesDefined = true
 }
 
 function colorClass(token) {
   return COLOR_CLASSES[token] || ''
 }
 
-function markClass(token) {
-  return MARK_CLASSES[token] || MARK_CLASSES.default
+function markerToken(token) {
+  return MARKER_COLOR_CLASSES[token] ? token : 'default'
+}
+
+function markerClass(token) {
+  return MARKER_COLOR_CLASSES[markerToken(token)]
+}
+
+function markerStyle(token) {
+  if (token === 'underline') return 'underline'
+  return 'archive'
 }
 
 function cleanHeadingText(text) {
@@ -71,13 +126,25 @@ function renderInline(tokens) {
 
     switch (token.type) {
       case 'strong':
-        return h('strong', { class: 'font-medium text-foreground' }, token.value)
+        return h('strong', { class: 'article-strong font-medium text-foreground' }, token.value)
       case 'em':
-        return h('em', { class: 'italic' }, token.value)
+        return h('em', { class: 'article-em italic' }, token.value)
       case 'strike':
         return h('del', { class: 'text-haze decoration-line' }, token.value)
-      case 'mark':
-        return h('mark', { class: `${markClass(token.token)} px-1 text-foreground` }, token.value)
+      case 'mark': {
+        const style = markerStyle(token.token)
+        const colorClass = markerClass(token.token)
+        return h(
+          'mark',
+          {
+            class: `article-mark ${colorClass}`,
+            'data-marker-highlight': '',
+            'data-highlight-style': style,
+            'data-drawing-mode': 'highlight',
+          },
+          token.value,
+        )
+      }
       case 'color': {
         const cls = colorClass(token.token)
         return cls ? h('span', { class: `font-medium ${cls}` }, token.value) : token.value
@@ -300,11 +367,11 @@ function renderCallout(block) {
   }
 
   const isWarning = block.variant === 'warning'
-  const labelClass = isWarning ? 'text-red-700' : 'text-blue'
-  const borderClass = isWarning ? 'border-red-200' : 'border-line'
+  const labelClass = isWarning ? 'text-foreground' : 'text-blue'
+  const borderClass = isWarning ? 'border-line-strong' : 'border-line'
   return h(
     'aside',
-    { class: `my-8 min-w-0 border-y py-5 ${borderClass}` },
+    { class: `article-callout my-8 min-w-0 border-y py-5 ${borderClass}` },
     [
       h('p', { class: `${META_LABEL_CLASS} mb-3 ${labelClass}` }, isWarning ? 'WARNING' : 'NOTE'),
       h('div', { class: 'space-y-1' }, block.blocks.map(renderBlock)),
@@ -313,7 +380,7 @@ function renderCallout(block) {
 }
 
 function renderHighlight(block) {
-  return h('aside', { class: 'my-8 min-w-0 border border-blue/30 bg-blue/5 px-5 py-5' }, [
+  return h('aside', { class: 'article-callout article-callout-highlight my-8 min-w-0 border border-blue/30 bg-blue/5 px-5 py-5' }, [
     h('p', { class: `${META_LABEL_CLASS} mb-3 text-blue` }, 'HIGHLIGHT'),
     h('div', { class: 'space-y-1' }, block.blocks.map(renderBlock)),
   ])
@@ -452,7 +519,7 @@ function renderBlock(block, context = {}) {
         renderInline(block.inlines),
       )
     case 'blockquote':
-      return h('blockquote', { class: 'my-10 min-w-0 border-l border-line-strong pl-5' }, [
+      return h('blockquote', { class: 'article-quote my-10 min-w-0 border-l border-line-strong pl-5' }, [
         h(
           'p',
           { class: 'text-base italic leading-8 text-foreground md:text-lg' },
@@ -490,6 +557,115 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      markerHighlighter: null,
+      markerCorrectionTimers: [],
+    }
+  },
+  mounted() {
+    this.setupMarkerHighlights()
+  },
+  updated() {
+    this.setupMarkerHighlights()
+  },
+  beforeUnmount() {
+    this.teardownMarkerHighlights()
+  },
+  methods: {
+    teardownMarkerHighlights() {
+      const root = this.$el
+      this.markerCorrectionTimers.forEach((timer) => window.clearTimeout(timer))
+      this.markerCorrectionTimers = []
+      this.markerHighlighter?.stopAllAnimations?.()
+      this.markerHighlighter?.clearExistingHighlights?.()
+      root?.removeAttribute?.('data-marker-initialized')
+      root?.querySelectorAll?.('mark[data-original-bgcolor]').forEach((mark) => {
+        mark.style.backgroundColor = mark.getAttribute('data-original-bgcolor') || ''
+        mark.removeAttribute('data-original-bgcolor')
+      })
+      this.markerHighlighter = null
+    },
+    async setupMarkerHighlights() {
+      await nextTick()
+      const root = this.$el
+      if (!root?.querySelectorAll) return
+
+      this.teardownMarkerHighlights()
+
+      const marks = root.querySelectorAll('mark[data-marker-highlight]')
+      if (!marks.length) return
+
+      if (typeof window === 'undefined') return
+
+      if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+        return
+      }
+
+      defineMarkerStyles()
+      try {
+        this.markerHighlighter = new MarkerHighlighter(root, {
+          drawingMode: 'highlight',
+          animate: false,
+          animationTrigger: 'scrollIntoView',
+          animationSpeed: 1200,
+          height: 0.72,
+          offset: 0.22,
+          padding: 0.12,
+          multiLineDelay: 0.16,
+          skewX: 0,
+          highlight: {
+            amplitude: 0.12,
+            wavelength: 5,
+            roughEnds: 0.35,
+            jitter: 0.01,
+          },
+        })
+        this.scheduleMarkerHighlightCorrection()
+      } catch (error) {
+        this.teardownMarkerHighlights()
+        console.warn('[blog] MarkerHighlighter failed; using static mark fallback.', error)
+      }
+    },
+    scheduleMarkerHighlightCorrection() {
+      this.markerCorrectionTimers.forEach((timer) => window.clearTimeout(timer))
+      this.markerCorrectionTimers = [40, 180, 420].map((delay) =>
+        window.setTimeout(() => this.correctMarkerHighlightPositions(), delay),
+      )
+    },
+    correctMarkerHighlightPositions() {
+      const root = this.$el
+      if (!root?.querySelectorAll) return
+
+      root.querySelectorAll('.highlight[data-mark-id]').forEach((highlight) => {
+        const markId = highlight.getAttribute('data-mark-id')
+        if (!markId) return
+
+        const mark = Array.from(root.querySelectorAll('mark[data-mark-ref]')).find(
+          (item) => item.getAttribute('data-mark-ref') === markId,
+        )
+        if (!mark) return
+
+        const segmentIndex = Number.parseInt(highlight.getAttribute('data-segment-index') || '0', 10)
+        const markRects = Array.from(mark.getClientRects())
+        const markRect = markRects[Number.isNaN(segmentIndex) ? 0 : segmentIndex] || mark.getBoundingClientRect()
+        const highlightRect = highlight.getBoundingClientRect()
+        if (!markRect.width || !highlightRect.width) return
+
+        const desiredTop = markRect.top + (markRect.height - highlightRect.height) / 2
+        const desiredLeft = markRect.left - (highlightRect.width - markRect.width) / 2
+        const topDelta = desiredTop - highlightRect.top
+        const leftDelta = desiredLeft - highlightRect.left
+
+        if (Math.abs(topDelta) > 0.5) {
+          highlight.style.top = `${(parseFloat(highlight.style.top) || 0) + topDelta}px`
+        }
+        if (Math.abs(leftDelta) > 0.5) {
+          highlight.style.left = `${(parseFloat(highlight.style.left) || 0) + leftDelta}px`
+        }
+      })
+    },
+  },
   render() {
     const blocks = this.blocks || []
     const rightFigure = blocks.find((b) => b.type === 'figure' && b.variant === 'right')
@@ -513,3 +689,157 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.article-body {
+  --article-marker-default: rgba(249, 213, 68, 0.82);
+  --article-marker-gray: rgba(170, 176, 184, 0.55);
+  --article-marker-blue: rgba(38, 147, 255, 0.62);
+  --article-marker-green: rgba(45, 198, 128, 0.58);
+  --article-marker-yellow: rgba(249, 213, 68, 0.82);
+  --article-marker-orange: rgba(255, 159, 64, 0.62);
+  --article-marker-red: rgba(255, 92, 92, 0.58);
+  --article-marker-purple: rgba(162, 118, 255, 0.56);
+  --article-marker-pink: rgba(255, 126, 182, 0.56);
+  --article-marker-underline: rgba(14, 102, 200, 0.44);
+}
+
+.article-link {
+  background-image: linear-gradient(
+    to right,
+    currentColor,
+    currentColor
+  );
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 1px;
+  text-decoration: none;
+  transition:
+    color 360ms var(--ease-premium),
+    background-size 520ms var(--ease-premium);
+}
+
+.article-link:hover {
+  color: var(--blue);
+  background-size: 100% 2px;
+}
+
+.article-strong {
+  background-image: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--blue) 18%, transparent),
+    color-mix(in srgb, var(--blue) 18%, transparent)
+  );
+  background-position: 0 88%;
+  background-repeat: no-repeat;
+  background-size: 100% 0.38em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.article-em {
+  color: color-mix(in srgb, var(--foreground) 82%, var(--blue));
+}
+
+.article-mark {
+  position: relative;
+  z-index: 0;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  color: var(--foreground);
+}
+
+.article-marker-default,
+.article-marker-gray,
+.article-marker-blue,
+.article-marker-green,
+.article-marker-yellow,
+.article-marker-orange,
+.article-marker-red,
+.article-marker-purple,
+.article-marker-pink {
+  padding-inline: 0.22em;
+}
+
+.article-marker-default {
+  background-color: var(--article-marker-default);
+}
+
+.article-marker-gray {
+  background-color: var(--article-marker-gray);
+}
+
+.article-marker-blue {
+  background-color: var(--article-marker-blue);
+}
+
+.article-marker-green {
+  background-color: var(--article-marker-green);
+}
+
+.article-marker-yellow {
+  background-color: var(--article-marker-yellow);
+}
+
+.article-marker-orange {
+  background-color: var(--article-marker-orange);
+}
+
+.article-marker-red {
+  background-color: var(--article-marker-red);
+}
+
+.article-marker-purple {
+  background-color: var(--article-marker-purple);
+}
+
+.article-marker-pink {
+  background-color: var(--article-marker-pink);
+}
+
+.article-marker-underline {
+  padding-inline: 0.04em;
+  background-color: var(--article-marker-underline);
+}
+
+.article-quote {
+  position: relative;
+}
+
+.article-quote::before {
+  position: absolute;
+  top: 0;
+  left: -1px;
+  width: 1px;
+  height: 100%;
+  content: "";
+  background: var(--blue);
+  transform: scaleY(0.72);
+  transform-origin: top;
+}
+
+.article-callout {
+  position: relative;
+  background:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--blue) 7%, transparent),
+      transparent 42%
+    );
+}
+
+.article-callout-highlight {
+  box-shadow: inset 1px 0 0 var(--blue);
+}
+
+.article-body :deep(.highlight) {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-link,
+  .article-strong {
+    transition: none;
+  }
+}
+</style>

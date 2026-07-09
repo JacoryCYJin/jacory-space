@@ -15,6 +15,7 @@
     "axios": "^1.6.7",
     "gsap": "^3.15.0",
     "lucide-vue-next": "^0.577.0",
+    "markerhighlight": "git+https://github.com/Robincodes-Sandbox/marker-highlight.git",
     "three": "^0.184.0",
     "vue": "^3.4.21",
     "vue-i18n": "^11.4.5",
