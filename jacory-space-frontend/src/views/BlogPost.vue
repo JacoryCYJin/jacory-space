@@ -1,5 +1,5 @@
 <template>
-  <main class="grain min-h-screen bg-background">
+  <main ref="pageRoot" class="grain min-h-screen bg-background">
     <section v-if="isLoading || loadError" class="page-gutter pt-40">
       <div class="page-frame">
         <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
@@ -9,36 +9,91 @@
     </section>
 
     <template v-else-if="post">
-      <section class="page-gutter pt-28 md:pt-32">
+      <section class="page-gutter pt-24 md:pt-28">
         <div class="page-frame">
-          <div class="grid min-w-0 grid-cols-12 gap-x-0 lg:gap-x-10">
-            <article class="col-span-12 min-w-0 lg:order-2 lg:col-span-9">
-              <div class="flex flex-wrap items-start justify-between gap-x-6 gap-y-2 border-b border-line pb-4">
-                <span class="min-w-0 break-words font-mono text-xs tracking-[0.16em] text-blue">{{ headerLabel }}</span>
-                <span class="min-w-0 break-words text-left font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground sm:text-right">
-                  {{ headerMeta }}
-                </span>
-              </div>
+          <div class="grid min-w-0 grid-cols-1 gap-x-0 lg:grid-cols-[minmax(220px,250px)_minmax(0,60rem)] lg:justify-center lg:gap-x-12 xl:grid-cols-[minmax(220px,260px)_minmax(0,60rem)] xl:gap-x-16">
+            <aside
+              data-post-enter
+              class="hidden min-w-0 lg:order-1 lg:block"
+            >
+              <nav
+                v-if="displayToc.length"
+                class="lg:sticky lg:top-28"
+                :aria-label="t('blog.post.onThisNote')"
+              >
+                <p class="font-sans text-base font-semibold leading-none text-foreground">
+                  目录
+                </p>
+                <ol class="mt-7 space-y-5">
+                  <li
+                    v-for="item in displayToc"
+                    :key="item.id"
+                    :class="item.level === 3 ? 'pl-5' : ''"
+                  >
+                    <a
+                      :href="`#${item.id}`"
+                      class="group grid min-w-0 grid-cols-[2rem_minmax(0,1fr)] items-start gap-3 text-left transition-colors"
+                      :class="activeId === item.id ? 'text-blue' : 'text-foreground'"
+                    >
+                      <span
+                        class="relative mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full font-mono text-xs font-medium leading-none transition-colors"
+                        :class="activeId === item.id ? 'bg-blue text-card' : 'bg-muted text-haze group-hover:text-blue'"
+                      >
+                        {{ item.number }}
+                      </span>
+                      <span
+                        class="min-w-0 break-words pt-0.5 text-sm font-medium leading-relaxed transition-colors"
+                        :class="activeId === item.id ? 'text-blue' : 'text-muted-foreground group-hover:text-foreground'"
+                      >
+                        {{ item.text }}
+                      </span>
+                    </a>
+                  </li>
+                </ol>
+              </nav>
+            </aside>
 
-              <header class="pt-10">
+            <article class="min-w-0 lg:order-2">
+              <header class="max-w-[60rem] border-b border-line pb-10 md:pb-12">
+                <div data-post-enter class="font-mono text-xs font-medium leading-[1.2] tracking-[0.16em] text-blue">
+                  {{ breadcrumbLabel }}
+                </div>
                 <h1
-                  class="max-w-3xl break-words text-balance font-sans text-4xl font-medium leading-[1.08] tracking-tight text-foreground md:text-5xl"
+                  data-post-enter
+                  class="mt-10 max-w-[60rem] break-words text-balance font-sans text-4xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl"
                 >
                   {{ frontmatter.title }}
                 </h1>
                 <p
                   v-if="frontmatter.description"
-                  class="mt-6 max-w-2xl break-words text-pretty text-base leading-relaxed text-muted-foreground"
+                  data-post-enter
+                  class="mt-7 max-w-[46rem] break-words text-pretty text-base leading-8 text-muted-foreground md:text-lg"
                 >
                   {{ frontmatter.description }}
                 </p>
+
+                <div
+                  v-if="articleMetaItems.length"
+                  data-post-enter
+                  class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-haze"
+                >
+                  <span
+                    v-for="item in articleMetaItems"
+                    :key="item.key"
+                    class="inline-flex min-w-0 items-center gap-2 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.12em]"
+                  >
+                    <span class="h-1 w-1 rounded-full bg-line-strong" aria-hidden="true"></span>
+                    <span class="break-words">{{ item.label }}</span>
+                  </span>
+                </div>
               </header>
 
-              <hr class="my-10 border-0 border-t border-line" />
-
-              <MarkdownArticle :blocks="post.blocks" />
+              <div data-post-enter class="mt-12 max-w-[54rem]">
+                <MarkdownArticle :blocks="post.blocks" />
+              </div>
 
               <nav
+                data-post-enter
                 class="mt-20 grid grid-cols-1 gap-8 border-t border-line py-8 md:grid-cols-2"
                 :aria-label="t('blog.post.navAria')"
               >
@@ -78,30 +133,6 @@
               </nav>
             </article>
 
-            <aside class="col-span-12 mt-12 hidden min-w-0 lg:order-1 lg:mt-0 lg:block lg:col-span-3">
-              <div v-if="post.toc.length" class="lg:sticky lg:top-28">
-                <p
-                  class="border-b border-line pb-3 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-foreground"
-                >
-                  {{ t('blog.post.onThisNote') }}
-                </p>
-                <ul class="mt-4 space-y-3">
-                  <li
-                    v-for="item in post.toc"
-                    :key="item.id"
-                    :class="item.level === 3 ? 'pl-4' : ''"
-                  >
-                    <a
-                      :href="`#${item.id}`"
-                      class="group block break-words font-mono text-xs leading-relaxed transition-colors"
-                      :class="activeId === item.id ? 'text-blue' : 'text-muted-foreground hover:text-foreground'"
-                    >
-                      <span>{{ item.text }}</span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </aside>
           </div>
         </div>
       </section>
@@ -132,20 +163,31 @@
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
+import { gsap } from 'gsap'
 import { getPost } from '../lib/blog/index.js'
 import MarkdownArticle from '../components/blog/MarkdownArticle.vue'
 import Footer from '../components/Footer.vue'
 
 const route = useRoute()
 const { t } = useI18n()
+const pageRoot = ref(null)
 const post = ref(null)
 const activeId = ref('')
 const isLoading = ref(true)
 const loadError = ref('')
 let headingObserver
+let postMotionMedia
 let loadToken = 0
 
 const frontmatter = computed(() => post.value?.frontmatter ?? {})
+
+function cleanHeadingText(text) {
+  return String(text || '').replace(/^\s*\d{1,2}\s*(?:[.．、|｜/])\s*/, '').trim()
+}
+
+function tocNumber(index) {
+  return String(index + 1).padStart(2, '0')
+}
 
 function categoryLabel(meta) {
   return t(meta?.categoryLabelKey, meta?.categoryKey || meta?.category || 'NOTE')
@@ -156,24 +198,77 @@ function topicLabel(meta) {
   return t(meta.topicLabelKey, meta.topicKey || meta.topic)
 }
 
-const headerLabel = computed(() => {
-  const fm = frontmatter.value
-  const meta = post.value?.meta
-  const labels = [categoryLabel(meta), topicLabel(meta)].filter(Boolean).join('  ')
-  return t('blog.post.headerLabel', {
-    index: fm.index || '—',
-    category: labels,
-  })
+const breadcrumbLabel = computed(() => {
+  const index = frontmatter.value.index || '—'
+  return `${t('nav.blog')} / ${index}`
 })
 
-const headerMeta = computed(() => {
+const articleMetaItems = computed(() => {
   const fm = frontmatter.value
-  return [fm.date, fm.readTime].filter(Boolean).join(' / ')
+  const meta = post.value?.meta
+  const labels = [categoryLabel(meta), topicLabel(meta)].filter(Boolean).join(' · ')
+  return [
+    { key: 'date', label: fm.date },
+    { key: 'readTime', label: fm.readTime },
+    { key: 'category', label: labels },
+  ].filter((item) => item.label)
 })
+
+const displayToc = computed(() =>
+  (post.value?.toc || []).map((item, index) => ({
+    ...item,
+    number: tocNumber(index),
+    text: cleanHeadingText(item.text),
+  })),
+)
 
 function teardownObserver() {
   headingObserver?.disconnect()
   headingObserver = undefined
+}
+
+function teardownPostMotion() {
+  postMotionMedia?.revert()
+  postMotionMedia = undefined
+}
+
+function setupPostMotion() {
+  teardownPostMotion()
+  const root = pageRoot.value
+  if (!root || typeof window === 'undefined') return
+
+  postMotionMedia = gsap.matchMedia()
+  postMotionMedia.add(
+    {
+      all: '(min-width: 0px)',
+      reduceMotion: '(prefers-reduced-motion: reduce)',
+    },
+    ({ conditions }) => {
+      const enterTargets = gsap.utils.toArray('[data-post-enter]', root)
+
+      if (conditions.reduceMotion) {
+        gsap.set(enterTargets, {
+          autoAlpha: 1,
+          y: 0,
+          clearProps: 'transform,opacity,visibility',
+        })
+        return
+      }
+
+      gsap
+        .timeline({ defaults: { duration: 0.78, ease: 'power3.out' } })
+        .fromTo(
+          enterTargets,
+          { autoAlpha: 0, y: 14 },
+          {
+            autoAlpha: 1,
+            y: 0,
+            stagger: 0.08,
+            clearProps: 'transform,opacity,visibility',
+          },
+        )
+    },
+  )
 }
 
 function setupObserver() {
@@ -205,6 +300,7 @@ function setupObserver() {
 async function loadPost(slug) {
   const token = (loadToken += 1)
   teardownObserver()
+  teardownPostMotion()
   post.value = null
   activeId.value = ''
   isLoading.value = true
@@ -227,6 +323,7 @@ async function loadPost(slug) {
       window.scrollTo({ top: 0 })
     }
     setupObserver()
+    setupPostMotion()
   })
 }
 
@@ -236,5 +333,8 @@ watch(
   { immediate: true },
 )
 
-onBeforeUnmount(teardownObserver)
+onBeforeUnmount(() => {
+  teardownObserver()
+  teardownPostMotion()
+})
 </script>
