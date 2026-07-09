@@ -7,6 +7,7 @@ const INLINE_CODE_CLASS =
   'break-words rounded-sm border border-line bg-card px-1.5 py-0.5 font-mono text-sm text-foreground'
 const META_LABEL_CLASS =
   'font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em]'
+const HEADING_NUMBER_RE = /^\s*\d{1,2}\s*(?:[.．、|｜/])\s*/
 const COLOR_CLASSES = {
   default: 'text-[var(--blog-color-default)]',
   gray: 'text-[var(--blog-color-gray)]',
@@ -38,8 +39,36 @@ function markClass(token) {
   return MARK_CLASSES[token] || MARK_CLASSES.default
 }
 
+function cleanHeadingText(text) {
+  return String(text || '').replace(HEADING_NUMBER_RE, '').trim()
+}
+
+function normalizeHeadingInlines(inlines) {
+  let cleaned = false
+
+  return (inlines || []).map((token) => {
+    if (cleaned) return token
+
+    if (typeof token === 'string') {
+      const nextValue = cleanHeadingText(token)
+      cleaned = nextValue !== token
+      return nextValue
+    }
+
+    if (typeof token?.value === 'string') {
+      const nextValue = cleanHeadingText(token.value)
+      cleaned = nextValue !== token.value
+      return { ...token, value: nextValue }
+    }
+
+    return token
+  })
+}
+
 function renderInline(tokens) {
   return (tokens || []).map((token) => {
+    if (typeof token === 'string') return token
+
     switch (token.type) {
       case 'strong':
         return h('strong', { class: 'font-medium text-foreground' }, token.value)
@@ -242,7 +271,7 @@ function renderList(block, { nested = false } = {}) {
   return h(
     tag,
     {
-      class: `${nested ? 'mt-2 space-y-1 pl-5' : 'my-5 space-y-2 pl-5'} min-w-0 text-base leading-relaxed text-muted-foreground ${
+      class: `${nested ? 'mt-2 space-y-1 pl-5' : 'my-7 space-y-2.5 pl-5'} min-w-0 text-base leading-8 text-foreground md:text-lg ${
         block.ordered ? 'list-decimal' : block.items.some((item) => item.task !== null) ? 'list-none' : 'list-disc'
       } marker:text-blue-soft`,
     },
@@ -383,27 +412,50 @@ function renderLinkPreview(block) {
   )
 }
 
-function renderBlock(block) {
+function renderBlock(block, context = {}) {
   switch (block.type) {
     case 'heading': {
       const tag = `h${block.level}`
-      const cls =
-        block.level === 2
-          ? 'mb-4 mt-14 scroll-mt-28 break-words font-sans text-2xl font-medium tracking-tight text-foreground first:mt-0'
-          : 'mb-3 mt-10 scroll-mt-28 break-words font-sans text-lg font-medium tracking-tight text-foreground'
-      return h(tag, { id: block.id, class: cls }, renderInline(block.inlines))
+      if (block.level === 2) {
+        const sectionNumber = String(context.headingIndex || 1).padStart(2, '0')
+        const normalizedInlines = normalizeHeadingInlines(block.inlines)
+
+        return h(
+          tag,
+          {
+            id: block.id,
+            class:
+              'mb-5 mt-20 scroll-mt-28 break-words font-sans text-2xl font-semibold leading-tight tracking-tight text-foreground first:mt-0 md:text-3xl',
+          },
+          [
+            h('span', { class: 'mr-4 font-mono text-2xl font-semibold leading-none text-blue md:text-3xl' }, sectionNumber),
+            h('span', { class: 'mr-4 font-mono text-2xl font-normal leading-none text-line-strong md:text-3xl' }, '|'),
+            h('span', renderInline(normalizedInlines)),
+          ],
+        )
+      }
+
+      return h(
+        tag,
+        {
+          id: block.id,
+          class:
+            'mb-4 mt-12 scroll-mt-28 break-words font-sans text-xl font-semibold leading-snug tracking-tight text-foreground',
+        },
+        renderInline(normalizeHeadingInlines(block.inlines)),
+      )
     }
     case 'paragraph':
       return h(
         'p',
-        { class: 'my-5 min-w-0 break-words text-base leading-relaxed text-muted-foreground' },
+        { class: 'my-6 min-w-0 break-words text-base leading-8 text-foreground md:text-lg md:leading-9' },
         renderInline(block.inlines),
       )
     case 'blockquote':
-      return h('blockquote', { class: 'my-8 min-w-0 border-l border-line-strong pl-5' }, [
+      return h('blockquote', { class: 'my-10 min-w-0 border-l border-line-strong pl-5' }, [
         h(
           'p',
-          { class: 'text-base italic leading-relaxed text-foreground' },
+          { class: 'text-base italic leading-8 text-foreground md:text-lg' },
           renderInline(block.inlines),
         ),
         block.attribution
@@ -422,7 +474,7 @@ function renderBlock(block) {
     case 'table':
       return renderTable(block)
     case 'hr':
-      return h('hr', { class: 'my-12 border-0 border-t border-line' })
+      return h('hr', { class: 'my-14 border-0 border-t border-line' })
     case 'figure':
       return renderFigure(block)
     default:
@@ -443,12 +495,16 @@ export default {
     const rightFigure = blocks.find((b) => b.type === 'figure' && b.variant === 'right')
 
     const children = []
+    let headingIndex = 0
     if (rightFigure) {
       children.push(renderFigure(rightFigure, { floated: true }))
     }
     for (const block of blocks) {
       if (block === rightFigure) continue
-      children.push(renderBlock(block))
+      if (block.type === 'heading' && block.level === 2) {
+        headingIndex += 1
+      }
+      children.push(renderBlock(block, { headingIndex }))
     }
     // Ensure following sections clear the floated figure cleanly.
     children.push(h('div', { class: 'clear-both' }))
