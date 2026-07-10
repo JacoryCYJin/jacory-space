@@ -4,7 +4,8 @@
       <div class="page-frame">
         <div class="reveal blog-reveal flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-line pb-4">
           <span class="min-w-0 break-words font-mono text-xs tracking-[0.16em] text-blue">{{ t('blog.fieldNotes.journalLabel') }}</span>
-          <span class="min-w-0 break-words text-right font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
+          <span class="inline-flex min-w-0 items-center gap-3 break-words text-right font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
+            <span class="h-2 w-2 shrink-0 rounded-full bg-blue" aria-hidden="true"></span>
             {{ t('blog.fieldNotes.archiveOpen', { count: entryCount }) }}
           </span>
         </div>
@@ -15,9 +16,10 @@
           >
             {{ t('blog.fieldNotes.titleLead') }}<span class="italic text-blue">{{ t('blog.fieldNotes.titleAccent') }}</span>
           </h1>
-          <p class="mt-6 max-w-md text-pretty text-sm leading-relaxed text-muted-foreground">
-            {{ t('blog.fieldNotes.subtitle') }}
-          </p>
+          <div class="mt-6 max-w-2xl space-y-2 text-sm leading-relaxed text-muted-foreground">
+            <p class="font-mono text-xs uppercase tracking-[0.12em] text-blue">{{ t('blog.fieldNotes.subtitleLead') }}</p>
+            <p class="text-pretty">{{ t('blog.fieldNotes.subtitleBody') }}</p>
+          </div>
         </div>
       </div>
     </section>
@@ -33,42 +35,76 @@
         <div v-else-if="lead" class="reveal blog-reveal">
           <RouterLink
             :to="`/blog/${lead.slug}`"
-            class="group grid min-w-0 gap-8 border-y border-line py-10 lg:grid-cols-12 lg:gap-10"
+            class="group relative grid min-w-0 overflow-hidden border-y border-line py-12 transition-colors duration-300 hover:border-line-strong md:py-16 lg:grid-cols-[minmax(9rem,12rem)_1px_minmax(0,1fr)] lg:gap-x-10 xl:gap-x-12"
           >
-            <div class="flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between lg:col-span-4 lg:flex-col lg:gap-6">
-              <span class="shrink-0 font-mono text-xs text-blue">{{ lead.no }}</span>
-              <div class="min-w-0 space-y-1 sm:text-right lg:text-left">
-                <span class="block break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
-                  {{ lead.cat }}
-                </span>
-                <span
-                  v-if="lead.topic"
-                  class="block break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze"
-                >
-                  {{ lead.topic }}
-                </span>
-                <span class="block break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
-                  {{ lead.date }} / {{ lead.read }}
-                </span>
+            <div class="relative z-10 flex min-w-0 flex-col pb-10 lg:pb-0 lg:pr-8">
+              <span class="inline-flex items-center gap-3 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-blue">
+                <span class="h-2 w-2 shrink-0 rounded-full bg-blue" aria-hidden="true"></span>
+                {{ lead.no.replace('№ ', 'NO. ') }}
+              </span>
+
+              <div class="mt-10 grid min-w-0 grid-cols-1 gap-8 sm:grid-cols-3 lg:mt-14 lg:grid-cols-1">
+                <div class="min-w-0">
+                  <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+                    分类
+                  </span>
+                  <span class="mt-2 block break-words font-mono text-sm leading-relaxed tracking-[0.12em] text-foreground">
+                    {{ lead.cat }}
+                  </span>
+                  <span
+                    v-if="lead.topic"
+                    class="mt-1 block break-words font-mono text-xs uppercase leading-[1.2] tracking-[0.14em] text-muted-foreground"
+                  >
+                    {{ lead.topic }}
+                  </span>
+                </div>
+
+                <div class="min-w-0">
+                  <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+                    日期
+                  </span>
+                  <span class="mt-2 block break-words font-mono text-sm leading-relaxed tracking-[0.12em] text-foreground">
+                    {{ lead.date }}
+                  </span>
+                </div>
+
+                <div class="min-w-0">
+                  <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+                    阅读时间
+                  </span>
+                  <span class="mt-2 block break-words font-mono text-sm uppercase leading-relaxed tracking-[0.12em] text-foreground">
+                    {{ lead.read }}
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div class="min-w-0 lg:col-span-8">
+            <span class="hidden bg-line lg:block" aria-hidden="true"></span>
+
+            <div class="relative z-10 min-w-0 pt-10 lg:pt-0">
+              <div class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.24em] text-haze">
+                Latest / 最新记录
+              </div>
               <h2
-                class="break-words text-balance font-sans text-3xl font-medium leading-tight tracking-tight text-foreground transition-all duration-500 ease-out group-hover:text-blue sm:group-hover:translate-x-1 md:text-4xl"
+                class="mt-10 max-w-4xl break-words text-balance font-sans text-4xl font-medium leading-[1.02] tracking-tight text-foreground transition-all duration-500 ease-out group-hover:text-blue sm:group-hover:translate-x-1 md:text-6xl lg:text-7xl"
               >
                 {{ lead.title }}
               </h2>
-              <p class="mt-5 max-w-xl text-pretty text-sm leading-relaxed text-muted-foreground">
+              <p class="mt-7 max-w-2xl text-pretty text-sm leading-7 text-muted-foreground md:text-base">
                 {{ lead.excerpt }}
               </p>
               <span
-                class="mt-6 inline-flex items-center gap-2 font-mono text-xs tracking-[0.14em] text-foreground transition-colors group-hover:text-blue"
+                class="mt-10 inline-flex items-center gap-4 border-b border-blue pb-2 font-mono text-xs tracking-[0.14em] text-blue transition-colors"
               >
                 {{ t('blog.fieldNotes.readEntry') }}
                 <span class="transition-transform duration-500 ease-out group-hover:translate-x-1">↗</span>
               </span>
             </div>
+
+            <div class="pointer-events-none absolute right-10 top-1/2 hidden -translate-y-1/2 select-none font-mono text-7xl font-medium leading-none tracking-tight text-foreground opacity-[0.035] md:block lg:text-8xl">
+              {{ lead.no.replace('№ ', '') }}
+            </div>
+            <span class="pointer-events-none absolute right-10 top-1/2 hidden h-0.5 w-20 -translate-y-20 bg-blue md:block" aria-hidden="true"></span>
           </RouterLink>
         </div>
       </div>
@@ -80,51 +116,55 @@
           <span class="min-w-0 break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
             {{ t('blog.fieldNotes.archiveAll') }}
           </span>
-          <div class="grid min-w-0 grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:items-center" :aria-label="t('blog.fieldNotes.filterAria')">
-            <span class="min-w-0 break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze sm:mr-1">
+          <div class="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-3" :aria-label="t('blog.fieldNotes.filterAria')">
+            <span class="inline-flex min-w-0 items-center gap-2 break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
+              <ListFilter class="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               {{ t('blog.fieldNotes.filterLabel') }}
             </span>
+            <span class="font-mono text-xs text-haze" aria-hidden="true">/</span>
 
-            <label class="relative flex min-w-0 items-center sm:inline-flex">
+            <label class="relative inline-flex min-w-0 items-center">
               <span class="sr-only">{{ t('blog.fieldNotes.filterCategory') }}</span>
               <select
                 v-model="activeCategoryFilter"
-                class="h-9 w-full min-w-0 appearance-none border border-line bg-background py-0 pl-4 pr-9 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze transition-colors duration-300 hover:border-line-strong hover:text-muted-foreground focus:border-blue focus:text-muted-foreground focus:outline-none sm:w-24"
+                class="w-auto min-w-0 appearance-none bg-transparent py-0 pl-0 pr-6 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze transition-colors duration-300 hover:text-muted-foreground focus:text-muted-foreground focus:outline-none"
               >
                 <option value="all">{{ t('blog.fieldNotes.filterCategory') }}</option>
                 <option v-for="category in categoryOptions" :key="category.id" :value="category.id">
                   {{ category.label }}
                 </option>
               </select>
-              <ChevronDown class="pointer-events-none absolute right-3 h-4 w-4 text-haze" aria-hidden="true" />
+              <ChevronDown class="pointer-events-none absolute right-0 h-4 w-4 text-haze" aria-hidden="true" />
             </label>
+            <span class="font-mono text-xs text-haze" aria-hidden="true">/</span>
 
-            <label class="relative flex min-w-0 items-center sm:inline-flex">
+            <label class="relative inline-flex min-w-0 items-center">
               <span class="sr-only">{{ t('blog.fieldNotes.filterTopic') }}</span>
               <select
                 v-model="activeTopicFilter"
-                class="h-9 w-full min-w-0 appearance-none border border-line bg-background py-0 pl-4 pr-9 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze transition-colors duration-300 hover:border-line-strong hover:text-muted-foreground focus:border-blue focus:text-muted-foreground focus:outline-none sm:w-24"
+                class="w-auto min-w-0 appearance-none bg-transparent py-0 pl-0 pr-6 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze transition-colors duration-300 hover:text-muted-foreground focus:text-muted-foreground focus:outline-none"
               >
                 <option value="all">{{ t('blog.fieldNotes.filterTopic') }}</option>
                 <option v-for="topic in topicOptions" :key="topic.id" :value="topic.id">
                   {{ topic.label }}
                 </option>
               </select>
-              <ChevronDown class="pointer-events-none absolute right-3 h-4 w-4 text-haze" aria-hidden="true" />
+              <ChevronDown class="pointer-events-none absolute right-0 h-4 w-4 text-haze" aria-hidden="true" />
             </label>
+            <span class="font-mono text-xs text-haze" aria-hidden="true">/</span>
 
-            <label class="relative flex min-w-0 items-center sm:inline-flex">
+            <label class="relative inline-flex min-w-0 items-center">
               <span class="sr-only">{{ t('blog.fieldNotes.filterYear') }}</span>
               <select
                 v-model="activeYearFilter"
-                class="h-9 w-full min-w-0 appearance-none border border-line bg-background py-0 pl-4 pr-9 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze transition-colors duration-300 hover:border-line-strong hover:text-muted-foreground focus:border-blue focus:text-muted-foreground focus:outline-none sm:w-24"
+                class="w-auto min-w-0 appearance-none bg-transparent py-0 pl-0 pr-6 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze transition-colors duration-300 hover:text-muted-foreground focus:text-muted-foreground focus:outline-none"
               >
                 <option value="all">{{ t('blog.fieldNotes.filterYear') }}</option>
                 <option v-for="year in yearOptions" :key="year" :value="year">
                   {{ year }}
                 </option>
               </select>
-              <ChevronDown class="pointer-events-none absolute right-3 h-4 w-4 text-haze" aria-hidden="true" />
+              <ChevronDown class="pointer-events-none absolute right-0 h-4 w-4 text-haze" aria-hidden="true" />
             </label>
           </div>
         </div>
@@ -183,7 +223,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown, ListFilter } from 'lucide-vue-next'
 import Footer from '../components/Footer.vue'
 import { blogCategories } from '../content/blog-categories.js'
 import { blogTopics } from '../content/blog-topics.js'
