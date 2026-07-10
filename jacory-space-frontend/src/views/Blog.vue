@@ -86,7 +86,7 @@
                 Latest / 最新记录
               </div>
               <h2
-                class="mt-10 max-w-4xl break-words text-balance font-sans text-4xl font-medium leading-[1.02] tracking-tight text-foreground transition-all duration-500 ease-out group-hover:text-blue sm:group-hover:translate-x-1 md:text-6xl lg:text-7xl"
+                class="mt-10 max-w-5xl break-words text-balance font-sans text-3xl font-medium leading-[1.08] tracking-tight text-foreground transition-all duration-500 ease-out group-hover:text-blue sm:group-hover:translate-x-1 md:text-4xl lg:text-5xl"
               >
                 {{ lead.title }}
               </h2>
