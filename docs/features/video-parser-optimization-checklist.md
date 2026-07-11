@@ -1,55 +1,14 @@
-# Video Parser 优化清单
+# Video Parser Optimization Checklist
 
-这份清单用于跟踪 Video Parser 后续优化项。所有事项默认不勾选。
+Video Parser has moved out of the website repository.
 
-勾选规则：只有用户实际验收通过后，才手动把对应事项改成已勾选。开发完成、代码合并、Agent 判断已修复，都不等于验收通过。
+Current ownership:
 
-## P0
+```txt
+repository: media-parser
+runtime: Electron desktop app + Python media-core
+release: https://github.com/JacoryCYJin/media-parser/releases
+```
 
-- [x] 完成后的 `Reveal` 按钮行为和文案一致
-  - 下载完成后，行内按钮应走本地路径打开逻辑，不再触发重新下载。
-  - 验收标准：完成状态下点击按钮应打开或定位到输出路径；如果无法打开，需要给出明确反馈，而不是重新下载。
-
-- [x] 下载进度改为可信进度
-  - 后端创建下载任务，读取 `yt-dlp` 实时输出，前端轮询任务状态并显示真实百分比。
-  - 验收标准：下载中显示百分比，百分比来自后端任务状态；完成后进度到 100%，状态变为完成。
-
-## P1
-
-- [x] 下载任务模型基础能力
-  - 下载开始后返回 `taskId`，前端轮询任务状态、进度、错误和完成路径。
-  - 验收标准：长视频下载期间页面不被同步请求卡住；刷新任务状态能看到进度、失败或完成结果。
-
-- [x] 下载任务管理完善
-  - 验收标准：下载中显示暂停和取消；暂停后可以继续；取消后任务停止并可重新下载；过期任务自动清理；同一用户下载并发可控；重新解析同一链接后可以恢复未完成任务状态。
-
-- [x] 补完整音频下载链路
-  - 验收标准：解析结果里出现 Audio 下载项；前端列表能区分 M4A 音频；后端只允许合法音频格式走音频下载链路；音频下载完成后可显示到本地路径。
-
-## P2
-
-- [ ] 优化格式选择准确性
-  - 当前问题：解析时按分辨率选择一个 MP4 格式，下载时再组合 bestaudio，展示信息和最终下载结果可能不完全一致。
-  - 期望结果：前端展示的格式、大小、是否含音频，与最终下载策略尽量一致。
-
-- [ ] Cookie 自动重试过程可见
-  - 当前问题：YouTube 失败时后端可能自动尝试无 Cookie、Safari、Chrome，但前端不知道实际使用了哪个来源。
-  - 期望结果：解析/下载结果或错误提示里能说明本次使用的 Cookie 来源，方便排查。
-
-- [ ] 目录选择适配 macOS / Windows
-  - 当前问题：目录选择和本地路径显示原本主要依赖 macOS 命令，不适合 Windows 本机使用。
-  - 期望结果：macOS 可用系统目录选择和 Finder 显示；Windows 可用系统目录选择和 Explorer 显示；其他系统明确提示暂不支持并允许手动填写路径。
-
-## P3
-
-- [ ] 支持字幕语言选择
-  - 当前问题：大纲生成会自动选择字幕候选，用户不能指定字幕语言。
-  - 期望结果：当存在多个字幕语言时，用户可以选择用于生成大纲的字幕。
-
-- [ ] 收敛开发调试日志
-  - 当前问题：前端 console 会输出 transcript preview 等调试信息。
-  - 期望结果：生产使用时不输出不必要的字幕预览；需要排错时再通过调试开关启用。
-
-- [ ] 同步架构文档中的后端描述
-  - 当前问题：部分文档可能仍未对齐媒体后端的目录与 FastAPI 结构。
-  - 期望结果：文档统一描述当前 `media-backend` 的 Python/FastAPI 后端结构。
+The `site` repository now only presents Media Parser as a desktop software entry.
+Implementation checklists for parsing, downloading, cookies, transcription, and release packaging belong in the `media-parser` repository.

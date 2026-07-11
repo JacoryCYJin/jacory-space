@@ -8,7 +8,6 @@ LOG_DIR="$RUNTIME_DIR/logs"
 
 # name|directory|start command|port
 SERVICES=(
-  "media-backend|jacory-space-backend/media-backend|env PYTHONPATH=. .venv/bin/python run_dev.py --daemon|5001"
   "jacory-space-frontend|jacory-space-frontend|npm run dev|3001"
 )
 
@@ -26,7 +25,6 @@ Jacory Space 开发服务脚本
   bash scripts/dev.sh list            列出可用服务（同 ls）
 
 可用服务:
-  media-backend
   jacory-space-frontend
 EOF
 }
@@ -183,13 +181,6 @@ ensure_service_dependencies() {
   local workdir="$2"
 
   case "$service" in
-    media-backend)
-      if [[ ! -x "$workdir/.venv/bin/python" ]]; then
-        echo "[$service] 未检测到 .venv，请先执行:" >&2
-        echo "  cd $workdir && python3 -m venv .venv && .venv/bin/python -m pip install -r requirements.txt" >&2
-        exit 1
-      fi
-      ;;
     jacory-space-frontend)
       if [[ ! -d "$workdir/node_modules" ]]; then
         echo "[$service] 未检测到 node_modules，正在安装依赖..."
@@ -224,7 +215,7 @@ start_service() {
 
   if ! service_exists "$service"; then
     echo "未知服务: $service" >&2
-    echo "可用服务: media-backend jacory-space-frontend" >&2
+    echo "可用服务: jacory-space-frontend" >&2
     exit 1
   fi
 
@@ -378,7 +369,7 @@ main() {
         done
       fi
       ;;
-    media-backend|jacory-space-frontend)
+    jacory-space-frontend)
       start_service "$action"
       ;;
     *)

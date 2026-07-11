@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-import VideoParser from '../views/VideoParser.vue'
-import PodcastParser from '../views/PodcastParser.vue'
+import MediaParserSoftware from '../views/MediaParserSoftware.vue'
 import About from '../views/About.vue'
 import Blog from '../views/Blog.vue'
 import BlogPost from '../views/BlogPost.vue'
@@ -14,14 +13,17 @@ const routes = [
     component: Home
   },
   {
+    path: '/media-parser',
+    name: 'MediaParser',
+    component: MediaParserSoftware
+  },
+  {
     path: '/video-parser',
-    name: 'VideoParser',
-    component: VideoParser
+    redirect: '/media-parser'
   },
   {
     path: '/podcast-parser',
-    name: 'PodcastParser',
-    component: PodcastParser
+    redirect: '/media-parser'
   },
   {
     path: '/tools',
