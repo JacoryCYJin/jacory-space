@@ -73,44 +73,63 @@ export default {
     kicker: '02 — LOCAL SOFTWARE / MEDIA WORKBENCH',
     titleLead: 'Media Parser ',
     titleAccent: 'Desktop',
-    description: 'Video parsing, podcast parsing, downloads, transcription, and structured notes have moved into a local desktop application. The website now acts as an introduction and release entry point.',
+    tagline: 'A local tool for media parsing, transcription, and structured notes.',
+    descriptionLead: 'Designed for video, podcast, and personal content workflows, turning scattered media sources into reusable text assets.',
+    descriptionPoints: {
+      sources: {
+        title: 'Parse Media Sources',
+        description: 'Support video links, podcast RSS, and audio URLs.'
+      },
+      download: {
+        title: 'Download And Transcribe',
+        description: 'Download media, subtitles, and generate local transcripts.'
+      },
+      notes: {
+        title: 'Shape Structured Notes',
+        description: 'Export summaries, outlines, and key points for writing or review.'
+      }
+    },
     meta: {
-      type: 'TYPE',
-      typeValue: 'DESKTOP APP',
-      runtime: 'RUNTIME',
-      status: 'STATUS',
-      statusValue: 'LOCAL FIRST'
+      type: 'OPEN SOURCE',
+      typeValue: 'MIT License'
     },
     sections: {
-      release: 'GET THE APP',
-      modules: 'MODULES',
-      local: 'LOCAL RUNTIME'
+      release: 'OPEN · FREE · CONTROLLABLE',
+      modules: 'CORE CAPABILITIES · LOCAL FIRST'
     },
-    releaseTitle: 'Install Media Parser from GitHub Releases.',
-    releaseDescription: 'The website no longer hosts the live parsing service. Parsing, downloads, transcription, and file management now happen inside the local app, which is better suited for long-running jobs, private cookies, download folders, and model caches.',
     actions: {
-      releases: 'Open Releases',
+      releases: 'Download Release',
       github: 'View GitHub'
+    },
+    screenshot: {
+      alt: 'Media Parser Desktop software screenshot'
     },
     modules: {
       video: {
-        title: 'Video Parser',
-        description: 'Resolve video links, read metadata, download selected formats, and generate outlines for note-taking.'
+        title: 'Video Parse & Download',
+        short: 'Metadata / Downloads',
+        description: 'Resolve video metadata, download media, subtitles, and source information.'
       },
       podcast: {
-        title: 'Podcast Parser',
-        description: 'Resolve Apple Podcasts, Xiaoyuzhou, RSS, and audio links into episode metadata and audio sources.'
+        title: 'Podcast Parse & Download',
+        short: 'RSS / Audio files',
+        description: 'Resolve podcast RSS, read episode metadata, and download audio files.'
       },
       transcript: {
         title: 'Local Transcription',
-        description: 'Use the local Python core to orchestrate FFmpeg and faster-whisper for transcript and writing material.'
+        short: 'faster-whisper / Local',
+        description: 'Use faster-whisper to complete high-accuracy transcription locally.'
       },
       release: {
-        title: 'Releases and Source',
-        description: 'Use GitHub to inspect the source, follow versions, and get desktop installers from the Releases page.'
+        title: 'Structured Notes',
+        short: 'Summary / Outline / Points',
+        description: 'Generate summaries, outlines, key points, and structured notes automatically.'
       }
     },
-    localDescription: 'Moving long-running media tasks into local software lets the website stay a pure frontend personal space while the media core is maintained, released, and run independently.'
+    releaseLinks: {
+      github: 'GitHub Repository',
+      releases: 'Releases Download'
+    }
   },
   blog: {
     badge: 'Jacory Blog',

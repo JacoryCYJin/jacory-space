@@ -73,44 +73,63 @@ export default {
     kicker: '02 — 本地软件 / 媒体工作台',
     titleLead: 'Media Parser ',
     titleAccent: 'Desktop',
-    description: '视频解析、播客解析、下载、转写和结构化笔记已经迁移为本地桌面软件。网站保留说明入口，实际能力通过 GitHub Release 安装后在本机运行。',
+    tagline: '本地运行的媒体解析、转写与结构化笔记工具。',
+    descriptionLead: '为视频、播客和个人内容整理流程设计，把分散的媒体素材处理成可复用的文本资产。',
+    descriptionPoints: {
+      sources: {
+        title: '解析媒体源',
+        description: '支持视频链接、播客 RSS 与音频链接。'
+      },
+      download: {
+        title: '下载与转写',
+        description: '下载音视频、字幕，并在本地生成转写文本。'
+      },
+      notes: {
+        title: '整理成笔记',
+        description: '输出摘要、大纲、要点，便于后续写作和复盘。'
+      }
+    },
     meta: {
-      type: '类型',
-      typeValue: '桌面软件',
-      runtime: '运行时',
-      status: '状态',
-      statusValue: '本地优先'
+      type: '开源项目',
+      typeValue: 'MIT License'
     },
     sections: {
-      release: '获取软件',
-      modules: '功能模块',
-      local: '本地运行'
+      release: '开源 · 自由 · 可控',
+      modules: '核心能力 · 全部在本地'
     },
-    releaseTitle: '从 GitHub Release 安装 Media Parser。',
-    releaseDescription: '网站不再承载在线解析服务。解析、下载、转写和文件管理都在本地应用里完成，适合处理较长任务、私有 Cookie、下载目录和模型缓存。',
     actions: {
-      releases: '打开 Release',
+      releases: '下载 Release',
       github: '查看 GitHub'
+    },
+    screenshot: {
+      alt: 'Media Parser Desktop 软件截图'
     },
     modules: {
       video: {
-        title: '视频解析',
-        description: '解析视频链接、读取元信息、下载可选格式，并生成面向笔记整理的大纲。'
+        title: '视频解析 & 下载',
+        short: '解析视频信息 / 下载资源',
+        description: '解析视频信息，下载音视频、字幕与元数据。'
       },
       podcast: {
-        title: '播客解析',
-        description: '解析 Apple Podcasts、小宇宙、RSS 和音频链接，提取单集信息与音频源。'
+        title: '播客解析 & 下载',
+        short: '解析播客 RSS / 下载音频',
+        description: '解析播客 RSS，获取单集信息并下载音频文件。'
       },
       transcript: {
         title: '本地转写',
-        description: '通过本地 Python 核心调度 FFmpeg 与 faster-whisper，输出转写文本和后续写作素材。'
+        short: 'faster-whisper / 本地完成',
+        description: '基于 faster-whisper，在本地完成高精度转写。'
       },
       release: {
-        title: '发布与源码',
-        description: '通过 GitHub 查看源码、跟踪版本，并在 Releases 页面获取桌面端安装包。'
+        title: '结构化笔记生成',
+        short: '摘要 / 大纲 / 要点',
+        description: '自动生成摘要、大纲、要点，输出结构化笔记。'
       }
     },
-    localDescription: '把长任务放回本地软件后，网站可以保持为纯前端个人空间；媒体解析核心则独立维护、独立发布、独立运行。'
+    releaseLinks: {
+      github: 'GitHub 仓库',
+      releases: 'Releases 下载'
+    }
   },
   blog: {
     badge: 'Jacory Blog',
