@@ -97,7 +97,7 @@ const projects = [
   {
     id: '001', no: '001', title: 'Media Parser', layer: 'TOOLS', category: 'tool', status: 'live',
     pos: [-7.0, -1.6], description: '本地桌面媒体工作台，整合视频解析、播客解析、下载、转写和结构化笔记。',
-    stack: ['Electron', 'Python', 'Whisper'], version: 'desktop', updated: '2026.07.11', href: '/media-parser'
+    stack: ['Electron', 'Python', 'Whisper'], version: 'desktop', updated: '2026.07.11', href: '/tools/media-parser'
   },
   {
     id: '003', no: '003', title: 'Cool Palette', layer: 'TOOLS', category: 'tool', status: 'wip',

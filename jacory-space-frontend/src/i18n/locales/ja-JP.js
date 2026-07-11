@@ -69,6 +69,68 @@ export default {
       }
     }
   },
+  mediaParserSoftware: {
+    kicker: '02 — ローカルソフトウェア / メディアワークベンチ',
+    titleLead: 'Media Parser ',
+    titleAccent: 'Desktop',
+    tagline: 'ローカルで動作するメディア解析、文字起こし、構造化ノートのためのツール。',
+    descriptionLead: '動画、Podcast、個人のコンテンツ整理に向けて、散らばったメディア素材を再利用しやすいテキスト資産へ変換します。',
+    descriptionPoints: {
+      sources: {
+        title: 'メディアソースを解析',
+        description: '動画リンク、Podcast RSS、音声 URL に対応。'
+      },
+      download: {
+        title: 'ダウンロードと文字起こし',
+        description: '音声・動画・字幕を保存し、ローカルで文字起こしを生成。'
+      },
+      notes: {
+        title: 'ノートへ整理',
+        description: '要約、大綱、要点を出力し、執筆や振り返りに使いやすくします。'
+      }
+    },
+    meta: {
+      type: 'オープンソース',
+      typeValue: 'MIT License'
+    },
+    sections: {
+      release: 'オープン · 自由 · 制御可能',
+      modules: '主要機能 · すべてローカル'
+    },
+    actions: {
+      releases: 'Release をダウンロード',
+      github: 'GitHub を見る'
+    },
+    screenshot: {
+      alt: 'Media Parser Desktop のソフトウェアスクリーンショット'
+    },
+    modules: {
+      video: {
+        title: '動画解析 & ダウンロード',
+        short: 'メタデータ / ダウンロード',
+        description: '動画情報を解析し、音声・動画・字幕・メタデータを保存します。'
+      },
+      podcast: {
+        title: 'Podcast 解析 & ダウンロード',
+        short: 'RSS / 音声ファイル',
+        description: 'Podcast RSS を解析し、エピソード情報を取得して音声を保存します。'
+      },
+      transcript: {
+        title: 'ローカル文字起こし',
+        short: 'faster-whisper / ローカル処理',
+        description: 'faster-whisper を使い、ローカル環境で高精度な文字起こしを行います。'
+      },
+      release: {
+        title: '構造化ノート生成',
+        short: '要約 / 大綱 / 要点',
+        description: '要約、大綱、要点を自動生成し、構造化されたノートとして出力します。'
+      }
+    },
+    releaseLinks: {
+      github: 'GitHub リポジトリ',
+      releases: 'Releases ダウンロード'
+    }
+  },
   blog: {
     badge: 'Jacory Blog',
     title: '個人ブログ',

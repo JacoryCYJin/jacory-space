@@ -2,51 +2,41 @@
   <main class="grain min-h-screen bg-background text-foreground">
     <section class="page-gutter pb-20 pt-28 md:pt-32">
       <div class="page-frame">
-        <header class="border-b border-line pb-10">
-          <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
-            <div>
-              <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">
-                {{ t('mediaParserSoftware.kicker') }}
-              </p>
-              <h1 class="mt-6 max-w-4xl text-5xl font-medium leading-none tracking-tight text-foreground md:text-7xl">
-                {{ t('mediaParserSoftware.titleLead') }}
-                <span class="italic text-blue">{{ t('mediaParserSoftware.titleAccent') }}</span>
-              </h1>
-              <p class="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
-                {{ t('mediaParserSoftware.description') }}
-              </p>
-            </div>
-
-            <dl class="grid gap-4 border-l border-line pl-6 font-mono text-xs uppercase tracking-[0.16em]">
-              <div v-for="item in metaItems" :key="item.key" class="grid gap-1">
-                <dt class="text-muted-foreground">{{ item.key }}</dt>
-                <dd class="text-foreground">{{ item.value }}</dd>
-              </div>
-            </dl>
-          </div>
-        </header>
-
-        <section class="grid gap-10 border-b border-line py-10 lg:grid-cols-[180px_minmax(0,1fr)]">
+        <section class="grid gap-12 border-b border-line pb-16 lg:grid-cols-[minmax(0,0.78fr)_minmax(560px,1.22fr)] lg:items-center">
           <div>
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">01</p>
-            <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">
-              {{ t('mediaParserSoftware.sections.release') }}
+            <p class="inline-flex items-center gap-3 font-mono text-xs uppercase tracking-[0.18em] text-blue">
+              <span class="h-2 w-2 rounded-full bg-blue" aria-hidden="true"></span>
+              {{ t('mediaParserSoftware.kicker') }}
             </p>
-          </div>
 
-          <div class="grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-            <div>
-              <h2 class="text-2xl font-medium tracking-tight text-foreground md:text-3xl">
-                {{ t('mediaParserSoftware.releaseTitle') }}
-              </h2>
-              <p class="mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-                {{ t('mediaParserSoftware.releaseDescription') }}
-              </p>
+            <h1 class="mt-12 max-w-3xl text-5xl font-medium leading-none tracking-tight text-foreground md:text-7xl">
+              {{ t('mediaParserSoftware.titleLead') }}
+              <span class="italic text-blue">{{ t('mediaParserSoftware.titleAccent') }}</span>
+            </h1>
+
+            <p class="mt-7 max-w-xl text-2xl leading-snug tracking-tight text-foreground">
+              {{ t('mediaParserSoftware.tagline') }}
+            </p>
+            <div class="mt-7 max-w-xl text-base leading-relaxed text-muted-foreground">
+              <p>{{ t('mediaParserSoftware.descriptionLead') }}</p>
+              <ul class="mt-5 grid gap-3">
+                <li
+                  v-for="point in descriptionPoints"
+                  :key="point.title"
+                  class="grid grid-cols-[0.45rem_minmax(0,1fr)] gap-3"
+                >
+                  <span class="mt-[0.7em] h-1.5 w-1.5 rounded-full bg-blue" aria-hidden="true"></span>
+                  <span>
+                    <span class="block text-foreground">{{ point.title }}</span>
+                    <span class="block">{{ point.description }}</span>
+                  </span>
+                </li>
+              </ul>
             </div>
 
-            <div class="flex flex-wrap gap-3">
+            <div class="mt-12 flex flex-wrap gap-5">
               <a
-                class="inline-flex h-11 items-center gap-3 border border-line px-5 font-mono text-xs uppercase tracking-[0.16em] text-blue transition-colors hover:border-line-strong hover:bg-card"
+                class="inline-flex h-12 items-center gap-3 border border-blue px-6 font-mono text-xs uppercase tracking-[0.16em] text-blue transition-colors hover:bg-card"
                 href="https://github.com/JacoryCYJin/media-parser/releases"
                 target="_blank"
                 rel="noreferrer"
@@ -55,7 +45,7 @@
                 {{ t('mediaParserSoftware.actions.releases') }}
               </a>
               <a
-                class="inline-flex h-11 items-center gap-3 border border-line px-5 font-mono text-xs uppercase tracking-[0.16em] text-foreground transition-colors hover:border-line-strong hover:bg-card hover:text-blue"
+                class="inline-flex h-12 items-center gap-3 border border-line px-6 font-mono text-xs uppercase tracking-[0.16em] text-foreground transition-colors hover:border-line-strong hover:bg-card hover:text-blue"
                 href="https://github.com/JacoryCYJin/media-parser"
                 target="_blank"
                 rel="noreferrer"
@@ -64,53 +54,64 @@
                 {{ t('mediaParserSoftware.actions.github') }}
               </a>
             </div>
+
+            <dl class="mt-6 grid gap-4 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground sm:grid-cols-2">
+              <div v-for="item in metaItems" :key="item.key" class="flex gap-2">
+                <dt>{{ item.key }}</dt>
+                <dd class="text-foreground">{{ item.value }}</dd>
+              </div>
+            </dl>
           </div>
+
+          <figure>
+            <img
+              :src="screenshotSrc"
+              :alt="t('mediaParserSoftware.screenshot.alt')"
+              class="block w-full object-contain"
+            >
+          </figure>
         </section>
 
-        <section class="grid gap-10 border-b border-line py-10 lg:grid-cols-[180px_minmax(0,1fr)]">
+        <section class="grid gap-10 border-b border-line py-12 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.42fr)]">
           <div>
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">02</p>
-            <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">
+            <p class="font-mono text-xs uppercase tracking-[0.18em] text-foreground">
               {{ t('mediaParserSoftware.sections.modules') }}
             </p>
-          </div>
-
-          <div class="grid gap-4 md:grid-cols-2">
-            <article
-              v-for="module in modules"
-              :key="module.title"
-              class="border border-line bg-card p-5"
-            >
-              <component :is="module.icon" class="h-5 w-5 text-blue" :stroke-width="1.7" />
-              <h2 class="mt-5 text-xl font-medium tracking-tight text-foreground">{{ module.title }}</h2>
-              <p class="mt-3 text-sm leading-relaxed text-muted-foreground">{{ module.description }}</p>
-            </article>
-          </div>
-        </section>
-
-        <section class="grid gap-10 py-10 lg:grid-cols-[180px_minmax(0,1fr)]">
-          <div>
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-blue">03</p>
-            <p class="mt-1 font-mono text-xs uppercase tracking-[0.18em] text-blue">
-              {{ t('mediaParserSoftware.sections.local') }}
-            </p>
-          </div>
-
-          <div class="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)]">
-            <p class="max-w-xl text-sm leading-relaxed text-muted-foreground">
-              {{ t('mediaParserSoftware.localDescription') }}
-            </p>
-            <div class="grid gap-3">
-              <div
-                v-for="item in localStack"
-                :key="item"
-                class="flex items-center justify-between border-b border-line py-3 font-mono text-xs uppercase tracking-[0.14em]"
+            <div class="mt-8 grid gap-6 md:grid-cols-4">
+              <article
+                v-for="module in modules"
+                :key="module.title"
+                class="border-r border-line pr-6 last:border-r-0"
               >
-                <span class="text-muted-foreground">{{ item }}</span>
-                <span class="text-blue">LOCAL</span>
-              </div>
+                <component :is="module.icon" class="h-6 w-6 text-muted-foreground" :stroke-width="1.6" />
+                <h2 class="mt-6 text-lg font-medium tracking-tight text-foreground">{{ module.title }}</h2>
+                <p class="mt-3 text-sm leading-relaxed text-muted-foreground">{{ module.description }}</p>
+              </article>
             </div>
           </div>
+
+          <aside class="border-l border-line pl-8">
+            <p class="font-mono text-xs uppercase tracking-[0.18em] text-foreground">
+              {{ t('mediaParserSoftware.sections.release') }}
+            </p>
+            <div class="mt-8 grid border-t border-line">
+              <a
+                v-for="link in releaseLinks"
+                :key="link.label"
+                class="group flex items-center gap-5 border-b border-line py-5"
+                :href="link.href"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <component :is="link.icon" class="h-7 w-7 shrink-0 text-foreground" :stroke-width="1.7" />
+                <span class="min-w-0 flex-1">
+                  <span class="block text-base font-medium tracking-tight text-foreground">{{ link.label }}</span>
+                  <span class="mt-1 block truncate font-mono text-xs text-muted-foreground">{{ link.urlLabel }}</span>
+                </span>
+                <ArrowRight class="h-4 w-4 text-muted-foreground transition-transform group-hover:translate-x-1 group-hover:text-blue" />
+              </a>
+            </div>
+          </aside>
         </section>
       </div>
     </section>
@@ -120,38 +121,71 @@
 <script setup>
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Clapperboard, Download, FileText, Github, Podcast } from 'lucide-vue-next'
+import { ArrowRight, Clapperboard, Download, FileText, Github, Podcast, Tags } from 'lucide-vue-next'
+import screenshotSrc from '../assets/tools/media-parser-desktop.png'
 
 const { t } = useI18n()
 
 const metaItems = computed(() => [
-  { key: t('mediaParserSoftware.meta.type'), value: t('mediaParserSoftware.meta.typeValue') },
-  { key: t('mediaParserSoftware.meta.runtime'), value: 'Electron / Vue / Python' },
-  { key: t('mediaParserSoftware.meta.status'), value: t('mediaParserSoftware.meta.statusValue') }
+  { key: 'macOS', value: '/ Windows' },
+  { key: t('mediaParserSoftware.meta.type'), value: t('mediaParserSoftware.meta.typeValue') }
+])
+
+const descriptionPoints = computed(() => [
+  {
+    title: t('mediaParserSoftware.descriptionPoints.sources.title'),
+    description: t('mediaParserSoftware.descriptionPoints.sources.description')
+  },
+  {
+    title: t('mediaParserSoftware.descriptionPoints.download.title'),
+    description: t('mediaParserSoftware.descriptionPoints.download.description')
+  },
+  {
+    title: t('mediaParserSoftware.descriptionPoints.notes.title'),
+    description: t('mediaParserSoftware.descriptionPoints.notes.description')
+  }
 ])
 
 const modules = computed(() => [
   {
     title: t('mediaParserSoftware.modules.video.title'),
+    short: t('mediaParserSoftware.modules.video.short'),
     description: t('mediaParserSoftware.modules.video.description'),
     icon: Clapperboard
   },
   {
     title: t('mediaParserSoftware.modules.podcast.title'),
+    short: t('mediaParserSoftware.modules.podcast.short'),
     description: t('mediaParserSoftware.modules.podcast.description'),
     icon: Podcast
   },
   {
     title: t('mediaParserSoftware.modules.transcript.title'),
+    short: t('mediaParserSoftware.modules.transcript.short'),
     description: t('mediaParserSoftware.modules.transcript.description'),
     icon: FileText
   },
   {
     title: t('mediaParserSoftware.modules.release.title'),
+    short: t('mediaParserSoftware.modules.release.short'),
     description: t('mediaParserSoftware.modules.release.description'),
-    icon: Github
+    icon: Tags
   }
 ])
 
-const localStack = ['yt-dlp', 'FFmpeg', 'faster-whisper', 'local downloads', 'desktop release']
+const releaseLinks = computed(() => [
+  {
+    label: t('mediaParserSoftware.releaseLinks.github'),
+    urlLabel: 'github.com/JacoryCYJin/media-parser',
+    href: 'https://github.com/JacoryCYJin/media-parser',
+    icon: Github
+  },
+  {
+    label: t('mediaParserSoftware.releaseLinks.releases'),
+    urlLabel: 'github.com/JacoryCYJin/media-parser/releases',
+    href: 'https://github.com/JacoryCYJin/media-parser/releases',
+    icon: Tags
+  }
+])
+
 </script>

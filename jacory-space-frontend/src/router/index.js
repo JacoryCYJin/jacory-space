@@ -13,17 +13,21 @@ const routes = [
     component: Home
   },
   {
-    path: '/media-parser',
+    path: '/tools/media-parser',
     name: 'MediaParser',
     component: MediaParserSoftware
   },
   {
+    path: '/media-parser',
+    redirect: '/tools/media-parser'
+  },
+  {
     path: '/video-parser',
-    redirect: '/media-parser'
+    redirect: '/tools/media-parser'
   },
   {
     path: '/podcast-parser',
-    redirect: '/media-parser'
+    redirect: '/tools/media-parser'
   },
   {
     path: '/tools',
