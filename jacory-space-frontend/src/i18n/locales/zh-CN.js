@@ -69,6 +69,49 @@ export default {
       }
     }
   },
+  mediaParserSoftware: {
+    kicker: '02 — 本地软件 / 媒体工作台',
+    titleLead: 'Media Parser ',
+    titleAccent: 'Desktop',
+    description: '视频解析、播客解析、下载、转写和结构化笔记已经迁移为本地桌面软件。网站保留说明入口，实际能力通过 GitHub Release 安装后在本机运行。',
+    meta: {
+      type: '类型',
+      typeValue: '桌面软件',
+      runtime: '运行时',
+      status: '状态',
+      statusValue: '本地优先'
+    },
+    sections: {
+      release: '获取软件',
+      modules: '功能模块',
+      local: '本地运行'
+    },
+    releaseTitle: '从 GitHub Release 安装 Media Parser。',
+    releaseDescription: '网站不再承载在线解析服务。解析、下载、转写和文件管理都在本地应用里完成，适合处理较长任务、私有 Cookie、下载目录和模型缓存。',
+    actions: {
+      releases: '打开 Release',
+      github: '查看 GitHub'
+    },
+    modules: {
+      video: {
+        title: '视频解析',
+        description: '解析视频链接、读取元信息、下载可选格式，并生成面向笔记整理的大纲。'
+      },
+      podcast: {
+        title: '播客解析',
+        description: '解析 Apple Podcasts、小宇宙、RSS 和音频链接，提取单集信息与音频源。'
+      },
+      transcript: {
+        title: '本地转写',
+        description: '通过本地 Python 核心调度 FFmpeg 与 faster-whisper，输出转写文本和后续写作素材。'
+      },
+      release: {
+        title: '发布与源码',
+        description: '通过 GitHub 查看源码、跟踪版本，并在 Releases 页面获取桌面端安装包。'
+      }
+    },
+    localDescription: '把长任务放回本地软件后，网站可以保持为纯前端个人空间；媒体解析核心则独立维护、独立发布、独立运行。'
+  },
   blog: {
     badge: 'Jacory Blog',
     title: '个人博客',

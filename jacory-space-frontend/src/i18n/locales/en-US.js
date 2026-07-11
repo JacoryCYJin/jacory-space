@@ -69,6 +69,49 @@ export default {
       }
     }
   },
+  mediaParserSoftware: {
+    kicker: '02 — LOCAL SOFTWARE / MEDIA WORKBENCH',
+    titleLead: 'Media Parser ',
+    titleAccent: 'Desktop',
+    description: 'Video parsing, podcast parsing, downloads, transcription, and structured notes have moved into a local desktop application. The website now acts as an introduction and release entry point.',
+    meta: {
+      type: 'TYPE',
+      typeValue: 'DESKTOP APP',
+      runtime: 'RUNTIME',
+      status: 'STATUS',
+      statusValue: 'LOCAL FIRST'
+    },
+    sections: {
+      release: 'GET THE APP',
+      modules: 'MODULES',
+      local: 'LOCAL RUNTIME'
+    },
+    releaseTitle: 'Install Media Parser from GitHub Releases.',
+    releaseDescription: 'The website no longer hosts the live parsing service. Parsing, downloads, transcription, and file management now happen inside the local app, which is better suited for long-running jobs, private cookies, download folders, and model caches.',
+    actions: {
+      releases: 'Open Releases',
+      github: 'View GitHub'
+    },
+    modules: {
+      video: {
+        title: 'Video Parser',
+        description: 'Resolve video links, read metadata, download selected formats, and generate outlines for note-taking.'
+      },
+      podcast: {
+        title: 'Podcast Parser',
+        description: 'Resolve Apple Podcasts, Xiaoyuzhou, RSS, and audio links into episode metadata and audio sources.'
+      },
+      transcript: {
+        title: 'Local Transcription',
+        description: 'Use the local Python core to orchestrate FFmpeg and faster-whisper for transcript and writing material.'
+      },
+      release: {
+        title: 'Releases and Source',
+        description: 'Use GitHub to inspect the source, follow versions, and get desktop installers from the Releases page.'
+      }
+    },
+    localDescription: 'Moving long-running media tasks into local software lets the website stay a pure frontend personal space while the media core is maintained, released, and run independently.'
+  },
   blog: {
     badge: 'Jacory Blog',
     title: 'Personal Blog',

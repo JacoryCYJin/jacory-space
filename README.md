@@ -25,7 +25,7 @@ small mono labels, sparse blue accents, and an editorial archive rhythm.
 | --- | --- |
 | `Tools` | Self-built utilities, interface experiments, and project entries |
 | `Field Notes` | Essays, project notes, methods, reviews, and observations |
-| `Video Parser` | A local workflow for parsing videos and shaping structured notes |
+| `Media Parser` | A desktop software entry for video, podcast, download, and transcription workflows |
 | `Agent Library` | Skills, rules, prompts, and personal AI workflow assets |
 
 ## 03 / Direction
@@ -36,3 +36,10 @@ small mono labels, sparse blue accents, and an editorial archive rhythm.
 
 This space is in public construction.
 The system will keep evolving as the tools, notes, and workflows become more precise.
+
+## 05 / Media Parser
+
+The former website-hosted media backend has moved into the separate `media-parser` repository.
+This site now stays as a pure frontend surface and links to the desktop app releases:
+
+`https://github.com/JacoryCYJin/media-parser/releases`

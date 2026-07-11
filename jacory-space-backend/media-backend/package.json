@@ -1,9 +1,0 @@
-{
-  "name": "media-backend",
-  "version": "1.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "sh -c 'PYTHON_BIN=python3; if [ -x .venv/bin/python ]; then PYTHON_BIN=.venv/bin/python; fi; PYTHONPATH=. $PYTHON_BIN run_dev.py'",
-    "start": "sh -c 'PYTHON_BIN=python3; if [ -x .venv/bin/python ]; then PYTHON_BIN=.venv/bin/python; fi; PYTHONPATH=. $PYTHON_BIN run_dev.py'"
-  }
-}
