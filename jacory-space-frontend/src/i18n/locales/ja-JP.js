@@ -212,7 +212,7 @@ export default {
     entryCategories: {
       WEEKLY: '週刊',
       RESEARCH: 'リサーチ',
-      ESSAY: 'エッセイ',
+      ESSAY: '思考',
       METHOD: 'メソッド'
     },
     entryTopics: {
