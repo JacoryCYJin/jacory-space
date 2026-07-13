@@ -1,6 +1,6 @@
 <template>
   <main class="grain min-h-screen bg-background text-foreground">
-    <section class="page-gutter pb-20 pt-28 md:pt-32">
+    <section class="page-gutter pb-8 md:pb-10 pt-28 md:pt-32">
       <div class="page-frame">
         <section class="grid gap-12 border-b border-line pb-16 lg:grid-cols-[minmax(0,0.78fr)_minmax(560px,1.22fr)] lg:items-center">
           <div>
@@ -63,11 +63,17 @@
             </dl>
           </div>
 
-          <figure class="lg:flex lg:items-center">
+          <figure class="relative isolate lg:flex lg:items-center">
+            <img
+              :src="watermarkSrc"
+              alt=""
+              aria-hidden="true"
+              class="pointer-events-none absolute left-[-50%] top-[-20%] z-0 hidden w-[110%] max-w-none select-none opacity-[0.14] mix-blend-multiply lg:block"
+            >
             <img
               :src="screenshotSrc"
               :alt="t('mediaParserSoftware.screenshot.alt')"
-              class="block max-h-[80vh] w-full object-contain"
+              class="relative z-10 block max-h-[80vh] w-full object-contain"
             >
           </figure>
         </section>
@@ -121,6 +127,7 @@ import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ArrowRight, Clapperboard, Download, FileText, Github, Podcast, Tags } from 'lucide-vue-next'
 import screenshotSrc from '../assets/tools/media-parser-desktop.png'
+import watermarkSrc from '../assets/tools/video-parser-watermark.png'
 
 const { t } = useI18n()
 
