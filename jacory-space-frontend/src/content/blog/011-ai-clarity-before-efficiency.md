@@ -2,7 +2,7 @@
 title: "AI 不是效率本身，清晰才是"
 description: "一次初创公司实习后的复盘：AI 能放大局部速度，但真正决定团队效率的，是清晰的边界、规则、需求和验收标准。"
 date: "2026.07.01"
-category: "essay"
+category: "thinking"
 topic: "product"
 index: "011"
 readTime: "3 MIN"

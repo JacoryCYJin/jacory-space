@@ -2,7 +2,7 @@
 title: "好的工作状态，是专注地做有用的事"
 description: "工作状态的好坏，不只取决于情绪、待遇或压力，更取决于能否持续进入问题，并确认自己的工作确实产生了作用。"
 date: "2026.07.10"
-category: "essay"
+category: "thinking"
 topic: "product"
 index: "016"
 readTime: "5 MIN"

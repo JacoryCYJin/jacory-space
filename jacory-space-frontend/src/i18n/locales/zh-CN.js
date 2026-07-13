@@ -212,7 +212,7 @@ export default {
     entryCategories: {
       WEEKLY: '周刊',
       RESEARCH: '调研',
-      ESSAY: '思考',
+      THINKING: '思考',
       METHOD: '方法'
     },
     entryTopics: {

@@ -2,7 +2,7 @@
 title: "把产品价值说成一条变化路径"
 description: "真正清楚的产品价值，不是功能和指标的堆叠，而是说明产品如何改变了一个具体客户的处境。"
 date: "2026.07.13"
-category: "essay"
+category: "thinking"
 topic: "product"
 index: "019"
 readTime: "5 MIN"

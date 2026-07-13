@@ -2,7 +2,7 @@
 title: "价值不是功能，而是被需要"
 description: "产品价值并不来自功能、技术或产品经理的判断，而来自它是否真正满足了某个具体客户的需要。"
 date: "2026.07.12"
-category: "essay"
+category: "thinking"
 topic: "product"
 index: "018"
 readTime: "5 MIN"
