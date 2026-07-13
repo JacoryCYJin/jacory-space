@@ -37,7 +37,7 @@
             <div class="mt-12 flex flex-wrap gap-5">
               <a
                 class="inline-flex h-12 items-center gap-3 border border-blue px-6 font-mono text-xs uppercase tracking-[0.16em] text-blue transition-colors hover:bg-card"
-                href="https://github.com/JacoryCYJin/media-parser/releases"
+                href="https://github.com/JacoryCYJin/media-parser/releases/tag/v0.2.5"
                 target="_blank"
                 rel="noreferrer"
               >
@@ -63,16 +63,16 @@
             </dl>
           </div>
 
-          <figure>
+          <figure class="lg:flex lg:items-center">
             <img
               :src="screenshotSrc"
               :alt="t('mediaParserSoftware.screenshot.alt')"
-              class="block w-full object-contain"
+              class="block max-h-[80vh] w-full object-contain"
             >
           </figure>
         </section>
 
-        <section class="grid gap-10 border-b border-line py-12 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.42fr)]">
+        <section class="grid gap-10 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.42fr)]">
           <div>
             <p class="font-mono text-xs uppercase tracking-[0.18em] text-foreground">
               {{ t('mediaParserSoftware.sections.modules') }}
@@ -91,14 +91,12 @@
           </div>
 
           <aside class="border-l border-line pl-8">
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-foreground">
-              {{ t('mediaParserSoftware.sections.release') }}
-            </p>
-            <div class="mt-8 grid border-t border-line">
+            <div class="grid">
               <a
-                v-for="link in releaseLinks"
+                v-for="(link, index) in releaseLinks"
                 :key="link.label"
-                class="group flex items-center gap-5 border-b border-line py-5"
+                class="group flex items-center gap-5 py-5"
+                :class="{ 'border-b border-line': index === 0 }"
                 :href="link.href"
                 target="_blank"
                 rel="noreferrer"
@@ -127,7 +125,7 @@ import screenshotSrc from '../assets/tools/media-parser-desktop.png'
 const { t } = useI18n()
 
 const metaItems = computed(() => [
-  { key: 'macOS', value: '/ Windows' },
+  { key: 'macOS', value: 'v0.2.5' },
   { key: t('mediaParserSoftware.meta.type'), value: t('mediaParserSoftware.meta.typeValue') }
 ])
 
@@ -182,8 +180,8 @@ const releaseLinks = computed(() => [
   },
   {
     label: t('mediaParserSoftware.releaseLinks.releases'),
-    urlLabel: 'github.com/JacoryCYJin/media-parser/releases',
-    href: 'https://github.com/JacoryCYJin/media-parser/releases',
+    urlLabel: 'github.com/JacoryCYJin/media-parser/releases/tag/v0.2.5',
+    href: 'https://github.com/JacoryCYJin/media-parser/releases/tag/v0.2.5',
     icon: Tags
   }
 ])

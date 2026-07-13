@@ -73,20 +73,20 @@ export default {
     kicker: '02 — ローカルソフトウェア / メディアワークベンチ',
     titleLead: 'Media Parser ',
     titleAccent: 'Desktop',
-    tagline: 'ローカルで動作するメディア解析、文字起こし、構造化ノートのためのツール。',
-    descriptionLead: '動画、Podcast、個人のコンテンツ整理に向けて、散らばったメディア素材を再利用しやすいテキスト資産へ変換します。',
+    tagline: 'macOS 向けプレリリースを配布しているローカルメディア解析ツール。',
+    descriptionLead: 'Media Parser v0.2.5 は、ダウンロード可能なデスクトップソフトウェアとして公開されています。動画、Podcast、個人のメディア整理をローカル環境で扱い、macOS パッケージには ffmpeg と yt-dlp も同梱しています。',
     descriptionPoints: {
       sources: {
-        title: 'メディアソースを解析',
-        description: '動画リンク、Podcast RSS、音声 URL に対応。'
+        title: 'macOS Release をダウンロード',
+        description: '現在は Apple Silicon 向けのプレリリースを dmg 形式で配布しています。'
       },
       download: {
-        title: 'ダウンロードと文字起こし',
-        description: '音声・動画・字幕を保存し、ローカルで文字起こしを生成。'
+        title: 'メディアをローカル処理',
+        description: '動画解析、Podcast 解析、単体ファイルのダウンロード、Cookie 設定をデスクトップアプリ内で行います。'
       },
       notes: {
-        title: 'ノートへ整理',
-        description: '要約、大綱、要点を出力し、執筆や振り返りに使いやすくします。'
+        title: 'データは手元に保持',
+        description: 'ローカル設定、Cookie、保存先、メディアファイルは Release に同梱されず、アップロードもされません。'
       }
     },
     meta: {
@@ -94,11 +94,11 @@ export default {
       typeValue: 'MIT License'
     },
     sections: {
-      release: 'オープン · 自由 · 制御可能',
-      modules: '主要機能 · すべてローカル'
+      release: 'Release v0.2.5 · macOS プレリリース',
+      modules: '主要機能 · ローカル優先'
     },
     actions: {
-      releases: 'Release をダウンロード',
+      releases: 'v0.2.5 をダウンロード',
       github: 'GitHub を見る'
     },
     screenshot: {
@@ -108,27 +108,27 @@ export default {
       video: {
         title: '動画解析 & ダウンロード',
         short: 'メタデータ / ダウンロード',
-        description: '動画情報を解析し、音声・動画・字幕・メタデータを保存します。'
+        description: '動画情報を解析し、利用可能な形式を確認して単体メディアファイルを保存します。'
       },
       podcast: {
         title: 'Podcast 解析 & ダウンロード',
         short: 'RSS / 音声ファイル',
-        description: 'Podcast RSS を解析し、エピソード情報を取得して音声を保存します。'
+        description: 'Podcast RSS と音声ソースを解析し、エピソード情報を取得して音声を保存します。'
       },
       transcript: {
-        title: 'ローカル文字起こし',
-        short: 'faster-whisper / ローカル処理',
-        description: 'faster-whisper を使い、ローカル環境で高精度な文字起こしを行います。'
+        title: '同梱ランタイム',
+        short: 'ffmpeg / yt-dlp 同梱',
+        description: 'パッケージ版にはメディアツールを同梱しているため、ffmpeg や yt-dlp を個別にインストールする必要はありません。'
       },
       release: {
-        title: '構造化ノート生成',
-        short: '要約 / 大綱 / 要点',
-        description: '要約、大綱、要点を自動生成し、構造化されたノートとして出力します。'
+        title: '更新確認',
+        short: '設定 / About / 更新確認',
+        description: 'デスクトップアプリの設定画面に更新確認の入口を追加し、今後のバージョンで更新フローをさらに整えていきます。'
       }
     },
     releaseLinks: {
       github: 'GitHub リポジトリ',
-      releases: 'Releases ダウンロード'
+      releases: 'v0.2.5 Release'
     }
   },
   blog: {
