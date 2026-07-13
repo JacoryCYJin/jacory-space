@@ -2,7 +2,7 @@
 title: "MVP 不是少做一点，而是先把问题问清楚"
 description: "MVP 的重点不是把产品做得简陋，而是用最小的成本验证一个最关键的判断。"
 date: "2026.07.05"
-category: "essay"
+category: "thinking"
 topic: "product"
 index: "012"
 readTime: "5 MIN"

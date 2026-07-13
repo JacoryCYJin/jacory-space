@@ -2,7 +2,7 @@
 title: "能力的另一种价值：为工作主动降噪"
 description: "工作中的安静很少来自环境，更多时候，它来自判断问题、过滤信息和处理协作的能力。"
 date: "2026.07.11"
-category: "essay"
+category: "thinking"
 topic: "product"
 index: "017"
 readTime: "5 MIN"

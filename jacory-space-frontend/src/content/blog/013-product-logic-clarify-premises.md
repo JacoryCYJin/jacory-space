@@ -2,7 +2,7 @@
 title: "一个判断成立之前，先把前提说清楚"
 description: "产品经理需要的逻辑能力，不是把话说得漂亮，而是能把判断背后的前提、推理和边界讲清楚。"
 date: "2026.07.06"
-category: "essay"
+category: "thinking"
 topic: "product"
 index: "013"
 readTime: "5 MIN"

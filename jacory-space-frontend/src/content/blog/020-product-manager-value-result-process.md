@@ -2,7 +2,7 @@
 title: "产品经理的价值，既在结果里，也在过程里"
 description: "产品经理的个人价值不能完全等同于产品成绩，也不能脱离产品结果，只用工作量和努力证明自己。"
 date: "2026.07.14"
-category: "essay"
+category: "thinking"
 topic: "product"
 index: "020"
 readTime: "5 MIN"

@@ -212,7 +212,7 @@ export default {
     entryCategories: {
       WEEKLY: 'WEEKLY',
       RESEARCH: 'RESEARCH',
-      ESSAY: 'THOUGHTS',
+      THINKING: 'THINKING',
       METHOD: 'METHOD'
     },
     entryTopics: {

@@ -18,9 +18,9 @@ export const blogCategories = [
     sortOrder: 30,
   },
   {
-    slug: 'essay',
-    key: 'ESSAY',
-    labelKey: 'blog.entryCategories.ESSAY',
+    slug: 'thinking',
+    key: 'THINKING',
+    labelKey: 'blog.entryCategories.THINKING',
     sortOrder: 40,
   },
 ]

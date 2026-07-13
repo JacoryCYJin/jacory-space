@@ -2,7 +2,7 @@
 title: "懂业务，不是听懂需求"
 description: "产品不是业务本身，但产品经理如果看不清业务，就很容易把专业能力误认为业务能力。"
 date: "2026.07.09"
-category: "essay"
+category: "thinking"
 topic: "product"
 index: "015"
 readTime: "5 MIN"
