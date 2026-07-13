@@ -73,20 +73,20 @@ export default {
     kicker: '02 — 本地软件 / 媒体工作台',
     titleLead: 'Media Parser ',
     titleAccent: 'Desktop',
-    tagline: '本地运行的媒体解析、转写与结构化笔记工具。',
-    descriptionLead: '为视频、播客和个人内容整理流程设计，把分散的媒体素材处理成可复用的文本资产。',
+    tagline: '已经提供 macOS 预发布包的本地媒体解析工具。',
+    descriptionLead: 'Media Parser v0.2.5 已作为可下载桌面软件发布。它把视频、播客和个人内容整理流程放回本机，内置 ffmpeg 与 yt-dlp，不需要用户手动安装这些媒体依赖。',
     descriptionPoints: {
       sources: {
-        title: '解析媒体源',
-        description: '支持视频链接、播客 RSS 与音频链接。'
+        title: '下载 macOS Release',
+        description: '当前提供 Apple Silicon 预发布包，普通用户下载 dmg 安装即可。'
       },
       download: {
-        title: '下载与转写',
-        description: '下载音视频、字幕，并在本地生成转写文本。'
+        title: '本地处理媒体',
+        description: '视频解析、播客解析、单文件下载和 Cookie 设置都在本地桌面端完成。'
       },
       notes: {
-        title: '整理成笔记',
-        description: '输出摘要、大纲、要点，便于后续写作和复盘。'
+        title: '数据留在本机',
+        description: '本地设置、Cookies、下载目录和媒体文件不会被打包或上传到 Release。'
       }
     },
     meta: {
@@ -94,11 +94,11 @@ export default {
       typeValue: 'MIT License'
     },
     sections: {
-      release: '开源 · 自由 · 可控',
-      modules: '核心能力 · 全部在本地'
+      release: 'Release v0.2.5 · macOS 预发布',
+      modules: '核心能力 · 本地优先'
     },
     actions: {
-      releases: '下载 Release',
+      releases: '下载 v0.2.5',
       github: '查看 GitHub'
     },
     screenshot: {
@@ -108,27 +108,27 @@ export default {
       video: {
         title: '视频解析 & 下载',
         short: '解析视频信息 / 下载资源',
-        description: '解析视频信息，下载音视频、字幕与元数据。'
+        description: '解析视频信息，选择可用格式，并下载单个媒体文件。'
       },
       podcast: {
         title: '播客解析 & 下载',
         short: '解析播客 RSS / 下载音频',
-        description: '解析播客 RSS，获取单集信息并下载音频文件。'
+        description: '解析播客 RSS 与音频来源，获取单集信息并保存音频。'
       },
       transcript: {
-        title: '本地转写',
-        short: 'faster-whisper / 本地完成',
-        description: '基于 faster-whisper，在本地完成高精度转写。'
+        title: '本地运行时',
+        short: '内置 ffmpeg / yt-dlp',
+        description: '打包版本随附媒体工具，用户无需单独安装 ffmpeg 或 yt-dlp。'
       },
       release: {
-        title: '结构化笔记生成',
-        short: '摘要 / 大纲 / 要点',
-        description: '自动生成摘要、大纲、要点，输出结构化笔记。'
+        title: '更新入口',
+        short: '设置 / 关于 / 检测更新',
+        description: '桌面端设置页提供检测更新入口，后续版本会继续完善更新流程。'
       }
     },
     releaseLinks: {
       github: 'GitHub 仓库',
-      releases: 'Releases 下载'
+      releases: 'v0.2.5 Release'
     }
   },
   blog: {

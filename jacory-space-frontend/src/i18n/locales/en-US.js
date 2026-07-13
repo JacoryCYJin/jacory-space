@@ -73,20 +73,20 @@ export default {
     kicker: '02 — LOCAL SOFTWARE / MEDIA WORKBENCH',
     titleLead: 'Media Parser ',
     titleAccent: 'Desktop',
-    tagline: 'A local tool for media parsing, transcription, and structured notes.',
-    descriptionLead: 'Designed for video, podcast, and personal content workflows, turning scattered media sources into reusable text assets.',
+    tagline: 'A local media parser with a downloadable macOS pre-release.',
+    descriptionLead: 'Media Parser v0.2.5 is now available as desktop software. It keeps video, podcast, and personal media workflows on the local machine, with ffmpeg and yt-dlp bundled in the macOS package.',
     descriptionPoints: {
       sources: {
-        title: 'Parse Media Sources',
-        description: 'Support video links, podcast RSS, and audio URLs.'
+        title: 'Download The macOS Release',
+        description: 'The current Apple Silicon pre-release is distributed as a dmg for regular installation.'
       },
       download: {
-        title: 'Download And Transcribe',
-        description: 'Download media, subtitles, and generate local transcripts.'
+        title: 'Process Media Locally',
+        description: 'Video parsing, podcast parsing, single-file downloads, and cookie settings run in the desktop app.'
       },
       notes: {
-        title: 'Shape Structured Notes',
-        description: 'Export summaries, outlines, and key points for writing or review.'
+        title: 'Keep Data On The Device',
+        description: 'Local settings, cookies, download folders, and media files are not bundled into releases or uploaded.'
       }
     },
     meta: {
@@ -94,11 +94,11 @@ export default {
       typeValue: 'MIT License'
     },
     sections: {
-      release: 'OPEN · FREE · CONTROLLABLE',
+      release: 'RELEASE v0.2.5 · macOS PRE-RELEASE',
       modules: 'CORE CAPABILITIES · LOCAL FIRST'
     },
     actions: {
-      releases: 'Download Release',
+      releases: 'Download v0.2.5',
       github: 'View GitHub'
     },
     screenshot: {
@@ -108,27 +108,27 @@ export default {
       video: {
         title: 'Video Parse & Download',
         short: 'Metadata / Downloads',
-        description: 'Resolve video metadata, download media, subtitles, and source information.'
+        description: 'Resolve video metadata, inspect available formats, and download single media files.'
       },
       podcast: {
         title: 'Podcast Parse & Download',
         short: 'RSS / Audio files',
-        description: 'Resolve podcast RSS, read episode metadata, and download audio files.'
+        description: 'Resolve podcast RSS and audio sources, read episode metadata, and save audio files.'
       },
       transcript: {
-        title: 'Local Transcription',
-        short: 'faster-whisper / Local',
-        description: 'Use faster-whisper to complete high-accuracy transcription locally.'
+        title: 'Packaged Runtime',
+        short: 'Bundled ffmpeg / yt-dlp',
+        description: 'The packaged app includes media tooling, so users do not need to install ffmpeg or yt-dlp manually.'
       },
       release: {
-        title: 'Structured Notes',
-        short: 'Summary / Outline / Points',
-        description: 'Generate summaries, outlines, key points, and structured notes automatically.'
+        title: 'Update Entry',
+        short: 'Settings / About / Check Updates',
+        description: 'The desktop app includes a check-for-updates action in Settings, with the update flow continuing to improve.'
       }
     },
     releaseLinks: {
       github: 'GitHub Repository',
-      releases: 'Releases Download'
+      releases: 'v0.2.5 Release'
     }
   },
   blog: {
