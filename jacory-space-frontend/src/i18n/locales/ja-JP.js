@@ -1,10 +1,10 @@
 export default {
   nav: {
-    home: 'ホーム',
+    home: '索引',
     tools: 'ツール',
     videoParser: '動画解析',
-    blog: 'ブログ',
-    about: 'プロフィール'
+    blog: 'ノート',
+    about: '自己紹介'
   },
   language: {
     label: '言語を切り替える',

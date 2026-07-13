@@ -1,10 +1,10 @@
 export default {
   nav: {
-    home: '首页',
-    tools: '工具库',
+    home: '总览',
+    tools: '工具',
     videoParser: '视频解析',
-    blog: '博客',
-    about: '关于我'
+    blog: '手记',
+    about: '关于'
   },
   language: {
     label: '切换语言',
