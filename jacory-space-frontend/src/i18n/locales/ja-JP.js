@@ -77,16 +77,16 @@ export default {
     descriptionLead: 'Media Parser v0.2.5 は、ダウンロード可能なデスクトップソフトウェアとして公開されています。動画、Podcast、個人のメディア整理をローカル環境で扱い、macOS パッケージには ffmpeg と yt-dlp も同梱しています。',
     descriptionPoints: {
       sources: {
-        title: 'macOS Release をダウンロード',
-        description: '現在は Apple Silicon 向けのプレリリースを dmg 形式で配布しています。'
+        title: 'デスクトップのメディア入口',
+        description: '動画リンク、Podcast フィード、単体ファイルのダウンロードを、スクリプトやWebページ、コマンドラインに分散させず、ひとつのローカルツールにまとめます。'
       },
       download: {
-        title: 'メディアをローカル処理',
-        description: '動画解析、Podcast 解析、単体ファイルのダウンロード、Cookie 設定をデスクトップアプリ内で行います。'
+        title: '解析ランタイムを同梱',
+        description: 'macOS パッケージには ffmpeg と yt-dlp を同梱しているため、インストール後すぐに解析、ダウンロード、基本的なメディア整理を始められます。'
       },
       notes: {
-        title: 'データは手元に保持',
-        description: 'ローカル設定、Cookie、保存先、メディアファイルは Release に同梱されず、アップロードもされません。'
+        title: 'ローカル優先のワークフロー',
+        description: 'Cookie、保存先、メディアファイル、個人の処理記録は手元に残り、Release はソフトウェア本体だけを届けます。'
       }
     },
     meta: {
@@ -94,8 +94,7 @@ export default {
       typeValue: 'MIT License'
     },
     sections: {
-      release: 'Release v0.2.5 · macOS プレリリース',
-      modules: '主要機能 · ローカル優先'
+      release: 'Release v0.2.5 · macOS プレリリース'
     },
     actions: {
       releases: 'v0.2.5 をダウンロード',

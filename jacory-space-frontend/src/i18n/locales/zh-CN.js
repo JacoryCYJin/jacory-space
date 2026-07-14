@@ -77,16 +77,16 @@ export default {
     descriptionLead: 'Media Parser v0.2.5 已作为可下载桌面软件发布。它把视频、播客和个人内容整理流程放回本机，内置 ffmpeg 与 yt-dlp，不需要用户手动安装这些媒体依赖。',
     descriptionPoints: {
       sources: {
-        title: '下载 macOS Release',
-        description: '当前提供 Apple Silicon 预发布包，普通用户下载 dmg 安装即可。'
+        title: '桌面化媒体入口',
+        description: '把视频链接、播客源和单文件下载收进同一个本地工具，不再分散在脚本、网页和命令行里。'
       },
       download: {
-        title: '本地处理媒体',
-        description: '视频解析、播客解析、单文件下载和 Cookie 设置都在本地桌面端完成。'
+        title: '内置解析运行时',
+        description: 'macOS 包内置 ffmpeg 与 yt-dlp，普通用户安装后即可完成解析、下载和基础内容整理。'
       },
       notes: {
-        title: '数据留在本机',
-        description: '本地设置、Cookies、下载目录和媒体文件不会被打包或上传到 Release。'
+        title: '本地优先的工作流',
+        description: 'Cookies、下载目录、媒体文件和个人处理记录保留在本机，Release 只交付软件本身。'
       }
     },
     meta: {
@@ -94,8 +94,7 @@ export default {
       typeValue: 'MIT License'
     },
     sections: {
-      release: 'Release v0.2.5 · macOS 预发布',
-      modules: '核心能力 · 本地优先'
+      release: 'Release v0.2.5 · macOS 预发布'
     },
     actions: {
       releases: '下载 v0.2.5',

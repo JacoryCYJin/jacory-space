@@ -2,7 +2,7 @@
   <main class="grain min-h-screen bg-background text-foreground">
     <section class="page-gutter pb-8 md:pb-10 pt-28 md:pt-32">
       <div class="page-frame">
-        <section class="grid gap-12 border-b border-line pb-16 lg:grid-cols-[minmax(0,0.78fr)_minmax(560px,1.22fr)] lg:items-center">
+        <section class="grid gap-12 border-b border-line pb-10 md:pb-12 lg:grid-cols-[minmax(0,0.78fr)_minmax(560px,1.22fr)] lg:items-center">
           <div>
             <p class="inline-flex items-center gap-3 font-mono text-xs uppercase tracking-[0.18em] text-blue">
               <span class="h-2 w-2 rounded-full bg-blue" aria-hidden="true"></span>
@@ -34,7 +34,7 @@
               </ul>
             </div>
 
-            <div class="mt-12 flex flex-wrap gap-5">
+            <div class="mt-12 flex flex-wrap gap-10">
               <a
                 class="inline-flex h-12 items-center gap-3 border border-blue px-6 font-mono text-xs uppercase tracking-[0.16em] text-blue transition-colors hover:bg-card"
                 href="https://github.com/JacoryCYJin/media-parser/releases/tag/v0.2.5"
@@ -55,7 +55,7 @@
               </a>
             </div>
 
-            <dl class="mt-6 grid gap-4 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground sm:grid-cols-2">
+            <dl class="mt-10 grid gap-4 font-mono text-xs uppercase tracking-[0.14em] text-muted-foreground sm:grid-cols-2">
               <div v-for="item in metaItems" :key="item.key" class="flex gap-2">
                 <dt>{{ item.key }}</dt>
                 <dd class="text-foreground">{{ item.value }}</dd>
@@ -80,10 +80,7 @@
 
         <section class="grid gap-10 py-12 lg:grid-cols-[minmax(0,1fr)_minmax(360px,0.42fr)]">
           <div>
-            <p class="font-mono text-xs uppercase tracking-[0.18em] text-foreground">
-              {{ t('mediaParserSoftware.sections.modules') }}
-            </p>
-            <div class="mt-8 grid gap-6 md:grid-cols-4">
+            <div class="grid gap-6 md:grid-cols-4">
               <article
                 v-for="module in modules"
                 :key="module.title"
