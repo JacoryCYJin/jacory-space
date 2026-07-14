@@ -77,16 +77,16 @@ export default {
     descriptionLead: 'Media Parser v0.2.5 is now available as desktop software. It keeps video, podcast, and personal media workflows on the local machine, with ffmpeg and yt-dlp bundled in the macOS package.',
     descriptionPoints: {
       sources: {
-        title: 'Download The macOS Release',
-        description: 'The current Apple Silicon pre-release is distributed as a dmg for regular installation.'
+        title: 'A Desktop Media Entry Point',
+        description: 'Bring video links, podcast feeds, and single-file downloads into one local tool instead of scattering them across scripts, web pages, and command lines.'
       },
       download: {
-        title: 'Process Media Locally',
-        description: 'Video parsing, podcast parsing, single-file downloads, and cookie settings run in the desktop app.'
+        title: 'Bundled Parsing Runtime',
+        description: 'The macOS package includes ffmpeg and yt-dlp, so regular users can install it and start parsing, downloading, and organizing media.'
       },
       notes: {
-        title: 'Keep Data On The Device',
-        description: 'Local settings, cookies, download folders, and media files are not bundled into releases or uploaded.'
+        title: 'Local-First Workflow',
+        description: 'Cookies, download folders, media files, and personal processing records stay on the device; the Release only ships the software itself.'
       }
     },
     meta: {
@@ -94,8 +94,7 @@ export default {
       typeValue: 'MIT License'
     },
     sections: {
-      release: 'RELEASE v0.2.5 · macOS PRE-RELEASE',
-      modules: 'CORE CAPABILITIES · LOCAL FIRST'
+      release: 'RELEASE v0.2.5 · macOS PRE-RELEASE'
     },
     actions: {
       releases: 'Download v0.2.5',
