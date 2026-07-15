@@ -499,7 +499,7 @@ export default {
     saving: '保存中…',
     cookieHelp: {
       browser: 'yt-dlp を --cookies-from-browser {browser} 付きで実行します。先にそのブラウザで動画サービスへログインしてください。',
-      manual: 'サーバーに保存した cookies.txt を使用します。ブラウザの Cookie を読み込めない場合に便利です。',
+      manual: 'ローカルに保存した cookies.txt を使用します。ブラウザの Cookie を読み込めない場合に便利です。',
       none: '公開動画は Cookie なしでも解析できる場合があります。ログインが必要な動画は解析に失敗することがあります。'
     },
     status: {
@@ -526,7 +526,7 @@ export default {
     addPlatformTitle: 'カスタムプラットフォームを追加',
     platformPlaceholder: 'プラットフォーム名を入力（例：twitter、instagram）',
     setCookiesTitle: '{platform} の Cookie を設定',
-    cookiesSavedTip: 'Cookie はサーバーに保存されるため、ページを再読み込みしても保持されます。',
+    cookiesSavedTip: 'Cookie はデスクトップアプリによってローカルに保存され、ページを再読み込みしても保持されます。',
     cookiesPlaceholder: '{platform} の cookies.txt の内容を貼り付けてください…',
     errors: {
       emptyUrl: '動画の URL を入力してください',

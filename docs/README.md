@@ -7,9 +7,10 @@ docs/
   product/        # 面向使用者的产品/功能介绍
   overview/       # 总览、调研、问题背景、方案草稿
   features/       # 功能 PRD、页面需求、验收标准
-  architecture/   # 前端架构、后端架构、路由、数据流、模块关系
-  api/            # 接口说明、请求响应、错误码
-  operations/     # 本地启动、部署、环境变量、排障
+  architecture/   # 网站前端架构、路由、内容流、模块关系
+  reference/      # 稳定语法、内容格式、配置说明
+  operations/     # 本地启动、部署、排障
+  archive/        # 已迁移或不再维护的历史文档
 ```
 
 ## Directory Guide
@@ -28,11 +29,11 @@ docs/
 
 ### `architecture/`
 
-放相对稳定的系统结构说明，例如前端目录关系、后端模块关系、路由组织、前后端数据流、代理关系等。
+放相对稳定的网站结构说明，例如前端目录关系、路由组织、内容流、模块关系等。
 
-### `api/`
+### `reference/`
 
-放接口文档，例如请求路径、请求参数、响应结构、错误码、鉴权或 Cookie 相关说明。主要用于前后端对齐。
+放稳定参考文档，例如 Markdown 语法、内容格式、配置约定等。Media Parser 的本地服务接口不在 `site` 维护，归 `../media-parser/` 所有。
 
 ### `operations/`
 
@@ -45,6 +46,6 @@ docs/
 ```txt
 product/video-parser.md
 features/video-downloader-prd.md
-architecture/routing-and-api-proxy.md
+architecture/jacory-space.md
 operations/local-development.md
 ```
