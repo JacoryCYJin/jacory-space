@@ -1,5 +1,7 @@
 <template>
   <main ref="heroRoot" class="grain bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
+    <HomeLoadingOverlay @complete="handleLoadingComplete" />
+
     <section
       id="top"
       class="relative flex min-h-[calc(100svh-var(--navbar-height))] flex-col justify-between px-5 pb-10 pt-8 md:px-8 md:pt-12"
@@ -79,6 +81,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
+import HomeLoadingOverlay from '../components/HomeLoadingOverlay.vue'
 
 gsap.registerPlugin(CustomEase)
 
@@ -87,7 +90,20 @@ const { t } = useI18n()
 const heroDescription = computed(() => t('home.hero.description'))
 const heroKeywords = computed(() => t('home.hero.keywords'))
 let heroContext
+let heroTimeline
 let reducedMotionQuery
+let heroReady = false
+let loadingComplete = false
+
+const playHeroIntro = () => {
+  if (!heroReady || !loadingComplete) return
+  heroTimeline?.play(0)
+}
+
+const handleLoadingComplete = () => {
+  loadingComplete = true
+  playHeroIntro()
+}
 
 onMounted(() => {
   const root = heroRoot.value
@@ -114,6 +130,7 @@ onMounted(() => {
         scaleX: 1,
         clipPath: 'inset(0% 0% -30% 0%)'
       })
+      heroReady = true
       return
     }
 
@@ -131,9 +148,9 @@ onMounted(() => {
     gsap.set(bottomLine, { scaleX: 0, transformOrigin: 'left top' })
     gsap.set(dot, { autoAlpha: 0, scale: 0.8 })
 
-    const timeline = gsap.timeline({ defaults: { ease: heroEase } })
+    heroTimeline = gsap.timeline({ paused: true, defaults: { ease: heroEase } })
 
-    timeline
+    heroTimeline
       .to(gridLines, {
         autoAlpha: 1,
         duration: 0.9,
@@ -155,6 +172,9 @@ onMounted(() => {
       .to(sideMeta, { autoAlpha: 1, y: 0, duration: 0.7 }, 0.95)
       .to(bottomLine, { scaleX: 1, duration: 0.9 }, 1.05)
       .to(dot, { autoAlpha: 1, scale: 1, duration: 0.45 }, 1.25)
+
+    heroReady = true
+    playHeroIntro()
   }, root)
 })
 
