@@ -119,7 +119,8 @@ docs/overview/      # overview, research, drafts
 docs/features/      # PRD and feature scope
 docs/reference/     # stable syntax/config reference
 docs/architecture/  # system/module structure
-docs/api/           # API contracts when needed
 docs/operations/    # run/deploy/troubleshooting when needed
 docs/archive/       # old docs
 ```
+
+Media Parser API contracts, desktop packaging notes, and Python media-core docs belong in `../media-parser/`.
