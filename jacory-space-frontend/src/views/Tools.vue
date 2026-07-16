@@ -100,24 +100,19 @@ const projects = [
     stack: ['Electron', 'Python', 'Whisper'], version: 'desktop', updated: '2026.07.11', href: '/tools/media-parser'
   },
   {
-    id: '003', no: '003', title: 'Cool Palette', layer: 'TOOLS', category: 'tool', status: 'wip',
-    pos: [3.8, -1.2], description: '从一个冷色种子值导出完整的色彩系统，并提供 OKLCH 对比校验。',
-    stack: ['OKLCH', 'Color System'], version: 'v0.3.1', updated: '2026.06.17', href: '/tools'
-  },
-  {
-    id: '005', no: '005', title: 'Jacory Space', layer: 'WORKS', category: 'work', status: 'live',
+    id: '002', no: '002', title: 'Jacory Space', layer: 'WORKS', category: 'work', status: 'live',
     pos: [-6.8, 0.8], description: '个人数字空间与操作系统，整合工具、博客与实验。',
     stack: ['Vue', 'GSAP', 'Design System'], version: 'v1.5.0', updated: '2026.06.15', href: '/'
   },
   {
-    id: '007', no: '007', title: 'Agent Library', layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
-    pos: [7.0, 1.3], description: '集中管理和组织可复用的 Skills、Rules 与 Prompts，形成个人 AI 工作流资产库。',
-    stack: ['Skills', 'Rules', 'Prompts'], version: 'v0.1.0', updated: '2026.06.24', href: '/tools'
+    id: '003', no: '003', title: 'Personal Blog', layer: 'WORKS', category: 'work', status: 'wip',
+    pos: [2.4, 1.6], description: '沉淀开发笔记、项目复盘与日常观察，并持续完善个人写作与发布系统。',
+    stack: ['Writing', 'Markdown', 'Publishing'], version: 'v0.1.0', updated: '2026.07.16', href: '/blog'
   },
   {
-    id: '009', no: '009', title: 'Workflow', layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
-    pos: [1.6, 2.4], description: '沉淀可复用的任务流程、执行顺序与验证节点，把重复工作组织成稳定的工作流。',
-    stack: ['Process', 'Automation', 'Validation'], version: 'v0.1.0', updated: '2026.06.24', href: '/tools'
+    id: '004', no: '004', title: 'Workflow System', layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
+    pos: [6.2, 1.4], description: '沉淀可复用的任务步骤、自动化与验证节点，把重复工作组织成稳定的工作流。',
+    stack: ['Process', 'Automation', 'Validation'], version: 'v0.1.0', updated: '2026.07.16', href: '/tools'
   }
 ]
 

@@ -60,10 +60,10 @@ export default {
         archived: 'ARCHIVED'
       },
       categoryDescriptions: {
-        all: 'The complete spatial index, including every entry.',
-        tools: 'Foundational utilities and interface elements.',
-        works: 'Published projects and case studies.',
-        experiments: 'Research, prototypes, and explorations.'
+        all: 'A unified index of tools, works, and experiments.',
+        tools: 'Practical tools built for specific needs.',
+        works: 'Complete projects, products, and creative practice.',
+        experiments: 'Concepts, prototypes, and systems currently being explored.'
       },
       summary: {
         entries: 'ENTRIES',
