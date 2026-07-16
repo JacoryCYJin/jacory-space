@@ -24,7 +24,7 @@
       </div>
     </section>
 
-    <section class="page-gutter pb-20 pt-12 md:pb-28 md:pt-16">
+    <section class="page-gutter pb-20 pt-12 max-lg:pb-10 md:pb-28 md:pt-16">
       <div class="page-frame">
         <div v-if="isLoading || loadError" class="reveal blog-reveal border-y border-line py-10">
           <p class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
@@ -35,20 +35,20 @@
         <div v-else-if="lead" class="reveal blog-reveal">
           <RouterLink
             :to="`/blog/${lead.slug}`"
-            class="group relative grid min-w-0 overflow-hidden border-y border-line py-12 transition-colors duration-300 hover:border-line-strong md:py-16 lg:grid-cols-[minmax(9rem,12rem)_1px_minmax(0,1fr)] lg:gap-x-10 xl:gap-x-12"
+            class="group relative grid min-w-0 overflow-hidden border-y border-line py-12 transition-colors duration-300 hover:border-line-strong max-lg:py-10 lg:grid-cols-[minmax(9rem,12rem)_1px_minmax(0,1fr)] lg:gap-x-10 lg:py-16 xl:gap-x-12"
           >
-            <div class="relative z-10 flex min-w-0 flex-col pb-10 lg:pb-0 lg:pr-8">
+            <div class="relative z-10 flex min-w-0 flex-col pb-10 max-lg:pb-5 lg:pb-0 lg:pr-8">
               <span class="inline-flex items-center gap-3 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-blue">
                 <span class="h-2 w-2 shrink-0 rounded-full bg-blue" aria-hidden="true"></span>
                 {{ lead.no.replace('№ ', 'NO. ') }}
               </span>
 
-              <div class="mt-10 grid min-w-0 grid-cols-1 gap-8 sm:grid-cols-3 lg:mt-14 lg:grid-cols-1">
+              <div class="mt-10 grid min-w-0 grid-cols-1 gap-8 max-lg:mt-5 max-lg:grid-cols-3 max-lg:gap-x-3 max-lg:gap-y-0 lg:mt-14 lg:grid-cols-1">
                 <div class="min-w-0">
                   <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
                     分类
                   </span>
-                  <span class="mt-2 block break-words font-mono text-sm leading-relaxed tracking-[0.12em] text-foreground">
+                  <span class="mt-2 block break-words font-mono text-sm leading-relaxed tracking-[0.12em] text-foreground max-lg:mt-1">
                     {{ lead.cat }}
                   </span>
                   <span
@@ -63,7 +63,7 @@
                   <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
                     日期
                   </span>
-                  <span class="mt-2 block break-words font-mono text-sm leading-relaxed tracking-[0.12em] text-foreground">
+                  <span class="mt-2 block break-words font-mono text-sm leading-relaxed tracking-[0.12em] text-foreground max-lg:mt-1 max-lg:whitespace-nowrap">
                     {{ lead.date }}
                   </span>
                 </div>
@@ -72,7 +72,7 @@
                   <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
                     阅读时间
                   </span>
-                  <span class="mt-2 block break-words font-mono text-sm uppercase leading-relaxed tracking-[0.12em] text-foreground">
+                  <span class="mt-2 block break-words font-mono text-sm uppercase leading-relaxed tracking-[0.12em] text-foreground max-lg:mt-1 max-lg:whitespace-nowrap">
                     {{ lead.read }}
                   </span>
                 </div>
@@ -81,12 +81,12 @@
 
             <span class="hidden bg-line lg:block" aria-hidden="true"></span>
 
-            <div class="relative z-10 min-w-0 pt-10 lg:pt-0">
+            <div class="relative z-10 min-w-0 pt-10 max-lg:pt-5 lg:pt-0">
               <div class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.24em] text-haze">
                 Latest / 最新记录
               </div>
               <h2
-                class="mt-10 max-w-5xl break-words text-balance font-sans text-3xl font-medium leading-[1.08] tracking-tight text-foreground transition-all duration-500 ease-out group-hover:text-blue sm:group-hover:translate-x-1 md:text-4xl lg:text-5xl"
+                class="mt-10 max-w-5xl break-words text-balance font-sans text-3xl font-medium leading-[1.08] tracking-tight text-foreground transition-all duration-500 ease-out group-hover:text-blue max-lg:mt-5 sm:group-hover:translate-x-1 md:text-4xl lg:text-5xl"
               >
                 {{ lead.title }}
               </h2>
@@ -110,9 +110,9 @@
       </div>
     </section>
 
-    <section class="page-gutter pb-28">
+    <section class="page-gutter pb-14 md:pb-16">
       <div class="page-frame">
-        <div class="reveal blog-reveal mb-4 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div class="reveal blog-reveal mb-4 flex flex-col gap-4 max-lg:mb-3 max-lg:gap-3 md:flex-row md:items-center md:justify-between">
           <span class="min-w-0 break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
             {{ t('blog.fieldNotes.archiveAll') }}
           </span>
@@ -178,17 +178,18 @@
           >
             <RouterLink
               :to="`/blog/${entry.slug}`"
-              class="group grid min-w-0 grid-cols-[minmax(3.75rem,auto)_minmax(0,1fr)] gap-x-3 gap-y-3 border-b border-line py-6 transition-colors duration-300 hover:bg-card md:grid-cols-12 md:items-center md:gap-2"
+              class="group grid min-w-0 grid-cols-[minmax(3.75rem,auto)_minmax(0,1fr)] gap-x-3 gap-y-3 py-6 transition-colors duration-300 hover:bg-card max-md:gap-y-4 max-md:py-5 md:grid-cols-12 md:items-center md:gap-2"
+              :class="{ 'border-b border-line': index < entries.length - 1 }"
             >
-              <span class="font-mono text-xs text-blue md:col-span-2">
+              <span class="font-mono text-xs text-blue max-md:order-1 max-md:self-center md:col-span-2">
                 {{ entry.no }}
               </span>
               <span
-                class="min-w-0 break-words text-balance text-base font-medium tracking-tight text-foreground transition-all duration-300 group-hover:text-blue sm:group-hover:translate-x-1 md:col-span-6 md:text-lg"
+                class="min-w-0 break-words text-balance text-base font-medium tracking-tight text-foreground transition-all duration-300 group-hover:text-blue max-md:order-3 max-md:col-span-2 sm:group-hover:translate-x-1 md:col-span-6 md:text-lg"
               >
                 {{ entry.title }}
               </span>
-              <span class="col-span-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 md:col-span-2">
+              <span class="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 max-md:order-4 max-md:col-span-1 max-md:gap-x-3 max-md:gap-y-0 md:col-span-2">
                 <span class="min-w-0 break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
                   {{ entry.cat }}
                 </span>
@@ -200,12 +201,12 @@
                 </span>
               </span>
               <span
-                class="min-w-0 text-left font-mono text-xs tracking-[0.12em] text-muted-foreground md:col-span-1 md:text-right"
+                class="min-w-0 text-left font-mono text-xs tracking-[0.12em] text-muted-foreground max-md:order-2 max-md:col-span-1 max-md:justify-self-end max-md:self-center max-md:whitespace-nowrap max-md:text-right md:col-span-1 md:text-right"
               >
                 {{ entry.date }}
               </span>
               <span
-                class="text-right font-mono text-sm text-muted-foreground transition-all duration-300 group-hover:text-blue sm:group-hover:translate-x-1 md:col-span-1"
+                class="text-right font-mono text-sm text-muted-foreground transition-all duration-300 group-hover:text-blue max-md:order-5 max-md:col-span-1 max-md:justify-self-end max-md:self-center sm:group-hover:translate-x-1 md:col-span-1"
               >
                 ↗
               </span>
