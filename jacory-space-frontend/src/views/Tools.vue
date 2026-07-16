@@ -9,10 +9,10 @@
       >
 
       <div class="relative z-10 grid w-full grid-cols-[minmax(0,1fr)] border-line lg:grid-cols-[360px_minmax(0,1fr)] lg:px-4 xl:grid-cols-[372px_minmax(0,1fr)] xl:px-8 2xl:grid-cols-[380px_minmax(0,1fr)] 2xl:px-20">
-        <aside class="self-start border-b border-line px-8 pb-14 pt-5 lg:sticky lg:top-[var(--navbar-height)] lg:flex lg:h-[calc(100svh-var(--navbar-height))] lg:flex-col lg:border-b-0 lg:border-r lg:px-[2.35rem] lg:pb-6 lg:pt-4 xl:px-10 2xl:px-12">
+        <aside class="self-start border-b-0 px-8 pb-0 pt-2 lg:sticky lg:top-[var(--navbar-height)] lg:flex lg:h-[calc(100svh-var(--navbar-height))] lg:flex-col lg:border-b-0 lg:border-r lg:px-[2.35rem] lg:pb-6 lg:pt-4 xl:px-10 2xl:px-12">
           <section data-tools-enter class="sidebar-hero-section">
-            <div class="grid gap-8 lg:gap-4 xl:gap-6">
-              <div class="grid gap-10 lg:gap-4 xl:gap-7">
+            <div class="grid gap-5 lg:gap-4 xl:gap-6">
+              <div class="grid gap-6 lg:gap-4 xl:gap-7">
                 <p class="font-mono text-xs tracking-[0.18em] text-blue">{{ t('tools.interfaceIndex.kicker') }}</p>
                 <h1 class="font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-[4.15rem] lg:text-[3.55rem] xl:text-[4.15rem]">
                   Interface
@@ -25,8 +25,8 @@
             </div>
           </section>
 
-          <section data-tools-enter class="sidebar-index-section" :aria-label="t('tools.interfaceIndex.categoriesAria')">
-            <nav class="space-y-1 pb-[var(--sidebar-border-gap)] pt-3 lg:space-y-0 lg:pt-1 xl:space-y-1 xl:pt-2">
+          <section data-tools-enter class="sidebar-index-section hidden lg:block" :aria-label="t('tools.interfaceIndex.categoriesAria')">
+            <nav class="space-y-1 pb-[var(--sidebar-border-gap)] pt-2 lg:space-y-0 lg:pt-1 xl:space-y-1 xl:pt-2">
               <button
                 v-for="panel in categoryPanels"
                 :key="panel.id"
@@ -44,16 +44,16 @@
                   <span class="font-mono text-sm font-semibold uppercase tracking-[0.2em]">{{ panel.label }}</span>
                   <span class="justify-self-end font-mono text-sm tabular-nums tracking-[0.12em]">{{ panel.count }}</span>
                 </span>
-                <span class="mt-[var(--sidebar-copy-gap)] block max-w-[18rem] pl-8 font-mono text-xs leading-relaxed tracking-[0.08em] text-muted-foreground">
+                <span class="mt-[var(--sidebar-copy-gap)] hidden max-w-[18rem] pl-8 font-mono text-xs leading-relaxed tracking-[0.08em] text-muted-foreground lg:block">
                   {{ panel.description }}
                 </span>
               </button>
             </nav>
 
             <div class="border-t border-line pt-[var(--sidebar-border-gap)]">
-              <div class="sidebar-index-item">
+              <div class="sidebar-index-item flex items-baseline justify-between lg:block">
                 <p class="font-mono text-sm uppercase leading-none tracking-[0.16em] text-muted-foreground">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</p>
-                <p class="mt-[var(--sidebar-update-gap)] font-mono text-sm uppercase leading-none tracking-[0.16em] text-foreground">
+                <p class="mt-0 font-mono text-sm uppercase leading-none tracking-[0.16em] text-foreground lg:mt-[var(--sidebar-update-gap)]">
                   {{ lastUpdate }}
                 </p>
               </div>
@@ -61,7 +61,7 @@
           </section>
         </aside>
 
-        <section class="flex min-w-0 flex-col px-6 pb-12 pt-16 md:px-9 md:pt-20 lg:h-[calc(100svh-var(--navbar-height))] lg:px-10 lg:pb-10 lg:pt-12 xl:px-11 2xl:px-12">
+        <section class="flex min-w-0 flex-col px-6 pb-12 pt-8 md:px-9 md:pt-20 lg:h-[calc(100svh-var(--navbar-height))] lg:px-10 lg:pb-10 lg:pt-12 xl:px-11 2xl:px-12">
           <div data-tools-enter class="min-h-0 flex-1">
             <LayeredSpatialIndex
               ref="spatialIndex"
@@ -69,6 +69,12 @@
               :active-filter="activeFilter"
               @select="handleSelect"
             />
+          </div>
+          <div class="mt-8 border-t border-line pt-4 pb-2 lg:hidden">
+            <div class="flex items-baseline justify-between font-mono text-xs uppercase tracking-[0.16em]">
+              <span class="text-muted-foreground">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</span>
+              <span class="text-foreground">{{ lastUpdate }}</span>
+            </div>
           </div>
         </section>
       </div>
@@ -105,7 +111,7 @@ const projects = [
     stack: ['Vue', 'GSAP', 'Design System'], version: 'v1.5.0', updated: '2026.06.15', href: '/'
   },
   {
-    id: '003', no: '003', title: 'Personal Blog', layer: 'WORKS', category: 'work', status: 'wip',
+    id: '003', no: '003', title: 'Personal Blog', layer: 'WORKS', category: 'work', status: 'live',
     pos: [2.4, 1.6], description: '沉淀开发笔记、项目复盘与日常观察，并持续完善个人写作与发布系统。',
     stack: ['Writing', 'Markdown', 'Publishing'], version: 'v0.1.0', updated: '2026.07.16', href: '/blog'
   },
@@ -202,15 +208,15 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .sidebar-hero-section {
-  @apply border-b border-line py-10 lg:shrink-0 lg:pb-5 lg:pt-0 xl:pb-7 xl:pt-0;
+  @apply border-b border-line py-6 lg:shrink-0 lg:pb-5 lg:pt-0 xl:pb-7 xl:pt-0;
 }
 
 .sidebar-index-section {
-  --sidebar-border-gap: 1.5rem;
+  --sidebar-border-gap: 0.75rem;
   --sidebar-copy-gap: 1rem;
   --sidebar-update-gap: 0.5rem;
 
-  @apply border-b-0 py-10 lg:min-h-0 lg:flex-1 lg:py-3 xl:py-5;
+  @apply border-b-0 py-6 lg:min-h-0 lg:flex-1 lg:py-3 xl:py-5;
 }
 
 @media (min-width: 1024px) {
@@ -226,6 +232,12 @@ onBeforeUnmount(() => {
 }
 
 .sidebar-index-item {
-  @apply block w-full py-6 text-left transition-colors duration-300 ease-premium lg:py-2.5 xl:py-2.5;
+  @apply block w-full py-2 text-left transition-colors duration-300 ease-premium lg:py-2.5 xl:py-2.5;
+}
+
+@media (max-width: 1023px) {
+  .sidebar-index-section {
+    --sidebar-copy-gap: 0.5rem;
+  }
 }
 </style>
