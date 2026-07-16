@@ -175,7 +175,7 @@ export default {
       life: '生活观察'
     },
     fieldNotes: {
-      journalLabel: '01 — 日志',
+      journalLabel: '02 — 手记',
       archiveOpen: '{count} 篇 / 归档已开放',
       titleLead: 'Field',
       titleAccent: ' Notes',
