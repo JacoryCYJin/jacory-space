@@ -175,7 +175,7 @@ export default {
       life: '日々の観察'
     },
     fieldNotes: {
-      journalLabel: '01 — ジャーナル',
+      journalLabel: '02 — ノート',
       archiveOpen: '{count}件 / アーカイブ公開中',
       titleLead: 'Field',
       titleAccent: ' Notes',
