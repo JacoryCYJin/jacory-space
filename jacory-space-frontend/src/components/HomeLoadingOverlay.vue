@@ -55,7 +55,8 @@ gsap.registerPlugin(CustomEase)
 
 const emit = defineEmits(['complete'])
 const loaderRoot = ref(null)
-const MIN_LOADING_DURATION = 4.8
+const DESKTOP_MIN_LOADING_DURATION = 3.8
+const MOBILE_MIN_LOADING_DURATION = 4.8
 const LOADER_EXIT_DURATION = 0.72
 let loaderContext
 let reducedMotionQuery
@@ -75,6 +76,8 @@ onMounted(() => {
     }
 
     const mobileQuery = window.matchMedia('(max-width: 767px)')
+    const minimumLoadingDuration = mobileQuery.matches ? MOBILE_MIN_LOADING_DURATION : DESKTOP_MIN_LOADING_DURATION
+    const strokeStagger = mobileQuery.matches ? 0.4 : 0.25
     const activeGeometry = loader.querySelector(mobileQuery.matches ? '.home-loader__geometry--mobile' : '.home-loader__geometry--desktop')
     const dividers = gsap.utils.toArray(activeGeometry?.querySelectorAll('.home-loader__dividers line') ?? [])
     const spiral = gsap.utils.toArray(activeGeometry?.querySelectorAll('.home-loader__spiral path') ?? [])
@@ -91,7 +94,7 @@ onMounted(() => {
     const timeline = gsap.timeline({ defaults: { ease: loaderEase } })
 
     dividers.forEach((divider, index) => {
-      const stepStart = index * 0.4
+      const stepStart = index * strokeStagger
 
       timeline
         .to(divider, {
@@ -110,7 +113,7 @@ onMounted(() => {
         duration: LOADER_EXIT_DURATION,
         pointerEvents: 'none',
         onComplete: () => emit('complete')
-      }, MIN_LOADING_DURATION - LOADER_EXIT_DURATION)
+      }, minimumLoadingDuration - LOADER_EXIT_DURATION)
   }, loader)
 })
 
