@@ -16,7 +16,7 @@
     <div
       v-if="isOpen"
       id="language-menu"
-      class="absolute right-0 top-full z-50 mt-2 w-max border border-line bg-background py-1 text-muted-foreground"
+      class="absolute bottom-full right-0 z-50 mb-2 w-max border border-line bg-background py-1 text-muted-foreground md:bottom-auto md:top-full md:mb-0 md:mt-2"
       role="menu"
       :aria-label="t('language.label')"
     >
@@ -51,25 +51,17 @@ const { locale, t } = useI18n()
 const isOpen = ref(false)
 const switcherRef = ref(null)
 
-const languageDetails = {
-  'zh-CN': {
-    shortLabel: 'ZH',
-    label: '中文'
-  },
-  'en-US': {
-    shortLabel: 'EN',
-    label: 'English'
-  },
-  'ja-JP': {
-    shortLabel: 'JP',
-    label: '日本語'
-  }
+const languageKey = (value) => value.split('-')[0]
+
+const languageShortLabel = (value) => {
+  const key = languageKey(value)
+  return key === 'ja' ? 'JP' : key.toUpperCase()
 }
 
 const languageOptions = computed(() => supportedLocales.map((value) => ({
   value,
-  shortLabel: languageDetails[value]?.shortLabel ?? value.slice(0, 2).toUpperCase(),
-  label: languageDetails[value]?.label ?? value
+  shortLabel: languageShortLabel(value),
+  label: t(`language.${languageKey(value)}`)
 })))
 
 const currentLanguage = computed(
