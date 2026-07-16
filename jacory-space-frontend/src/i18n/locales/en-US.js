@@ -4,7 +4,11 @@ export default {
     tools: 'Tools',
     videoParser: 'Video Parser',
     blog: 'Notes',
-    about: 'About'
+    about: 'About',
+    menu: {
+      open: 'Menu',
+      close: 'Close'
+    }
   },
   language: {
     label: 'Switch language',

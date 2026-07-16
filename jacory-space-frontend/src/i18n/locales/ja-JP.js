@@ -4,7 +4,11 @@ export default {
     tools: 'ツール',
     videoParser: '動画解析',
     blog: 'ノート',
-    about: '自己紹介'
+    about: '自己紹介',
+    menu: {
+      open: 'メニュー',
+      close: '閉じる'
+    }
   },
   language: {
     label: '言語を切り替える',

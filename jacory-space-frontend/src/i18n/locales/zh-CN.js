@@ -4,7 +4,11 @@ export default {
     tools: '工具',
     videoParser: '视频解析',
     blog: '手记',
-    about: '关于'
+    about: '关于',
+    menu: {
+      open: '菜单',
+      close: '关闭'
+    }
   },
   language: {
     label: '切换语言',

@@ -55,10 +55,15 @@
         type="button"
         class="flex items-center gap-2 md:hidden"
         :aria-expanded="mobileMenuOpen"
-        :aria-label="mobileMenuOpen ? '关闭菜单' : '打开菜单'"
+        :aria-label="mobileMenuLabel"
         @click="mobileMenuOpen = !mobileMenuOpen"
       >
-        <span class="tech text-xs">{{ mobileMenuOpen ? 'Close' : 'Menu' }}</span>
+        <span
+          class="font-mono text-xs text-muted-foreground transition-colors duration-300"
+          :class="isLatinLocale ? 'uppercase tracking-[0.14em]' : 'tracking-normal'"
+        >
+          {{ mobileMenuLabel }}
+        </span>
         <span class="relative block h-3 w-4">
           <span
             class="absolute left-0 block h-px w-full bg-foreground transition-all duration-300"
@@ -81,14 +86,14 @@
 
     <div
       class="overflow-hidden border-b border-line bg-background backdrop-blur-md transition-[max-height,opacity] duration-500 ease-out md:hidden"
-      :class="mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'"
+      :class="mobileMenuOpen ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0'"
     >
-      <nav aria-label="Mobile" class="flex flex-col px-5 py-2">
+      <nav aria-label="Mobile" class="flex flex-col px-5 py-2 pb-[calc(1rem+env(safe-area-inset-bottom))]">
         <router-link
           v-for="link in navLinks"
           :key="link.to"
           :to="link.to"
-          class="flex items-baseline justify-between border-b border-line py-4 last:border-b-0"
+          class="flex items-baseline justify-between border-b border-line py-3"
           :aria-current="isActive(link.to) ? 'page' : undefined"
           @click="mobileMenuOpen = false"
         >
@@ -131,7 +136,7 @@ const mobileMenuOpen = ref(false)
 const scrolled = ref(false)
 const scrollProgress = ref(0)
 const route = useRoute()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const navLinks = computed(() => [
   { to: '/', index: '00', label: t('nav.home') },
@@ -141,6 +146,8 @@ const navLinks = computed(() => [
 ])
 
 const isActive = (path) => (path === '/' ? route.path === '/' : route.path.startsWith(path))
+const isLatinLocale = computed(() => locale.value.startsWith('en'))
+const mobileMenuLabel = computed(() => t(mobileMenuOpen.value ? 'nav.menu.close' : 'nav.menu.open'))
 
 const updateScrollState = () => {
   const root = document.documentElement
