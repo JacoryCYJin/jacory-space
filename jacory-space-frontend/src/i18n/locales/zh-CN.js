@@ -60,10 +60,10 @@ export default {
         archived: '归档'
       },
       categoryDescriptions: {
-        all: '完整空间索引与全部条目。',
-        tools: '基础工具与界面元素。',
-        works: '已发布项目与案例研究。',
-        experiments: '研究、原型与探索。'
+        all: '工具、作品与实验的统一索引。',
+        tools: '为具体需求构建的实用工具。',
+        works: '完整项目、产品与创作实践。',
+        experiments: '正在验证的概念、原型与系统探索。'
       },
       summary: {
         entries: '条目',
