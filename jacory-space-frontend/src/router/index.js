@@ -5,6 +5,7 @@ import About from '../views/About.vue'
 import Blog from '../views/Blog.vue'
 import BlogPost from '../views/BlogPost.vue'
 import Tools from '../views/Tools.vue'
+import MinecraftSkinEditor from '../views/MinecraftSkinEditor.vue'
 
 const routes = [
   {
@@ -33,6 +34,11 @@ const routes = [
     path: '/tools',
     name: 'Tools',
     component: Tools
+  },
+  {
+    path: '/tools/minecraft-skin-editor',
+    name: 'MinecraftSkinEditor',
+    component: MinecraftSkinEditor
   },
   {
     path: '/blog',

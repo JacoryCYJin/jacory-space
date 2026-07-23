@@ -119,6 +119,11 @@ const projects = [
     id: '004', no: '004', title: 'Workflow System', layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
     pos: [6.2, 1.4], description: '沉淀可复用的任务步骤、自动化与验证节点，把重复工作组织成稳定的工作流。',
     stack: ['Process', 'Automation', 'Validation'], version: 'v0.1.0', updated: '2026.07.16', href: '/tools'
+  },
+  {
+    id: '005', no: '005', title: 'Minecraft Skin Studio', layer: 'TOOLS', category: 'tool', status: 'live',
+    pos: [1.4, -1.45], description: '在浏览器中绘制、预览并导出可直接用于 Minecraft 的 64 × 64 皮肤。',
+    stack: ['Vue', 'skinview3d', 'WebGL'], version: 'v0.1.0', updated: '2026.07.23', href: '/tools/minecraft-skin-editor'
   }
 ]
 

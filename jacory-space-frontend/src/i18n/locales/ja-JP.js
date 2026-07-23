@@ -558,5 +558,36 @@ export default {
       cookieUsageSaved: 'Cookie の利用方法を保存しました',
       confirmDeleteCookies: '{platform} の Cookie を削除しますか？'
     }
+  },
+  minecraftSkin: {
+    title: 'Minecraft スキンスタジオ',
+    import: 'PNG を読み込む',
+    export: 'スキンを書き出す',
+    saved: 'ローカル保存済み',
+    preview: '3D プレビュー',
+    coordinates: 'ピクセル座標',
+    model: 'モデル',
+    layers: 'レイヤー',
+    color: 'カラー',
+    textureMap: 'スキンテクスチャ',
+    classic: 'クラシックモデル',
+    slim: 'スリムモデル',
+    base: 'ベースレイヤー',
+    outer: '外側レイヤー',
+    brush: 'ブラシ',
+    eyedropper: 'スポイト',
+    eraser: '消しゴム',
+    settings: '設定',
+    close: '閉じる',
+    controls: 'ビュー操作',
+    grid: 'グリッド',
+    undo: '元に戻す',
+    redo: 'やり直す',
+    reset: 'リセット',
+    brushActive: 'クリックして描画',
+    eraserActive: 'クリックして消去',
+    canvasHint: 'テクスチャ上のピクセルをクリックすると、3D キャラクターも更新されます。',
+    webglError: '3D プレビューを初期化できませんでした。WebGL 対応を確認してページを更新してください。',
+    ready: 'READY'
   }
 }
