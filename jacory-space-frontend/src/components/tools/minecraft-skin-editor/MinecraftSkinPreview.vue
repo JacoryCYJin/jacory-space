@@ -40,10 +40,13 @@ function viewerModel() {
   return props.model === 'slim' ? 'slim' : 'default'
 }
 
-function updateSkin() {
+function updateSkinTexture() {
   if (!viewer || !props.textureCanvas) return
-  viewer.loadSkin(props.textureCanvas, { model: viewerModel() })
-  applyLayerVisibility()
+  const context = viewer.skinCanvas.getContext('2d')
+  context.clearRect(0, 0, viewer.skinCanvas.width, viewer.skinCanvas.height)
+  context.imageSmoothingEnabled = false
+  context.drawImage(props.textureCanvas, 0, 0)
+  viewer.skinTexture.needsUpdate = true
 }
 
 function updateModel() {
@@ -264,6 +267,7 @@ function onPointerDown(event) {
 function onPointerMove(event) {
   updateHover(event)
   if (event.pointerId !== drawingPointerId) return
+  if (props.activeTool === 'fill') return
   event.preventDefault()
   event.stopImmediatePropagation()
   const pixel = pixelAtPointer(event, props.activeTool === 'eyedropper')
@@ -353,7 +357,7 @@ onMounted(() => {
   }
 })
 
-watch(() => props.textureVersion, updateSkin)
+watch(() => props.textureVersion, updateSkinTexture)
 watch(() => props.model, () => {
   updateModel()
   applyLayerVisibility()
