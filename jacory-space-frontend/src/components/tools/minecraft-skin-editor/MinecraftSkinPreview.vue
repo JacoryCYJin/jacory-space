@@ -109,10 +109,11 @@ function createGroundGuide() {
   markerShape.closePath()
   const marker = new Mesh(
     new ShapeGeometry(markerShape),
-    new MeshBasicMaterial({ color: materialColor('--muted-foreground'), side: DoubleSide, transparent: true, opacity: 0.9, depthWrite: false })
+    new MeshBasicMaterial({ color: materialColor('--muted-foreground'), side: DoubleSide, transparent: true, opacity: 1, depthTest: false, depthWrite: false })
   )
   marker.position.set(0, GROUND_Y + 0.02, 6.5)
   marker.rotation.x = Math.PI / 2
+  marker.renderOrder = 2
   marker.raycast = () => {}
   guide.add(marker)
 
