@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { BufferGeometry, Float32BufferAttribute, LineBasicMaterial, LineSegments, Raycaster, Vector2, Vector3 } from 'skinview3d/node_modules/three/build/three.module.js'
+import { BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Group, LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, PlaneGeometry, Raycaster, ShaderMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'skinview3d/node_modules/three/build/three.module.js'
 import { Line2 } from 'skinview3d/node_modules/three/examples/jsm/lines/Line2.js'
 import { LineGeometry } from 'skinview3d/node_modules/three/examples/jsm/lines/LineGeometry.js'
 import { LineMaterial } from 'skinview3d/node_modules/three/examples/jsm/lines/LineMaterial.js'
@@ -35,6 +35,102 @@ let hoverOutline
 let targetZoom = 0.72
 let zoomAnimationFrame
 let pixelGridObjects = []
+let groundGuide
+
+const GROUND_Y = -16.5
+const GROUND_EXTENT = 2000
+const GROUND_CELL_SIZE = 10
+
+function materialColor(token) {
+  return getComputedStyle(mount.value).getPropertyValue(token).trim()
+}
+
+function createGroundGuide() {
+  if (!viewer || groundGuide) return
+  const guide = new Group()
+  const gridMaterial = new ShaderMaterial({
+    uniforms: {
+      uGridColor: { value: new Color(materialColor('--line-strong')) },
+      uXAxisColor: { value: new Color('#ef5350') },
+      uZAxisColor: { value: new Color('#43a75d') },
+      uCameraPosition: { value: new Vector3() }
+    },
+    extensions: { derivatives: true },
+    transparent: true,
+    depthWrite: false,
+    side: DoubleSide,
+    vertexShader: `
+      varying vec3 vWorldPosition;
+      void main() {
+        vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+        vWorldPosition = worldPosition.xyz;
+        gl_Position = projectionMatrix * viewMatrix * worldPosition;
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 uGridColor;
+      uniform vec3 uXAxisColor;
+      uniform vec3 uZAxisColor;
+      uniform vec3 uCameraPosition;
+      varying vec3 vWorldPosition;
+      void main() {
+        vec2 coordinate = vWorldPosition.xz / ${GROUND_CELL_SIZE.toFixed(1)};
+        vec2 derivative = fwidth(coordinate) * 1.85;
+        vec2 grid = abs(fract(coordinate - 0.5) - 0.5) / derivative;
+        float line = 1.0 - min(min(grid.x, grid.y), 1.0);
+        float axisWidthX = max(fwidth(vWorldPosition.z) * 1.4, 0.08);
+        float axisWidthZ = max(fwidth(vWorldPosition.x) * 1.4, 0.08);
+        float xAxis = 1.0 - smoothstep(axisWidthX, axisWidthX * 1.8, abs(vWorldPosition.z));
+        float zAxis = 1.0 - smoothstep(axisWidthZ, axisWidthZ * 1.8, abs(vWorldPosition.x));
+        float distanceFade = 1.0 - smoothstep(72.0, 500.0, length(vWorldPosition.xz - uCameraPosition.xz));
+        vec3 color = mix(uGridColor, uXAxisColor, xAxis * 0.5);
+        color = mix(color, uZAxisColor, zAxis * 0.5);
+        float alpha = max(line * 0.72, max(xAxis, zAxis) * 0.56) * distanceFade;
+        gl_FragColor = vec4(color, alpha);
+      }
+    `
+  })
+  const grid = new Mesh(new PlaneGeometry(GROUND_EXTENT, GROUND_EXTENT), gridMaterial)
+  grid.position.y = GROUND_Y
+  grid.rotation.x = -Math.PI / 2
+  grid.raycast = () => {}
+  grid.onBeforeRender = (_renderer, _scene, camera) => {
+    grid.position.x = Math.round(camera.position.x / GROUND_CELL_SIZE) * GROUND_CELL_SIZE
+    grid.position.z = Math.round(camera.position.z / GROUND_CELL_SIZE) * GROUND_CELL_SIZE
+    gridMaterial.uniforms.uCameraPosition.value.copy(camera.position)
+  }
+  guide.add(grid)
+
+  const markerShape = new Shape()
+  markerShape.moveTo(0, 1.15)
+  markerShape.lineTo(-1, -0.75)
+  markerShape.lineTo(0, -0.35)
+  markerShape.lineTo(1, -0.75)
+  markerShape.closePath()
+  const marker = new Mesh(
+    new ShapeGeometry(markerShape),
+    new MeshBasicMaterial({ color: materialColor('--muted-foreground'), side: DoubleSide, transparent: true, opacity: 0.9, depthWrite: false })
+  )
+  marker.position.set(0, GROUND_Y + 0.02, 6.5)
+  marker.rotation.x = Math.PI / 2
+  marker.raycast = () => {}
+  guide.add(marker)
+
+  viewer.scene.add(guide)
+  groundGuide = guide
+}
+
+function clearGroundGuide() {
+  if (!groundGuide) return
+  viewer?.scene.remove(groundGuide)
+  groundGuide.onBeforeRender = null
+  groundGuide.traverse((object) => {
+    object.geometry?.dispose()
+    if (Array.isArray(object.material)) object.material.forEach((material) => material.dispose())
+    else object.material?.dispose()
+  })
+  groundGuide = undefined
+}
 
 function viewerModel() {
   return props.model === 'slim' ? 'slim' : 'default'
@@ -341,6 +437,7 @@ onMounted(() => {
     hoverOutline.renderOrder = 1
     hoverOutline.visible = false
     viewer.scene.add(hoverOutline)
+    createGroundGuide()
     applyLayerVisibility()
     syncPixelGrid()
     canvas.value.addEventListener('contextmenu', (event) => event.preventDefault())
@@ -378,6 +475,7 @@ onBeforeUnmount(() => {
   canvas.value?.removeEventListener('wheel', onWheel, true)
   if (zoomAnimationFrame) window.cancelAnimationFrame(zoomAnimationFrame)
   clearPixelGrid()
+  clearGroundGuide()
   if (hoverOutline) {
     viewer?.scene.remove(hoverOutline)
     hoverOutline.geometry.dispose()
