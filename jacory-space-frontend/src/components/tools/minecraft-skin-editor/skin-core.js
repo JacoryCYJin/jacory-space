@@ -49,6 +49,67 @@ export const SKIN_PARTS = {
   }
 }
 
+const MIRROR_PARTS = {
+  head: 'head', body: 'body', rightArm: 'leftArm', leftArm: 'rightArm', rightLeg: 'leftLeg', leftLeg: 'rightLeg'
+}
+
+const MIRROR_FACES = {
+  top: 'top', bottom: 'bottom', right: 'left', front: 'front', left: 'right', back: 'back'
+}
+
+export function findSkinFaceAtPixel(pixel, layer) {
+  for (const [partName, part] of Object.entries(SKIN_PARTS)) {
+    for (const [face, rect] of Object.entries(part[layer])) {
+      const [x, y, width, height] = rect
+      if (pixel.x >= x && pixel.x < x + width && pixel.y >= y && pixel.y < y + height) {
+        return { partName, face, rect, localX: pixel.x - x, localY: pixel.y - y }
+      }
+    }
+  }
+  return null
+}
+
+export function mirrorSkinPixel(pixel, layer) {
+  const source = findSkinFaceAtPixel(pixel, layer)
+  if (!source) return null
+  const targetPart = SKIN_PARTS[MIRROR_PARTS[source.partName]]
+  const targetRect = targetPart[layer][MIRROR_FACES[source.face]]
+  const [x, y, width] = targetRect
+  return { x: x + width - source.localX - 1, y: y + source.localY }
+}
+
+function samePixel(data, offset, red, green, blue, alpha) {
+  return data[offset] === red && data[offset + 1] === green && data[offset + 2] === blue && data[offset + 3] === alpha
+}
+
+export function floodFillSkinFace(canvas, pixel, layer, color) {
+  const face = findSkinFaceAtPixel(pixel, layer)
+  if (!face) return false
+  const [originX, originY, width, height] = face.rect
+  const context = canvas.getContext('2d', { willReadFrequently: true })
+  const image = context.getImageData(originX, originY, width, height)
+  const startX = face.localX
+  const startY = face.localY
+  const startOffset = (startY * width + startX) * 4
+  const [red, green, blue, alpha] = image.data.slice(startOffset, startOffset + 4)
+  const queue = [[startX, startY]]
+  const visited = new Set()
+  context.fillStyle = color
+
+  while (queue.length) {
+    const [x, y] = queue.pop()
+    const key = `${x}:${y}`
+    if (visited.has(key) || x < 0 || y < 0 || x >= width || y >= height) continue
+    visited.add(key)
+    const offset = (y * width + x) * 4
+    if (!samePixel(image.data, offset, red, green, blue, alpha)) continue
+    context.fillRect(originX + x, originY + y, 1, 1)
+    queue.push([x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1])
+  }
+
+  return visited.size > 0
+}
+
 export function createSkinCanvas() {
   const canvas = document.createElement('canvas')
   canvas.width = SKIN_SIZE
