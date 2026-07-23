@@ -558,5 +558,36 @@ export default {
       cookieUsageSaved: 'Cookie 使用方式已保存',
       confirmDeleteCookies: '确定要删除 {platform} 的 Cookies 吗？'
     }
+  },
+  minecraftSkin: {
+    title: 'Minecraft 皮肤工作台',
+    import: '导入 PNG',
+    export: '导出皮肤',
+    saved: '本地自动保存',
+    preview: '3D 预览',
+    coordinates: '像素坐标',
+    model: '模型',
+    layers: '图层',
+    color: '颜色',
+    textureMap: '皮肤纹理图',
+    classic: '经典模型',
+    slim: '纤细模型',
+    base: '基础层',
+    outer: '外层覆盖',
+    brush: '画笔',
+    eyedropper: '吸取颜色',
+    eraser: '橡皮擦',
+    settings: '设置',
+    close: '关闭',
+    controls: '镜头操作',
+    grid: '网格',
+    undo: '撤销',
+    redo: '重做',
+    reset: '重置',
+    brushActive: '点击像素绘制',
+    eraserActive: '点击像素擦除',
+    canvasHint: '在纹理图上点击像素，中央的 3D 人物会同步更新。',
+    webglError: '当前浏览器无法初始化 3D 预览，请检查 WebGL 支持后刷新页面。',
+    ready: 'READY'
   }
 }

@@ -558,5 +558,36 @@ export default {
       cookieUsageSaved: 'Cookie mode updated',
       confirmDeleteCookies: 'Delete cookies for {platform}?'
     }
+  },
+  minecraftSkin: {
+    title: 'Minecraft Skin Studio',
+    import: 'Import PNG',
+    export: 'Export Skin',
+    saved: 'Saved locally',
+    preview: '3D Preview',
+    coordinates: 'Pixel Coordinates',
+    model: 'Model',
+    layers: 'Layers',
+    color: 'Color',
+    textureMap: 'Skin Texture Map',
+    classic: 'Classic model',
+    slim: 'Slim model',
+    base: 'Base layer',
+    outer: 'Outer layer',
+    brush: 'Brush',
+    eyedropper: 'Eyedropper',
+    eraser: 'Eraser',
+    settings: 'Settings',
+    close: 'Close',
+    controls: 'View controls',
+    grid: 'Grid',
+    undo: 'Undo',
+    redo: 'Redo',
+    reset: 'Reset',
+    brushActive: 'Click pixels to paint',
+    eraserActive: 'Click pixels to erase',
+    canvasHint: 'Click a pixel in the texture map and the 3D character will update in sync.',
+    webglError: 'The 3D preview could not initialize. Check WebGL support and refresh the page.',
+    ready: 'READY'
   }
 }
