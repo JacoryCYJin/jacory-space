@@ -574,6 +574,8 @@ export default {
     model: 'モデル',
     layers: 'レイヤー',
     outerDisplay: '外側レイヤー表示',
+    outerDisplayOn: '表示',
+    outerDisplayOff: '非表示',
     outerVisibility: '外側レイヤーの表示部位',
     outerVisibilityOn: '外側レイヤーを表示',
     outerVisibilityOff: '外側レイヤーを非表示',

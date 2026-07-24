@@ -574,6 +574,8 @@ export default {
     model: 'Model',
     layers: 'Layers',
     outerDisplay: 'Outer layer display',
+    outerDisplayOn: 'Show',
+    outerDisplayOff: 'Hide',
     outerVisibility: 'Outer visibility',
     outerVisibilityOn: 'Show outer layer',
     outerVisibilityOff: 'Hide outer layer',
