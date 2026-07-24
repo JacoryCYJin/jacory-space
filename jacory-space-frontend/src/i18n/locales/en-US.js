@@ -666,6 +666,7 @@ export default {
     aiNetworkError: 'Could not connect to the API. This may be a network or browser CORS restriction.',
     aiVisionUnsupported: 'This model cannot view images. Use a vision model in connection settings, or turn off “Let AI view the current skin”.',
     aiPlanInvalid: 'The AI returned an unusable edit plan. Generate again.',
+    aiPlanTruncated: 'The AI output reached its length limit. Reduce the edit scope and try again.',
     aiGenerationFailed: 'Could not generate a plan. Check connection settings and try again.',
     aiValidateApply: 'Validate and apply',
     aiLoadExample: 'Load example',

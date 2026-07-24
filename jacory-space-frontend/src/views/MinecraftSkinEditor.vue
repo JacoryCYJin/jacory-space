@@ -59,7 +59,7 @@
               <span :class="['h-1.5 w-1.5 rounded-full', !showOuterLayer ? 'bg-blue' : 'bg-line-strong']" aria-hidden="true" />
               {{ t('minecraftSkin.outerDisplayOff') }}
             </button>
-            <button type="button" :aria-pressed="showOuterLayer" :class="['flex h-10 items-center justify-center gap-2 text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', showOuterLayer ? 'text-blue' : 'text-muted-foreground hover:text-foreground']" @click="showOuterLayer = true">
+            <button type="button" :aria-pressed="showOuterLayer" :class="['flex h-10 items-center justify-center gap-2 text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', showOuterLayer ? 'text-blue' : 'text-muted-foreground hover:text-foreground']" @click="showAllOuterLayers">
               <span :class="['h-1.5 w-1.5 rounded-full', showOuterLayer ? 'bg-blue' : 'bg-line-strong']" aria-hidden="true" />
               {{ t('minecraftSkin.outerDisplayOn') }}
             </button>
@@ -222,6 +222,97 @@ const RECENT_COLORS_STORAGE_KEY = 'jacory-space.minecraft-skin-studio.recent-col
 const MAX_RECENT_COLORS = 8
 const modelIconImages = new Map()
 const isDevToolsEnabled = isDevelopment
+const AI_SYSTEM_PROMPT = `# Minecraft Skin Art Director
+
+## 身份
+
+你是一位顶级 Minecraft 像素皮肤设计师。你擅长从现有皮肤中识别角色的主色、材质、轮廓和视觉语言，并把用户的自然语言需求转化为有辨识度、可穿戴、符合 Minecraft 像素美学的设计。
+
+## 设计目标
+
+- 不做机械换色：为指定部位建立明确的材质、明暗和细节层级。
+- 尊重原有角色：用户要求保留的部位必须保持原样；局部改造必须与其余皮肤协调。
+- 遵循像素皮肤语言：色板克制、轮廓清晰、明暗明确，不制造杂乱的零碎像素。
+- 根据需求优先选择护甲、夹克、科技纹样或边饰等合适视觉方案。
+
+## 通用设计原则
+
+- 先分析当前皮肤的主色、明暗关系、材质感与角色辨识特征，再决定修改方案。
+- 用户指定的颜色、风格或主题是设计方向，不等于把目标部位直接填成单一高饱和色。
+- 每次局部修改都要建立主体色、阴影色，以及高光或点缀色的层次关系。
+- 新增部位应与未修改部位在冷暖、明度、材质或少量点缀色上建立视觉联系。
+- 优先保持角色整体轮廓和可读性；除非用户明确要求，不让单个部位抢走全身视觉重心。
+- 外层用于护甲、衣物和饰件；基础层只用于角色本体的改色或重绘。
+- 设计结果必须服务于用户请求，同时尊重编辑器实际支持的纹样与操作能力。
+
+## 方案选择
+
+- 先选择最适合任务的操作，再生成字段。
+- 设计任务优先使用 style，由编辑器绘制稳定、完整的像素风样式。
+- 需要保留原有材质、只调整颜色关系时使用 palette。
+- 只有无法由 style 表达的小型标志或局部细节才使用 patch。
+
+## 输入理解
+
+用户消息包含 userRequest、当前 skin 的结构化信息，以及可选的当前皮肤 UV 图和参考图。
+
+- 将图片视为当前皮肤的真实视觉状态，优先保留其可识别的配色和细节。
+- 将 userRequest 视为本次修改范围；未被明确要求修改的部位必须保留。
+- 在内部完成设计判断，不要输出设计说明、分析过程或推理过程。
+
+## 编辑器能力边界
+
+- BodyPart 只能是：head、body、rightArm、leftArm、rightLeg、leftLeg。
+- layer 只能是：base、outer。
+- 可用的快速设计纹样只有：armor、jacket、tech、trim。
+
+## 操作协议
+
+每个 operation 都必须包含 type、layer、targets。targets 是一个或多个 BodyPart。每个 operation 必须且只能匹配以下一种格式。
+
+### style：绘制稳定的像素风样式
+
+- pattern 只能是 armor、jacket、tech、trim。
+- palette 必须含有 base；可选 shadow、highlight、accent。
+- 禁止使用 replacements 或 pixels。
+
+### palette：替换既有颜色
+
+- replacements 不得为空。
+- 禁止使用 pattern、palette 或 pixels。
+
+### patch：修改少量指定像素
+
+- pixels 必须有 1 至 24 项，且每个像素必须位于 targets 指定部位内。
+
+### mirror：镜像一个部位
+
+\`{"type":"mirror","layer":"outer","targets":["rightArm"]}\`
+
+- targets 只能有一个部位。
+- 禁止使用 replacements、palette 或 pixels。
+
+### clear：清空目标部位图层
+
+\`{"type":"clear","layer":"outer","targets":["rightArm"],"color":"#00000000"}\`
+
+- color 可省略。
+
+## 强制约束
+
+- 只修改用户明确要求的部位。
+- 未修改部位必须列入 preserve。
+- operations 的 targets 不得出现在 preserve。
+- 不同操作的字段绝不能混用。
+- operations 不得为空。
+
+## 交付要求
+
+只返回一个合法 JSON 对象，严格符合以下顶层结构：
+
+\`{"operations":[...],"preserve":[...]}\`
+
+不要输出 Markdown、解释、代码围栏或额外字段。`
 
 const { t } = useI18n()
 const fileInput = ref(null)
@@ -354,6 +445,12 @@ function toggleOuterPart(partName) {
 
 function toggleAllOuterParts() {
   visibleOuterParts.value = allOuterPartsSelected.value ? [] : skinParts.value.map((part) => part.id)
+  textureVersion.value += 1
+}
+
+function showAllOuterLayers() {
+  showOuterLayer.value = true
+  visibleOuterParts.value = skinParts.value.map((part) => part.id)
   textureVersion.value += 1
 }
 
@@ -554,9 +651,8 @@ function collectSkinAiContext() {
 
 function buildAiUserContent() {
   const text = JSON.stringify({
-    request: aiPrompt.value.trim(),
-    skin: collectSkinAiContext(),
-    responseRule: '从 request 中自行理解设计风格、目标部位和基础层或外层；operations 必须声明 targets、layer 和实际操作。'
+    userRequest: aiPrompt.value.trim(),
+    skin: collectSkinAiContext()
   })
   if (!aiUseVision.value) return text
   const content = [{ type: 'text', text }]
@@ -576,14 +672,27 @@ function isVisionModel(modelName) {
   return /(?:vl|vision|omni|glm-[\d.]+v|deepseek[-_]?vl|step3)/i.test(modelName)
 }
 
-function isQwen3Model(modelName) {
-  return /qwen3/i.test(modelName)
+function supportsJsonMode(modelName) {
+  return !isVisionModel(modelName) || /^Qwen\/Qwen3-VL-/i.test(modelName)
+}
+
+function createAiRequestPayload(modelName, messages) {
+  return {
+    model: modelName,
+    temperature: 0.2,
+    max_tokens: aiUseVision.value ? 4096 : 1600,
+    stream: true,
+    ...(supportsJsonMode(modelName) ? { response_format: { type: 'json_object' } } : {}),
+    ...(modelName.startsWith('Qwen/Qwen3') && !isVisionModel(modelName) ? { enable_thinking: false } : {}),
+    messages
+  }
 }
 
 function formatAiGenerationError(error) {
   const message = error instanceof Error ? error.message : String(error || '')
   if (/not a vlm|vision language model|text-only prompts/i.test(message)) return t('minecraftSkin.aiVisionUnsupported')
-  if (/json|plan\.operations|invalid ai skin edit plan/i.test(message)) return t('minecraftSkin.aiPlanInvalid')
+  if (/truncated|output limit/i.test(message)) return t('minecraftSkin.aiPlanTruncated')
+  if (/json|plan\.operations|invalid ai skin edit plan|operations\[|preserve contains/i.test(message)) return t('minecraftSkin.aiPlanInvalid')
   return t('minecraftSkin.aiGenerationFailed')
 }
 
@@ -601,6 +710,44 @@ function recordAiDiagnostic(partial) {
     ...aiRequestDiagnostic.value,
     ...partial
   }
+}
+
+async function requestAiPlanContent(modelName, messages, attempt = 'initial') {
+  const requestPayload = createAiRequestPayload(modelName, messages)
+  if (isDevToolsEnabled) console.log('[Minecraft AI] request', { attempt, endpoint: normalizeAiEndpoint(aiBaseUrl.value), payload: requestPayload })
+  const response = await fetch(normalizeAiEndpoint(aiBaseUrl.value), {
+    method: 'POST',
+    signal: aiRequestController.signal,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${aiApiKey.value.trim()}`
+    },
+    body: JSON.stringify(requestPayload)
+  })
+  const traceId = response.headers.get('x-siliconcloud-trace-id') || ''
+  if (isDevToolsEnabled) {
+    console.log('[Minecraft AI] response', { attempt, status: response.status, contentType: response.headers.get('content-type'), traceId })
+    response.clone().text().then((raw) => console.log('[Minecraft AI] raw SSE response', { attempt, raw })).catch((error) => console.error('[Minecraft AI] raw SSE read failed', error))
+  }
+  if (!response.ok) {
+    const payload = await response.json().catch(() => null)
+    const providerError = payload?.error || payload || {}
+    const detail = providerError.message || payload?.message || `HTTP ${response.status}`
+    recordAiDiagnostic({ status: response.status, traceId, code: providerError.code || providerError.type || 'request_failed', detail: sanitizeDiagnosticDetail(detail) })
+    throw new Error(detail)
+  }
+  recordAiDiagnostic({ status: response.status, traceId, code: 'stream_connected', detail: 'Waiting for model output.' })
+  aiGenerationStatus.value = t('minecraftSkin.aiWaitingStream')
+  const { content, finishReason } = await readAiStream(response, (partialContent) => {
+    aiPlanText.value = partialContent
+    aiGenerationStatus.value = t('minecraftSkin.aiReceiving')
+  }, () => {
+    aiGenerationStatus.value = t('minecraftSkin.aiThinking')
+  })
+  if (isDevToolsEnabled) console.log('[Minecraft AI] assembled model content', { attempt, content })
+  if (finishReason === 'length') throw new Error('AI response was truncated because it reached the output limit.')
+  if (!content) throw new Error('AI response did not contain a plan.')
+  return content
 }
 
 async function generateAiPlan() {
@@ -630,60 +777,19 @@ async function generateAiPlan() {
   aiRequestController = new AbortController()
   try {
     const modelName = aiModel.value.trim()
-    const response = await fetch(normalizeAiEndpoint(aiBaseUrl.value), {
-      method: 'POST',
-      signal: aiRequestController.signal,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${aiApiKey.value.trim()}`
-      },
-      body: JSON.stringify({
-        model: modelName,
-        temperature: 0.2,
-        max_tokens: 4096,
-        stream: true,
-        ...(!isVisionModel(modelName) ? { response_format: { type: 'json_object' } } : {}),
-        ...(isQwen3Model(modelName) ? { enable_thinking: false } : {}),
-        messages: [
-          {
-            role: 'system',
-            content: '你是 Minecraft 皮肤编辑器的结构化设计助手。只返回一个可解析的 JSON 对象，不要 Markdown，不要解释文字。必须包含 operations 数组和 preserve 数组。根据用户 request 自行理解设计风格、目标部位及基础层或外层；operations 中必须明确声明 targets 和 layer。只修改用户明确要求的部位；如果用户要求全身修改，才可以使用全部六个部位。preserve 必须包含所有未被修改的身体部位。允许的 type 只有 style、palette、patch、mirror、clear。设计任务优先使用 style：{"type":"style","pattern":"armor|tech|jacket|trim","layer":"outer","targets":["rightArm"],"palette":{"base":"#7f2f37","shadow":"#4a1820","highlight":"#c85b5b","accent":"#e8b3a7"}}。style 会由编辑器绘制稳定的像素纹样，不要用大量 patch 模拟护甲。palette 必须包含非空 replacements，格式为 [{"from":"#rrggbb","to":"#rrggbb"}]；patch 必须包含非空 pixels，最多 24 个像素；mirror 不要包含 replacements 或 pixels；clear 可以选填 color。不要输出空数组。'
-          },
-          {
-            role: 'user',
-            content: buildAiUserContent()
-          }
-        ]
-      })
-    })
-    const traceId = response.headers.get('x-siliconcloud-trace-id') || ''
-    if (!response.ok) {
-      const payload = await response.json().catch(() => null)
-      const providerError = payload?.error || payload || {}
-      const detail = providerError.message || payload?.message || `HTTP ${response.status}`
-      recordAiDiagnostic({ status: response.status, traceId, code: providerError.code || providerError.type || 'request_failed', detail: sanitizeDiagnosticDetail(detail) })
-      throw new Error(detail)
-    }
-    recordAiDiagnostic({ status: response.status, traceId, code: 'stream_connected', detail: 'Waiting for model output.' })
-    aiGenerationStatus.value = t('minecraftSkin.aiWaitingStream')
-    const streamResult = await readAiStream(response, (partialContent) => {
-      aiPlanText.value = partialContent
-      aiGenerationStatus.value = t('minecraftSkin.aiReceiving')
-    }, () => {
-      aiGenerationStatus.value = t('minecraftSkin.aiThinking')
-    })
-    const content = streamResult.content
-    if (!content && streamResult.reasoning) {
-      recordAiDiagnostic({ status: response.status, traceId, code: 'reasoning_only', detail: 'Model returned reasoning but no final content.' })
-      throw new Error('AI response contained reasoning but no final content.')
-    }
-    if (!content) throw new Error('AI response did not contain a plan.')
+    const userContent = buildAiUserContent()
+    const messages = [
+      { role: 'system', content: AI_SYSTEM_PROMPT },
+      { role: 'user', content: userContent }
+    ]
+    const content = await requestAiPlanContent(modelName, messages)
     const plan = typeof content === 'string' ? JSON.parse(content) : content
     const validation = validateAiSkinEditPlan(plan)
     if (!validation.valid) throw new Error(validation.errors.join('; '))
     aiPlanText.value = JSON.stringify(plan, null, 2)
     previewAiPlan(plan)
   } catch (error) {
+    if (isDevToolsEnabled) console.error('[Minecraft AI] generation failed', error)
     if (error?.name === 'AbortError') {
       aiPlanError.value = t('minecraftSkin.aiCancelled')
     } else if (error instanceof TypeError) {
@@ -710,17 +816,16 @@ async function readAiStream(response, onContent, onReasoning) {
   const decoder = new TextDecoder()
   let buffer = ''
   let content = ''
-  let reasoning = ''
+  let finishReason = ''
   const processLine = (line) => {
     if (!line.startsWith('data:')) return
     const data = line.slice(5).trim()
     if (!data || data === '[DONE]') return
     const chunk = JSON.parse(data)
-    const message = chunk.choices?.[0]?.delta || chunk.choices?.[0]?.message || {}
-    if (message.reasoning_content || message.reasoning) {
-      reasoning += message.reasoning_content || message.reasoning
-      onReasoning?.()
-    }
+    const choice = chunk.choices?.[0] || {}
+    const message = choice.delta || choice.message || {}
+    if (choice.finish_reason) finishReason = choice.finish_reason
+    if (message.reasoning_content || message.reasoning) onReasoning?.()
     if (message.content) {
       content += message.content
       onContent(content)
@@ -735,7 +840,7 @@ async function readAiStream(response, onContent, onReasoning) {
     if (done) break
   }
   if (buffer.trim()) processLine(buffer.trim())
-  return { content, reasoning }
+  return { content, finishReason }
 }
 
 function redraw() {
@@ -769,6 +874,7 @@ async function handleImport(event) {
   if (!file) return
   await importSkinFile(file, skinCanvas.value)
   discardAiProposal()
+  showAllOuterLayers()
   history.value = []
   redoStack.value = []
   redraw()
