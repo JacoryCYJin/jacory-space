@@ -574,6 +574,8 @@ export default {
     model: '模型',
     layers: '图层',
     outerDisplay: '外层显示',
+    outerDisplayOn: '显示',
+    outerDisplayOff: '关闭',
     outerVisibility: '外层显示区域',
     outerVisibilityOn: '开启外层显示',
     outerVisibilityOff: '关闭外层显示',

@@ -54,9 +54,14 @@
       <section v-if="isLayerPanelOpen" class="pointer-events-auto absolute left-20 top-20 z-20 w-64 border border-line bg-card/95 backdrop-blur-sm">
         <div class="border-b border-line p-4">
           <p class="tech">01 — {{ t('minecraftSkin.outerDisplay') }}</p>
-          <div class="mt-3 grid grid-cols-2 gap-2">
-            <button type="button" :aria-pressed="showOuterLayer" :class="['col-span-2 border px-3 py-2 text-left text-xs transition-colors', showOuterLayer ? 'border-blue text-blue' : 'border-line text-muted-foreground hover:border-line-strong hover:text-foreground']" @click="showOuterLayer = !showOuterLayer">
-              <span class="block">{{ showOuterLayer ? t('minecraftSkin.outerVisibilityOn') : t('minecraftSkin.outerVisibilityOff') }}</span>
+          <div class="mt-3 grid grid-cols-2 border border-line">
+            <button type="button" :aria-pressed="!showOuterLayer" :class="['flex h-10 items-center justify-center gap-2 border-r border-line text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', !showOuterLayer ? 'text-blue' : 'text-muted-foreground hover:text-foreground']" @click="showOuterLayer = false">
+              <span :class="['h-1.5 w-1.5 rounded-full', !showOuterLayer ? 'bg-blue' : 'bg-line-strong']" aria-hidden="true" />
+              {{ t('minecraftSkin.outerDisplayOff') }}
+            </button>
+            <button type="button" :aria-pressed="showOuterLayer" :class="['flex h-10 items-center justify-center gap-2 text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', showOuterLayer ? 'text-blue' : 'text-muted-foreground hover:text-foreground']" @click="showOuterLayer = true">
+              <span :class="['h-1.5 w-1.5 rounded-full', showOuterLayer ? 'bg-blue' : 'bg-line-strong']" aria-hidden="true" />
+              {{ t('minecraftSkin.outerDisplayOn') }}
             </button>
           </div>
         </div>
