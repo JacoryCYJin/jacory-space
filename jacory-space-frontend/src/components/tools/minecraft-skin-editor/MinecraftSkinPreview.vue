@@ -19,6 +19,8 @@ const props = defineProps({
   textureVersion: { type: Number, default: 0 },
   model: { type: String, default: 'classic' },
   activeLayer: { type: String, default: 'base' },
+  showOuterLayer: { type: Boolean, default: false },
+  visibleOuterParts: { type: Array, default: () => [] },
   activeTool: { type: String, default: 'brush' },
   showGrid: { type: Boolean, default: false }
 })
@@ -151,11 +153,29 @@ function updateModel() {
   viewer.playerObject.skin.modelType = viewerModel()
 }
 
+function capturePreview() {
+  try {
+    return canvas.value?.toDataURL('image/png') || null
+  } catch {
+    return null
+  }
+}
+
 function applyLayerVisibility() {
   if (!viewer) return
   const skin = viewer.playerObject.skin
   skin.setInnerLayerVisible(true)
-  skin.setOuterLayerVisible(props.activeLayer === 'outer')
+  const parts = [
+    ['head', skin.head],
+    ['body', skin.body],
+    ['rightArm', skin.rightArm],
+    ['leftArm', skin.leftArm],
+    ['rightLeg', skin.rightLeg],
+    ['leftLeg', skin.leftLeg]
+  ]
+  parts.forEach(([partName, part]) => {
+    part.outerLayer.visible = props.showOuterLayer && props.visibleOuterParts.includes(partName)
+  })
 }
 
 function resize() {
@@ -167,7 +187,7 @@ function resize() {
 function activeMeshTargets() {
   const skin = viewer.playerObject.skin
   const parts = [skin.head, skin.body, skin.rightArm, skin.leftArm, skin.rightLeg, skin.leftLeg]
-  return parts.map((part) => props.activeLayer === 'outer' ? part.outerLayer : part.innerLayer)
+  return parts.map((part) => part.outerLayer.visible ? part.outerLayer : part.innerLayer)
 }
 
 function visibleMeshTargets() {
@@ -461,10 +481,14 @@ watch(() => props.model, () => {
   applyLayerVisibility()
   syncPixelGrid()
 })
-watch(() => [props.showGrid, props.activeLayer], () => {
+watch(() => [props.showGrid, props.activeLayer, props.showOuterLayer], () => {
   applyLayerVisibility()
   syncPixelGrid()
 })
+watch(() => props.visibleOuterParts, () => {
+  applyLayerVisibility()
+  syncPixelGrid()
+}, { deep: true })
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
@@ -484,4 +508,6 @@ onBeforeUnmount(() => {
   }
   viewer?.dispose()
 })
+
+defineExpose({ capturePreview })
 </script>
