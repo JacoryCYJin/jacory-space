@@ -666,6 +666,7 @@ export default {
     aiNetworkError: '无法连接 API，可能是网络或浏览器跨域限制。',
     aiVisionUnsupported: '当前模型不支持看图。请在连接设置中使用视觉模型，或关闭“让 AI 查看当前皮肤”。',
     aiPlanInvalid: 'AI 返回的编辑方案无法使用，请重新生成。',
+    aiPlanTruncated: 'AI 输出达到长度上限而被截断。请缩小修改范围后重试。',
     aiGenerationFailed: '生成方案失败，请检查连接设置后重试。',
     aiValidateApply: '校验并应用',
     aiLoadExample: '载入示例',
