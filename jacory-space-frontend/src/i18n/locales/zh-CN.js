@@ -649,7 +649,7 @@ export default {
     aiAppliedLabel: '已应用',
     aiRawPlan: '查看原始 JSON',
     aiPreviewPlan: '预览 JSON 方案',
-    aiApiKeyPlaceholder: 'SiliconFlow API Key（仅保存在当前页面）',
+    aiApiKeyPlaceholder: 'API Key（仅保存在当前页面）',
     aiBaseUrlPlaceholder: 'Base URL',
     aiModelPlaceholder: '模型名称',
     aiGenerate: '生成方案',

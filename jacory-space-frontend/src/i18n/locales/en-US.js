@@ -649,7 +649,7 @@ export default {
     aiAppliedLabel: 'Applied',
     aiRawPlan: 'View raw JSON',
     aiPreviewPlan: 'Preview JSON plan',
-    aiApiKeyPlaceholder: 'SiliconFlow API key (kept in this page only)',
+    aiApiKeyPlaceholder: 'API key (kept on this page only)',
     aiBaseUrlPlaceholder: 'Base URL',
     aiModelPlaceholder: 'Model name',
     aiGenerate: 'Generate plan',

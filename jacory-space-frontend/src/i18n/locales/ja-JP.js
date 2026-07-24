@@ -649,7 +649,7 @@ export default {
     aiAppliedLabel: '適用済み',
     aiRawPlan: '元の JSON を表示',
     aiPreviewPlan: 'JSON プランをプレビュー',
-    aiApiKeyPlaceholder: 'SiliconFlow API Key（このページ内のみ保持）',
+    aiApiKeyPlaceholder: 'API Key（このページ内のみ保持）',
     aiBaseUrlPlaceholder: 'Base URL',
     aiModelPlaceholder: 'モデル名',
     aiGenerate: 'プランを生成',

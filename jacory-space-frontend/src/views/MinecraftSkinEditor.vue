@@ -215,12 +215,13 @@ import MinecraftSkinPreview from '../components/tools/minecraft-skin-editor/Mine
 import ColorPickerPanel from '../components/tools/minecraft-skin-editor/ColorPickerPanel.vue'
 import { createSkinCanvas, DEFAULT_ALEX_SKIN_DATA_URL, DEFAULT_STEVE_SKIN_DATA_URL, downloadCanvas, floodFillSkinFace, importSkinFile, mirrorSkinPixel } from '../components/tools/minecraft-skin-editor/skin-core'
 import { applyAiSkinEditPlan, createAiSkinProposalCanvas, validateAiSkinEditPlan } from '../components/tools/minecraft-skin-editor/skin-operations'
+import { devOnly, isDevelopment } from '../config/runtime'
 
 const STORAGE_KEY = 'jacory-space.minecraft-skin-studio.project.v1'
 const RECENT_COLORS_STORAGE_KEY = 'jacory-space.minecraft-skin-studio.recent-colors.v1'
 const MAX_RECENT_COLORS = 8
 const modelIconImages = new Map()
-const isDevToolsEnabled = import.meta.env.DEV
+const isDevToolsEnabled = isDevelopment
 
 const { t } = useI18n()
 const fileInput = ref(null)
@@ -261,12 +262,12 @@ const aiPlanResult = ref(null)
 const aiProposalApplied = ref(false)
 const visibleOuterParts = ref([])
 const proposalPreviousOuterParts = ref(null)
-const aiPrompt = ref('把右臂改成红色护甲，保留头部和身体。')
+const aiPrompt = ref(devOnly('把右臂改成红色护甲，保留头部和身体。'))
 const aiUseVision = ref(true)
 const aiReferenceImage = ref('')
 const aiApiKey = ref('')
-const aiBaseUrl = ref(import.meta.env.DEV ? import.meta.env.VITE_MC_AI_BASE_URL || '' : '')
-const aiModel = ref(import.meta.env.DEV ? import.meta.env.VITE_MC_AI_MODEL || '' : '')
+const aiBaseUrl = ref(devOnly(import.meta.env.VITE_MC_AI_BASE_URL || ''))
+const aiModel = ref(devOnly(import.meta.env.VITE_MC_AI_MODEL || ''))
 const isGeneratingAiPlan = ref(false)
 const aiGenerationStatus = ref('')
 const aiRequestDiagnostic = ref(null)
@@ -575,6 +576,10 @@ function isVisionModel(modelName) {
   return /(?:vl|vision|omni|glm-[\d.]+v|deepseek[-_]?vl|step3)/i.test(modelName)
 }
 
+function isQwen3Model(modelName) {
+  return /qwen3/i.test(modelName)
+}
+
 function formatAiGenerationError(error) {
   const message = error instanceof Error ? error.message : String(error || '')
   if (/not a vlm|vision language model|text-only prompts/i.test(message)) return t('minecraftSkin.aiVisionUnsupported')
@@ -635,10 +640,10 @@ async function generateAiPlan() {
       body: JSON.stringify({
         model: modelName,
         temperature: 0.2,
-        max_tokens: 1600,
+        max_tokens: 4096,
         stream: true,
         ...(!isVisionModel(modelName) ? { response_format: { type: 'json_object' } } : {}),
-        ...(modelName.startsWith('Qwen/Qwen3') && !isVisionModel(modelName) ? { enable_thinking: false } : {}),
+        ...(isQwen3Model(modelName) ? { enable_thinking: false } : {}),
         messages: [
           {
             role: 'system',
@@ -661,12 +666,17 @@ async function generateAiPlan() {
     }
     recordAiDiagnostic({ status: response.status, traceId, code: 'stream_connected', detail: 'Waiting for model output.' })
     aiGenerationStatus.value = t('minecraftSkin.aiWaitingStream')
-    const content = await readAiStream(response, (partialContent) => {
+    const streamResult = await readAiStream(response, (partialContent) => {
       aiPlanText.value = partialContent
       aiGenerationStatus.value = t('minecraftSkin.aiReceiving')
     }, () => {
       aiGenerationStatus.value = t('minecraftSkin.aiThinking')
     })
+    const content = streamResult.content
+    if (!content && streamResult.reasoning) {
+      recordAiDiagnostic({ status: response.status, traceId, code: 'reasoning_only', detail: 'Model returned reasoning but no final content.' })
+      throw new Error('AI response contained reasoning but no final content.')
+    }
     if (!content) throw new Error('AI response did not contain a plan.')
     const plan = typeof content === 'string' ? JSON.parse(content) : content
     const validation = validateAiSkinEditPlan(plan)
@@ -700,13 +710,17 @@ async function readAiStream(response, onContent, onReasoning) {
   const decoder = new TextDecoder()
   let buffer = ''
   let content = ''
+  let reasoning = ''
   const processLine = (line) => {
     if (!line.startsWith('data:')) return
     const data = line.slice(5).trim()
     if (!data || data === '[DONE]') return
     const chunk = JSON.parse(data)
     const message = chunk.choices?.[0]?.delta || chunk.choices?.[0]?.message || {}
-    if (message.reasoning_content || message.reasoning) onReasoning?.()
+    if (message.reasoning_content || message.reasoning) {
+      reasoning += message.reasoning_content || message.reasoning
+      onReasoning?.()
+    }
     if (message.content) {
       content += message.content
       onContent(content)
@@ -721,7 +735,7 @@ async function readAiStream(response, onContent, onReasoning) {
     if (done) break
   }
   if (buffer.trim()) processLine(buffer.trim())
-  return content
+  return { content, reasoning }
 }
 
 function redraw() {
