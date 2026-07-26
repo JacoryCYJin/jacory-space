@@ -595,6 +595,7 @@ export default {
     base: 'Base layer',
     outer: 'Outer layer',
     brush: 'Brush',
+    eraser: 'Eraser',
     fill: 'Fill',
     eyedropper: 'Eyedropper',
     mirror: 'Mirror paint',

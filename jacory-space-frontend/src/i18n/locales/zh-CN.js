@@ -595,6 +595,7 @@ export default {
     base: '基础层',
     outer: '外层覆盖',
     brush: '画笔',
+    eraser: '橡皮擦',
     fill: '油漆桶',
     eyedropper: '吸取颜色',
     mirror: '镜像绘制',
