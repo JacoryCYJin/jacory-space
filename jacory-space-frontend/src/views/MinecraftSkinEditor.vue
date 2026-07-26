@@ -1,5 +1,6 @@
 <template>
   <main class="relative min-h-dvh overflow-hidden bg-background text-foreground">
+    <StatusToast :visible="aiConnectionToastVisible" :message="aiConnectionToastMessage" type="success" />
     <MinecraftSkinPreview
       v-if="skinCanvas"
       ref="skinPreview"
@@ -46,7 +47,6 @@
         <button type="button" :aria-label="t('minecraftSkin.redo')" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(t('minecraftSkin.redo'), $event)" @mouseleave="hideToolTooltip" @click="redo"><Redo2 class="h-4 w-4" /></button>
         <span class="mx-2 h-px bg-line" />
         <button type="button" :aria-label="t('minecraftSkin.aiEdit')" :class="toolButtonClass(isAiPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.aiEdit'), $event)" @mouseleave="hideToolTooltip" @click="toggleAiPanel"><Sparkles class="h-4 w-4" /></button>
-        <button v-if="isDevToolsEnabled" type="button" :aria-label="t('minecraftSkin.devTests')" :class="toolButtonClass(isDevPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.devTests'), $event)" @mouseleave="hideToolTooltip" @click="toggleDevPanel"><Code2 class="h-4 w-4" /></button>
       </div>
 
       <span v-if="hoveredTool" class="pointer-events-none absolute left-20 z-30 -translate-y-1/2 font-mono text-xs tracking-[0.1em] text-muted-foreground" :style="{ top: `calc(5rem + ${hoveredToolTop}px)` }">{{ hoveredTool }}</span>
@@ -88,19 +88,13 @@
         @select-recent="selectRecentColor"
       />
 
-      <section v-if="isAiPanelOpen || (isDevToolsEnabled && isDevPanelOpen)" class="pointer-events-auto absolute left-20 top-20 z-20 w-[min(23rem,calc(100vw-6.5rem))] border border-line bg-card/95 backdrop-blur-sm">
+      <section v-if="isAiPanelOpen" class="pointer-events-auto absolute left-20 top-20 z-20 w-[min(23rem,calc(100vw-6.5rem))] border border-line bg-card/95 backdrop-blur-sm">
         <div class="flex h-12 items-center justify-between border-b border-line px-4">
-          <p class="tech">{{ isDevPanelOpen ? 'DEV / JSON' : t('minecraftSkin.aiEdit') }}</p>
-          <button v-if="isAiPanelOpen" type="button" class="text-xs text-muted-foreground transition-colors hover:text-foreground" @click="closeAiPanel">{{ t('minecraftSkin.close') }}</button>
+          <p class="tech">AI / {{ t('minecraftSkin.aiPartRightArm') }}</p>
+          <button type="button" class="text-xs text-muted-foreground transition-colors hover:text-foreground" @click="closeAiPanel">{{ t('minecraftSkin.close') }}</button>
         </div>
-        <div v-if="isDevPanelOpen" class="px-4 pt-4">
-          <p class="text-sm text-foreground">{{ t('minecraftSkin.devTestsTitle') }}</p>
-          <p class="mt-2 text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.devTestsHint') }}</p>
-        </div>
-        <div v-if="isDevPanelOpen" class="mt-3 grid grid-cols-2 gap-2 px-4">
-          <button v-for="test in devTests" :key="test.id" type="button" class="border border-line px-3 py-2 text-left font-mono text-xs text-muted-foreground transition-colors hover:border-blue hover:text-blue" @click="loadDevTest(test)">{{ test.label }}</button>
-        </div>
-        <div v-if="isAiPanelOpen" class="space-y-3 p-4">
+        <div class="space-y-3 p-4">
+          <p class="text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.pixelGenerationHint') }}</p>
           <div class="border border-line bg-background transition-colors focus-within:border-blue">
             <textarea v-model="aiPrompt" class="h-32 w-full resize-y bg-transparent p-3 text-sm leading-6 text-foreground outline-none" :placeholder="t('minecraftSkin.aiPromptPlaceholder')" />
             <div class="flex h-10 items-center justify-between border-t border-line px-3">
@@ -118,7 +112,8 @@
           <button type="button" class="flex w-full items-center justify-between px-1 py-1 text-left transition-colors hover:text-foreground" @click="isAiConnectionOpen = !isAiConnectionOpen">
             <span class="text-xs text-muted-foreground">{{ t('minecraftSkin.aiConnection') }}</span>
             <span class="flex items-center gap-2">
-              <span :class="['font-mono text-xs', aiConnectionConfigured ? 'text-blue' : 'text-haze']">{{ aiConnectionConfigured ? t('minecraftSkin.aiConnectionConfigured') : t('minecraftSkin.aiConnectionNotConfigured') }}</span>
+              <span v-if="aiConnectionStatus.showDot" class="h-1.5 w-1.5 rounded-full bg-blue" aria-hidden="true" />
+              <span :class="['font-mono text-xs', aiConnectionStatus.className]">{{ aiConnectionStatus.label }}</span>
               <ChevronDown :class="['h-3.5 w-3.5 text-haze transition-transform', isAiConnectionOpen ? 'rotate-180' : '']" />
             </span>
           </button>
@@ -133,17 +128,25 @@
             </label>
             <label class="mt-4 block">
               <span class="tech text-haze">{{ t('minecraftSkin.aiModelLabel') }}</span>
-              <input v-model="aiModel" type="text" class="mt-1 w-full border-b border-line bg-transparent pb-2 font-mono text-xs text-foreground outline-none transition-colors placeholder:text-haze focus:border-blue" :placeholder="t('minecraftSkin.aiModelPlaceholder')" />
+              <input v-model="aiModel" list="minecraft-skin-ai-models" type="text" class="mt-1 w-full border-b border-line bg-transparent pb-2 font-mono text-xs text-foreground outline-none transition-colors placeholder:text-haze focus:border-blue" :placeholder="t('minecraftSkin.aiModelPlaceholder')" />
+              <datalist id="minecraft-skin-ai-models">
+                <option v-for="modelId in aiModelCatalog" :key="modelId" :value="modelId" />
+              </datalist>
             </label>
-            <p class="mt-4 text-xs leading-5 text-muted-foreground">{{ aiUseVision ? t('minecraftSkin.aiVisionModelHint') : t('minecraftSkin.aiTextModelHint') }}</p>
+            <div class="mt-4 flex gap-2">
+              <button type="button" class="border border-line px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-blue hover:text-blue disabled:cursor-not-allowed disabled:opacity-50" :disabled="isTestingAiConnection || isGeneratingAiPart" @click="testAiConnection">{{ isTestingAiConnection ? t('minecraftSkin.aiConnectionTesting') : t('minecraftSkin.aiConnectionTest') }}</button>
+              <button type="button" class="border border-blue px-3 py-2 text-xs text-blue transition-colors hover:border-foreground hover:bg-foreground hover:text-background" :disabled="isTestingAiConnection || isGeneratingAiPart" @click="saveAiConnectionSettings">{{ t('minecraftSkin.aiConnectionSave') }}</button>
+            </div>
+            <p v-if="aiConnectionTest?.state === 'error'" class="mt-3 text-xs leading-5 text-destructive">{{ aiConnectionTest.message }}</p>
+            <p class="mt-4 text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.pixelGenerationConnectionHint') }}</p>
           </div>
           <div class="flex gap-2">
-            <button type="button" class="flex-1 border border-blue bg-blue px-3 py-2 text-xs text-white transition-colors hover:border-foreground hover:bg-foreground disabled:cursor-not-allowed disabled:opacity-50" :disabled="isGeneratingAiPlan" @click="generateAiPlan">{{ isGeneratingAiPlan ? t('minecraftSkin.aiGenerating') : t('minecraftSkin.aiGenerate') }}</button>
-            <button v-if="isGeneratingAiPlan" type="button" class="border border-line px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-line-strong hover:text-foreground" @click="cancelAiGeneration">{{ t('minecraftSkin.aiCancel') }}</button>
+            <button type="button" class="flex-1 border border-blue bg-blue px-3 py-2 text-xs text-white transition-colors hover:border-foreground hover:bg-foreground disabled:cursor-not-allowed disabled:opacity-50" :disabled="isGeneratingAiPart" @click="generateAiPart">{{ isGeneratingAiPart ? t('minecraftSkin.aiGenerating') : t('minecraftSkin.pixelGeneratePart') }}</button>
+            <button v-if="isGeneratingAiPart" type="button" class="border border-line px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-line-strong hover:text-foreground" @click="cancelAiGeneration">{{ t('minecraftSkin.aiCancel') }}</button>
           </div>
           <p v-if="aiGenerationStatus" class="text-xs text-muted-foreground">{{ aiGenerationStatus }}</p>
           <div v-if="proposalCanvas" class="border-t border-line pt-3">
-            <p class="text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.aiProposalReady', { targets: proposalResult?.targets.join(', '), layers: proposalResult?.layers.join(', ') }) }}</p>
+            <p class="text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.pixelProposalReady', { count: proposalResult?.changedPixels || 0 }) }}</p>
             <div class="mt-3 grid grid-cols-3 gap-2">
               <button type="button" class="border border-line px-2 py-2 text-xs text-muted-foreground transition-colors hover:border-blue hover:text-blue" @click="showProposal = !showProposal">{{ showProposal ? t('minecraftSkin.aiShowOriginal') : t('minecraftSkin.aiShowProposal') }}</button>
               <button type="button" class="border border-line px-2 py-2 text-xs text-muted-foreground transition-colors hover:border-line-strong hover:text-foreground" @click="discardAiProposal">{{ t('minecraftSkin.aiDiscard') }}</button>
@@ -151,29 +154,16 @@
             </div>
           </div>
         </div>
-        <template v-else>
-          <div class="px-4 pb-4">
-          <textarea v-model="aiPlanText" class="mt-3 h-64 w-full resize-y border border-line bg-background p-3 font-mono text-xs leading-5 text-foreground outline-none transition-colors focus:border-blue" spellcheck="false" :placeholder="t('minecraftSkin.aiEditPlaceholder')" />
-          <div class="mt-3 flex flex-wrap justify-between gap-2">
-            <button type="button" class="border border-line px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-blue hover:text-blue" @click="loadAiExample">{{ t('minecraftSkin.aiLoadExample') }}</button>
-            <div class="flex gap-2">
-              <button type="button" class="border border-line px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-line-strong hover:text-foreground" @click="aiPlanText = ''; aiPlanError = ''; aiPlanResult = null">{{ t('minecraftSkin.aiClear') }}</button>
-              <button type="button" class="border border-foreground bg-foreground px-3 py-2 text-xs text-background transition-colors hover:border-blue hover:bg-blue" @click="runAiPlan">{{ t('minecraftSkin.aiValidateApply') }}</button>
-            </div>
-          </div>
-          </div>
-          <div v-if="aiRequestDiagnostic" class="mx-4 mb-4 border-t border-line pt-3 font-mono text-xs text-muted-foreground">
-            <p class="tech">{{ t('minecraftSkin.devRequestDiagnostic') }}</p>
-            <dl class="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-              <dt>{{ t('minecraftSkin.devStatus') }}</dt><dd>{{ aiRequestDiagnostic.status }}</dd>
-              <dt>{{ t('minecraftSkin.devTrace') }}</dt><dd class="truncate">{{ aiRequestDiagnostic.traceId || '—' }}</dd>
-              <dt>{{ t('minecraftSkin.devProvider') }}</dt><dd>{{ aiRequestDiagnostic.code || '—' }}</dd>
-              <dt>{{ t('minecraftSkin.devDetail') }}</dt><dd>{{ aiRequestDiagnostic.detail || '—' }}</dd>
-            </dl>
-          </div>
-        </template>
-        <p v-if="aiPlanError" :class="['border-l-2 px-4 py-2 text-xs leading-5', isDevPanelOpen ? 'border-destructive text-destructive' : 'border-blue text-muted-foreground']">{{ aiPlanError }}</p>
-        <p v-if="aiPlanResult && isDevPanelOpen" class="border-l-2 border-blue px-4 py-2 text-xs leading-5 text-blue">{{ t('minecraftSkin.aiApplied', { count: aiPlanResult.changedPixels, targets: aiPlanResult.targets.join(', '), layers: aiPlanResult.layers.join(', ') }) }}</p>
+        <div v-if="aiRequestDiagnostic" class="mx-4 mb-4 border-t border-line pt-3 font-mono text-xs text-muted-foreground">
+          <p class="tech">{{ t('minecraftSkin.devRequestDiagnostic') }}</p>
+          <dl class="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+            <dt>{{ t('minecraftSkin.devStatus') }}</dt><dd>{{ aiRequestDiagnostic.status }}</dd>
+            <dt>{{ t('minecraftSkin.devTrace') }}</dt><dd class="truncate">{{ aiRequestDiagnostic.traceId || '—' }}</dd>
+            <dt>{{ t('minecraftSkin.devProvider') }}</dt><dd>{{ aiRequestDiagnostic.code || '—' }}</dd>
+            <dt>{{ t('minecraftSkin.devDetail') }}</dt><dd>{{ aiRequestDiagnostic.detail || '—' }}</dd>
+          </dl>
+        </div>
+        <p v-if="aiGenerationError" class="border-l-2 border-blue px-4 py-2 text-xs leading-5 text-muted-foreground">{{ aiGenerationError }}</p>
       </section>
 
       <div class="pointer-events-auto absolute bottom-5 right-5 flex items-center gap-2">
@@ -209,110 +199,38 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ChevronDown, Code2, Download, FilePlus2, FlipHorizontal, Grid3X3, Layers3, PaintBucket, Pencil, Pipette, Redo2, Sparkles, Undo2, Upload } from 'lucide-vue-next'
+import { ChevronDown, Download, FilePlus2, FlipHorizontal, Grid3X3, Layers3, PaintBucket, Pencil, Pipette, Redo2, Sparkles, Undo2, Upload } from 'lucide-vue-next'
 import jacoryLogo from '../assets/jacory-logo.png'
+import StatusToast from '../components/StatusToast.vue'
 import MinecraftSkinPreview from '../components/tools/minecraft-skin-editor/MinecraftSkinPreview.vue'
 import ColorPickerPanel from '../components/tools/minecraft-skin-editor/ColorPickerPanel.vue'
 import { createSkinCanvas, DEFAULT_ALEX_SKIN_DATA_URL, DEFAULT_STEVE_SKIN_DATA_URL, downloadCanvas, floodFillSkinFace, importSkinFile, mirrorSkinPixel } from '../components/tools/minecraft-skin-editor/skin-core'
-import { applyAiSkinEditPlan, createAiSkinProposalCanvas, validateAiSkinEditPlan } from '../components/tools/minecraft-skin-editor/skin-operations'
-import { devOnly, isDevelopment } from '../config/runtime'
+import { applyPixelPartDesign, createPixelPartProposalCanvas, readPixelPartDesign, validatePixelPartDesign } from '../components/tools/minecraft-skin-editor/skin-part-generation'
 
 const STORAGE_KEY = 'jacory-space.minecraft-skin-studio.project.v1'
 const RECENT_COLORS_STORAGE_KEY = 'jacory-space.minecraft-skin-studio.recent-colors.v1'
+const AI_CONNECTION_STORAGE_KEY = 'jacory-space.minecraft-skin-studio.ai-connection.v1'
+const AI_MODEL_CATALOG_STORAGE_KEY = 'jacory-space.minecraft-skin-studio.ai-model-catalog.v1'
 const MAX_RECENT_COLORS = 8
+const MAX_CACHED_MODELS = 500
 const modelIconImages = new Map()
-const isDevToolsEnabled = isDevelopment
-const AI_SYSTEM_PROMPT = `# Minecraft Skin Art Director
+const PIXEL_PART_SYSTEM_PROMPT = `You are a Minecraft skin pixel artist. You own every pixel of one requested body part; the application will not add templates, borders, folds, shading, or patterns after your response.
 
-## 身份
+Generate a complete, coherent texture for the player's right arm in the Classic 4-pixel-wide model. The design must describe one wearable object across all six faces and two layers. Base is the underlying garment; outer is the raised Minecraft overlay. Use outer transparency deliberately to make volume, hems, folds, openings, or accents. Do not modify any other body part.
 
-你是一位顶级 Minecraft 像素皮肤设计师。你擅长从现有皮肤中识别角色的主色、材质、轮廓和视觉语言，并把用户的自然语言需求转化为有辨识度、可穿戴、符合 Minecraft 像素美学的设计。
+Return JSON only. Its exact shape is:
+{
+  "version": 1,
+  "part": "rightArm",
+  "model": "classic",
+  "palette": { "0": "#RRGGBBAA", "1": "#RRGGBB" },
+  "layers": {
+    "base": { "top": ["1111"], "bottom": ["1111"], "right": ["1111"], "front": ["1111"], "left": ["1111"], "back": ["1111"] },
+    "outer": { "top": ["0000"], "bottom": ["0000"], "right": ["0000"], "front": ["0000"], "left": ["0000"], "back": ["0000"] }
+  }
+}
 
-## 设计目标
-
-- 不做机械换色：为指定部位建立明确的材质、明暗和细节层级。
-- 尊重原有角色：用户要求保留的部位必须保持原样；局部改造必须与其余皮肤协调。
-- 遵循像素皮肤语言：色板克制、轮廓清晰、明暗明确，不制造杂乱的零碎像素。
-- 根据需求优先选择护甲、夹克、科技纹样或边饰等合适视觉方案。
-
-## 通用设计原则
-
-- 先分析当前皮肤的主色、明暗关系、材质感与角色辨识特征，再决定修改方案。
-- 用户指定的颜色、风格或主题是设计方向，不等于把目标部位直接填成单一高饱和色。
-- 每次局部修改都要建立主体色、阴影色，以及高光或点缀色的层次关系。
-- 新增部位应与未修改部位在冷暖、明度、材质或少量点缀色上建立视觉联系。
-- 优先保持角色整体轮廓和可读性；除非用户明确要求，不让单个部位抢走全身视觉重心。
-- 外层用于护甲、衣物和饰件；基础层只用于角色本体的改色或重绘。
-- 设计结果必须服务于用户请求，同时尊重编辑器实际支持的纹样与操作能力。
-
-## 方案选择
-
-- 先选择最适合任务的操作，再生成字段。
-- 设计任务优先使用 style，由编辑器绘制稳定、完整的像素风样式。
-- 需要保留原有材质、只调整颜色关系时使用 palette。
-- 只有无法由 style 表达的小型标志或局部细节才使用 patch。
-
-## 输入理解
-
-用户消息包含 userRequest、当前 skin 的结构化信息，以及可选的当前皮肤 UV 图和参考图。
-
-- 将图片视为当前皮肤的真实视觉状态，优先保留其可识别的配色和细节。
-- 将 userRequest 视为本次修改范围；未被明确要求修改的部位必须保留。
-- 在内部完成设计判断，不要输出设计说明、分析过程或推理过程。
-
-## 编辑器能力边界
-
-- BodyPart 只能是：head、body、rightArm、leftArm、rightLeg、leftLeg。
-- layer 只能是：base、outer。
-- 可用的快速设计纹样只有：armor、jacket、tech、trim。
-
-## 操作协议
-
-每个 operation 都必须包含 type、layer、targets。targets 是一个或多个 BodyPart。每个 operation 必须且只能匹配以下一种格式。
-
-### style：绘制稳定的像素风样式
-
-- pattern 只能是 armor、jacket、tech、trim。
-- palette 必须含有 base；可选 shadow、highlight、accent。
-- 禁止使用 replacements 或 pixels。
-
-### palette：替换既有颜色
-
-- replacements 不得为空。
-- 禁止使用 pattern、palette 或 pixels。
-
-### patch：修改少量指定像素
-
-- pixels 必须有 1 至 24 项，且每个像素必须位于 targets 指定部位内。
-
-### mirror：镜像一个部位
-
-\`{"type":"mirror","layer":"outer","targets":["rightArm"]}\`
-
-- targets 只能有一个部位。
-- 禁止使用 replacements、palette 或 pixels。
-
-### clear：清空目标部位图层
-
-\`{"type":"clear","layer":"outer","targets":["rightArm"],"color":"#00000000"}\`
-
-- color 可省略。
-
-## 强制约束
-
-- 只修改用户明确要求的部位。
-- 未修改部位必须列入 preserve。
-- operations 的 targets 不得出现在 preserve。
-- 不同操作的字段绝不能混用。
-- operations 不得为空。
-
-## 交付要求
-
-只返回一个合法 JSON 对象，严格符合以下顶层结构：
-
-\`{"operations":[...],"preserve":[...]}\`
-
-不要输出 Markdown、解释、代码围栏或额外字段。`
+Palette keys are one uppercase letter or digit. Colors are #RRGGBB or #RRGGBBAA. top and bottom are exactly four strings of four palette keys. right, front, left, and back are exactly twelve strings of four palette keys. Every base-layer pixel is opaque. Every face must be supplied. Use at least three opaque colors and make lighting, seams, folds, and cuffs follow the garment's form across adjacent faces. Do not return operations, prose, Markdown, a rendered image, or an atlas.`
 
 const { t } = useI18n()
 const fileInput = ref(null)
@@ -335,7 +253,6 @@ const brushOpacity = ref(1)
 const isColorPanelOpen = ref(false)
 const isLayerPanelOpen = ref(false)
 const isAiPanelOpen = ref(false)
-const isDevPanelOpen = ref(false)
 const isAiConnectionOpen = ref(false)
 const showPixelGrid = ref(false)
 const mirrorEnabled = ref(false)
@@ -348,37 +265,41 @@ const strokeModified = ref(false)
 const eyedropperSampling = ref(false)
 const recentColors = ref([])
 const isNewSkinDialogOpen = ref(false)
-const aiPlanError = ref('')
-const aiPlanResult = ref(null)
+const aiGenerationError = ref('')
 const aiProposalApplied = ref(false)
 const visibleOuterParts = ref([])
 const proposalPreviousOuterParts = ref(null)
-const aiPrompt = ref(devOnly('把右臂改成红色护甲，保留头部和身体。'))
+const aiPrompt = ref('')
 const aiUseVision = ref(true)
 const aiReferenceImage = ref('')
 const aiApiKey = ref('')
-const aiBaseUrl = ref(devOnly(import.meta.env.VITE_MC_AI_BASE_URL || ''))
-const aiModel = ref(devOnly(import.meta.env.VITE_MC_AI_MODEL || ''))
-const isGeneratingAiPlan = ref(false)
+const aiBaseUrl = ref(import.meta.env.VITE_MC_AI_BASE_URL || '')
+const aiModel = ref(import.meta.env.VITE_MC_AI_MODEL || '')
+const aiModelCatalog = ref([])
+const aiConnectionTest = ref(null)
+const aiConnectionToastVisible = ref(false)
+const aiConnectionToastMessage = ref('')
+const savedAiConnection = ref(null)
+const isTestingAiConnection = ref(false)
+const isGeneratingAiPart = ref(false)
 const aiGenerationStatus = ref('')
 const aiRequestDiagnostic = ref(null)
 let aiRequestController = null
-const aiPlanText = ref(JSON.stringify({
-  operations: [
-    {
-      type: 'style',
-      pattern: 'armor',
-      layer: 'outer',
-      targets: ['rightArm'],
-      palette: { base: '#7f2f37', shadow: '#4a1820', highlight: '#c85b5b', accent: '#e8b3a7' }
-    }
-  ],
-  preserve: ['head', 'body', 'leftArm', 'rightLeg', 'leftLeg']
-}, null, 2))
 let saveTimer
+let aiConnectionToastTimer
 
 const displayCanvas = computed(() => showProposal.value && proposalCanvas.value ? proposalCanvas.value : skinCanvas.value)
 const aiConnectionConfigured = computed(() => Boolean(aiApiKey.value.trim() && aiBaseUrl.value.trim() && aiModel.value.trim()))
+const aiConnectionStatus = computed(() => {
+  if (!aiConnectionConfigured.value) return { label: t('minecraftSkin.aiConnectionNotConfigured'), className: 'text-haze', showDot: false }
+  if (aiConnectionTest.value?.state === 'success') return { label: t('minecraftSkin.aiConnectionConnected'), className: 'text-blue', showDot: true }
+  if (aiConnectionTest.value?.state === 'error') return { label: t('minecraftSkin.aiConnectionFailed'), className: 'text-destructive', showDot: false }
+  if (aiConnectionDirty.value) return { label: t('minecraftSkin.aiConnectionUnsaved'), className: 'text-muted-foreground', showDot: false }
+  return aiConnectionConfigured.value
+    ? { label: savedAiConnection.value ? t('minecraftSkin.aiConnectionSaved') : t('minecraftSkin.aiConnectionConfigured'), className: 'text-blue', showDot: false }
+    : { label: t('minecraftSkin.aiConnectionNotConfigured'), className: 'text-haze', showDot: false }
+})
+const aiConnectionDirty = computed(() => JSON.stringify(currentAiConnection()) !== JSON.stringify(savedAiConnection.value))
 const nextModelLabel = computed(() => model.value === 'classic' ? t('minecraftSkin.switchToSlim') : t('minecraftSkin.switchToClassic'))
 
 const tools = computed(() => [
@@ -395,43 +316,6 @@ const skinParts = computed(() => [
   { id: 'leftLeg', label: t('minecraftSkin.aiPartLeftLeg') }
 ])
 const allOuterPartsSelected = computed(() => skinParts.value.every((part) => visibleOuterParts.value.includes(part.id)))
-const devTests = computed(() => [
-  {
-    id: 'base-palette',
-    label: t('minecraftSkin.devBasePalette'),
-    plan: { operations: [{ type: 'palette', layer: 'base', targets: ['rightArm'], replacements: [{ from: '#b9795c', to: '#7f2f37' }, { from: '#16aab1', to: '#14243a' }] }], preserve: ['head'] }
-  },
-  {
-    id: 'outer-patch',
-    label: t('minecraftSkin.devOuterPatch'),
-    plan: { operations: [{ type: 'patch', layer: 'outer', targets: ['rightArm'], pixels: [{ x: 44, y: 36, color: '#9ab8c7' }, { x: 45, y: 36, color: '#9ab8c7' }, { x: 46, y: 36, color: '#315c7a' }] }], preserve: ['head'] }
-  },
-  {
-    id: 'mirror',
-    label: t('minecraftSkin.devMirrorOuter'),
-    plan: { operations: [{ type: 'mirror', layer: 'outer', targets: ['rightArm'] }], preserve: ['head'] }
-  },
-  {
-    id: 'clear',
-    label: t('minecraftSkin.devClearOuter'),
-    plan: { operations: [{ type: 'clear', layer: 'outer', targets: ['rightArm'] }], preserve: ['head'] }
-  },
-  {
-    id: 'style-armor',
-    label: t('minecraftSkin.devStyleArmor'),
-    plan: { operations: [{ type: 'style', pattern: 'armor', layer: 'outer', targets: ['rightArm'], palette: { base: '#7f2f37', shadow: '#4a1820', highlight: '#c85b5b', accent: '#e8b3a7' } }], preserve: ['head'] }
-  },
-  {
-    id: 'preserve-error',
-    label: t('minecraftSkin.devPreserveError'),
-    plan: { operations: [{ type: 'clear', layer: 'base', targets: ['head'] }], preserve: ['head'] }
-  },
-  {
-    id: 'missing-layer-error',
-    label: t('minecraftSkin.devMissingLayer'),
-    plan: { operations: [{ type: 'clear', targets: ['rightArm'] }], preserve: [] }
-  }
-])
 function toolButtonClass(active) {
   return ['flex h-11 w-11 items-center justify-center transition-colors', active ? 'bg-blue text-white' : 'text-muted-foreground hover:bg-background hover:text-foreground']
 }
@@ -467,14 +351,12 @@ function toggleColorPanel() {
   isColorPanelOpen.value = !isColorPanelOpen.value
   isLayerPanelOpen.value = false
   isAiPanelOpen.value = false
-  isDevPanelOpen.value = false
 }
 
 function toggleLayerPanel() {
   isLayerPanelOpen.value = !isLayerPanelOpen.value
   isColorPanelOpen.value = false
   isAiPanelOpen.value = false
-  isDevPanelOpen.value = false
 }
 
 function toggleModel() {
@@ -507,10 +389,8 @@ function toggleAiPanel() {
   isAiPanelOpen.value = isOpening
   isLayerPanelOpen.value = false
   isColorPanelOpen.value = false
-  isDevPanelOpen.value = false
   if (isOpening) isAiConnectionOpen.value = false
-  aiPlanError.value = ''
-  aiPlanResult.value = null
+  aiGenerationError.value = ''
 }
 
 function closeAiPanel() {
@@ -529,78 +409,6 @@ function handleReferenceImage(event) {
   event.target.value = ''
 }
 
-function toggleDevPanel() {
-  if (!isDevToolsEnabled) return
-  isDevPanelOpen.value = !isDevPanelOpen.value
-  isLayerPanelOpen.value = false
-  isColorPanelOpen.value = false
-  isAiPanelOpen.value = false
-  aiPlanError.value = ''
-  aiPlanResult.value = null
-}
-
-function loadDevTest(test) {
-  aiPlanText.value = JSON.stringify(test.plan, null, 2)
-  aiPlanError.value = ''
-  aiPlanResult.value = null
-}
-
-function loadAiExample() {
-  aiPlanText.value = JSON.stringify({
-    operations: [
-      {
-        type: 'style',
-        pattern: 'armor',
-        layer: 'outer',
-        targets: ['rightArm'],
-        palette: { base: '#7f2f37', shadow: '#4a1820', highlight: '#c85b5b', accent: '#e8b3a7' }
-      }
-    ],
-    preserve: ['head', 'body', 'leftArm', 'rightLeg', 'leftLeg']
-  }, null, 2)
-  aiPlanError.value = ''
-  aiPlanResult.value = null
-}
-
-function runAiPlan() {
-  aiPlanError.value = ''
-  aiPlanResult.value = null
-  try {
-    const plan = JSON.parse(aiPlanText.value)
-    aiPlanResult.value = applyAiPlan(plan)
-  } catch (error) {
-    aiPlanError.value = error instanceof Error ? error.message : String(error)
-  }
-}
-
-function previewAiPlan(plan) {
-  if (!skinCanvas.value) throw new Error('Skin canvas is not ready.')
-  const validation = validateAiSkinEditPlan(plan)
-  if (!validation.valid) throw new Error(validation.errors.join('; '))
-  const proposal = createAiSkinProposalCanvas(skinCanvas.value, plan)
-  if (!proposalCanvas.value) proposalPreviousOuterParts.value = [...visibleOuterParts.value]
-  const proposalOuterParts = plan.operations
-    .filter((operation) => operation.layer === 'outer')
-    .flatMap((operation) => operation.targets || (operation.target ? [operation.target] : []))
-  visibleOuterParts.value = [...new Set([...visibleOuterParts.value, ...proposalOuterParts])]
-  proposalCanvas.value = proposal.canvas
-  proposalPlan.value = plan
-  proposalResult.value = proposal
-  aiProposalApplied.value = false
-  showProposal.value = true
-  textureVersion.value += 1
-  return proposal
-}
-
-function previewAiPlanFromText() {
-  aiPlanError.value = ''
-  try {
-    previewAiPlan(JSON.parse(aiPlanText.value))
-  } catch (error) {
-    aiPlanError.value = error instanceof Error ? error.message : String(error)
-  }
-}
-
 function discardAiProposal() {
   proposalCanvas.value = null
   proposalPlan.value = null
@@ -614,58 +422,129 @@ function discardAiProposal() {
 
 function applyAiProposal() {
   if (!proposalPlan.value || aiProposalApplied.value) return
-  aiPlanError.value = ''
+  aiGenerationError.value = ''
   try {
-    aiPlanResult.value = applyAiPlan(proposalPlan.value)
+    const before = skinCanvas.value.toDataURL('image/png')
+    applyPixelPartDesign(skinCanvas.value, proposalPlan.value, { expectedPart: 'rightArm' })
+    history.value.push(before)
+    redoStack.value = []
     aiProposalApplied.value = true
     showProposal.value = true
-    textureVersion.value += 1
+    redraw()
   } catch (error) {
-    aiPlanError.value = error instanceof Error ? error.message : String(error)
+    aiGenerationError.value = error instanceof Error ? error.message : String(error)
   }
 }
 
-function collectSkinAiContext() {
-  const context = skinCanvas.value?.getContext('2d', { willReadFrequently: true })
-  if (!context) throw new Error('Skin canvas is not ready.')
-  const image = context.getImageData(0, 0, 64, 64)
-  const colors = new Map()
-  for (let offset = 0; offset < image.data.length; offset += 4) {
-    const alpha = image.data[offset + 3]
-    if (!alpha) continue
-    const color = `#${[image.data[offset], image.data[offset + 1], image.data[offset + 2]].map((value) => value.toString(16).padStart(2, '0')).join('')}`
-    colors.set(color, (colors.get(color) || 0) + 1)
-  }
-  return {
-    model: model.value,
-    resolution: 64,
-    layers: ['base', 'outer'],
-    activeLayer: activeLayer.value,
-    bodyParts: ['head', 'body', 'rightArm', 'leftArm', 'rightLeg', 'leftLeg'],
-    dominantColors: [...colors.entries()].sort((first, second) => second[1] - first[1]).slice(0, 12).map(([color]) => color),
-    bodyPartNames: {
-      head: '头部', body: '身体', rightArm: '右臂', leftArm: '左臂', rightLeg: '右腿', leftLeg: '左腿'
-    }
-  }
-}
-
-function buildAiUserContent() {
+function buildPixelPartUserContent() {
+  const sourceCanvas = proposalCanvas.value || skinCanvas.value
   const text = JSON.stringify({
-    userRequest: aiPrompt.value.trim(),
-    skin: collectSkinAiContext()
+    request: aiPrompt.value.trim(),
+    target: {
+      part: 'rightArm',
+      model: 'classic',
+      layers: ['base', 'outer'],
+      goal: 'Design the entire right-arm garment as coherent pixel art. Return a replacement texture for this part only.'
+    },
+    currentRightArm: readPixelPartDesign(sourceCanvas, 'rightArm', 'classic'),
+    revision: proposalCanvas.value ? 'This is a refinement request. Replace the current right arm according to the new request.' : 'This is the first generation request.'
   })
   if (!aiUseVision.value) return text
   const content = [{ type: 'text', text }]
   const preview = skinPreview.value?.capturePreview?.()
   if (preview) content.push({ type: 'image_url', image_url: { url: preview, detail: 'low' } })
-  if (skinCanvas.value) content.push({ type: 'image_url', image_url: { url: skinCanvas.value.toDataURL('image/png'), detail: 'low' } })
+  if (sourceCanvas) content.push({ type: 'image_url', image_url: { url: sourceCanvas.toDataURL('image/png'), detail: 'low' } })
   if (aiReferenceImage.value) content.push({ type: 'image_url', image_url: { url: aiReferenceImage.value, detail: 'low' } })
   return content
 }
 
+function normalizeAiBaseUrl(baseUrl) {
+  return baseUrl.trim().replace(/\/+$/, '').replace(/\/chat\/completions$/, '').replace(/\/models$/, '')
+}
+
 function normalizeAiEndpoint(baseUrl) {
-  const normalized = baseUrl.trim().replace(/\/$/, '')
-  return normalized.endsWith('/chat/completions') ? normalized : `${normalized}/chat/completions`
+  return `${normalizeAiBaseUrl(baseUrl)}/chat/completions`
+}
+
+function normalizeAiModelsEndpoint(baseUrl) {
+  return `${normalizeAiBaseUrl(baseUrl)}/models`
+}
+
+function currentAiConnection() {
+  return {
+    apiKey: aiApiKey.value.trim(),
+    baseUrl: aiBaseUrl.value.trim(),
+    model: aiModel.value.trim()
+  }
+}
+
+function restoreAiConnectionCache() {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(AI_CONNECTION_STORAGE_KEY) || 'null')
+    if (!saved || typeof saved !== 'object') return
+    if (typeof saved.apiKey !== 'string' || typeof saved.baseUrl !== 'string' || typeof saved.model !== 'string') return
+    aiApiKey.value = saved.apiKey
+    aiBaseUrl.value = saved.baseUrl
+    aiModel.value = saved.model
+    savedAiConnection.value = currentAiConnection()
+  } catch {
+    // Connection settings are optional when browser storage is unavailable.
+  }
+}
+
+function saveAiConnectionSettings() {
+  if (!aiConnectionConfigured.value) {
+    aiConnectionTest.value = { state: 'error', message: t('minecraftSkin.aiConfigRequired') }
+    return
+  }
+  try {
+    const connection = currentAiConnection()
+    window.localStorage.setItem(AI_CONNECTION_STORAGE_KEY, JSON.stringify(connection))
+    savedAiConnection.value = connection
+    showAiConnectionToast(t('minecraftSkin.aiConnectionSavedNotice'))
+  } catch {
+    aiConnectionTest.value = { state: 'error', message: t('minecraftSkin.aiConnectionSaveFailed') }
+  }
+}
+
+function showAiConnectionToast(message) {
+  window.clearTimeout(aiConnectionToastTimer)
+  aiConnectionToastVisible.value = false
+  aiConnectionToastMessage.value = message
+  window.requestAnimationFrame(() => {
+    aiConnectionToastVisible.value = true
+    aiConnectionToastTimer = window.setTimeout(() => {
+      aiConnectionToastVisible.value = false
+    }, 2800)
+  })
+}
+
+function restoreAiModelCatalog() {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(AI_MODEL_CATALOG_STORAGE_KEY) || 'null')
+    if (!saved || normalizeAiBaseUrl(saved.baseUrl || '') !== normalizeAiBaseUrl(aiBaseUrl.value)) return
+    aiModelCatalog.value = Array.isArray(saved.models)
+      ? saved.models.filter((modelId) => typeof modelId === 'string' && modelId.trim()).slice(0, MAX_CACHED_MODELS)
+      : []
+  } catch {
+    aiModelCatalog.value = []
+  }
+}
+
+function saveAiModelCatalog(models) {
+  const normalizedModels = [...new Set(models.filter((modelId) => typeof modelId === 'string' && modelId.trim()))]
+    .sort((left, right) => left.localeCompare(right))
+    .slice(0, MAX_CACHED_MODELS)
+  aiModelCatalog.value = normalizedModels
+  try {
+    window.localStorage.setItem(AI_MODEL_CATALOG_STORAGE_KEY, JSON.stringify({
+      baseUrl: normalizeAiBaseUrl(aiBaseUrl.value),
+      models: normalizedModels,
+      testedAt: new Date().toISOString()
+    }))
+  } catch {
+    // The model catalog is a convenience only.
+  }
 }
 
 function isVisionModel(modelName) {
@@ -676,14 +555,13 @@ function supportsJsonMode(modelName) {
   return !isVisionModel(modelName) || /^Qwen\/Qwen3-VL-/i.test(modelName)
 }
 
-function createAiRequestPayload(modelName, messages) {
+function createPixelPartRequestPayload(modelName, messages) {
   return {
     model: modelName,
-    temperature: 0.2,
-    max_tokens: aiUseVision.value ? 4096 : 1600,
-    stream: true,
+    temperature: 0.35,
+    max_tokens: 8192,
+    stream: false,
     ...(supportsJsonMode(modelName) ? { response_format: { type: 'json_object' } } : {}),
-    ...(modelName.startsWith('Qwen/Qwen3') && !isVisionModel(modelName) ? { enable_thinking: false } : {}),
     messages
   }
 }
@@ -692,7 +570,8 @@ function formatAiGenerationError(error) {
   const message = error instanceof Error ? error.message : String(error || '')
   if (/not a vlm|vision language model|text-only prompts/i.test(message)) return t('minecraftSkin.aiVisionUnsupported')
   if (/truncated|output limit/i.test(message)) return t('minecraftSkin.aiPlanTruncated')
-  if (/json|plan\.operations|invalid ai skin edit plan|operations\[|preserve contains/i.test(message)) return t('minecraftSkin.aiPlanInvalid')
+  if (/reasoning but no final|did not contain a pixel design/i.test(message)) return t('minecraftSkin.pixelGenerationNoContent')
+  if (/json|design|palette|layers|face|row|pixel/i.test(message)) return t('minecraftSkin.pixelGenerationInvalid')
   return t('minecraftSkin.aiGenerationFailed')
 }
 
@@ -712,9 +591,50 @@ function recordAiDiagnostic(partial) {
   }
 }
 
-async function requestAiPlanContent(modelName, messages, attempt = 'initial') {
-  const requestPayload = createAiRequestPayload(modelName, messages)
-  if (isDevToolsEnabled) console.log('[Minecraft AI] request', { attempt, endpoint: normalizeAiEndpoint(aiBaseUrl.value), payload: requestPayload })
+async function testAiConnection() {
+  aiConnectionTest.value = null
+  if (!aiApiKey.value.trim()) {
+    aiConnectionTest.value = { state: 'error', message: t('minecraftSkin.aiApiKeyRequired') }
+    return
+  }
+  if (!aiBaseUrl.value.trim() || !aiModel.value.trim()) {
+    aiConnectionTest.value = { state: 'error', message: t('minecraftSkin.aiConfigRequired') }
+    return
+  }
+  isTestingAiConnection.value = true
+  try {
+    const response = await fetch(normalizeAiModelsEndpoint(aiBaseUrl.value), {
+      headers: { Authorization: `Bearer ${aiApiKey.value.trim()}` }
+    })
+    const traceId = response.headers.get('x-siliconcloud-trace-id') || ''
+    const payload = await response.json().catch(() => null)
+    if (!response.ok) {
+      const providerError = payload?.error || payload || {}
+      const detail = providerError.message || payload?.message || `HTTP ${response.status}`
+      aiConnectionTest.value = { state: 'error', message: t('minecraftSkin.aiConnectionTestFailed', { detail: sanitizeDiagnosticDetail(detail) }) }
+      recordAiDiagnostic({ status: response.status, traceId, code: providerError.code || providerError.type || 'connection_test_failed', detail: sanitizeDiagnosticDetail(detail) })
+      return
+    }
+    const modelIds = Array.isArray(payload?.data) ? payload.data.map((entry) => entry?.id).filter(Boolean) : []
+    saveAiModelCatalog(modelIds)
+    const modelFound = modelIds.includes(aiModel.value.trim())
+    aiConnectionTest.value = {
+      state: modelFound ? 'success' : 'error',
+      message: modelFound ? '' : t('minecraftSkin.aiConnectionTestModelMissing')
+    }
+    if (modelFound) showAiConnectionToast(t('minecraftSkin.aiConnectionTestSuccess'))
+    recordAiDiagnostic({ status: response.status, traceId, code: modelFound ? 'connection_test_passed' : 'connection_test_model_missing', detail: `Loaded ${modelIds.length} models from /models.` })
+  } catch (error) {
+    const detail = sanitizeDiagnosticDetail(error instanceof Error ? error.message : String(error))
+    aiConnectionTest.value = { state: 'error', message: t('minecraftSkin.aiConnectionTestFailed', { detail }) }
+    recordAiDiagnostic({ status: 'network', code: 'connection_test_network_error', detail })
+  } finally {
+    isTestingAiConnection.value = false
+  }
+}
+
+async function requestPixelPartContent(modelName, messages) {
+  const requestPayload = createPixelPartRequestPayload(modelName, messages)
   const response = await fetch(normalizeAiEndpoint(aiBaseUrl.value), {
     method: 'POST',
     signal: aiRequestController.signal,
@@ -725,10 +645,6 @@ async function requestAiPlanContent(modelName, messages, attempt = 'initial') {
     body: JSON.stringify(requestPayload)
   })
   const traceId = response.headers.get('x-siliconcloud-trace-id') || ''
-  if (isDevToolsEnabled) {
-    console.log('[Minecraft AI] response', { attempt, status: response.status, contentType: response.headers.get('content-type'), traceId })
-    response.clone().text().then((raw) => console.log('[Minecraft AI] raw SSE response', { attempt, raw })).catch((error) => console.error('[Minecraft AI] raw SSE read failed', error))
-  }
   if (!response.ok) {
     const payload = await response.json().catch(() => null)
     const providerError = payload?.error || payload || {}
@@ -736,71 +652,139 @@ async function requestAiPlanContent(modelName, messages, attempt = 'initial') {
     recordAiDiagnostic({ status: response.status, traceId, code: providerError.code || providerError.type || 'request_failed', detail: sanitizeDiagnosticDetail(detail) })
     throw new Error(detail)
   }
-  recordAiDiagnostic({ status: response.status, traceId, code: 'stream_connected', detail: 'Waiting for model output.' })
-  aiGenerationStatus.value = t('minecraftSkin.aiWaitingStream')
-  const { content, finishReason } = await readAiStream(response, (partialContent) => {
-    aiPlanText.value = partialContent
-    aiGenerationStatus.value = t('minecraftSkin.aiReceiving')
-  }, () => {
-    aiGenerationStatus.value = t('minecraftSkin.aiThinking')
-  })
-  if (isDevToolsEnabled) console.log('[Minecraft AI] assembled model content', { attempt, content })
-  if (finishReason === 'length') throw new Error('AI response was truncated because it reached the output limit.')
-  if (!content) throw new Error('AI response did not contain a plan.')
+  aiGenerationStatus.value = t('minecraftSkin.aiWaitingResponse')
+  const payload = await response.json().catch(() => null)
+  const choice = payload?.choices?.[0] || {}
+  const message = choice.message || {}
+  const content = typeof message.content === 'string' ? message.content.trim() : ''
+  const reasoning = typeof message.reasoning_content === 'string' ? message.reasoning_content.trim() : ''
+  const finishReason = choice.finish_reason || ''
+  if (finishReason === 'length') {
+    recordAiDiagnostic({ status: response.status, traceId, code: 'response_truncated', detail: `The model reached its output limit after ${content.length} final-content characters.` })
+    throw new Error('AI response was truncated because it reached the output limit.')
+  }
+  if (!content) {
+    recordAiDiagnostic({
+      status: response.status,
+      traceId,
+      code: reasoning ? 'reasoning_without_content' : 'empty_model_content',
+      detail: reasoning ? 'The model returned reasoning but no final content.' : 'The response did not contain choices[0].message.content.'
+    })
+    throw new Error(reasoning ? 'AI response contained reasoning but no final pixel design.' : 'AI response did not contain a pixel design.')
+  }
+  recordAiDiagnostic({ status: response.status, traceId, code: 'response_complete', detail: `Complete JSON response; final content ${content.length} characters.` })
   return content
 }
 
-async function generateAiPlan() {
-  aiPlanError.value = ''
-  aiPlanResult.value = null
+function parsePixelPartDesign(content) {
+  const normalized = content.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')
+  return JSON.parse(normalized)
+}
+
+function inspectPixelPartResponse(stage, content) {
+  console.groupCollapsed(`[Minecraft Skin AI] ${stage} response (${content.length} chars)`)
+  console.log('Raw model content:', content)
+  try {
+    const design = parsePixelPartDesign(content)
+    const validation = validatePixelPartDesign(design, { expectedPart: 'rightArm' })
+    console.log('Parsed pixel design:', design)
+    if (validation.valid) console.info('Pixel protocol validation: passed')
+    else console.error('Pixel protocol validation errors:', validation.errors)
+  } catch (error) {
+    console.error('Pixel response JSON parse error:', error)
+  }
+  console.groupEnd()
+}
+
+function decodePixelPartDesign(content) {
+  const design = parsePixelPartDesign(content)
+  const validation = validatePixelPartDesign(design, { expectedPart: 'rightArm' })
+  if (!validation.valid) throw new Error(validation.errors.join('; '))
+  return design
+}
+
+function previewPixelPartDesign(design) {
+  const proposal = createPixelPartProposalCanvas(skinCanvas.value, design, { expectedPart: 'rightArm' })
+  if (!proposalCanvas.value) proposalPreviousOuterParts.value = [...visibleOuterParts.value]
+  visibleOuterParts.value = [...new Set([...visibleOuterParts.value, 'rightArm'])]
+  showOuterLayer.value = true
+  proposalCanvas.value = proposal.canvas
+  proposalPlan.value = design
+  proposalResult.value = proposal
+  aiProposalApplied.value = false
+  showProposal.value = true
+  textureVersion.value += 1
+}
+
+async function generateAiPart() {
+  aiGenerationError.value = ''
   aiGenerationStatus.value = ''
   aiRequestDiagnostic.value = null
   if (!aiPrompt.value.trim()) {
-    aiPlanError.value = t('minecraftSkin.aiPromptRequired')
+    aiGenerationError.value = t('minecraftSkin.aiPromptRequired')
     return
   }
   if (!aiApiKey.value.trim()) {
-    aiPlanError.value = t('minecraftSkin.aiApiKeyRequired')
+    aiGenerationError.value = t('minecraftSkin.aiApiKeyRequired')
     return
   }
   if (!aiBaseUrl.value.trim() || !aiModel.value.trim()) {
-    aiPlanError.value = t('minecraftSkin.aiConfigRequired')
+    aiGenerationError.value = t('minecraftSkin.aiConfigRequired')
+    return
+  }
+  if (model.value !== 'classic') {
+    aiGenerationError.value = t('minecraftSkin.pixelGenerationClassicOnly')
     return
   }
   if (aiUseVision.value && !isVisionModel(aiModel.value.trim())) {
-    aiPlanError.value = t('minecraftSkin.aiVisionUnsupported')
+    aiGenerationError.value = t('minecraftSkin.aiVisionUnsupported')
     return
   }
-  aiPlanText.value = ''
-  isGeneratingAiPlan.value = true
+  isGeneratingAiPart.value = true
   aiGenerationStatus.value = t('minecraftSkin.aiConnecting')
   aiRequestController = new AbortController()
   try {
     const modelName = aiModel.value.trim()
-    const userContent = buildAiUserContent()
+    const userContent = buildPixelPartUserContent()
     const messages = [
-      { role: 'system', content: AI_SYSTEM_PROMPT },
+      { role: 'system', content: PIXEL_PART_SYSTEM_PROMPT },
       { role: 'user', content: userContent }
     ]
-    const content = await requestAiPlanContent(modelName, messages)
-    const plan = typeof content === 'string' ? JSON.parse(content) : content
-    const validation = validateAiSkinEditPlan(plan)
-    if (!validation.valid) throw new Error(validation.errors.join('; '))
-    aiPlanText.value = JSON.stringify(plan, null, 2)
-    previewAiPlan(plan)
+    const content = await requestPixelPartContent(modelName, messages)
+    inspectPixelPartResponse('Initial', content)
+    let design
+    try {
+      design = decodePixelPartDesign(content)
+    } catch (error) {
+      recordAiDiagnostic({ code: 'repairing_pixel_protocol', detail: sanitizeDiagnosticDetail(error.message) })
+      aiGenerationStatus.value = t('minecraftSkin.pixelGenerationRepairing')
+      const repaired = await requestPixelPartContent(modelName, [
+        { role: 'system', content: PIXEL_PART_SYSTEM_PROMPT },
+        {
+          role: 'user',
+          content: JSON.stringify({
+            task: 'Repair the invalid JSON below. Keep the requested right-arm design, but return a complete valid pixel design matching the system schema exactly.',
+            validationError: error instanceof Error ? error.message : String(error),
+            invalidResponse: content
+          })
+        }
+      ])
+      inspectPixelPartResponse('Repair', repaired)
+      design = decodePixelPartDesign(repaired)
+    }
+    previewPixelPartDesign(design)
   } catch (error) {
-    if (isDevToolsEnabled) console.error('[Minecraft AI] generation failed', error)
     if (error?.name === 'AbortError') {
-      aiPlanError.value = t('minecraftSkin.aiCancelled')
+      aiGenerationError.value = t('minecraftSkin.aiCancelled')
     } else if (error instanceof TypeError) {
       recordAiDiagnostic({ status: 'network', code: 'network_error', detail: sanitizeDiagnosticDetail(error.message) })
-      aiPlanError.value = t('minecraftSkin.aiNetworkError')
+      aiGenerationError.value = t('minecraftSkin.aiNetworkError')
     } else {
       if (!aiRequestDiagnostic.value) recordAiDiagnostic({ status: 'client', code: 'client_error', detail: sanitizeDiagnosticDetail(error?.message) })
-      aiPlanError.value = formatAiGenerationError(error)
+      aiGenerationError.value = formatAiGenerationError(error)
     }
   } finally {
-    isGeneratingAiPlan.value = false
+    isGeneratingAiPart.value = false
     aiGenerationStatus.value = ''
     aiRequestController = null
   }
@@ -810,55 +794,9 @@ function cancelAiGeneration() {
   aiRequestController?.abort()
 }
 
-async function readAiStream(response, onContent, onReasoning) {
-  if (!response.body) throw new Error('AI response stream is unavailable.')
-  const reader = response.body.getReader()
-  const decoder = new TextDecoder()
-  let buffer = ''
-  let content = ''
-  let finishReason = ''
-  const processLine = (line) => {
-    if (!line.startsWith('data:')) return
-    const data = line.slice(5).trim()
-    if (!data || data === '[DONE]') return
-    const chunk = JSON.parse(data)
-    const choice = chunk.choices?.[0] || {}
-    const message = choice.delta || choice.message || {}
-    if (choice.finish_reason) finishReason = choice.finish_reason
-    if (message.reasoning_content || message.reasoning) onReasoning?.()
-    if (message.content) {
-      content += message.content
-      onContent(content)
-    }
-  }
-  while (true) {
-    const { done, value } = await reader.read()
-    buffer += decoder.decode(value || new Uint8Array(), { stream: !done })
-    const lines = buffer.split('\n')
-    buffer = lines.pop() || ''
-    lines.forEach(processLine)
-    if (done) break
-  }
-  if (buffer.trim()) processLine(buffer.trim())
-  return { content, finishReason }
-}
-
 function redraw() {
   textureVersion.value += 1
   scheduleProjectSave()
-}
-
-// Reserved for the AI panel: plans are validated and applied as one undoable transaction.
-function applyAiPlan(plan) {
-  if (!skinCanvas.value) throw new Error('Skin canvas is not ready.')
-  const validation = validateAiSkinEditPlan(plan)
-  if (!validation.valid) throw new Error(validation.errors.join('; '))
-  const before = skinCanvas.value.toDataURL('image/png')
-  const result = applyAiSkinEditPlan(skinCanvas.value, plan)
-  history.value.push(before)
-  redoStack.value = []
-  redraw()
-  return result
 }
 
 function handlePreviewError(error) {
@@ -1089,6 +1027,8 @@ onMounted(async () => {
   window.addEventListener('keydown', handleKeyboardShortcut)
   window.addEventListener('pagehide', saveProject)
   try {
+    restoreAiConnectionCache()
+    restoreAiModelCatalog()
     skinCanvas.value = await createSkinCanvas()
     restoreRecentColors()
     const saved = restoreProject()
@@ -1112,11 +1052,18 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', handleKeyboardShortcut)
   window.removeEventListener('pagehide', saveProject)
   window.clearTimeout(saveTimer)
+  window.clearTimeout(aiConnectionToastTimer)
   saveProject()
 })
 
 watch(model, drawModelSwitchIcon, { flush: 'post' })
 watch([model, activeLayer, brushColor, brushOpacity, mirrorEnabled], scheduleProjectSave)
+watch(aiBaseUrl, () => {
+  restoreAiModelCatalog()
+})
+watch([aiApiKey, aiBaseUrl, aiModel], () => {
+  aiConnectionTest.value = null
+})
 </script>
 
 <style scoped>
