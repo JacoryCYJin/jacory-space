@@ -199,7 +199,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ChevronDown, Download, FilePlus2, FlipHorizontal, Grid3X3, Layers3, PaintBucket, Pencil, Pipette, Redo2, Sparkles, Undo2, Upload } from 'lucide-vue-next'
+import { ChevronDown, Download, Eraser, FilePlus2, FlipHorizontal, Grid3X3, Layers3, PaintBucket, Pencil, Pipette, Redo2, Sparkles, Undo2, Upload } from 'lucide-vue-next'
 import jacoryLogo from '../assets/jacory-logo.png'
 import StatusToast from '../components/StatusToast.vue'
 import MinecraftSkinPreview from '../components/tools/minecraft-skin-editor/MinecraftSkinPreview.vue'
@@ -304,6 +304,7 @@ const nextModelLabel = computed(() => model.value === 'classic' ? t('minecraftSk
 
 const tools = computed(() => [
   { id: 'brush', label: t('minecraftSkin.brush'), icon: Pencil },
+  { id: 'eraser', label: t('minecraftSkin.eraser'), icon: Eraser },
   { id: 'fill', label: t('minecraftSkin.fill'), icon: PaintBucket },
   { id: 'eyedropper', label: t('minecraftSkin.eyedropper'), icon: Pipette },
 ])
@@ -424,10 +425,7 @@ function applyAiProposal() {
   if (!proposalPlan.value || aiProposalApplied.value) return
   aiGenerationError.value = ''
   try {
-    const before = skinCanvas.value.toDataURL('image/png')
     applyPixelPartDesign(skinCanvas.value, proposalPlan.value, { expectedPart: 'rightArm' })
-    history.value.push(before)
-    redoStack.value = []
     aiProposalApplied.value = true
     showProposal.value = true
     redraw()
@@ -877,6 +875,7 @@ function paintPreviewPixel({ x, y }) {
   if (!strokeSnapshot.value) beginPaintStroke()
   const context = skinCanvas.value.getContext('2d')
   const color = colorWithOpacity(brushColor.value, brushOpacity.value)
+  const isErasing = activeTool.value === 'eraser'
   if (activeTool.value === 'fill') {
     floodFillSkinFace(skinCanvas.value, { x, y }, activeLayer.value, color)
     if (mirrorEnabled.value) {
@@ -884,11 +883,17 @@ function paintPreviewPixel({ x, y }) {
       if (mirrorPixel && (mirrorPixel.x !== x || mirrorPixel.y !== y)) floodFillSkinFace(skinCanvas.value, mirrorPixel, activeLayer.value, color)
     }
   } else {
-    context.fillStyle = color
-    context.fillRect(x, y, 1, 1)
+    if (isErasing) context.clearRect(x, y, 1, 1)
+    else {
+      context.fillStyle = color
+      context.fillRect(x, y, 1, 1)
+    }
     if (mirrorEnabled.value) {
       const mirrorPixel = mirrorSkinPixel({ x, y }, activeLayer.value)
-      if (mirrorPixel && (mirrorPixel.x !== x || mirrorPixel.y !== y)) context.fillRect(mirrorPixel.x, mirrorPixel.y, 1, 1)
+      if (mirrorPixel && (mirrorPixel.x !== x || mirrorPixel.y !== y)) {
+        if (isErasing) context.clearRect(mirrorPixel.x, mirrorPixel.y, 1, 1)
+        else context.fillRect(mirrorPixel.x, mirrorPixel.y, 1, 1)
+      }
     }
   }
   strokeModified.value = true
@@ -975,7 +980,6 @@ function restoreDataUrl(dataUrl) {
 function undo() {
   const previous = history.value.pop()
   if (!previous) return
-  discardAiProposal()
   redoStack.value.push(skinCanvas.value.toDataURL())
   restoreDataUrl(previous)
 }
@@ -983,7 +987,6 @@ function undo() {
 function redo() {
   const next = redoStack.value.pop()
   if (!next) return
-  discardAiProposal()
   history.value.push(skinCanvas.value.toDataURL())
   restoreDataUrl(next)
 }

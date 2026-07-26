@@ -595,6 +595,7 @@ export default {
     base: 'ベースレイヤー',
     outer: '外側レイヤー',
     brush: 'ブラシ',
+    eraser: '消しゴム',
     fill: '塗りつぶし',
     eyedropper: 'スポイト',
     mirror: 'ミラー描画',
