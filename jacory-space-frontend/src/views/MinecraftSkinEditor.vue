@@ -38,7 +38,7 @@
         <ColorPickerPanel v-if="isColorPanelOpen" v-model="project.state.brushColor" v-model:opacity="project.state.brushOpacity" :recent-colors="editing.state.recentColors" class="pointer-events-auto w-full overflow-hidden rounded-[10px]" @commit="editing.actions.rememberColor" @select-recent="editing.actions.selectRecentColor" />
       </div>
 
-      <AiPartGenerationPanel v-if="isDevelopment && isAiPanelOpen" class="pointer-events-auto" :ai="ai" :connection-status="ai.connectionStatus.value" @close="closeAiPanel" />
+      <AiPartGenerationPanel v-if="isDevelopment && isAiPanelOpen" class="pointer-events-auto" :ai="ai" :connection-status="ai.connectionStatus.value" />
       <MotionWorkspacePanel v-if="isMotionPanelOpen" class="pointer-events-auto" :motion-id="selectedMotion" :paused="motionPaused" :speed="motionSpeed" @select="selectMotion" @update:paused="motionPaused = $event" @update:speed="motionSpeed = $event" @reset="resetMotion" />
       <SkinFileActions class="pointer-events-auto" :motion-locked="isMotionPlaybackActive" @new="isNewSkinDialogOpen = true" @import="handleImport" @export="project.actions.exportSkin" />
       <NewSkinDialog v-if="isNewSkinDialogOpen" class="pointer-events-auto" @cancel="isNewSkinDialogOpen = false" @confirm="startNewSkin" />
@@ -84,14 +84,31 @@ const displayCanvas = computed(() => ai.state.showProposal && ai.state.proposalC
 const isMotionPlaybackActive = computed(() => selectedMotion.value !== 'static' && !motionPaused.value)
 
 function togglePanel(panel) {
-  const nextOpen = panel === 'color' ? !isColorPanelOpen.value : panel === 'layer' ? !isLayerPanelOpen.value : panel === 'motion' ? !isMotionPanelOpen.value : !isAiPanelOpen.value
-  isColorPanelOpen.value = panel === 'color' && nextOpen
-  isLayerPanelOpen.value = panel === 'layer' && nextOpen
-  isMotionPanelOpen.value = panel === 'motion' && nextOpen
-  isAiPanelOpen.value = panel === 'ai' && nextOpen
-  if (panel === 'ai') ai.state.generationError = ''
+  if (panel === 'color') {
+    isColorPanelOpen.value = !isColorPanelOpen.value
+    isAiPanelOpen.value = false
+    isMotionPanelOpen.value = false
+    return
+  }
+  if (panel === 'layer') {
+    isLayerPanelOpen.value = !isLayerPanelOpen.value
+    isAiPanelOpen.value = false
+    isMotionPanelOpen.value = false
+    return
+  }
+  if (panel === 'motion') {
+    isMotionPanelOpen.value = !isMotionPanelOpen.value
+    isColorPanelOpen.value = false
+    isLayerPanelOpen.value = false
+    isAiPanelOpen.value = false
+    return
+  }
+  isAiPanelOpen.value = !isAiPanelOpen.value
+  isColorPanelOpen.value = false
+  isLayerPanelOpen.value = false
+  isMotionPanelOpen.value = false
+  ai.state.generationError = ''
 }
-function closeAiPanel() { isAiPanelOpen.value = false }
 function toggleModel() { project.state.model = project.state.model === 'classic' ? 'slim' : 'classic' }
 function selectMotion(motion) { selectedMotion.value = motion; motionPaused.value = false }
 function resetMotion() { selectedMotion.value = 'static'; motionSpeed.value = 1; motionPaused.value = false }
