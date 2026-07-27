@@ -25,54 +25,80 @@
         <span class="hidden font-mono text-xs tracking-[0.16em] text-muted-foreground sm:inline">JACORY SPACE</span>
       </RouterLink>
 
-      <div class="pointer-events-auto absolute left-5 top-20 flex w-11 flex-col overflow-hidden rounded-md border border-line bg-card/95 backdrop-blur-sm">
-        <button type="button" :aria-label="nextModelLabel" :title="nextModelLabel" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(nextModelLabel, $event)" @mouseleave="hideToolTooltip" @click="toggleModel">
-          <canvas ref="modelSwitchIcon" width="24" height="24" class="h-6 w-6 image-render-pixel" aria-hidden="true" />
-        </button>
-        <button type="button" :aria-label="t('minecraftSkin.outerDisplay')" :class="toolButtonClass(isLayerPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.outerDisplay'), $event)" @mouseleave="hideToolTooltip" @click="toggleLayerPanel">
-          <Layers3 class="h-4 w-4" />
-        </button>
-        <span class="mx-2 h-px bg-line" />
-        <button type="button" :aria-label="t('minecraftSkin.color')" :class="toolButtonClass(isColorPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.color'), $event)" @mouseleave="hideToolTooltip" @click="toggleColorPanel">
-          <span class="h-5 w-5 rounded-sm border border-line-strong" :style="{ backgroundColor: brushColor, opacity: brushOpacity }" />
-        </button>
-        <button v-for="tool in tools" :key="tool.id" type="button" :aria-label="tool.label" :class="toolButtonClass(activeTool === tool.id)" @mouseenter="showToolTooltip(tool.label, $event)" @mouseleave="hideToolTooltip" @click="activeTool = tool.id">
-          <component :is="tool.icon" class="h-4 w-4" />
-        </button>
-        <span class="mx-2 h-px bg-line" />
-        <button type="button" :aria-label="t('minecraftSkin.grid')" :class="toolButtonClass(showPixelGrid)" @mouseenter="showToolTooltip(t('minecraftSkin.grid'), $event)" @mouseleave="hideToolTooltip" @click="showPixelGrid = !showPixelGrid"><Grid3X3 class="h-4 w-4" /></button>
-        <button type="button" :aria-label="t('minecraftSkin.mirror')" :class="toolButtonClass(mirrorEnabled)" @mouseenter="showToolTooltip(t('minecraftSkin.mirror'), $event)" @mouseleave="hideToolTooltip" @click="mirrorEnabled = !mirrorEnabled"><FlipHorizontal class="h-4 w-4" /></button>
-        <span class="mx-2 h-px bg-line" />
-        <button type="button" :aria-label="t('minecraftSkin.undo')" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(t('minecraftSkin.undo'), $event)" @mouseleave="hideToolTooltip" @click="undo"><Undo2 class="h-4 w-4" /></button>
-        <button type="button" :aria-label="t('minecraftSkin.redo')" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(t('minecraftSkin.redo'), $event)" @mouseleave="hideToolTooltip" @click="redo"><Redo2 class="h-4 w-4" /></button>
-        <span class="mx-2 h-px bg-line" />
-        <button v-if="isDevelopment" type="button" :aria-label="t('minecraftSkin.aiEdit')" :class="toolButtonClass(isAiPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.aiEdit'), $event)" @mouseleave="hideToolTooltip" @click="toggleAiPanel"><Sparkles class="h-4 w-4" /></button>
+      <div class="pointer-events-auto absolute left-5 top-20 flex w-14 flex-col rounded-[10px] border border-line bg-card/95 p-1.5 backdrop-blur-sm">
+        <div class="flex flex-col items-center gap-1">
+          <button type="button" :aria-label="nextModelLabel" :title="nextModelLabel" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(nextModelLabel, $event)" @mouseleave="hideToolTooltip" @click="toggleModel">
+            <span class="flex h-8 w-8 items-center justify-center rounded-md border border-line bg-background">
+              <canvas ref="modelSwitchIcon" width="24" height="24" class="h-6 w-6 image-render-pixel" aria-hidden="true" />
+            </span>
+          </button>
+          <button type="button" :aria-label="t('minecraftSkin.outerDisplay')" :class="toolButtonClass(isLayerPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.outerDisplay'), $event)" @mouseleave="hideToolTooltip" @click="toggleLayerPanel">
+            <Layers3 class="h-5 w-5" />
+          </button>
+        </div>
+        <span class="mx-1.5 my-1 h-px bg-line" />
+        <div class="flex flex-col items-center gap-1">
+          <button type="button" :aria-label="t('minecraftSkin.color')" :class="toolButtonClass(isColorPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.color'), $event)" @mouseleave="hideToolTooltip" @click="toggleColorPanel">
+            <span class="h-5 w-5 rounded-sm border border-line-strong" :style="{ backgroundColor: brushColor, opacity: brushOpacity }" />
+          </button>
+          <button v-for="tool in tools" :key="tool.id" type="button" :aria-label="tool.label" :class="toolButtonClass(activeTool === tool.id, 'primary')" @mouseenter="showToolTooltip(tool.label, $event)" @mouseleave="hideToolTooltip" @click="activeTool = tool.id">
+            <span :class="toolButtonContentClass(activeTool === tool.id, 'primary')">
+              <component :is="tool.icon" class="h-5 w-5" />
+            </span>
+          </button>
+        </div>
+        <span class="mx-1.5 my-1 h-px bg-line" />
+        <div class="flex flex-col items-center gap-1">
+          <button type="button" :aria-label="t('minecraftSkin.grid')" :class="toolButtonClass(showPixelGrid)" @mouseenter="showToolTooltip(t('minecraftSkin.grid'), $event)" @mouseleave="hideToolTooltip" @click="showPixelGrid = !showPixelGrid"><Grid3X3 class="h-5 w-5" /></button>
+          <button type="button" :aria-label="t('minecraftSkin.mirror')" :class="toolButtonClass(mirrorEnabled)" @mouseenter="showToolTooltip(t('minecraftSkin.mirror'), $event)" @mouseleave="hideToolTooltip" @click="mirrorEnabled = !mirrorEnabled"><FlipHorizontal class="h-5 w-5" /></button>
+        </div>
+        <span class="mx-1.5 my-1 h-px bg-line" />
+        <div class="flex flex-col items-center gap-1">
+          <button type="button" :aria-label="t('minecraftSkin.undo')" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(t('minecraftSkin.undo'), $event)" @mouseleave="hideToolTooltip" @click="undo"><Undo2 class="h-5 w-5" /></button>
+          <button type="button" :aria-label="t('minecraftSkin.redo')" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(t('minecraftSkin.redo'), $event)" @mouseleave="hideToolTooltip" @click="redo"><Redo2 class="h-5 w-5" /></button>
+        </div>
+        <span v-if="isDevelopment" class="mx-1.5 my-1 h-px bg-line" />
+        <button v-if="isDevelopment" type="button" :aria-label="t('minecraftSkin.aiEdit')" :class="toolButtonClass(isAiPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.aiEdit'), $event)" @mouseleave="hideToolTooltip" @click="toggleAiPanel"><Sparkles class="h-5 w-5" /></button>
       </div>
 
       <span v-if="hoveredTool" class="pointer-events-none absolute left-20 z-30 -translate-y-1/2 font-mono text-xs tracking-[0.1em] text-muted-foreground" :style="{ top: `calc(5rem + ${hoveredToolTop}px)` }">{{ hoveredTool }}</span>
 
-      <section v-if="isLayerPanelOpen" class="pointer-events-auto absolute left-20 top-20 z-20 w-64 border border-line bg-card/95 backdrop-blur-sm">
-        <div class="border-b border-line p-4">
+      <div v-if="isLayerPanelOpen || isColorPanelOpen" class="pointer-events-none absolute left-[5.125rem] top-20 z-20 flex w-[min(20rem,calc(100vw-6.5rem))] flex-col items-start gap-1.5">
+      <section v-if="isLayerPanelOpen" class="pointer-events-auto w-full overflow-hidden rounded-[10px] border border-line bg-card/95 backdrop-blur-sm">
+        <div class="p-4">
           <p class="tech">01 — {{ t('minecraftSkin.outerDisplay') }}</p>
-          <div class="mt-3 grid grid-cols-2 border border-line">
-            <button type="button" :aria-pressed="!showOuterLayer" :class="['flex h-10 items-center justify-center gap-2 border-r border-line text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', !showOuterLayer ? 'text-blue' : 'text-muted-foreground hover:text-foreground']" @click="showOuterLayer = false">
-              <span :class="['h-1.5 w-1.5 rounded-full', !showOuterLayer ? 'bg-blue' : 'bg-line-strong']" aria-hidden="true" />
+          <div class="mt-2 grid grid-cols-2 rounded-sm border border-line p-0.5" role="group" :aria-label="t('minecraftSkin.outerDisplay')">
+            <button type="button" :aria-pressed="!showOuterLayer" :class="['flex h-8 items-center justify-center gap-2 rounded-[2px] text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', !showOuterLayer ? 'border border-blue bg-blue/5 text-blue' : 'text-muted-foreground hover:text-foreground']" @click="setOuterLayerDisplay(false)">
+              <span :class="['h-1.5 w-1.5 rounded-full border', !showOuterLayer ? 'border-blue bg-blue' : 'border-line-strong']" aria-hidden="true" />
               {{ t('minecraftSkin.outerDisplayOff') }}
             </button>
-            <button type="button" :aria-pressed="showOuterLayer" :class="['flex h-10 items-center justify-center gap-2 text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', showOuterLayer ? 'text-blue' : 'text-muted-foreground hover:text-foreground']" @click="showAllOuterLayers">
-              <span :class="['h-1.5 w-1.5 rounded-full', showOuterLayer ? 'bg-blue' : 'bg-line-strong']" aria-hidden="true" />
+            <button type="button" :aria-pressed="showOuterLayer" :class="['flex h-8 items-center justify-center gap-2 rounded-[2px] text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', showOuterLayer ? 'border border-blue bg-blue/5 text-blue' : 'text-muted-foreground hover:text-foreground']" @click="setOuterLayerDisplay(true)">
+              <span :class="['h-1.5 w-1.5 rounded-full border', showOuterLayer ? 'border-blue bg-blue' : 'border-line-strong']" aria-hidden="true" />
               {{ t('minecraftSkin.outerDisplayOn') }}
             </button>
           </div>
         </div>
-        <div class="p-4">
-          <p class="tech">02 — {{ t('minecraftSkin.outerVisibility') }}</p>
-          <div class="mt-3 grid grid-cols-2 gap-2">
-            <button type="button" :class="['col-span-2 border px-3 py-2 text-left text-xs transition-colors', allOuterPartsSelected ? 'border-blue text-blue' : 'border-line text-muted-foreground hover:border-line-strong hover:text-foreground']" @click="toggleAllOuterParts">
-              <span class="block">{{ t('minecraftSkin.allOuterParts') }}</span>
+        <div :class="['border-t border-line p-4 transition-opacity', showOuterLayer ? '' : 'opacity-45']" :aria-disabled="!showOuterLayer">
+          <div class="flex items-center justify-between gap-3">
+            <p class="tech">02 — {{ t('minecraftSkin.outerVisibility') }}</p>
+            <span v-if="!showOuterLayer" class="rounded-full bg-blue/10 px-2 py-1 text-xs text-blue">{{ t('minecraftSkin.outerVisibilityDisabledHint') }}</span>
+          </div>
+          <div class="mt-2 grid grid-cols-2 rounded-sm border border-line p-0.5" role="group" :aria-label="t('minecraftSkin.outerVisibility')">
+            <button type="button" :aria-pressed="allOuterPartsSelected && !isCustomOuterPartsExpanded" :disabled="!showOuterLayer" :class="['flex h-8 items-center justify-center rounded-[2px] text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset disabled:cursor-not-allowed', allOuterPartsSelected && !isCustomOuterPartsExpanded ? 'border border-blue bg-blue/5 text-blue' : 'text-muted-foreground hover:text-foreground']" @click="selectAllOuterParts">
+              {{ t('minecraftSkin.allOuterParts') }}
             </button>
-            <button v-for="part in skinParts" :key="part.id" type="button" :class="['border px-3 py-2 text-left text-xs transition-colors', visibleOuterParts.includes(part.id) ? 'border-blue text-blue' : 'border-line text-muted-foreground hover:border-line-strong hover:text-foreground']" @click="toggleOuterPart(part.id)">
-              <span class="block">{{ part.label }}</span>
+            <button type="button" :aria-pressed="isCustomOuterPartsExpanded || !allOuterPartsSelected" :disabled="!showOuterLayer" :class="['flex h-8 items-center justify-center rounded-[2px] text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset disabled:cursor-not-allowed', isCustomOuterPartsExpanded || !allOuterPartsSelected ? 'border border-blue bg-blue/5 text-blue' : 'text-muted-foreground hover:text-foreground']" @click="expandCustomOuterParts">
+              {{ t('minecraftSkin.customOuterParts') }}
+            </button>
+          </div>
+          <p v-if="showOuterLayer && isCustomOuterPartsExpanded" class="mt-3 text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.outerVisibilityCustomHint') }}</p>
+          <div v-if="showOuterLayer && isCustomOuterPartsExpanded" class="mt-2 grid grid-cols-2 gap-2" role="group" :aria-label="t('minecraftSkin.outerVisibilityCustomHint')">
+            <button v-for="part in skinParts" :key="part.id" type="button" :aria-pressed="visibleOuterParts.includes(part.id)" :class="['flex h-10 items-center gap-3 border px-3 text-left text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', visibleOuterParts.includes(part.id) ? 'border-blue bg-blue/5 text-blue' : 'border-line text-muted-foreground hover:border-line-strong hover:text-foreground']" @click="toggleOuterPart(part.id)">
+              <BodyPartIcon :part="part.id" class="h-5 w-5 shrink-0" />
+              <span class="min-w-0 flex-1 whitespace-nowrap">{{ part.label }}</span>
+              <span :class="['flex h-4 w-4 shrink-0 items-center justify-center rounded-full', visibleOuterParts.includes(part.id) ? 'bg-blue text-background' : 'border border-line-strong']" aria-hidden="true">
+                <Check v-if="visibleOuterParts.includes(part.id)" class="h-2.5 w-2.5" />
+              </span>
             </button>
           </div>
         </div>
@@ -83,12 +109,13 @@
         v-model="brushColor"
         v-model:opacity="brushOpacity"
         :recent-colors="recentColors"
-        class="pointer-events-auto absolute left-20 top-20 z-20 w-[min(22rem,calc(100vw-6.5rem))]"
+        class="pointer-events-auto w-full overflow-hidden rounded-[10px]"
         @commit="rememberCurrentColor"
         @select-recent="selectRecentColor"
       />
+      </div>
 
-      <section v-if="isDevelopment && isAiPanelOpen" class="pointer-events-auto absolute left-20 top-20 z-20 w-[min(23rem,calc(100vw-6.5rem))] border border-line bg-card/95 backdrop-blur-sm">
+      <section v-if="isDevelopment && isAiPanelOpen" class="pointer-events-auto absolute left-[5.125rem] top-20 z-20 w-[min(20rem,calc(100vw-6.5rem))] overflow-hidden rounded-[10px] border border-line bg-card/95 backdrop-blur-sm">
         <div class="flex h-12 items-center justify-between border-b border-line px-4">
           <p class="tech">AI / {{ t('minecraftSkin.aiPartRightArm') }}</p>
           <button type="button" class="text-xs text-muted-foreground transition-colors hover:text-foreground" @click="closeAiPanel">{{ t('minecraftSkin.close') }}</button>
@@ -199,10 +226,11 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ChevronDown, Download, Eraser, FilePlus2, FlipHorizontal, Grid3X3, Layers3, PaintBucket, Pencil, Pipette, Redo2, Sparkles, Undo2, Upload } from 'lucide-vue-next'
+import { Check, ChevronDown, Download, Eraser, FilePlus2, FlipHorizontal, Grid3X3, Layers3, PaintBucket, Pencil, Pipette, Redo2, Sparkles, Undo2, Upload } from 'lucide-vue-next'
 import jacoryLogo from '../assets/jacory-logo.png'
 import StatusToast from '../components/StatusToast.vue'
 import MinecraftSkinPreview from '../components/tools/minecraft-skin-editor/MinecraftSkinPreview.vue'
+import BodyPartIcon from '../components/tools/minecraft-skin-editor/BodyPartIcon.vue'
 import ColorPickerPanel from '../components/tools/minecraft-skin-editor/ColorPickerPanel.vue'
 import { isDevelopment } from '../config/runtime'
 import { createSkinCanvas, DEFAULT_ALEX_SKIN_DATA_URL, DEFAULT_STEVE_SKIN_DATA_URL, downloadCanvas, floodFillSkinFace, importSkinFile, mirrorSkinPixel } from '../components/tools/minecraft-skin-editor/skin-core'
@@ -271,6 +299,7 @@ const isNewSkinDialogOpen = ref(false)
 const aiGenerationError = ref('')
 const aiProposalApplied = ref(false)
 const visibleOuterParts = ref([])
+const isCustomOuterPartsExpanded = ref(false)
 const proposalPreviousOuterParts = ref(null)
 const aiPrompt = ref('')
 const aiUseVision = ref(true)
@@ -320,25 +349,48 @@ const skinParts = computed(() => [
   { id: 'leftLeg', label: t('minecraftSkin.aiPartLeftLeg') }
 ])
 const allOuterPartsSelected = computed(() => skinParts.value.every((part) => visibleOuterParts.value.includes(part.id)))
-function toolButtonClass(active) {
-  return ['flex h-11 w-11 items-center justify-center transition-colors', active ? 'bg-blue text-white' : 'text-muted-foreground hover:bg-background hover:text-foreground']
+function toolButtonClass(active, emphasis = 'subtle') {
+  const base = 'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset'
+  if (!active) return [base, 'text-muted-foreground hover:bg-background hover:text-foreground']
+  return [base, emphasis === 'primary' ? 'text-muted-foreground' : 'border-blue/50 bg-blue/10 text-blue hover:bg-blue/15']
+}
+
+function toolButtonContentClass(active, emphasis = 'subtle') {
+  const base = 'flex h-9 w-9 items-center justify-center rounded-[8px]'
+  return active && emphasis === 'primary' ? [base, 'bg-blue text-white'] : base
 }
 
 function toggleOuterPart(partName) {
   visibleOuterParts.value = visibleOuterParts.value.includes(partName)
     ? visibleOuterParts.value.filter((part) => part !== partName)
     : [...visibleOuterParts.value, partName]
+  isCustomOuterPartsExpanded.value = !allOuterPartsSelected.value
   textureVersion.value += 1
 }
 
-function toggleAllOuterParts() {
-  visibleOuterParts.value = allOuterPartsSelected.value ? [] : skinParts.value.map((part) => part.id)
-  textureVersion.value += 1
-}
-
-function showAllOuterLayers() {
-  showOuterLayer.value = true
+function selectAllOuterParts() {
   visibleOuterParts.value = skinParts.value.map((part) => part.id)
+  isCustomOuterPartsExpanded.value = false
+  textureVersion.value += 1
+}
+
+function expandCustomOuterParts() {
+  isCustomOuterPartsExpanded.value = true
+}
+
+function setOuterLayerDisplay(visible) {
+  if (visible && visibleOuterParts.value.length === 0) {
+    visibleOuterParts.value = skinParts.value.map((part) => part.id)
+    isCustomOuterPartsExpanded.value = false
+  }
+  showOuterLayer.value = visible
+  textureVersion.value += 1
+}
+
+function resetOuterLayerForImportedSkin() {
+  visibleOuterParts.value = skinParts.value.map((part) => part.id)
+  isCustomOuterPartsExpanded.value = false
+  showOuterLayer.value = true
   textureVersion.value += 1
 }
 
@@ -353,13 +405,11 @@ function hideToolTooltip() {
 
 function toggleColorPanel() {
   isColorPanelOpen.value = !isColorPanelOpen.value
-  isLayerPanelOpen.value = false
   isAiPanelOpen.value = false
 }
 
 function toggleLayerPanel() {
   isLayerPanelOpen.value = !isLayerPanelOpen.value
-  isColorPanelOpen.value = false
   isAiPanelOpen.value = false
 }
 
@@ -843,7 +893,7 @@ async function handleImport(event) {
   if (!file) return
   await importSkinFile(file, skinCanvas.value)
   discardAiProposal()
-  showAllOuterLayers()
+  resetOuterLayerForImportedSkin()
   history.value = []
   redoStack.value = []
   redraw()
@@ -960,7 +1010,9 @@ function saveProject() {
       activeLayer: activeLayer.value,
       brushColor: brushColor.value,
       brushOpacity: brushOpacity.value,
-      mirrorEnabled: mirrorEnabled.value
+      mirrorEnabled: mirrorEnabled.value,
+      showOuterLayer: showOuterLayer.value,
+      visibleOuterParts: visibleOuterParts.value
     }))
   } catch {
     // Local persistence is optional; drawing remains available when storage is full or unavailable.
@@ -1074,6 +1126,12 @@ onMounted(async () => {
       brushColor.value = /^#[0-9a-f]{6}$/i.test(saved.brushColor) ? saved.brushColor : brushColor.value
       brushOpacity.value = Number.isFinite(saved.brushOpacity) ? Math.min(1, Math.max(0, saved.brushOpacity)) : brushOpacity.value
       mirrorEnabled.value = Boolean(saved.mirrorEnabled)
+      if (typeof saved.showOuterLayer === 'boolean') showOuterLayer.value = saved.showOuterLayer
+      if (Array.isArray(saved.visibleOuterParts)) {
+        const validPartIds = new Set(skinParts.value.map((part) => part.id))
+        visibleOuterParts.value = [...new Set(saved.visibleOuterParts.filter((partId) => validPartIds.has(partId)))]
+        isCustomOuterPartsExpanded.value = !allOuterPartsSelected.value
+      }
       await loadCanvasData(saved.skin)
     }
     await nextTick()
@@ -1093,7 +1151,7 @@ onBeforeUnmount(() => {
 })
 
 watch(model, drawModelSwitchIcon, { flush: 'post' })
-watch([model, activeLayer, brushColor, brushOpacity, mirrorEnabled], scheduleProjectSave)
+watch([model, activeLayer, brushColor, brushOpacity, mirrorEnabled, showOuterLayer, visibleOuterParts], scheduleProjectSave, { deep: true })
 watch(aiBaseUrl, () => {
   restoreAiModelCatalog()
 })
