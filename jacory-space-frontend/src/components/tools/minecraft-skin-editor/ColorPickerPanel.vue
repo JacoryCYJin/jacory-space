@@ -2,7 +2,7 @@
   <section class="border border-line bg-card/95 backdrop-blur-sm" @keydown.esc="cancelHex">
     <div class="space-y-4 p-4">
       <div>
-        <p class="mb-2 text-sm font-medium text-foreground">{{ t('minecraftSkin.saturationLightness') }}</p>
+        <p class="tech mb-2">{{ t('minecraftSkin.saturationLightness') }}</p>
         <div ref="saturationEl" class="color-square relative aspect-square w-full cursor-crosshair overflow-hidden" :style="{ backgroundColor: `hsl(${hue}, 100%, 50%)` }" @pointerdown="beginSquare" @pointermove="moveSquare" @pointerup="commitSquare" @pointercancel="commitSquare">
           <span class="pointer-events-none absolute h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-foreground bg-card/30" :style="{ left: `${saturation * 100}%`, top: `${(1 - brightness) * 100}%` }" />
         </div>
@@ -12,13 +12,13 @@
       <ColorRange :label="t('minecraftSkin.opacity')" :value="opacityValue * 100" :min="0" :max="100" :step="1" checkerboard :gradient="`linear-gradient(90deg, transparent, ${modelValue})`" @update="updateOpacity" @commit="emit('commit')" />
 
       <label class="block">
-        <span class="mb-2 block text-sm font-medium text-foreground">{{ t('minecraftSkin.hexCode') }}</span>
+        <span class="tech mb-2 block">{{ t('minecraftSkin.hexCode') }}</span>
         <input v-model="hexDraft" class="w-full border border-line-strong bg-background px-3 py-2 font-mono text-sm uppercase text-foreground outline-none transition-colors focus:border-blue" spellcheck="false" @keydown.enter.prevent="commitHex" @blur="commitHex" />
         <span class="mt-2 block text-xs text-muted-foreground">{{ t('minecraftSkin.hexHint') }}</span>
       </label>
 
       <div v-if="recentColors.length">
-        <p class="mb-2 text-sm font-medium text-foreground">{{ t('minecraftSkin.recentColors') }}</p>
+        <p class="tech mb-2">{{ t('minecraftSkin.recentColors') }}</p>
         <div class="flex flex-wrap gap-2">
           <button
             v-for="entry in recentColors"
@@ -47,7 +47,7 @@ const ColorRange = defineComponent({
   emits: ['update', 'commit'],
   setup(props, { emit }) {
     return () => h('label', { class: 'block' }, [
-      h('span', { class: 'mb-2 block text-sm font-medium text-foreground' }, props.label),
+      h('span', { class: 'tech mb-2 block' }, props.label),
       h('span', { class: ['color-range-track relative block h-3 overflow-hidden rounded-full', props.checkerboard ? 'color-range-checker' : ''] }, [
         h('span', { class: 'absolute inset-0', style: { background: props.gradient } }),
         h('input', { class: 'color-range absolute inset-0 h-full w-full cursor-pointer appearance-none bg-transparent', type: 'range', min: props.min, max: props.max, step: props.step, value: props.value, onInput: (event) => emit('update', Number(event.target.value)), onChange: () => emit('commit') })
