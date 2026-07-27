@@ -12,6 +12,10 @@
       :visible-outer-parts="visibleOuterParts"
       :active-tool="activeTool"
       :show-grid="showPixelGrid"
+      :is-motion-playback-locked="isMotionPlaybackActive"
+      :motion="selectedMotion"
+      :motion-speed="motionSpeed"
+      :motion-paused="motionPaused"
       class="absolute inset-0 min-h-dvh"
       @error="handlePreviewError"
       @paint-start="beginPaintStroke"
@@ -27,38 +31,42 @@
 
       <div class="pointer-events-auto absolute left-5 top-20 flex w-14 flex-col rounded-[10px] border border-line bg-card/95 p-1.5 backdrop-blur-sm">
         <div class="flex flex-col items-center gap-1">
-          <button type="button" :aria-label="nextModelLabel" :title="nextModelLabel" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(nextModelLabel, $event)" @mouseleave="hideToolTooltip" @click="toggleModel">
+          <button type="button" :aria-label="nextModelLabel" :title="nextModelLabel" :class="toolButtonClass(false)" :disabled="isMotionPlaybackActive" @mouseenter="showToolTooltip(nextModelLabel, $event)" @mouseleave="hideToolTooltip" @click="toggleModel">
             <span class="flex h-8 w-8 items-center justify-center rounded-md border border-line bg-background">
               <canvas ref="modelSwitchIcon" width="24" height="24" class="h-6 w-6 image-render-pixel" aria-hidden="true" />
             </span>
           </button>
-          <button type="button" :aria-label="t('minecraftSkin.outerDisplay')" :class="toolButtonClass(isLayerPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.outerDisplay'), $event)" @mouseleave="hideToolTooltip" @click="toggleLayerPanel">
+          <button type="button" :aria-label="t('minecraftSkin.outerDisplay')" :class="toolButtonClass(isLayerPanelOpen)" :disabled="isMotionPlaybackActive" @mouseenter="showToolTooltip(t('minecraftSkin.outerDisplay'), $event)" @mouseleave="hideToolTooltip" @click="toggleLayerPanel">
             <Layers3 class="h-5 w-5" />
           </button>
         </div>
-        <span class="mx-1.5 my-1 h-px bg-line" />
-        <div class="flex flex-col items-center gap-1">
-          <button type="button" :aria-label="t('minecraftSkin.color')" :class="toolButtonClass(isColorPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.color'), $event)" @mouseleave="hideToolTooltip" @click="toggleColorPanel">
+        <div class="contents">
+          <span class="mx-1.5 my-1 h-px bg-line" />
+          <div class="flex flex-col items-center gap-1">
+          <button type="button" :aria-label="t('minecraftSkin.color')" :class="toolButtonClass(isColorPanelOpen)" :disabled="isMotionPlaybackActive" @mouseenter="showToolTooltip(t('minecraftSkin.color'), $event)" @mouseleave="hideToolTooltip" @click="toggleColorPanel">
             <span class="h-5 w-5 rounded-sm border border-line-strong" :style="{ backgroundColor: brushColor, opacity: brushOpacity }" />
           </button>
-          <button v-for="tool in tools" :key="tool.id" type="button" :aria-label="tool.label" :class="toolButtonClass(activeTool === tool.id, 'primary')" @mouseenter="showToolTooltip(tool.label, $event)" @mouseleave="hideToolTooltip" @click="activeTool = tool.id">
+          <button v-for="tool in tools" :key="tool.id" type="button" :aria-label="tool.label" :class="toolButtonClass(activeTool === tool.id, 'primary')" :disabled="isMotionPlaybackActive" @mouseenter="showToolTooltip(tool.label, $event)" @mouseleave="hideToolTooltip" @click="activeTool = tool.id">
             <span :class="toolButtonContentClass(activeTool === tool.id, 'primary')">
               <component :is="tool.icon" class="h-5 w-5" />
             </span>
           </button>
+          </div>
+          <span class="mx-1.5 my-1 h-px bg-line" />
+          <div class="flex flex-col items-center gap-1">
+          <button type="button" :aria-label="t('minecraftSkin.grid')" :class="toolButtonClass(showPixelGrid)" :disabled="isMotionPlaybackActive" @mouseenter="showToolTooltip(t('minecraftSkin.grid'), $event)" @mouseleave="hideToolTooltip" @click="showPixelGrid = !showPixelGrid"><Grid3X3 class="h-5 w-5" /></button>
+          <button type="button" :aria-label="t('minecraftSkin.mirror')" :class="toolButtonClass(mirrorEnabled)" :disabled="isMotionPlaybackActive" @mouseenter="showToolTooltip(t('minecraftSkin.mirror'), $event)" @mouseleave="hideToolTooltip" @click="mirrorEnabled = !mirrorEnabled"><FlipHorizontal class="h-5 w-5" /></button>
+          </div>
+          <span class="mx-1.5 my-1 h-px bg-line" />
+          <div class="flex flex-col items-center gap-1">
+          <button type="button" :aria-label="t('minecraftSkin.undo')" :class="toolButtonClass(false)" :disabled="isMotionPlaybackActive" @mouseenter="showToolTooltip(t('minecraftSkin.undo'), $event)" @mouseleave="hideToolTooltip" @click="undo"><Undo2 class="h-5 w-5" /></button>
+          <button type="button" :aria-label="t('minecraftSkin.redo')" :class="toolButtonClass(false)" :disabled="isMotionPlaybackActive" @mouseenter="showToolTooltip(t('minecraftSkin.redo'), $event)" @mouseleave="hideToolTooltip" @click="redo"><Redo2 class="h-5 w-5" /></button>
+          </div>
+          <span class="mx-1.5 my-1 h-px bg-line" />
+          <button type="button" :aria-label="t('minecraftSkin.motionWorkspace')" :class="toolButtonClass(isMotionPanelOpen || isMotionPlaybackActive)" @mouseenter="showToolTooltip(t('minecraftSkin.motionWorkspace'), $event)" @mouseleave="hideToolTooltip" @click="toggleMotionWorkspace"><Clapperboard class="h-5 w-5" /></button>
+          <span v-if="isDevelopment" class="mx-1.5 my-1 h-px bg-line" />
+          <button v-if="isDevelopment" type="button" :aria-label="t('minecraftSkin.aiEdit')" :class="toolButtonClass(isAiPanelOpen)" :disabled="isMotionPlaybackActive" @mouseenter="showToolTooltip(t('minecraftSkin.aiEdit'), $event)" @mouseleave="hideToolTooltip" @click="toggleAiPanel"><Sparkles class="h-5 w-5" /></button>
         </div>
-        <span class="mx-1.5 my-1 h-px bg-line" />
-        <div class="flex flex-col items-center gap-1">
-          <button type="button" :aria-label="t('minecraftSkin.grid')" :class="toolButtonClass(showPixelGrid)" @mouseenter="showToolTooltip(t('minecraftSkin.grid'), $event)" @mouseleave="hideToolTooltip" @click="showPixelGrid = !showPixelGrid"><Grid3X3 class="h-5 w-5" /></button>
-          <button type="button" :aria-label="t('minecraftSkin.mirror')" :class="toolButtonClass(mirrorEnabled)" @mouseenter="showToolTooltip(t('minecraftSkin.mirror'), $event)" @mouseleave="hideToolTooltip" @click="mirrorEnabled = !mirrorEnabled"><FlipHorizontal class="h-5 w-5" /></button>
-        </div>
-        <span class="mx-1.5 my-1 h-px bg-line" />
-        <div class="flex flex-col items-center gap-1">
-          <button type="button" :aria-label="t('minecraftSkin.undo')" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(t('minecraftSkin.undo'), $event)" @mouseleave="hideToolTooltip" @click="undo"><Undo2 class="h-5 w-5" /></button>
-          <button type="button" :aria-label="t('minecraftSkin.redo')" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(t('minecraftSkin.redo'), $event)" @mouseleave="hideToolTooltip" @click="redo"><Redo2 class="h-5 w-5" /></button>
-        </div>
-        <span v-if="isDevelopment" class="mx-1.5 my-1 h-px bg-line" />
-        <button v-if="isDevelopment" type="button" :aria-label="t('minecraftSkin.aiEdit')" :class="toolButtonClass(isAiPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.aiEdit'), $event)" @mouseleave="hideToolTooltip" @click="toggleAiPanel"><Sparkles class="h-5 w-5" /></button>
       </div>
 
       <span v-if="hoveredTool" class="pointer-events-none absolute left-20 z-30 -translate-y-1/2 font-mono text-xs tracking-[0.1em] text-muted-foreground" :style="{ top: `calc(5rem + ${hoveredToolTop}px)` }">{{ hoveredTool }}</span>
@@ -78,7 +86,7 @@
             </button>
           </div>
         </div>
-        <div :class="['border-t border-line p-4 transition-opacity', showOuterLayer ? '' : 'opacity-45']" :aria-disabled="!showOuterLayer">
+        <div :class="['px-4 pb-4 pt-0 transition-opacity', showOuterLayer ? '' : 'opacity-45']" :aria-disabled="!showOuterLayer">
           <div class="flex items-center justify-between gap-3">
             <p class="tech">{{ t('minecraftSkin.outerVisibility') }}</p>
             <span v-if="!showOuterLayer" class="rounded-full bg-blue/10 px-2 py-1 text-xs text-blue">{{ t('minecraftSkin.outerVisibilityDisabledHint') }}</span>
@@ -93,13 +101,9 @@
           </div>
           <p v-if="showOuterLayer && isCustomOuterPartsExpanded" class="mt-3 text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.outerVisibilityCustomHint') }}</p>
           <div v-if="showOuterLayer && isCustomOuterPartsExpanded" class="mt-2 grid grid-cols-2 gap-2" role="group" :aria-label="t('minecraftSkin.outerVisibilityCustomHint')">
-            <button v-for="part in skinParts" :key="part.id" type="button" :aria-pressed="visibleOuterParts.includes(part.id)" :class="['flex h-10 items-center gap-3 border px-3 text-left text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', visibleOuterParts.includes(part.id) ? 'border-blue bg-blue/5 text-blue' : 'border-line text-muted-foreground hover:border-line-strong hover:text-foreground']" @click="toggleOuterPart(part.id)">
-              <BodyPartIcon :part="part.id" class="h-5 w-5 shrink-0" />
-              <span class="min-w-0 flex-1 whitespace-nowrap">{{ part.label }}</span>
-              <span :class="['flex h-4 w-4 shrink-0 items-center justify-center rounded-full', visibleOuterParts.includes(part.id) ? 'bg-blue text-background' : 'border border-line-strong']" aria-hidden="true">
-                <Check v-if="visibleOuterParts.includes(part.id)" class="h-2.5 w-2.5" />
-              </span>
-            </button>
+            <CenteredIconOption v-for="part in skinParts" :key="part.id" :label="part.label" :selected="visibleOuterParts.includes(part.id)" :disabled="!showOuterLayer" @click="toggleOuterPart(part.id)">
+              <template #icon><BodyPartIcon :part="part.id" class="h-5 w-5 shrink-0" /></template>
+            </CenteredIconOption>
           </div>
         </div>
       </section>
@@ -193,10 +197,40 @@
         <p v-if="aiGenerationError" class="border-l-2 border-blue px-4 py-2 text-xs leading-5 text-muted-foreground">{{ aiGenerationError }}</p>
       </section>
 
+      <section v-if="isMotionPanelOpen" class="pointer-events-auto absolute left-[5.125rem] top-20 z-20 w-[min(20rem,calc(100vw-6.5rem))] overflow-hidden rounded-[10px] border border-line bg-card/95 backdrop-blur-sm">
+        <div class="space-y-6 p-4">
+          <div v-for="group in motionGroups" :key="group.id" class="space-y-2.5">
+            <p class="text-xs font-medium text-foreground">{{ group.label }}</p>
+            <div class="grid grid-cols-2 gap-2">
+              <CenteredIconOption v-for="motion in group.items" :key="motion.id" :label="motion.label" :selected="selectedMotion === motion.id" @click="selectMotion(motion.id)">
+                <template #icon><component :is="motionIcons[motion.id]" class="h-5 w-5 shrink-0" aria-hidden="true" /></template>
+              </CenteredIconOption>
+            </div>
+          </div>
+          <div class="border-t border-line pt-5">
+            <p class="text-xs font-medium text-foreground">{{ t('minecraftSkin.playback') }}</p>
+            <div class="mt-3 grid grid-cols-[auto_1fr_auto] items-center gap-3">
+              <span class="text-xs text-muted-foreground">{{ t('minecraftSkin.currentMotion') }}</span>
+              <span class="truncate text-xs text-foreground">{{ selectedMotionLabel }}</span>
+              <button type="button" class="flex h-9 w-9 items-center justify-center rounded-md border border-line bg-background/60 text-muted-foreground transition-colors hover:border-blue hover:bg-blue/5 hover:text-blue" :aria-label="motionPaused ? t('minecraftSkin.play') : t('minecraftSkin.pause')" @click="motionPaused = !motionPaused">
+                <Play v-if="motionPaused" class="h-4 w-4" />
+                <Pause v-else class="h-4 w-4" />
+              </button>
+            </div>
+            <label class="mt-5 block">
+              <span class="flex items-center justify-between text-xs"><span class="font-medium text-foreground">{{ t('minecraftSkin.motionSpeed') }}</span><span class="font-mono text-muted-foreground">{{ motionSpeed.toFixed(1) }}×</span></span>
+              <input v-model.number="motionSpeed" class="motion-speed-range mt-3 h-1.5 w-full cursor-pointer appearance-none rounded-full" :style="{ background: `linear-gradient(to right, var(--blue) 0%, var(--blue) ${motionSpeedProgress}%, var(--line) ${motionSpeedProgress}%, var(--line) 100%)` }" type="range" min="0.5" max="2" step="0.25" :aria-label="t('minecraftSkin.motionSpeed')" />
+            </label>
+            <button type="button" class="mt-5 flex h-10 w-full items-center justify-center rounded-md border border-line bg-background/60 text-xs text-muted-foreground transition-colors hover:border-blue hover:bg-blue/5 hover:text-blue" @click="resetMotion">{{ t('minecraftSkin.resetMotion') }}</button>
+          </div>
+          <p class="border-l-2 border-blue/70 bg-blue/5 px-3 py-2.5 text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.motionWorkspaceHint') }}</p>
+        </div>
+      </section>
+
       <div class="pointer-events-auto absolute bottom-5 right-5 flex items-center gap-2">
         <input ref="fileInput" type="file" accept="image/png" class="hidden" @change="handleImport" />
-        <button type="button" class="border border-line bg-card px-3 py-2 text-xs text-foreground transition-colors hover:border-blue hover:text-blue" @click="isNewSkinDialogOpen = true"><FilePlus2 class="mr-2 inline-block h-4 w-4 align-[-3px]" />{{ t('minecraftSkin.newSkin') }}</button>
-        <button type="button" class="border border-line bg-card px-3 py-2 text-xs text-foreground transition-colors hover:border-blue hover:text-blue" @click="triggerImport"><Upload class="mr-2 inline-block h-4 w-4 align-[-3px]" />{{ t('minecraftSkin.import') }}</button>
+        <button type="button" class="border border-line bg-card px-3 py-2 text-xs text-foreground transition-colors hover:border-blue hover:text-blue disabled:cursor-not-allowed disabled:opacity-40" :disabled="isMotionPlaybackActive" @click="isNewSkinDialogOpen = true"><FilePlus2 class="mr-2 inline-block h-4 w-4 align-[-3px]" />{{ t('minecraftSkin.newSkin') }}</button>
+        <button type="button" class="border border-line bg-card px-3 py-2 text-xs text-foreground transition-colors hover:border-blue hover:text-blue disabled:cursor-not-allowed disabled:opacity-40" :disabled="isMotionPlaybackActive" @click="triggerImport"><Upload class="mr-2 inline-block h-4 w-4 align-[-3px]" />{{ t('minecraftSkin.import') }}</button>
         <button type="button" class="border border-foreground bg-foreground px-3 py-2 text-xs text-background transition-colors hover:border-blue hover:bg-blue" @click="exportSkin"><Download class="mr-2 inline-block h-4 w-4 align-[-3px]" />{{ t('minecraftSkin.export') }}</button>
       </div>
 
@@ -226,11 +260,12 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Check, ChevronDown, Download, Eraser, FilePlus2, FlipHorizontal, Grid3X3, Layers3, PaintBucket, Pencil, Pipette, Redo2, Sparkles, Undo2, Upload } from 'lucide-vue-next'
+import { Activity, Bird, Box, Clapperboard, ChevronDown, Download, Eraser, EyeOff, FilePlus2, FlipHorizontal, Footprints, Grid3X3, Hand, Layers3, PaintBucket, Pause, Pencil, Pipette, Play, Rabbit, Redo2, Sparkles, Swords, Undo2, Upload, Waves } from 'lucide-vue-next'
 import jacoryLogo from '../assets/jacory-logo.png'
 import StatusToast from '../components/StatusToast.vue'
 import MinecraftSkinPreview from '../components/tools/minecraft-skin-editor/MinecraftSkinPreview.vue'
 import BodyPartIcon from '../components/tools/minecraft-skin-editor/BodyPartIcon.vue'
+import CenteredIconOption from '../components/tools/minecraft-skin-editor/CenteredIconOption.vue'
 import ColorPickerPanel from '../components/tools/minecraft-skin-editor/ColorPickerPanel.vue'
 import { isDevelopment } from '../config/runtime'
 import { createSkinCanvas, DEFAULT_ALEX_SKIN_DATA_URL, DEFAULT_STEVE_SKIN_DATA_URL, downloadCanvas, floodFillSkinFace, importSkinFile, mirrorSkinPixel } from '../components/tools/minecraft-skin-editor/skin-core'
@@ -284,6 +319,10 @@ const brushOpacity = ref(1)
 const isColorPanelOpen = ref(false)
 const isLayerPanelOpen = ref(false)
 const isAiPanelOpen = ref(false)
+const isMotionPanelOpen = ref(false)
+const selectedMotion = ref('static')
+const motionSpeed = ref(1)
+const motionPaused = ref(false)
 const isAiConnectionOpen = ref(false)
 const showPixelGrid = ref(false)
 const mirrorEnabled = ref(false)
@@ -333,6 +372,37 @@ const aiConnectionStatus = computed(() => {
 })
 const aiConnectionDirty = computed(() => JSON.stringify(currentAiConnection()) !== JSON.stringify(savedAiConnection.value))
 const nextModelLabel = computed(() => model.value === 'classic' ? t('minecraftSkin.switchToSlim') : t('minecraftSkin.switchToClassic'))
+const isMotionPlaybackActive = computed(() => selectedMotion.value !== 'static' && !motionPaused.value)
+const motionGroups = computed(() => [
+  { id: 'base', label: t('minecraftSkin.motionBase'), items: [
+    { id: 'static', label: t('minecraftSkin.motionStatic') },
+    { id: 'idle', label: t('minecraftSkin.motionIdle') },
+    { id: 'walk', label: t('minecraftSkin.motionWalk') },
+    { id: 'run', label: t('minecraftSkin.motionRun') }
+  ] },
+  { id: 'state', label: t('minecraftSkin.motionState'), items: [
+    { id: 'crouch', label: t('minecraftSkin.motionCrouch') },
+    { id: 'swim', label: t('minecraftSkin.motionSwim') },
+    { id: 'fly', label: t('minecraftSkin.motionFly') }
+  ] },
+  { id: 'gesture', label: t('minecraftSkin.motionGesture'), items: [
+    { id: 'hit', label: t('minecraftSkin.motionHit') },
+    { id: 'wave', label: t('minecraftSkin.motionWave') }
+  ] }
+])
+const motionIcons = {
+  static: Box,
+  idle: Activity,
+  walk: Footprints,
+  run: Rabbit,
+  crouch: EyeOff,
+  swim: Waves,
+  fly: Bird,
+  hit: Swords,
+  wave: Hand
+}
+const selectedMotionLabel = computed(() => motionGroups.value.flatMap((group) => group.items).find((motion) => motion.id === selectedMotion.value)?.label || '')
+const motionSpeedProgress = computed(() => ((motionSpeed.value - 0.5) / 1.5) * 100)
 
 const tools = computed(() => [
   { id: 'brush', label: t('minecraftSkin.brush'), icon: Pencil },
@@ -350,7 +420,7 @@ const skinParts = computed(() => [
 ])
 const allOuterPartsSelected = computed(() => skinParts.value.every((part) => visibleOuterParts.value.includes(part.id)))
 function toolButtonClass(active, emphasis = 'subtle') {
-  const base = 'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset'
+  const base = 'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset disabled:cursor-not-allowed disabled:opacity-40'
   if (!active) return [base, 'text-muted-foreground hover:bg-background hover:text-foreground']
   return [base, emphasis === 'primary' ? 'text-muted-foreground' : 'border-blue/50 bg-blue/10 text-blue hover:bg-blue/15']
 }
@@ -406,11 +476,31 @@ function hideToolTooltip() {
 function toggleColorPanel() {
   isColorPanelOpen.value = !isColorPanelOpen.value
   isAiPanelOpen.value = false
+  isMotionPanelOpen.value = false
 }
 
 function toggleLayerPanel() {
   isLayerPanelOpen.value = !isLayerPanelOpen.value
   isAiPanelOpen.value = false
+  isMotionPanelOpen.value = false
+}
+
+function toggleMotionWorkspace() {
+  isMotionPanelOpen.value = !isMotionPanelOpen.value
+  isColorPanelOpen.value = false
+  isLayerPanelOpen.value = false
+  isAiPanelOpen.value = false
+}
+
+function selectMotion(motion) {
+  selectedMotion.value = motion
+  motionPaused.value = false
+}
+
+function resetMotion() {
+  selectedMotion.value = 'static'
+  motionSpeed.value = 1
+  motionPaused.value = false
 }
 
 function toggleModel() {
@@ -443,6 +533,7 @@ function toggleAiPanel() {
   isAiPanelOpen.value = isOpening
   isLayerPanelOpen.value = false
   isColorPanelOpen.value = false
+  isMotionPanelOpen.value = false
   if (isOpening) isAiConnectionOpen.value = false
   aiGenerationError.value = ''
 }
@@ -1081,6 +1172,7 @@ function handleKeyboardShortcut(event) {
   const target = event.target
   if (target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement || target instanceof HTMLSelectElement || target?.isContentEditable) return
   event.preventDefault()
+  if (isMotionPlaybackActive.value) return
   if (event.shiftKey) redo()
   else undo()
 }
@@ -1163,5 +1255,22 @@ watch([aiApiKey, aiBaseUrl, aiModel], () => {
 <style scoped>
 .image-render-pixel {
   image-rendering: pixelated;
+}
+
+.motion-speed-range::-webkit-slider-thumb {
+  width: 0.875rem;
+  height: 0.875rem;
+  appearance: none;
+  border: 1px solid var(--blue);
+  border-radius: 9999px;
+  background: var(--card);
+}
+
+.motion-speed-range::-moz-range-thumb {
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 1px solid var(--blue);
+  border-radius: 9999px;
+  background: var(--card);
 }
 </style>
