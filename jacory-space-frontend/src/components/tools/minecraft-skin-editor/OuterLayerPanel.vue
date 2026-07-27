@@ -1,21 +1,25 @@
 <template>
   <section class="w-full overflow-hidden rounded-[10px] border border-line bg-card/95 backdrop-blur-sm">
-    <div class="p-4">
-      <p class="tech">{{ t('minecraftSkin.outerDisplay') }}</p>
-      <div class="mt-2 grid grid-cols-2 rounded-sm border border-line p-0.5" role="group" :aria-label="t('minecraftSkin.outerDisplay')">
+    <div class="space-y-5 p-4">
+      <div>
+        <p class="tech text-haze">{{ t('minecraftSkin.outerDisplay') }}</p>
+        <div class="mt-2 grid grid-cols-2 rounded-sm border border-line p-0.5" role="group" :aria-label="t('minecraftSkin.outerDisplay')">
         <button type="button" :aria-pressed="!showOuterLayer" :class="choiceClass(!showOuterLayer)" @click="$emit('set-display', false)"><span :class="dotClass(!showOuterLayer)" aria-hidden="true" />{{ t('minecraftSkin.outerDisplayOff') }}</button>
         <button type="button" :aria-pressed="showOuterLayer" :class="choiceClass(showOuterLayer)" @click="$emit('set-display', true)"><span :class="dotClass(showOuterLayer)" aria-hidden="true" />{{ t('minecraftSkin.outerDisplayOn') }}</button>
+        </div>
       </div>
-    </div>
-    <div :class="['px-4 pb-4 pt-0 transition-opacity', showOuterLayer ? '' : 'opacity-45']" :aria-disabled="!showOuterLayer">
-      <div class="flex items-center justify-between gap-3"><p class="tech">{{ t('minecraftSkin.outerVisibility') }}</p><span v-if="!showOuterLayer" class="rounded-full bg-blue/10 px-2 py-1 text-xs text-blue">{{ t('minecraftSkin.outerVisibilityDisabledHint') }}</span></div>
-      <div class="mt-2 grid grid-cols-2 rounded-sm border border-line p-0.5" role="group" :aria-label="t('minecraftSkin.outerVisibility')">
+      <div :class="['transition-opacity', showOuterLayer ? '' : 'opacity-45']" :aria-disabled="!showOuterLayer">
+        <div class="flex items-center justify-between gap-3"><p class="tech text-haze">{{ t('minecraftSkin.outerVisibility') }}</p><span v-if="!showOuterLayer" class="rounded-full bg-blue/10 px-2 py-1 text-xs text-blue">{{ t('minecraftSkin.outerVisibilityDisabledHint') }}</span></div>
+        <div class="mt-2 grid grid-cols-2 rounded-sm border border-line p-0.5" role="group" :aria-label="t('minecraftSkin.outerVisibility')">
         <button type="button" :aria-pressed="allSelected && !customExpanded" :disabled="!showOuterLayer" :class="choiceClass(allSelected && !customExpanded)" @click="$emit('select-all')">{{ t('minecraftSkin.allOuterParts') }}</button>
         <button type="button" :aria-pressed="customExpanded || !allSelected" :disabled="!showOuterLayer" :class="choiceClass(customExpanded || !allSelected)" @click="$emit('expand-custom')">{{ t('minecraftSkin.customOuterParts') }}</button>
-      </div>
-      <p v-if="showOuterLayer && customExpanded" class="mt-3 text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.outerVisibilityCustomHint') }}</p>
-      <div v-if="showOuterLayer && customExpanded" class="mt-2 grid grid-cols-2 gap-2" role="group" :aria-label="t('minecraftSkin.outerVisibilityCustomHint')">
-        <CenteredIconOption v-for="part in parts" :key="part.id" :label="part.label" :selected="visibleParts.includes(part.id)" :disabled="!showOuterLayer" @click="$emit('toggle-part', part.id)"><template #icon><BodyPartIcon :part="part.id" class="h-5 w-5 shrink-0" /></template></CenteredIconOption>
+        </div>
+        <template v-if="showOuterLayer && customExpanded">
+          <p class="mt-3 text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.outerVisibilityCustomHint') }}</p>
+          <div class="mt-2 grid grid-cols-2 gap-2" role="group" :aria-label="t('minecraftSkin.outerVisibilityCustomHint')">
+            <CenteredIconOption v-for="part in parts" :key="part.id" :label="part.label" :selected="visibleParts.includes(part.id)" :disabled="!showOuterLayer" @click="$emit('toggle-part', part.id)"><template #icon><BodyPartIcon :part="part.id" class="h-5 w-5 shrink-0" /></template></CenteredIconOption>
+          </div>
+        </template>
       </div>
     </div>
   </section>

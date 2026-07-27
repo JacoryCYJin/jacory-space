@@ -1,19 +1,17 @@
 <template>
   <section class="absolute left-[5.125rem] top-20 z-20 w-[min(20rem,calc(100vw-6.5rem))] overflow-hidden rounded-[10px] border border-line bg-card/95 backdrop-blur-sm">
-    <div class="space-y-6 p-4">
-      <div v-for="group in motionGroups" :key="group.id" class="space-y-2.5">
-        <p class="text-xs font-medium text-foreground">{{ group.label }}</p>
+    <div class="space-y-5 p-4">
+      <div v-for="group in motionGroups" :key="group.id" class="space-y-2">
+        <p class="tech text-haze">{{ group.label }}</p>
         <div class="grid grid-cols-2 gap-2">
           <CenteredIconOption v-for="motion in group.items" :key="motion.id" :label="motion.label" :selected="motionId === motion.id" @click="$emit('select', motion.id)"><template #icon><component :is="motionIcons[motion.id]" class="h-5 w-5 shrink-0" aria-hidden="true" /></template></CenteredIconOption>
         </div>
       </div>
       <div class="border-t border-line pt-5">
-        <p class="text-xs font-medium text-foreground">{{ t('minecraftSkin.playback') }}</p>
-        <div class="mt-3 grid grid-cols-[auto_1fr_auto] items-center gap-3"><span class="text-xs text-muted-foreground">{{ t('minecraftSkin.currentMotion') }}</span><span class="truncate text-xs text-foreground">{{ selectedLabel }}</span><button type="button" class="flex h-9 w-9 items-center justify-center rounded-md border border-line bg-background/60 text-muted-foreground transition-colors hover:border-blue hover:bg-blue/5 hover:text-blue" :aria-label="paused ? t('minecraftSkin.play') : t('minecraftSkin.pause')" @click="$emit('update:paused', !paused)"><Play v-if="paused" class="h-4 w-4" /><Pause v-else class="h-4 w-4" /></button></div>
-        <label class="mt-5 block"><span class="flex items-center justify-between text-xs"><span class="font-medium text-foreground">{{ t('minecraftSkin.motionSpeed') }}</span><span class="font-mono text-muted-foreground">{{ speed.toFixed(1) }}×</span></span><input :value="speed" class="motion-speed-range mt-3 h-1.5 w-full cursor-pointer appearance-none rounded-full" :style="{ background: `linear-gradient(to right, var(--blue) 0%, var(--blue) ${speedProgress}%, var(--line) ${speedProgress}%, var(--line) 100%)` }" type="range" min="0.5" max="2" step="0.25" :aria-label="t('minecraftSkin.motionSpeed')" @input="$emit('update:speed', Number($event.target.value))" /></label>
+        <div class="flex items-center justify-between gap-3"><span class="tech text-haze">{{ t('minecraftSkin.playback') }}</span><button type="button" class="flex h-9 w-9 items-center justify-center rounded-md border border-line bg-background/60 text-muted-foreground transition-colors hover:border-blue hover:bg-blue/5 hover:text-blue" :aria-label="paused ? t('minecraftSkin.play') : t('minecraftSkin.pause')" @click="$emit('update:paused', !paused)"><Play v-if="paused" class="h-4 w-4" /><Pause v-else class="h-4 w-4" /></button></div>
+        <label class="mt-5 block"><span class="flex items-center justify-between"><span class="tech text-haze">{{ t('minecraftSkin.motionSpeed') }}</span><span class="font-mono text-xs text-muted-foreground">{{ speed.toFixed(1) }}×</span></span><input :value="speed" class="motion-speed-range mt-3 h-1.5 w-full cursor-pointer appearance-none rounded-full" :style="{ background: `linear-gradient(to right, var(--blue) 0%, var(--blue) ${speedProgress}%, var(--line) ${speedProgress}%, var(--line) 100%)` }" type="range" min="0.5" max="2" step="0.25" :aria-label="t('minecraftSkin.motionSpeed')" @input="$emit('update:speed', Number($event.target.value))" /></label>
         <button type="button" class="mt-5 flex h-10 w-full items-center justify-center rounded-md border border-line bg-background/60 text-xs text-muted-foreground transition-colors hover:border-blue hover:bg-blue/5 hover:text-blue" @click="$emit('reset')">{{ t('minecraftSkin.resetMotion') }}</button>
       </div>
-      <p class="border-l-2 border-blue/70 bg-blue/5 px-3 py-2.5 text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.motionWorkspaceHint') }}</p>
     </div>
   </section>
 </template>
@@ -33,7 +31,6 @@ const motionGroups = computed(() => [
   { id: 'state', label: t('minecraftSkin.motionState'), items: [{ id: 'crouch', label: t('minecraftSkin.motionCrouch') }, { id: 'swim', label: t('minecraftSkin.motionSwim') }, { id: 'fly', label: t('minecraftSkin.motionFly') }] },
   { id: 'gesture', label: t('minecraftSkin.motionGesture'), items: [{ id: 'hit', label: t('minecraftSkin.motionHit') }, { id: 'wave', label: t('minecraftSkin.motionWave') }] }
 ])
-const selectedLabel = computed(() => motionGroups.value.flatMap((group) => group.items).find((motion) => motion.id === props.motionId)?.label || '')
 const speedProgress = computed(() => ((props.speed - 0.5) / 1.5) * 100)
 </script>
 
