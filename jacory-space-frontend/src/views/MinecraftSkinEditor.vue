@@ -66,7 +66,7 @@
       <div v-if="isLayerPanelOpen || isColorPanelOpen" class="pointer-events-none absolute left-[5.125rem] top-20 z-20 flex w-[min(20rem,calc(100vw-6.5rem))] flex-col items-start gap-1.5">
       <section v-if="isLayerPanelOpen" class="pointer-events-auto w-full overflow-hidden rounded-[10px] border border-line bg-card/95 backdrop-blur-sm">
         <div class="p-4">
-          <p class="tech">01 — {{ t('minecraftSkin.outerDisplay') }}</p>
+          <p class="tech">{{ t('minecraftSkin.outerDisplay') }}</p>
           <div class="mt-2 grid grid-cols-2 rounded-sm border border-line p-0.5" role="group" :aria-label="t('minecraftSkin.outerDisplay')">
             <button type="button" :aria-pressed="!showOuterLayer" :class="['flex h-8 items-center justify-center gap-2 rounded-[2px] text-xs transition-colors focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue focus-visible:ring-inset', !showOuterLayer ? 'border border-blue bg-blue/5 text-blue' : 'text-muted-foreground hover:text-foreground']" @click="setOuterLayerDisplay(false)">
               <span :class="['h-1.5 w-1.5 rounded-full border', !showOuterLayer ? 'border-blue bg-blue' : 'border-line-strong']" aria-hidden="true" />
@@ -80,7 +80,7 @@
         </div>
         <div :class="['border-t border-line p-4 transition-opacity', showOuterLayer ? '' : 'opacity-45']" :aria-disabled="!showOuterLayer">
           <div class="flex items-center justify-between gap-3">
-            <p class="tech">02 — {{ t('minecraftSkin.outerVisibility') }}</p>
+            <p class="tech">{{ t('minecraftSkin.outerVisibility') }}</p>
             <span v-if="!showOuterLayer" class="rounded-full bg-blue/10 px-2 py-1 text-xs text-blue">{{ t('minecraftSkin.outerVisibilityDisabledHint') }}</span>
           </div>
           <div class="mt-2 grid grid-cols-2 rounded-sm border border-line p-0.5" role="group" :aria-label="t('minecraftSkin.outerVisibility')">
