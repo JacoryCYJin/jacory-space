@@ -99,9 +99,9 @@ const activeFilter = ref('all')
 const selectedProject = ref(null)
 let toolsContext = null
 
-const projects = [
+const projects = computed(() => [
   {
-    id: '001', no: '001', title: 'Media Parser', layer: 'TOOLS', category: 'tool', status: 'live',
+    id: '001', no: '001', title: t('tools.projects.mediaParser.title'), layer: 'TOOLS', category: 'tool', status: 'live',
     pos: [-7.0, -1.6], description: '本地桌面媒体工作台，整合视频解析、播客解析、下载、转写和结构化笔记。',
     stack: ['Electron', 'Python', 'Whisper'], version: 'desktop', updated: '2026.07.11', href: '/tools/media-parser'
   },
@@ -111,28 +111,28 @@ const projects = [
     stack: ['Vue', 'GSAP', 'Design System'], version: 'v1.5.0', updated: '2026.06.15', href: '/'
   },
   {
-    id: '003', no: '003', title: 'Personal Blog', layer: 'WORKS', category: 'work', status: 'live',
+    id: '003', no: '003', title: t('tools.projects.personalBlog.title'), layer: 'WORKS', category: 'work', status: 'live',
     pos: [2.4, 1.6], description: '沉淀开发笔记、项目复盘与日常观察，并持续完善个人写作与发布系统。',
     stack: ['Writing', 'Markdown', 'Publishing'], version: 'v0.1.0', updated: '2026.07.16', href: '/blog'
   },
   {
-    id: '004', no: '004', title: 'Workflow System', layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
+    id: '004', no: '004', title: t('tools.projects.workflowSystem.title'), layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
     pos: [6.2, 1.4], description: '沉淀可复用的任务步骤、自动化与验证节点，把重复工作组织成稳定的工作流。',
     stack: ['Process', 'Automation', 'Validation'], version: 'v0.1.0', updated: '2026.07.16', href: '/tools'
   },
   {
-    id: '005', no: '005', title: 'Minecraft Skin Studio', layer: 'TOOLS', category: 'tool', status: 'live',
+    id: '005', no: '005', title: t('tools.projects.minecraftSkinStudio.title'), layer: 'TOOLS', category: 'tool', status: 'live',
     pos: [1.4, -1.45], description: '在浏览器中绘制、预览并导出可直接用于 Minecraft 的 64 × 64 皮肤。',
     stack: ['Vue', 'skinview3d', 'WebGL'], version: 'v0.1.0', updated: '2026.07.23', href: '/tools/minecraft-skin-editor'
   }
-]
+])
 
 function pad2(value) {
   return String(value).padStart(2, '0')
 }
 
 function categoryCount(category) {
-  return projects.filter((project) => project.category === category).length
+  return projects.value.filter((project) => project.category === category).length
 }
 
 const categoryPanels = computed(() => [
@@ -140,7 +140,7 @@ const categoryPanels = computed(() => [
     id: 'all',
     label: t('tools.interfaceIndex.filters.all'),
     description: t('tools.interfaceIndex.categoryDescriptions.all'),
-    count: pad2(projects.length)
+    count: pad2(projects.value.length)
   },
   {
     id: 'tool',
@@ -162,7 +162,7 @@ const categoryPanels = computed(() => [
   }
 ])
 
-const lastUpdate = computed(() => projects.map((project) => project.updated).sort().at(-1))
+const lastUpdate = computed(() => projects.value.map((project) => project.updated).sort().at(-1))
 
 function setFilter(id) {
   activeFilter.value = id
