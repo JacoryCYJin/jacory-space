@@ -4,7 +4,7 @@
 
 ```txt
 site/
-  jacory-space-frontend/  # Vite + Vue 3 + Tailwind public website
+  jacory-space-frontend/  # Vite + Vue 3 + Tailwind + Vite SSG public website
   docs/                   # project docs
   scripts/dev.sh          # frontend dev service runner
 ```
@@ -50,15 +50,17 @@ Routes:
 ```txt
 /               -> Home.vue
 /tools          -> Tools.vue
-/media-parser   -> MediaParserSoftware.vue
-/video-parser   -> redirect /media-parser
-/podcast-parser -> redirect /media-parser
+/tools/media-parser -> MediaParserSoftware.vue
+/media-parser   -> redirect /tools/media-parser
+/video-parser   -> redirect /tools/media-parser
+/podcast-parser -> redirect /tools/media-parser
+/tools/minecraft-skin-editor -> MinecraftSkinEditor.vue
 /blog           -> Blog.vue
 /blog/:slug     -> BlogPost.vue
 /about          -> About.vue
 ```
 
-`/media-parser` is the software introduction page that links to:
+`/tools/media-parser` is the software introduction page that links to:
 
 ```txt
 https://github.com/JacoryCYJin/media-parser
@@ -81,6 +83,22 @@ Geist Sans + Geist Mono
 single cool-blue accent
 no heavy shadows
 ```
+
+## Static Rendering and SEO
+
+The public site is statically rendered during `npm run build` with Vite SSG. The
+build emits HTML for public routes and blog posts, so crawlers receive page
+content and route-specific metadata without running the Vue client first.
+
+```txt
+scripts/generate-seo-assets.mjs
+  -> public/robots.txt + public/sitemap.xml
+  -> vite-ssg build
+  -> dist/
+```
+
+SEO ownership, post-deploy checks, and search platform handoff are documented
+in [`../operations/site-seo-indexing.md`](../operations/site-seo-indexing.md).
 
 ## Blog Content
 

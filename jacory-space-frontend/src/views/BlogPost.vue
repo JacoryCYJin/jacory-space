@@ -160,7 +160,8 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onServerPrefetch, ref, watch } from 'vue'
+import { useHead } from '@unhead/vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { gsap } from 'gsap'
@@ -180,6 +181,46 @@ let postMotionMedia
 let loadToken = 0
 
 const frontmatter = computed(() => post.value?.frontmatter ?? {})
+const publishedDate = computed(() => {
+  const value = String(frontmatter.value.date || '').replaceAll('.', '-')
+  return /^\d{4}-\d{2}$/.test(value) ? `${value}-01` : value
+})
+
+useHead(() => {
+  const title = frontmatter.value.title
+  const description = frontmatter.value.description
+  const canonicalUrl = `https://jacoryspace.top/blog/${route.params.slug}`
+
+  if (!title || !description) return {}
+
+  return {
+    title: `${title} — Jacory Space`,
+    meta: [
+      { key: 'description', name: 'description', content: description },
+      { key: 'og:title', property: 'og:title', content: title },
+      { key: 'og:description', property: 'og:description', content: description },
+      { key: 'og:type', property: 'og:type', content: 'article' },
+      { key: 'og:url', property: 'og:url', content: canonicalUrl },
+      { key: 'article:published_time', property: 'article:published_time', content: publishedDate.value },
+      { key: 'twitter:card', name: 'twitter:card', content: 'summary' },
+    ],
+    link: [{ key: 'canonical', rel: 'canonical', href: canonicalUrl }],
+    script: [{
+      key: 'article-structured-data',
+      type: 'application/ld+json',
+      children: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: title,
+        description,
+        datePublished: publishedDate.value,
+        mainEntityOfPage: canonicalUrl,
+        author: { '@type': 'Person', name: 'Jacory' },
+        publisher: { '@type': 'Organization', name: 'Jacory Space', url: 'https://jacoryspace.top' },
+      }),
+    }],
+  }
+})
 
 function cleanHeadingText(text) {
   return String(text || '').replace(/^\s*\d{1,2}\s*(?:[.．、|｜/])\s*/, '').trim()
@@ -327,11 +368,15 @@ async function loadPost(slug) {
   })
 }
 
-watch(
-  () => route.params.slug,
-  (slug) => loadPost(slug),
-  { immediate: true },
-)
+if (import.meta.env.SSR) {
+  onServerPrefetch(() => loadPost(route.params.slug))
+} else {
+  watch(
+    () => route.params.slug,
+    (slug) => loadPost(slug),
+    { immediate: true },
+  )
+}
 
 onBeforeUnmount(() => {
   teardownObserver()

@@ -17,16 +17,19 @@ const normalizeLocale = (value) => {
 }
 
 const getInitialLocale = () => {
+  if (typeof window === 'undefined') return 'zh-CN'
   const savedLocale = localStorage.getItem(STORAGE_KEY)
   if (savedLocale) return normalizeLocale(savedLocale)
   return normalizeLocale(navigator.language)
 }
 
 export const setDocumentLocale = (locale) => {
+  if (typeof document === 'undefined') return
   document.documentElement.setAttribute('lang', locale)
 }
 
 export const persistLocale = (locale) => {
+  if (typeof window === 'undefined') return
   localStorage.setItem(STORAGE_KEY, locale)
   setDocumentLocale(locale)
 }

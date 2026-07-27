@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run generate:seo && vite-ssg build",
+    "generate:seo": "node scripts/generate-seo-assets.mjs",
     "link-previews": "node scripts/link-previews.mjs",
     "lp": "node scripts/link-previews.mjs",
     "lp:all": "node scripts/link-previews.mjs --all",
@@ -23,10 +24,12 @@
     "vue-router": "^4.6.4"
   },
   "devDependencies": {
+    "@unhead/vue": "^1.11.14",
     "@vitejs/plugin-vue": "^5.0.4",
     "autoprefixer": "^10.4.18",
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
-    "vite": "^5.1.4"
+    "vite": "^5.1.4",
+    "vite-ssg": "^0.24.3"
   }
 }
