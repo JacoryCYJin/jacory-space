@@ -1,5 +1,5 @@
 <template>
-  <section class="absolute left-[5.125rem] top-20 z-20 w-[min(20rem,calc(100vw-6.5rem))] overflow-hidden rounded-[10px] border border-line bg-card/95 backdrop-blur-sm">
+  <section class="w-full overflow-hidden rounded-[10px] border border-line bg-card/95 backdrop-blur-sm">
     <div class="space-y-5 p-4">
       <p class="text-xs leading-5 text-muted-foreground">{{ t('minecraftSkin.pixelGenerationHint') }}</p>
       <div class="border border-line bg-background transition-colors focus-within:border-blue">
