@@ -9,7 +9,7 @@ import { BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Group, LineB
 import { Line2 } from 'skinview3d/node_modules/three/examples/jsm/lines/Line2.js'
 import { LineGeometry } from 'skinview3d/node_modules/three/examples/jsm/lines/LineGeometry.js'
 import { LineMaterial } from 'skinview3d/node_modules/three/examples/jsm/lines/LineMaterial.js'
-import { SkinViewer } from 'skinview3d'
+import { CrouchAnimation, FlyingAnimation, HitAnimation, IdleAnimation, RunningAnimation, SkinViewer, SwimAnimation, WalkingAnimation, WaveAnimation } from 'skinview3d'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 const emit = defineEmits(['error', 'paint-start', 'paint-pixel', 'paint-end'])
@@ -22,7 +22,11 @@ const props = defineProps({
   showOuterLayer: { type: Boolean, default: false },
   visibleOuterParts: { type: Array, default: () => [] },
   activeTool: { type: String, default: 'brush' },
-  showGrid: { type: Boolean, default: false }
+  showGrid: { type: Boolean, default: false },
+  isMotionPlaybackLocked: { type: Boolean, default: false },
+  motion: { type: String, default: 'static' },
+  motionSpeed: { type: Number, default: 1 },
+  motionPaused: { type: Boolean, default: false }
 })
 
 const mount = ref(null)
@@ -151,6 +155,36 @@ function updateSkinTexture() {
 function updateModel() {
   if (!viewer) return
   viewer.playerObject.skin.modelType = viewerModel()
+}
+
+function createMotionAnimation() {
+  const animations = {
+    idle: () => new IdleAnimation(),
+    walk: () => new WalkingAnimation(),
+    run: () => new RunningAnimation(),
+    crouch: () => new CrouchAnimation(),
+    swim: () => new SwimAnimation(),
+    fly: () => new FlyingAnimation(),
+    hit: () => new HitAnimation(),
+    wave: () => new WaveAnimation('right')
+  }
+  return animations[props.motion]?.() || null
+}
+
+function syncMotion() {
+  if (!viewer) return
+  const animation = createMotionAnimation()
+  if (animation) {
+    animation.speed = props.motionSpeed
+    animation.paused = props.motionPaused
+  }
+  viewer.animation = animation
+}
+
+function syncMotionPlayback() {
+  if (!viewer?.animation) return
+  viewer.animation.speed = props.motionSpeed
+  viewer.animation.paused = props.motionPaused
 }
 
 function capturePreview() {
@@ -359,6 +393,10 @@ function drawHoverOutline(hit, pixel) {
 }
 
 function updateHover(event) {
+  if (props.isMotionPlaybackLocked) {
+    clearHover()
+    return null
+  }
   const intersection = intersectionAtPointer(event, props.activeTool === 'eyedropper')
   if (!intersection || !hoverOutline) {
     if (hoverOutline) hoverOutline.visible = false
@@ -369,6 +407,7 @@ function updateHover(event) {
 }
 
 function onPointerDown(event) {
+  if (props.isMotionPlaybackLocked) return
   if (event.button !== 0) return
   const pixel = updateHover(event)
   if (!pixel) return
@@ -382,6 +421,7 @@ function onPointerDown(event) {
 }
 
 function onPointerMove(event) {
+  if (props.isMotionPlaybackLocked) return
   updateHover(event)
   if (event.pointerId !== drawingPointerId) return
   if (props.activeTool === 'fill') return
@@ -461,6 +501,7 @@ onMounted(() => {
     createGroundGuide()
     applyLayerVisibility()
     syncPixelGrid()
+    syncMotion()
     canvas.value.addEventListener('contextmenu', (event) => event.preventDefault())
     canvas.value.addEventListener('pointerdown', onPointerDown, true)
     canvas.value.addEventListener('pointermove', onPointerMove, true)
@@ -489,6 +530,9 @@ watch(() => props.visibleOuterParts, () => {
   applyLayerVisibility()
   syncPixelGrid()
 }, { deep: true })
+watch(() => props.motion, syncMotion)
+watch(() => [props.motionSpeed, props.motionPaused], syncMotionPlayback)
+watch(() => props.isMotionPlaybackLocked, clearHover)
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
