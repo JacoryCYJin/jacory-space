@@ -54,6 +54,16 @@ function validateFaceRows(rows, rect, palette, prefix, errors) {
   })
 }
 
+function visitLayerTokens(layer, callback) {
+  Object.values(layer || {}).forEach((rows) => {
+    if (!Array.isArray(rows)) return
+    rows.forEach((row) => {
+      if (typeof row !== 'string') return
+      for (const token of row) callback(token)
+    })
+  })
+}
+
 export function validatePixelPartDesign(design, { expectedPart = null, expectedModel = 'classic' } = {}) {
   const errors = []
   if (!design || typeof design !== 'object' || Array.isArray(design)) return { valid: false, errors: ['design must be an object'] }
@@ -86,14 +96,14 @@ export function validatePixelPartDesign(design, { expectedPart = null, expectedM
   })
 
   if (layers.base && palette) {
-    Object.values(layers.base).flat().forEach((token) => {
+    visitLayerTokens(layers.base, (token) => {
       if (palette[token] && isTransparent(palette[token])) errors.push('base layer cannot contain transparent pixels')
     })
   }
 
   const usedOpaqueColors = new Set()
   ;['base', 'outer'].forEach((layer) => {
-    Object.values(layers[layer] || {}).flat().forEach((token) => {
+    visitLayerTokens(layers[layer], (token) => {
       const color = palette[token]
       if (color && !isTransparent(color)) usedOpaqueColors.add(color.toLowerCase())
     })

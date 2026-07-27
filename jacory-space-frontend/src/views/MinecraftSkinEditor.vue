@@ -46,7 +46,7 @@
         <button type="button" :aria-label="t('minecraftSkin.undo')" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(t('minecraftSkin.undo'), $event)" @mouseleave="hideToolTooltip" @click="undo"><Undo2 class="h-4 w-4" /></button>
         <button type="button" :aria-label="t('minecraftSkin.redo')" :class="toolButtonClass(false)" @mouseenter="showToolTooltip(t('minecraftSkin.redo'), $event)" @mouseleave="hideToolTooltip" @click="redo"><Redo2 class="h-4 w-4" /></button>
         <span class="mx-2 h-px bg-line" />
-        <button type="button" :aria-label="t('minecraftSkin.aiEdit')" :class="toolButtonClass(isAiPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.aiEdit'), $event)" @mouseleave="hideToolTooltip" @click="toggleAiPanel"><Sparkles class="h-4 w-4" /></button>
+        <button v-if="isDevelopment" type="button" :aria-label="t('minecraftSkin.aiEdit')" :class="toolButtonClass(isAiPanelOpen)" @mouseenter="showToolTooltip(t('minecraftSkin.aiEdit'), $event)" @mouseleave="hideToolTooltip" @click="toggleAiPanel"><Sparkles class="h-4 w-4" /></button>
       </div>
 
       <span v-if="hoveredTool" class="pointer-events-none absolute left-20 z-30 -translate-y-1/2 font-mono text-xs tracking-[0.1em] text-muted-foreground" :style="{ top: `calc(5rem + ${hoveredToolTop}px)` }">{{ hoveredTool }}</span>
@@ -88,7 +88,7 @@
         @select-recent="selectRecentColor"
       />
 
-      <section v-if="isAiPanelOpen" class="pointer-events-auto absolute left-20 top-20 z-20 w-[min(23rem,calc(100vw-6.5rem))] border border-line bg-card/95 backdrop-blur-sm">
+      <section v-if="isDevelopment && isAiPanelOpen" class="pointer-events-auto absolute left-20 top-20 z-20 w-[min(23rem,calc(100vw-6.5rem))] border border-line bg-card/95 backdrop-blur-sm">
         <div class="flex h-12 items-center justify-between border-b border-line px-4">
           <p class="tech">AI / {{ t('minecraftSkin.aiPartRightArm') }}</p>
           <button type="button" class="text-xs text-muted-foreground transition-colors hover:text-foreground" @click="closeAiPanel">{{ t('minecraftSkin.close') }}</button>
@@ -204,6 +204,7 @@ import jacoryLogo from '../assets/jacory-logo.png'
 import StatusToast from '../components/StatusToast.vue'
 import MinecraftSkinPreview from '../components/tools/minecraft-skin-editor/MinecraftSkinPreview.vue'
 import ColorPickerPanel from '../components/tools/minecraft-skin-editor/ColorPickerPanel.vue'
+import { isDevelopment } from '../config/runtime'
 import { createSkinCanvas, DEFAULT_ALEX_SKIN_DATA_URL, DEFAULT_STEVE_SKIN_DATA_URL, downloadCanvas, floodFillSkinFace, importSkinFile, mirrorSkinPixel } from '../components/tools/minecraft-skin-editor/skin-core'
 import { applyPixelPartDesign, createPixelPartProposalCanvas, readPixelPartDesign, validatePixelPartDesign } from '../components/tools/minecraft-skin-editor/skin-part-generation'
 
@@ -211,6 +212,8 @@ const STORAGE_KEY = 'jacory-space.minecraft-skin-studio.project.v1'
 const RECENT_COLORS_STORAGE_KEY = 'jacory-space.minecraft-skin-studio.recent-colors.v1'
 const AI_CONNECTION_STORAGE_KEY = 'jacory-space.minecraft-skin-studio.ai-connection.v1'
 const AI_MODEL_CATALOG_STORAGE_KEY = 'jacory-space.minecraft-skin-studio.ai-model-catalog.v1'
+const DEFAULT_AI_MODEL = import.meta.env.VITE_MC_AI_MODEL || 'Qwen/Qwen3-Omni-30B-A3B-Instruct'
+const PREVIOUS_DEFAULT_AI_MODEL = 'Qwen/Qwen3-VL-8B-Instruct'
 const MAX_RECENT_COLORS = 8
 const MAX_CACHED_MODELS = 500
 const modelIconImages = new Map()
@@ -274,7 +277,7 @@ const aiUseVision = ref(true)
 const aiReferenceImage = ref('')
 const aiApiKey = ref('')
 const aiBaseUrl = ref(import.meta.env.VITE_MC_AI_BASE_URL || '')
-const aiModel = ref(import.meta.env.VITE_MC_AI_MODEL || '')
+const aiModel = ref(DEFAULT_AI_MODEL)
 const aiModelCatalog = ref([])
 const aiConnectionTest = ref(null)
 const aiConnectionToastVisible = ref(false)
@@ -296,7 +299,7 @@ const aiConnectionStatus = computed(() => {
   if (aiConnectionTest.value?.state === 'error') return { label: t('minecraftSkin.aiConnectionFailed'), className: 'text-destructive', showDot: false }
   if (aiConnectionDirty.value) return { label: t('minecraftSkin.aiConnectionUnsaved'), className: 'text-muted-foreground', showDot: false }
   return aiConnectionConfigured.value
-    ? { label: savedAiConnection.value ? t('minecraftSkin.aiConnectionSaved') : t('minecraftSkin.aiConnectionConfigured'), className: 'text-blue', showDot: false }
+    ? { label: savedAiConnection.value ? t('minecraftSkin.aiConnectionSaved') : t('minecraftSkin.aiConnectionConfigured'), className: 'text-blue', showDot: Boolean(savedAiConnection.value) }
     : { label: t('minecraftSkin.aiConnectionNotConfigured'), className: 'text-haze', showDot: false }
 })
 const aiConnectionDirty = computed(() => JSON.stringify(currentAiConnection()) !== JSON.stringify(savedAiConnection.value))
@@ -481,10 +484,16 @@ function restoreAiConnectionCache() {
     const saved = JSON.parse(window.localStorage.getItem(AI_CONNECTION_STORAGE_KEY) || 'null')
     if (!saved || typeof saved !== 'object') return
     if (typeof saved.apiKey !== 'string' || typeof saved.baseUrl !== 'string' || typeof saved.model !== 'string') return
-    aiApiKey.value = saved.apiKey
-    aiBaseUrl.value = saved.baseUrl
-    aiModel.value = saved.model
-    savedAiConnection.value = currentAiConnection()
+    const connection = {
+      apiKey: saved.apiKey,
+      baseUrl: saved.baseUrl,
+      model: saved.model === PREVIOUS_DEFAULT_AI_MODEL ? DEFAULT_AI_MODEL : saved.model
+    }
+    if (connection.model !== saved.model) window.localStorage.setItem(AI_CONNECTION_STORAGE_KEY, JSON.stringify(connection))
+    aiApiKey.value = connection.apiKey
+    aiBaseUrl.value = connection.baseUrl
+    aiModel.value = connection.model
+    savedAiConnection.value = connection
   } catch {
     // Connection settings are optional when browser storage is unavailable.
   }
@@ -631,8 +640,25 @@ async function testAiConnection() {
   }
 }
 
-async function requestPixelPartContent(modelName, messages) {
+function inspectPixelPartRequest(stage, modelName, requestPayload) {
+  const userMessage = requestPayload.messages.find((message) => message.role === 'user')
+  const content = userMessage?.content
+  const imageCount = Array.isArray(content) ? content.filter((entry) => entry?.type === 'image_url').length : 0
+  console.log(`[Minecraft Skin AI] ${stage} request summary:\n${JSON.stringify({
+    model: modelName,
+    endpoint: normalizeAiEndpoint(aiBaseUrl.value),
+    stream: requestPayload.stream,
+    responseFormat: requestPayload.response_format?.type || 'none',
+    temperature: requestPayload.temperature,
+    maxTokens: requestPayload.max_tokens,
+    usesVisionInput: Array.isArray(content),
+    imageCount
+  }, null, 2)}`)
+}
+
+async function requestPixelPartContent(stage, modelName, messages) {
   const requestPayload = createPixelPartRequestPayload(modelName, messages)
+  inspectPixelPartRequest(stage, modelName, requestPayload)
   const response = await fetch(normalizeAiEndpoint(aiBaseUrl.value), {
     method: 'POST',
     signal: aiRequestController.signal,
@@ -680,29 +706,33 @@ function parsePixelPartDesign(content) {
 }
 
 function inspectPixelPartResponse(stage, content) {
-  console.groupCollapsed(`[Minecraft Skin AI] ${stage} response (${content.length} chars)`)
-  console.log('Raw model content:', content)
+  console.log(`[Minecraft Skin AI] ${stage} raw response — copy this entire entry:\n${content}`)
   try {
     const design = parsePixelPartDesign(content)
     const validation = validatePixelPartDesign(design, { expectedPart: 'rightArm' })
-    console.log('Parsed pixel design:', design)
-    if (validation.valid) console.info('Pixel protocol validation: passed')
-    else console.error('Pixel protocol validation errors:', validation.errors)
+    console.log(`[Minecraft Skin AI] ${stage} validation result:\n${JSON.stringify({ valid: validation.valid, errors: validation.errors }, null, 2)}`)
   } catch (error) {
-    console.error('Pixel response JSON parse error:', error)
+    console.error(`[Minecraft Skin AI] ${stage} response inspection failed:\n${error instanceof Error ? error.stack || error.message : String(error)}`)
   }
-  console.groupEnd()
 }
 
-function decodePixelPartDesign(content) {
+function decodePixelPartDesign(stage, content) {
   const design = parsePixelPartDesign(content)
   const validation = validatePixelPartDesign(design, { expectedPart: 'rightArm' })
+  console.log(`[Minecraft Skin AI] ${stage} decode validation:\n${JSON.stringify({ valid: validation.valid, errors: validation.errors }, null, 2)}`)
   if (!validation.valid) throw new Error(validation.errors.join('; '))
   return design
 }
 
 function previewPixelPartDesign(design) {
-  const proposal = createPixelPartProposalCanvas(skinCanvas.value, design, { expectedPart: 'rightArm' })
+  console.log(`[Minecraft Skin AI] UV preview write: starting\n${JSON.stringify({ part: design.part, model: design.model })}`)
+  let proposal
+  try {
+    proposal = createPixelPartProposalCanvas(skinCanvas.value, design, { expectedPart: 'rightArm' })
+  } catch (error) {
+    console.error(`[Minecraft Skin AI] UV preview write: failed\n${error instanceof Error ? error.stack || error.message : String(error)}`)
+    throw error
+  }
   if (!proposalCanvas.value) proposalPreviousOuterParts.value = [...visibleOuterParts.value]
   visibleOuterParts.value = [...new Set([...visibleOuterParts.value, 'rightArm'])]
   showOuterLayer.value = true
@@ -712,6 +742,7 @@ function previewPixelPartDesign(design) {
   aiProposalApplied.value = false
   showProposal.value = true
   textureVersion.value += 1
+  console.log(`[Minecraft Skin AI] UV preview write: completed\n${JSON.stringify({ changedPixels: proposal.changedPixels, part: proposal.part, layers: proposal.layers })}`)
 }
 
 async function generateAiPart() {
@@ -748,15 +779,16 @@ async function generateAiPart() {
       { role: 'system', content: PIXEL_PART_SYSTEM_PROMPT },
       { role: 'user', content: userContent }
     ]
-    const content = await requestPixelPartContent(modelName, messages)
+    const content = await requestPixelPartContent('Initial', modelName, messages)
     inspectPixelPartResponse('Initial', content)
     let design
     try {
-      design = decodePixelPartDesign(content)
+      design = decodePixelPartDesign('Initial', content)
     } catch (error) {
+      console.error(`[Minecraft Skin AI] Repair triggered by initial decode failure:\n${error instanceof Error ? error.stack || error.message : String(error)}`)
       recordAiDiagnostic({ code: 'repairing_pixel_protocol', detail: sanitizeDiagnosticDetail(error.message) })
       aiGenerationStatus.value = t('minecraftSkin.pixelGenerationRepairing')
-      const repaired = await requestPixelPartContent(modelName, [
+      const repaired = await requestPixelPartContent('Repair', modelName, [
         { role: 'system', content: PIXEL_PART_SYSTEM_PROMPT },
         {
           role: 'user',
@@ -768,10 +800,11 @@ async function generateAiPart() {
         }
       ])
       inspectPixelPartResponse('Repair', repaired)
-      design = decodePixelPartDesign(repaired)
+      design = decodePixelPartDesign('Repair', repaired)
     }
     previewPixelPartDesign(design)
   } catch (error) {
+    console.error(`[Minecraft Skin AI] Generation flow failed:\n${error instanceof Error ? error.stack || error.message : String(error)}`)
     if (error?.name === 'AbortError') {
       aiGenerationError.value = t('minecraftSkin.aiCancelled')
     } else if (error instanceof TypeError) {
