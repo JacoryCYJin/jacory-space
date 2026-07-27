@@ -1,3 +1,5 @@
+import { inferModelType, loadSkinToCanvas } from 'skinview-utils'
+
 export const SKIN_SIZE = 64
 
 // Source: Mojang's official Java Edition Steve skin template. It is embedded so
@@ -243,11 +245,13 @@ export function importSkinFile(file, targetCanvas) {
     }
     const image = new Image()
     image.onload = () => {
+      const normalizedCanvas = document.createElement('canvas')
+      loadSkinToCanvas(normalizedCanvas, image)
       const context = targetCanvas.getContext('2d')
       context.clearRect(0, 0, SKIN_SIZE, SKIN_SIZE)
       context.imageSmoothingEnabled = false
-      context.drawImage(image, 0, 0, SKIN_SIZE, SKIN_SIZE)
-      resolve({ width: image.width, height: image.height })
+      context.drawImage(normalizedCanvas, 0, 0, SKIN_SIZE, SKIN_SIZE)
+      resolve({ width: image.width, height: image.height, model: inferModelType(normalizedCanvas) })
     }
     image.onerror = reject
     image.src = URL.createObjectURL(file)

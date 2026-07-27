@@ -120,7 +120,8 @@ export function useSkinEditorProject() {
 
   async function handleImport(file) {
     if (!file || !state.skinCanvas) return
-    await importSkinFile(file, state.skinCanvas)
+    const importedSkin = await importSkinFile(file, state.skinCanvas)
+    state.model = importedSkin.model === 'slim' ? 'slim' : 'classic'
     resetOuterLayerForImportedSkin()
     redraw()
   }
