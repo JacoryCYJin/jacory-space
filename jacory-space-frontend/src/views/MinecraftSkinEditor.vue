@@ -33,13 +33,13 @@
         />
       </div>
 
-      <div v-if="isLayerPanelOpen || isColorPanelOpen" class="pointer-events-none absolute left-[5.125rem] top-20 z-20 flex w-[min(20rem,calc(100vw-6.5rem))] flex-col items-start gap-1.5">
-        <OuterLayerPanel v-if="isLayerPanelOpen" class="pointer-events-auto" :show-outer-layer="project.state.showOuterLayer" :visible-parts="project.state.visibleOuterParts" :custom-expanded="project.state.isCustomOuterPartsExpanded" :all-selected="project.actions.allOuterPartsSelected()" @set-display="project.actions.setOuterLayerDisplay" @select-all="project.actions.selectAllOuterParts" @expand-custom="project.state.isCustomOuterPartsExpanded = true" @toggle-part="project.actions.toggleOuterPart" />
-        <ColorPickerPanel v-if="isColorPanelOpen" v-model="project.state.brushColor" v-model:opacity="project.state.brushOpacity" :recent-colors="editing.state.recentColors" class="pointer-events-auto w-full overflow-hidden rounded-[10px]" @commit="editing.actions.rememberColor" @select-recent="editing.actions.selectRecentColor" />
+      <div v-if="isLayerPanelOpen || isColorPanelOpen || (isDevelopment && isAiPanelOpen) || isMotionPanelOpen" class="workspace-scroll pointer-events-auto absolute left-[5.125rem] top-20 z-20 flex max-h-[calc(100dvh-6.25rem)] w-[min(20rem,calc(100vw-6.5rem))] flex-col items-start gap-1.5 overflow-x-hidden overflow-y-auto overscroll-contain pb-1">
+        <OuterLayerPanel v-if="isLayerPanelOpen" class="shrink-0" :show-outer-layer="project.state.showOuterLayer" :visible-parts="project.state.visibleOuterParts" :custom-expanded="project.state.isCustomOuterPartsExpanded" :all-selected="project.actions.allOuterPartsSelected()" @set-display="project.actions.setOuterLayerDisplay" @select-all="project.actions.selectAllOuterParts" @expand-custom="project.state.isCustomOuterPartsExpanded = true" @toggle-part="project.actions.toggleOuterPart" />
+        <ColorPickerPanel v-if="isColorPanelOpen" v-model="project.state.brushColor" v-model:opacity="project.state.brushOpacity" :recent-colors="editing.state.recentColors" class="w-full shrink-0 overflow-hidden rounded-[10px]" @commit="editing.actions.rememberColor" @select-recent="editing.actions.selectRecentColor" />
+        <AiPartGenerationPanel v-if="isDevelopment && isAiPanelOpen" class="shrink-0" :ai="ai" :connection-status="ai.connectionStatus.value" />
+        <MotionWorkspacePanel v-if="isMotionPanelOpen" class="shrink-0" :motion-id="selectedMotion" :paused="motionPaused" :speed="motionSpeed" @select="selectMotion" @update:paused="motionPaused = $event" @update:speed="motionSpeed = $event" @reset="resetMotion" />
       </div>
 
-      <AiPartGenerationPanel v-if="isDevelopment && isAiPanelOpen" class="pointer-events-auto" :ai="ai" :connection-status="ai.connectionStatus.value" />
-      <MotionWorkspacePanel v-if="isMotionPanelOpen" class="pointer-events-auto" :motion-id="selectedMotion" :paused="motionPaused" :speed="motionSpeed" @select="selectMotion" @update:paused="motionPaused = $event" @update:speed="motionSpeed = $event" @reset="resetMotion" />
       <SkinFileActions class="pointer-events-auto" :motion-locked="isMotionPlaybackActive" @new="isNewSkinDialogOpen = true" @import="handleImport" @export="project.actions.exportSkin" />
       <NewSkinDialog v-if="isNewSkinDialogOpen" class="pointer-events-auto" @cancel="isNewSkinDialogOpen = false" @confirm="startNewSkin" />
 
@@ -148,3 +148,8 @@ watch(() => [project.state.model, project.state.activeLayer, project.state.brush
 watch(() => ai.state.baseUrl, ai.actions.restoreModelCatalog)
 watch(() => [ai.state.apiKey, ai.state.baseUrl, ai.state.model], () => { ai.state.connectionTest = null })
 </script>
+
+<style scoped>
+.workspace-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+.workspace-scroll::-webkit-scrollbar { display: none; }
+</style>
