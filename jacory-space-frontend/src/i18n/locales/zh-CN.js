@@ -46,6 +46,12 @@ export default {
     }
   },
   tools: {
+    projects: {
+      mediaParser: { title: '媒体解析工具' },
+      personalBlog: { title: '个人博客' },
+      workflowSystem: { title: '工作流系统' },
+      minecraftSkinStudio: { title: 'Minecraft 皮肤工作台' }
+    },
     interfaceIndex: {
       kicker: '01 — 界面索引',
       description: '自建工具、界面实验、作品项目与系统组件的统一索引。',

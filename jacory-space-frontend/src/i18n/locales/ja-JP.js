@@ -46,6 +46,12 @@ export default {
     }
   },
   tools: {
+    projects: {
+      mediaParser: { title: 'メディア解析ツール' },
+      personalBlog: { title: '個人ブログ' },
+      workflowSystem: { title: 'ワークフローシステム' },
+      minecraftSkinStudio: { title: 'Minecraft スキンスタジオ' }
+    },
     interfaceIndex: {
       kicker: '01 — インターフェース索引',
       description: '自作ツール、作品、インターフェース実験、システム部品をまとめた索引。',

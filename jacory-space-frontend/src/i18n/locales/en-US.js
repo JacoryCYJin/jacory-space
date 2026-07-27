@@ -46,6 +46,12 @@ export default {
     }
   },
   tools: {
+    projects: {
+      mediaParser: { title: 'Media Parser' },
+      personalBlog: { title: 'Personal Blog' },
+      workflowSystem: { title: 'Workflow System' },
+      minecraftSkinStudio: { title: 'Minecraft Skin Studio' }
+    },
     interfaceIndex: {
       kicker: '01 — INTERFACE INDEX',
       description: 'A curated index of tools, works, interface experiments, and system components.',
