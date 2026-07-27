@@ -5,5 +5,8 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     port: 3001
+  },
+  ssr: {
+    noExternal: ['gsap']
   }
 })
