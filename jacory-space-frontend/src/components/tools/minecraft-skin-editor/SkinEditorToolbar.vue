@@ -10,7 +10,11 @@
     </div>
     <span class="mx-1.5 my-1 h-px bg-line" />
     <div class="flex flex-col items-center gap-1">
-      <button type="button" :aria-label="t('minecraftSkin.color')" :class="buttonClass(colorPanelOpen)" :disabled="motionLocked" @mouseenter="showTooltip(t('minecraftSkin.color'), $event)" @mouseleave="hideTooltip" @click="$emit('toggle-color')"><span class="h-5 w-5 rounded-sm border border-line-strong" :style="{ backgroundColor: brushColor, opacity: brushOpacity }" /></button>
+      <button type="button" :aria-label="t('minecraftSkin.color')" :class="buttonClass(colorPanelOpen)" :disabled="motionLocked" @mouseenter="showTooltip(t('minecraftSkin.color'), $event)" @mouseleave="hideTooltip" @click="$emit('select-solid-color'); $emit('toggle-color')"><span class="h-5 w-5 rounded-sm border border-line-strong" :style="{ backgroundColor: brushColor }" /></button>
+      <button type="button" :aria-label="t('minecraftSkin.opacity')" :class="buttonClass(brushOpacity === 0, 'primary')" :disabled="motionLocked" @mouseenter="showTooltip(t('minecraftSkin.opacity'), $event)" @mouseleave="hideTooltip" @click="$emit('select-transparent')"><span class="transparent-swatch h-5 w-5 rounded-sm border border-line-strong" /></button>
+    </div>
+    <span class="mx-1.5 my-1 h-px bg-line" />
+    <div class="flex flex-col items-center gap-1">
       <button v-for="tool in tools" :key="tool.id" type="button" :aria-label="tool.label" :class="buttonClass(activeTool === tool.id, 'primary')" :disabled="motionLocked" @mouseenter="showTooltip(tool.label, $event)" @mouseleave="hideTooltip" @click="$emit('update:active-tool', tool.id)">
         <span :class="buttonContentClass(activeTool === tool.id, 'primary')"><component :is="tool.icon" class="h-5 w-5" /></span>
       </button>
@@ -38,14 +42,14 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Clapperboard, Eraser, FlipHorizontal, Grid3X3, Layers3, PaintBucket, Pencil, Pipette, Redo2, Sparkles, Undo2 } from 'lucide-vue-next'
+import { Clapperboard, FlipHorizontal, Grid3X3, Layers3, PaintBucket, Pencil, Pipette, Redo2, Sparkles, Undo2 } from 'lucide-vue-next'
 import { DEFAULT_ALEX_SKIN_DATA_URL, DEFAULT_STEVE_SKIN_DATA_URL } from './skin-core'
 
 const props = defineProps({
   activeTool: { type: String, required: true }, aiPanelOpen: Boolean, brushColor: { type: String, required: true }, brushOpacity: { type: Number, required: true }, colorPanelOpen: Boolean,
   isDevelopment: Boolean, layerPanelOpen: Boolean, mirrorEnabled: Boolean, model: { type: String, required: true }, motionLocked: Boolean, motionPanelOpen: Boolean, showGrid: Boolean
 })
-defineEmits(['redo', 'toggle-ai', 'toggle-color', 'toggle-grid', 'toggle-layer', 'toggle-mirror', 'toggle-model', 'toggle-motion', 'undo', 'update:active-tool'])
+defineEmits(['redo', 'select-solid-color', 'select-transparent', 'toggle-ai', 'toggle-color', 'toggle-grid', 'toggle-layer', 'toggle-mirror', 'toggle-model', 'toggle-motion', 'undo', 'update:active-tool'])
 
 const { t } = useI18n()
 const modelSwitchIcon = ref(null)
@@ -53,8 +57,8 @@ const hoveredTool = ref('')
 const hoveredToolTop = ref(0)
 const modelIconImages = new Map()
 const tools = computed(() => [
-  { id: 'brush', label: t('minecraftSkin.brush'), icon: Pencil }, { id: 'eraser', label: t('minecraftSkin.eraser'), icon: Eraser },
-  { id: 'fill', label: t('minecraftSkin.fill'), icon: PaintBucket }, { id: 'eyedropper', label: t('minecraftSkin.eyedropper'), icon: Pipette }
+  { id: 'brush', label: t('minecraftSkin.brush'), icon: Pencil }, { id: 'fill', label: t('minecraftSkin.fill'), icon: PaintBucket },
+  { id: 'eyedropper', label: t('minecraftSkin.eyedropper'), icon: Pipette }
 ])
 const nextModelLabel = computed(() => props.model === 'classic' ? t('minecraftSkin.switchToSlim') : t('minecraftSkin.switchToClassic'))
 
@@ -88,4 +92,10 @@ watch(() => props.model, drawModelSwitchIcon, { flush: 'post' })
 
 <style scoped>
 .image-render-pixel { image-rendering: pixelated; }
+.transparent-swatch {
+  background-color: var(--card);
+  background-image: linear-gradient(45deg, var(--line) 25%, transparent 25%), linear-gradient(-45deg, var(--line) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, var(--line) 75%), linear-gradient(-45deg, transparent 75%, var(--line) 75%);
+  background-position: 0 0, 0 3px, 3px -3px, -3px 0;
+  background-size: 6px 6px;
+}
 </style>

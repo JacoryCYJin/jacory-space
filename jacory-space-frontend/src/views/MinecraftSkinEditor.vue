@@ -29,14 +29,16 @@
       <div class="pointer-events-auto">
         <SkinEditorToolbar
           :model="project.state.model" :active-tool="project.state.activeTool" :brush-color="project.state.brushColor" :brush-opacity="project.state.brushOpacity" :mirror-enabled="project.state.mirrorEnabled" :show-grid="showPixelGrid" :motion-locked="isMotionPlaybackActive" :color-panel-open="isColorPanelOpen" :layer-panel-open="isLayerPanelOpen" :motion-panel-open="isMotionPanelOpen" :ai-panel-open="isAiPanelOpen" :is-development="isDevelopment"
-          @toggle-model="toggleModel" @update:active-tool="project.state.activeTool = $event" @toggle-grid="showPixelGrid = !showPixelGrid" @toggle-mirror="project.state.mirrorEnabled = !project.state.mirrorEnabled" @undo="editing.actions.undo" @redo="editing.actions.redo" @toggle-color="togglePanel('color')" @toggle-layer="togglePanel('layer')" @toggle-motion="togglePanel('motion')" @toggle-ai="togglePanel('ai')"
+          @toggle-model="toggleModel" @update:active-tool="project.state.activeTool = $event" @toggle-grid="showPixelGrid = !showPixelGrid" @toggle-mirror="project.state.mirrorEnabled = !project.state.mirrorEnabled" @undo="editing.actions.undo" @redo="editing.actions.redo" @select-solid-color="project.state.brushOpacity = 1" @select-transparent="project.state.brushOpacity = 0" @toggle-color="togglePanel('color')" @toggle-layer="togglePanel('layer')" @toggle-motion="togglePanel('motion')" @toggle-ai="togglePanel('ai')"
         />
       </div>
 
       <div v-if="isLayerPanelOpen || isColorPanelOpen || (isDevelopment && isAiPanelOpen) || isMotionPanelOpen" class="workspace-scroll pointer-events-auto absolute left-[5.125rem] top-20 z-20 flex max-h-[calc(100dvh-6.25rem)] w-[min(20rem,calc(100vw-6.5rem))] flex-col items-start gap-1.5 overflow-x-hidden overflow-y-auto overscroll-contain pb-1">
         <OuterLayerPanel v-if="isLayerPanelOpen" class="shrink-0" :show-outer-layer="project.state.showOuterLayer" :visible-parts="project.state.visibleOuterParts" :custom-expanded="project.state.isCustomOuterPartsExpanded" :all-selected="project.actions.allOuterPartsSelected()" @set-display="project.actions.setOuterLayerDisplay" @select-all="project.actions.selectAllOuterParts" @expand-custom="project.state.isCustomOuterPartsExpanded = true" @toggle-part="project.actions.toggleOuterPart" />
         <ColorPickerPanel v-if="isColorPanelOpen" v-model="project.state.brushColor" v-model:opacity="project.state.brushOpacity" :recent-colors="editing.state.recentColors" class="w-full shrink-0 overflow-hidden rounded-[10px]" @commit="editing.actions.rememberColor" @select-recent="editing.actions.selectRecentColor" />
-        <AiPartGenerationPanel v-if="isDevelopment && isAiPanelOpen" class="shrink-0" :ai="ai" :connection-status="ai.connectionStatus.value" />
+        <Transition name="ai-panel">
+          <AiPartGenerationPanel v-if="isDevelopment && isAiPanelOpen" class="shrink-0" :ai="ai" />
+        </Transition>
         <MotionWorkspacePanel v-if="isMotionPanelOpen" class="shrink-0" :motion-id="selectedMotion" :paused="motionPaused" :speed="motionSpeed" @select="selectMotion" @update:paused="motionPaused = $event" @update:speed="motionSpeed = $event" @reset="resetMotion" />
       </div>
 
@@ -69,7 +71,12 @@ import { useSkinEditorProject } from '../composables/useSkinEditorProject'
 const { t } = useI18n()
 const skinPreview = ref(null)
 const project = useSkinEditorProject()
-const ai = useAiPartGeneration(project, { capturePreview: () => skinPreview.value?.capturePreview?.(), t })
+const ai = useAiPartGeneration(project, {
+  applyCandidate: (canvas, model) => {
+    editing.actions.applyCanvasReplacement(canvas)
+    project.actions.applyGeneratedModel(model)
+  }
+})
 const editing = useSkinEditing(project.state, toRef(ai.state, 'proposalCanvas'), project.actions.redraw)
 const isColorPanelOpen = ref(false)
 const isLayerPanelOpen = ref(false)
@@ -109,7 +116,10 @@ function togglePanel(panel) {
   isMotionPanelOpen.value = false
   ai.state.generationError = ''
 }
-function toggleModel() { project.state.model = project.state.model === 'classic' ? 'slim' : 'classic' }
+function toggleModel() {
+  ai.actions.discardProposal()
+  project.state.model = project.state.model === 'classic' ? 'slim' : 'classic'
+}
 function selectMotion(motion) { selectedMotion.value = motion; motionPaused.value = false }
 function resetMotion() { selectedMotion.value = 'static'; motionSpeed.value = 1; motionPaused.value = false }
 async function handleImport(file) { ai.actions.discardProposal(); await project.actions.handleImport(file); editing.actions.clearHistory() }
@@ -131,8 +141,6 @@ onMounted(async () => {
   window.addEventListener('keydown', handleKeyboardShortcut)
   window.addEventListener('pagehide', project.actions.saveProject)
   try {
-    ai.actions.restoreConnectionCache()
-    ai.actions.restoreModelCatalog()
     await project.actions.initialize()
     editing.actions.restoreRecentColors()
     project.actions.redraw()
@@ -145,11 +153,14 @@ onBeforeUnmount(() => {
   project.actions.dispose()
 })
 watch(() => [project.state.model, project.state.activeLayer, project.state.brushColor, project.state.brushOpacity, project.state.mirrorEnabled, project.state.showOuterLayer, project.state.visibleOuterParts], project.actions.scheduleProjectSave, { deep: true })
-watch(() => ai.state.baseUrl, ai.actions.restoreModelCatalog)
-watch(() => [ai.state.apiKey, ai.state.baseUrl, ai.state.model], () => { ai.state.connectionTest = null })
 </script>
 
 <style scoped>
 .workspace-scroll { -ms-overflow-style: none; scrollbar-width: none; }
 .workspace-scroll::-webkit-scrollbar { display: none; }
+.ai-panel-enter-active, .ai-panel-leave-active { transition: opacity 620ms cubic-bezier(0.16, 1, 0.3, 1), transform 620ms cubic-bezier(0.16, 1, 0.3, 1); }
+.ai-panel-enter-from, .ai-panel-leave-to { opacity: 0; transform: translateY(8px); }
+@media (prefers-reduced-motion: reduce) {
+  .ai-panel-enter-active, .ai-panel-leave-active { transition: none; }
+}
 </style>

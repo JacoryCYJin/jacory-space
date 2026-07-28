@@ -85,7 +85,7 @@ function samePixel(data, offset, red, green, blue, alpha) {
   return data[offset] === red && data[offset + 1] === green && data[offset + 2] === blue && data[offset + 3] === alpha
 }
 
-export function floodFillSkinFace(canvas, pixel, layer, color) {
+export function floodFillSkinFace(canvas, pixel, layer, color, { clear = false } = {}) {
   const face = findSkinFaceAtPixel(pixel, layer)
   if (!face) return false
   const [originX, originY, width, height] = face.rect
@@ -97,7 +97,7 @@ export function floodFillSkinFace(canvas, pixel, layer, color) {
   const [red, green, blue, alpha] = image.data.slice(startOffset, startOffset + 4)
   const queue = [[startX, startY]]
   const visited = new Set()
-  context.fillStyle = color
+  if (!clear) context.fillStyle = color
 
   while (queue.length) {
     const [x, y] = queue.pop()
@@ -106,7 +106,8 @@ export function floodFillSkinFace(canvas, pixel, layer, color) {
     visited.add(key)
     const offset = (y * width + x) * 4
     if (!samePixel(image.data, offset, red, green, blue, alpha)) continue
-    context.fillRect(originX + x, originY + y, 1, 1)
+    if (clear) context.clearRect(originX + x, originY + y, 1, 1)
+    else context.fillRect(originX + x, originY + y, 1, 1)
     queue.push([x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1])
   }
 

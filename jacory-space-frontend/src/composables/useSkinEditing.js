@@ -42,7 +42,7 @@ export function useSkinEditing(projectState, proposalCanvas, redraw) {
 
   function rememberColor(color = projectState.brushColor, opacity = projectState.brushOpacity) {
     const entry = normalizeColorEntry({ color, opacity })
-    if (!entry) return
+    if (!entry || entry.opacity === 0) return
     state.recentColors = [entry, ...state.recentColors.filter((item) => item.color !== entry.color || item.opacity !== entry.opacity)].slice(0, MAX_RECENT_COLORS)
     saveRecentColors()
   }
@@ -84,15 +84,15 @@ export function useSkinEditing(projectState, proposalCanvas, redraw) {
     if (!state.strokeSnapshot) beginPaintStroke()
     const context = projectState.skinCanvas.getContext('2d')
     const color = colorWithOpacity(projectState.brushColor, projectState.brushOpacity)
-    const isErasing = projectState.activeTool === 'eraser'
+    const isTransparent = projectState.brushOpacity === 0
     if (projectState.activeTool === 'fill') {
-      floodFillSkinFace(projectState.skinCanvas, { x, y }, projectState.activeLayer, color)
+      floodFillSkinFace(projectState.skinCanvas, { x, y }, projectState.activeLayer, color, { clear: isTransparent })
       if (projectState.mirrorEnabled) {
         const mirrorPixel = mirrorSkinPixel({ x, y }, projectState.activeLayer)
-        if (mirrorPixel && (mirrorPixel.x !== x || mirrorPixel.y !== y)) floodFillSkinFace(projectState.skinCanvas, mirrorPixel, projectState.activeLayer, color)
+        if (mirrorPixel && (mirrorPixel.x !== x || mirrorPixel.y !== y)) floodFillSkinFace(projectState.skinCanvas, mirrorPixel, projectState.activeLayer, color, { clear: isTransparent })
       }
     } else {
-      if (isErasing) context.clearRect(x, y, 1, 1)
+      if (isTransparent) context.clearRect(x, y, 1, 1)
       else {
         context.fillStyle = color
         context.fillRect(x, y, 1, 1)
@@ -100,7 +100,7 @@ export function useSkinEditing(projectState, proposalCanvas, redraw) {
       if (projectState.mirrorEnabled) {
         const mirrorPixel = mirrorSkinPixel({ x, y }, projectState.activeLayer)
         if (mirrorPixel && (mirrorPixel.x !== x || mirrorPixel.y !== y)) {
-          if (isErasing) context.clearRect(mirrorPixel.x, mirrorPixel.y, 1, 1)
+          if (isTransparent) context.clearRect(mirrorPixel.x, mirrorPixel.y, 1, 1)
           else context.fillRect(mirrorPixel.x, mirrorPixel.y, 1, 1)
         }
       }
@@ -131,6 +131,17 @@ export function useSkinEditing(projectState, proposalCanvas, redraw) {
     image.src = dataUrl
   }
 
+  function applyCanvasReplacement(sourceCanvas) {
+    if (!sourceCanvas || !projectState.skinCanvas) return
+    state.history.push(projectState.skinCanvas.toDataURL())
+    state.redoStack = []
+    const context = projectState.skinCanvas.getContext('2d')
+    context.clearRect(0, 0, 64, 64)
+    context.imageSmoothingEnabled = false
+    context.drawImage(sourceCanvas, 0, 0, 64, 64)
+    redraw()
+  }
+
   function undo() {
     const previous = state.history.pop()
     if (!previous || !projectState.skinCanvas) return
@@ -154,6 +165,6 @@ export function useSkinEditing(projectState, proposalCanvas, redraw) {
 
   return {
     state,
-    actions: { beginPaintStroke, clearHistory, finishPaintStroke, paintPreviewPixel, redo, rememberColor, restoreRecentColors, selectRecentColor, undo }
+    actions: { applyCanvasReplacement, beginPaintStroke, clearHistory, finishPaintStroke, paintPreviewPixel, redo, rememberColor, restoreRecentColors, selectRecentColor, undo }
   }
 }
