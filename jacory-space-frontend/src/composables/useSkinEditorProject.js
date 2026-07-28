@@ -138,6 +138,12 @@ export function useSkinEditorProject() {
     saveProject()
   }
 
+  function applyGeneratedModel(model) {
+    state.model = model === 'slim' ? 'slim' : 'classic'
+    resetOuterLayerForImportedSkin()
+    redraw()
+  }
+
   function exportSkin() {
     if (state.skinCanvas) downloadCanvas(state.skinCanvas)
   }
@@ -155,6 +161,7 @@ export function useSkinEditorProject() {
     state,
     actions: {
       allOuterPartsSelected,
+      applyGeneratedModel,
       dispose,
       exportSkin,
       handleImport,
