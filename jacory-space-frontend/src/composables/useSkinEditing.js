@@ -63,10 +63,25 @@ export function useSkinEditing(projectState, proposalCanvas, redraw) {
     return `rgb(${red} ${green} ${blue} / ${opacity})`
   }
 
+  function createHistorySnapshot() {
+    if (!projectState.skinCanvas) return null
+    return {
+      skin: projectState.skinCanvas.toDataURL(),
+      skinModel: projectState.skinModel === 'slim' ? 'slim' : 'classic'
+    }
+  }
+
+  function normalizeHistorySnapshot(snapshot) {
+    if (typeof snapshot === 'string') return { skin: snapshot, skinModel: null }
+    if (!snapshot || typeof snapshot.skin !== 'string') return null
+    const skinModel = snapshot.skinModel ?? snapshot.model
+    return { skin: snapshot.skin, skinModel: skinModel === 'slim' ? 'slim' : skinModel === 'classic' ? 'classic' : null }
+  }
+
   function beginPaintStroke() {
     if (proposalCanvas.value || projectState.activeTool === 'eyedropper') return
     rememberColor()
-    state.strokeSnapshot = projectState.skinCanvas?.toDataURL() || null
+    state.strokeSnapshot = createHistorySnapshot()
     state.strokeModified = false
     state.redoStack = []
   }
@@ -120,7 +135,10 @@ export function useSkinEditing(projectState, proposalCanvas, redraw) {
     state.strokeModified = false
   }
 
-  function restoreDataUrl(dataUrl) {
+  function restoreSnapshot(snapshot) {
+    const normalized = normalizeHistorySnapshot(snapshot)
+    if (!normalized || !projectState.skinCanvas) return
+    if (normalized.skinModel) projectState.skinModel = normalized.skinModel
     const image = new Image()
     image.onload = () => {
       const context = projectState.skinCanvas.getContext('2d')
@@ -128,32 +146,41 @@ export function useSkinEditing(projectState, proposalCanvas, redraw) {
       context.drawImage(image, 0, 0)
       redraw()
     }
-    image.src = dataUrl
+    image.src = normalized.skin
   }
 
-  function applyCanvasReplacement(sourceCanvas) {
-    if (!sourceCanvas || !projectState.skinCanvas) return
-    state.history.push(projectState.skinCanvas.toDataURL())
+  function applyCanvasReplacement(sourceCanvas, { model } = {}) {
+    if (!sourceCanvas || !projectState.skinCanvas) return null
+    const historyEntry = createHistorySnapshot()
+    if (!historyEntry) return null
+    state.history.push(historyEntry)
     state.redoStack = []
     const context = projectState.skinCanvas.getContext('2d')
     context.clearRect(0, 0, 64, 64)
     context.imageSmoothingEnabled = false
     context.drawImage(sourceCanvas, 0, 0, 64, 64)
+    if (model === 'classic' || model === 'slim') projectState.skinModel = model
     redraw()
+    return historyEntry
   }
 
-  function undo() {
+  function undo(expectedHistoryEntry = null) {
+    if (expectedHistoryEntry && state.history.at(-1) !== expectedHistoryEntry) return false
     const previous = state.history.pop()
-    if (!previous || !projectState.skinCanvas) return
-    state.redoStack.push(projectState.skinCanvas.toDataURL())
-    restoreDataUrl(previous)
+    if (!previous || !projectState.skinCanvas) return false
+    const current = createHistorySnapshot()
+    if (current) state.redoStack.push(current)
+    restoreSnapshot(previous)
+    return true
   }
 
   function redo() {
     const next = state.redoStack.pop()
-    if (!next || !projectState.skinCanvas) return
-    state.history.push(projectState.skinCanvas.toDataURL())
-    restoreDataUrl(next)
+    if (!next || !projectState.skinCanvas) return false
+    const current = createHistorySnapshot()
+    if (current) state.history.push(current)
+    restoreSnapshot(next)
+    return true
   }
 
   function clearHistory() {
@@ -165,6 +192,18 @@ export function useSkinEditing(projectState, proposalCanvas, redraw) {
 
   return {
     state,
-    actions: { applyCanvasReplacement, beginPaintStroke, clearHistory, finishPaintStroke, paintPreviewPixel, redo, rememberColor, restoreRecentColors, selectRecentColor, undo }
+    actions: {
+      applyCanvasReplacement,
+      beginPaintStroke,
+      canUndoHistoryEntry: (entry) => state.history.at(-1) === entry,
+      clearHistory,
+      finishPaintStroke,
+      paintPreviewPixel,
+      redo,
+      rememberColor,
+      restoreRecentColors,
+      selectRecentColor,
+      undo
+    }
   }
 }

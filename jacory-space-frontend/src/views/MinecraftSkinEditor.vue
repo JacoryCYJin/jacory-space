@@ -6,9 +6,9 @@
       ref="skinPreview"
       :texture-canvas="displayCanvas"
       :texture-version="project.state.textureVersion"
-      :model="project.state.model"
+      :model="project.state.previewModel"
       :active-layer="project.state.activeLayer"
-      :show-outer-layer="project.state.showOuterLayer"
+      :outer-layer-display="project.state.outerLayerDisplay"
       :visible-outer-parts="project.state.visibleOuterParts"
       :active-tool="project.state.activeTool"
       :show-grid="showPixelGrid"
@@ -28,13 +28,13 @@
 
       <div class="pointer-events-auto">
         <SkinEditorToolbar
-          :model="project.state.model" :active-tool="project.state.activeTool" :brush-color="project.state.brushColor" :brush-opacity="project.state.brushOpacity" :mirror-enabled="project.state.mirrorEnabled" :show-grid="showPixelGrid" :motion-locked="isMotionPlaybackActive" :color-panel-open="isColorPanelOpen" :layer-panel-open="isLayerPanelOpen" :motion-panel-open="isMotionPanelOpen" :ai-panel-open="isAiPanelOpen" :is-development="isDevelopment"
+          :model="project.state.previewModel" :active-tool="project.state.activeTool" :brush-color="project.state.brushColor" :brush-opacity="project.state.brushOpacity" :mirror-enabled="project.state.mirrorEnabled" :show-grid="showPixelGrid" :motion-locked="isMotionPlaybackActive" :color-panel-open="isColorPanelOpen" :layer-panel-open="isLayerPanelOpen" :motion-panel-open="isMotionPanelOpen" :ai-panel-open="isAiPanelOpen" :is-development="isDevelopment"
           @toggle-model="toggleModel" @update:active-tool="project.state.activeTool = $event" @toggle-grid="showPixelGrid = !showPixelGrid" @toggle-mirror="project.state.mirrorEnabled = !project.state.mirrorEnabled" @undo="editing.actions.undo" @redo="editing.actions.redo" @select-solid-color="project.state.brushOpacity = 1" @select-transparent="project.state.brushOpacity = 0" @toggle-color="togglePanel('color')" @toggle-layer="togglePanel('layer')" @toggle-motion="togglePanel('motion')" @toggle-ai="togglePanel('ai')"
         />
       </div>
 
       <div v-if="isLayerPanelOpen || isColorPanelOpen || (isDevelopment && isAiPanelOpen) || isMotionPanelOpen" class="workspace-scroll pointer-events-auto absolute left-[5.125rem] top-20 z-20 flex max-h-[calc(100dvh-6.25rem)] w-[min(20rem,calc(100vw-6.5rem))] flex-col items-start gap-1.5 overflow-x-hidden overflow-y-auto overscroll-contain pb-1">
-        <OuterLayerPanel v-if="isLayerPanelOpen" class="shrink-0" :show-outer-layer="project.state.showOuterLayer" :visible-parts="project.state.visibleOuterParts" :custom-expanded="project.state.isCustomOuterPartsExpanded" :all-selected="project.actions.allOuterPartsSelected()" @set-display="project.actions.setOuterLayerDisplay" @select-all="project.actions.selectAllOuterParts" @expand-custom="project.state.isCustomOuterPartsExpanded = true" @toggle-part="project.actions.toggleOuterPart" />
+        <OuterLayerPanel v-if="isLayerPanelOpen" class="shrink-0" :display="project.state.outerLayerDisplay" :visible-parts="project.state.visibleOuterParts" :custom-expanded="project.state.isCustomOuterPartsExpanded" :all-selected="project.actions.allOuterPartsSelected()" @set-display="project.actions.setOuterLayerDisplay" @select-all="project.actions.selectAllOuterParts" @expand-custom="project.state.isCustomOuterPartsExpanded = true" @toggle-part="project.actions.toggleOuterPart" />
         <ColorPickerPanel v-if="isColorPanelOpen" v-model="project.state.brushColor" v-model:opacity="project.state.brushOpacity" :recent-colors="editing.state.recentColors" class="w-full shrink-0 overflow-hidden rounded-[10px]" @commit="editing.actions.rememberColor" @select-recent="editing.actions.selectRecentColor" />
         <Transition name="ai-panel">
           <AiPartGenerationPanel v-if="isDevelopment && isAiPanelOpen" class="shrink-0" :ai="ai" />
@@ -73,9 +73,13 @@ const skinPreview = ref(null)
 const project = useSkinEditorProject()
 const ai = useAiPartGeneration(project, {
   applyCandidate: (canvas, model) => {
-    editing.actions.applyCanvasReplacement(canvas)
-    project.actions.applyGeneratedModel(model)
-  }
+    const historyEntry = editing.actions.applyCanvasReplacement(canvas, { model })
+    project.state.previewModel = model === 'slim' ? 'slim' : 'classic'
+    project.actions.resetOuterLayerForImportedSkin()
+    return historyEntry
+  },
+  canRevertCandidate: (entry) => editing.actions.canUndoHistoryEntry(entry),
+  revertCandidate: (entry) => editing.actions.undo(entry)
 })
 const editing = useSkinEditing(project.state, toRef(ai.state, 'proposalCanvas'), project.actions.redraw)
 const isColorPanelOpen = ref(false)
@@ -87,7 +91,7 @@ const showPixelGrid = ref(false)
 const selectedMotion = ref('static')
 const motionSpeed = ref(1)
 const motionPaused = ref(false)
-const displayCanvas = computed(() => ai.state.showProposal && ai.state.proposalCanvas ? ai.state.proposalCanvas : project.state.skinCanvas)
+const displayCanvas = computed(() => project.state.skinCanvas)
 const isMotionPlaybackActive = computed(() => selectedMotion.value !== 'static' && !motionPaused.value)
 
 function togglePanel(panel) {
@@ -118,7 +122,7 @@ function togglePanel(panel) {
 }
 function toggleModel() {
   ai.actions.discardProposal()
-  project.state.model = project.state.model === 'classic' ? 'slim' : 'classic'
+  project.state.previewModel = project.state.previewModel === 'classic' ? 'slim' : 'classic'
 }
 function selectMotion(motion) { selectedMotion.value = motion; motionPaused.value = false }
 function resetMotion() { selectedMotion.value = 'static'; motionSpeed.value = 1; motionPaused.value = false }
@@ -152,7 +156,7 @@ onBeforeUnmount(() => {
   ai.actions.dispose()
   project.actions.dispose()
 })
-watch(() => [project.state.model, project.state.activeLayer, project.state.brushColor, project.state.brushOpacity, project.state.mirrorEnabled, project.state.showOuterLayer, project.state.visibleOuterParts], project.actions.scheduleProjectSave, { deep: true })
+watch(() => [project.state.previewModel, project.state.skinModel, project.state.activeLayer, project.state.brushColor, project.state.brushOpacity, project.state.mirrorEnabled, project.state.outerLayerDisplay, project.state.visibleOuterParts], project.actions.scheduleProjectSave, { deep: true })
 </script>
 
 <style scoped>

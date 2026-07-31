@@ -582,6 +582,7 @@ export default {
     outerDisplay: '外側レイヤーの状態',
     outerDisplayOn: '表示',
     outerDisplayOff: '非表示',
+    outerDisplayOnly: '外側のみ',
     outerVisibility: '表示部位',
     outerVisibilityOn: '外側レイヤーを表示',
     outerVisibilityOff: '外側レイヤーを非表示',

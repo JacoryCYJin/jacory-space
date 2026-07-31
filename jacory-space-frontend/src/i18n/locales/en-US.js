@@ -582,6 +582,7 @@ export default {
     outerDisplay: 'Outer layer status',
     outerDisplayOn: 'Show',
     outerDisplayOff: 'Hide',
+    outerDisplayOnly: 'Outer only',
     outerVisibility: 'Display parts',
     outerVisibilityOn: 'Show outer layer',
     outerVisibilityOff: 'Hide outer layer',

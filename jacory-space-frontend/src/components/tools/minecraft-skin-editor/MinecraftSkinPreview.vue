@@ -19,7 +19,7 @@ const props = defineProps({
   textureVersion: { type: Number, default: 0 },
   model: { type: String, default: 'classic' },
   activeLayer: { type: String, default: 'base' },
-  showOuterLayer: { type: Boolean, default: false },
+  outerLayerDisplay: { type: String, default: 'hidden' },
   visibleOuterParts: { type: Array, default: () => [] },
   activeTool: { type: String, default: 'brush' },
   showGrid: { type: Boolean, default: false },
@@ -198,7 +198,8 @@ function capturePreview() {
 function applyLayerVisibility() {
   if (!viewer) return
   const skin = viewer.playerObject.skin
-  skin.setInnerLayerVisible(true)
+  const showOuterLayer = props.outerLayerDisplay !== 'hidden'
+  skin.setInnerLayerVisible(props.outerLayerDisplay !== 'only')
   const parts = [
     ['head', skin.head],
     ['body', skin.body],
@@ -208,7 +209,7 @@ function applyLayerVisibility() {
     ['leftLeg', skin.leftLeg]
   ]
   parts.forEach(([partName, part]) => {
-    part.outerLayer.visible = props.showOuterLayer && props.visibleOuterParts.includes(partName)
+    part.outerLayer.visible = showOuterLayer && props.visibleOuterParts.includes(partName)
   })
 }
 
@@ -522,7 +523,7 @@ watch(() => props.model, () => {
   applyLayerVisibility()
   syncPixelGrid()
 })
-watch(() => [props.showGrid, props.activeLayer, props.showOuterLayer], () => {
+watch(() => [props.showGrid, props.activeLayer, props.outerLayerDisplay], () => {
   applyLayerVisibility()
   syncPixelGrid()
 })

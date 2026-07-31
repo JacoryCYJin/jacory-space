@@ -1,6 +1,12 @@
 import { inferModelType, loadSkinToCanvas } from 'skinview-utils'
 
 export const SKIN_SIZE = 64
+export const SLIM_UNUSED_ARM_BOXES = [
+  [50, 16, 2, 4],
+  [54, 20, 2, 12],
+  [42, 48, 2, 4],
+  [46, 52, 2, 12]
+]
 
 // Source: Mojang's official Java Edition Steve skin template. It is embedded so
 // the initial texture remains same-origin and can be exported after editing.
@@ -238,6 +244,25 @@ export function downloadCanvas(canvas, filename = 'minecraft-skin.png') {
   link.click()
 }
 
+export function createExportCanvas(sourceCanvas, model) {
+  const exportCanvas = document.createElement('canvas')
+  exportCanvas.width = SKIN_SIZE
+  exportCanvas.height = SKIN_SIZE
+  const context = exportCanvas.getContext('2d', { willReadFrequently: true })
+  context.imageSmoothingEnabled = false
+  context.drawImage(sourceCanvas, 0, 0, SKIN_SIZE, SKIN_SIZE)
+
+  if (model === 'slim') {
+    SLIM_UNUSED_ARM_BOXES.forEach(([x, y, width, height]) => context.clearRect(x, y, width, height))
+  }
+
+  return exportCanvas
+}
+
+export function inferSkinModel(canvas) {
+  return inferModelType(canvas) === 'slim' ? 'slim' : 'classic'
+}
+
 export function importSkinFile(file, targetCanvas) {
   return new Promise((resolve, reject) => {
     if (!file || file.type !== 'image/png') {
@@ -252,7 +277,7 @@ export function importSkinFile(file, targetCanvas) {
       context.clearRect(0, 0, SKIN_SIZE, SKIN_SIZE)
       context.imageSmoothingEnabled = false
       context.drawImage(normalizedCanvas, 0, 0, SKIN_SIZE, SKIN_SIZE)
-      resolve({ width: image.width, height: image.height, model: inferModelType(normalizedCanvas) })
+      resolve({ width: image.width, height: image.height, model: inferSkinModel(normalizedCanvas) })
     }
     image.onerror = reject
     image.src = URL.createObjectURL(file)
