@@ -1,4 +1,4 @@
-import { reactive } from 'vue'
+import { computed, reactive } from 'vue'
 
 const DEFAULT_MONADICAL_SERVICE_URL = import.meta.env.VITE_MC_STUDIO_SERVICE_URL || 'http://127.0.0.1:8011'
 const DEFAULT_BLOCK_SERVICE_URL = import.meta.env.VITE_MC_BLOCK_SERVICE_URL || 'http://127.0.0.1:8012'
@@ -39,7 +39,7 @@ function loadCandidateCanvas(url, signal) {
     }))
 }
 
-export function useAiPartGeneration(project, { applyCandidate }) {
+export function useAiPartGeneration(project, { applyCandidate, canRevertCandidate, revertCandidate }) {
   const state = reactive({
     provider: 'monadical',
     prompt: '',
@@ -51,13 +51,13 @@ export function useAiPartGeneration(project, { applyCandidate }) {
     proposalCanvas: null,
     proposalResult: null,
     proposalApplied: false,
-    showProposal: true,
-    previousOuterState: null
+    appliedHistoryEntry: null
   })
   let requestController = null
+  const canRevertProposal = computed(() => state.proposalApplied && state.appliedHistoryEntry && canRevertCandidate(state.appliedHistoryEntry))
 
   function selectedModel() {
-    return project.state.model === 'slim' ? 'slim' : 'classic'
+    return project.state.previewModel === 'slim' ? 'slim' : 'classic'
   }
 
   function setProvider(provider) {
@@ -88,33 +88,17 @@ export function useAiPartGeneration(project, { applyCandidate }) {
     state.previewFile = null
   }
 
-  function clearProposal({ restoreOuterState = true } = {}) {
-    if (restoreOuterState && state.previousOuterState) {
-      project.state.showOuterLayer = state.previousOuterState.showOuterLayer
-      project.state.visibleOuterParts = state.previousOuterState.visibleOuterParts
-      project.state.isCustomOuterPartsExpanded = state.previousOuterState.isCustomOuterPartsExpanded
-    }
+  function clearProposal() {
     state.proposalCanvas = null
     state.proposalResult = null
     state.proposalApplied = false
-    state.showProposal = true
-    state.previousOuterState = null
-    project.actions.redraw()
+    state.appliedHistoryEntry = null
   }
 
   function previewCandidate(canvas, result) {
-    state.previousOuterState = {
-      showOuterLayer: project.state.showOuterLayer,
-      visibleOuterParts: [...project.state.visibleOuterParts],
-      isCustomOuterPartsExpanded: project.state.isCustomOuterPartsExpanded
-    }
-    project.actions.selectAllOuterParts()
-    project.state.showOuterLayer = true
     state.proposalCanvas = canvas
     state.proposalResult = result
     state.proposalApplied = false
-    state.showProposal = true
-    project.actions.redraw()
   }
 
   async function generate() {
@@ -130,7 +114,7 @@ export function useAiPartGeneration(project, { applyCandidate }) {
       state.generationError = '请先上传角色双视角预览图。'
       return
     }
-    if (state.proposalCanvas) clearProposal()
+    if (state.proposalResult) clearProposal()
 
     state.isGenerating = true
     state.generationStatus = isBlockProvider ? '正在上传角色双视角预览图…' : '正在连接本地 Minecraft 服务…'
@@ -173,6 +157,7 @@ export function useAiPartGeneration(project, { applyCandidate }) {
       const candidateUrl = new URL(payload.skin_png_path, `${serviceUrl}/`).toString()
       const canvas = await loadCandidateCanvas(candidateUrl, requestController.signal)
       previewCandidate(canvas, { ...payload, candidateUrl })
+      applyProposal()
     } catch (error) {
       if (error?.name === 'AbortError') state.generationError = '已停止生成。'
       else state.generationError = error instanceof Error ? error.message : '本地皮肤生成失败。'
@@ -185,13 +170,22 @@ export function useAiPartGeneration(project, { applyCandidate }) {
 
   function applyProposal() {
     if (!state.proposalCanvas || state.proposalApplied || !state.proposalResult) return
-    applyCandidate(state.proposalCanvas, state.proposalResult.model)
-    clearProposal({ restoreOuterState: false })
+    state.appliedHistoryEntry = applyCandidate(state.proposalCanvas, state.proposalResult.model)
+    state.proposalCanvas = null
+    state.proposalApplied = Boolean(state.appliedHistoryEntry)
   }
 
   function discardProposal() {
-    if (!state.proposalCanvas) return
-    clearProposal({ restoreOuterState: !state.proposalApplied })
+    if (!state.proposalCanvas && !state.proposalResult) return
+    clearProposal()
+  }
+
+  function revertProposal() {
+    if (!canRevertProposal.value) return
+    if (revertCandidate(state.appliedHistoryEntry)) {
+      state.proposalApplied = false
+      state.appliedHistoryEntry = null
+    }
   }
 
   function cancel() { requestController?.abort() }
@@ -199,6 +193,7 @@ export function useAiPartGeneration(project, { applyCandidate }) {
 
   return {
     state,
+    canRevertProposal,
     actions: {
       applyProposal,
       cancel,
@@ -206,6 +201,7 @@ export function useAiPartGeneration(project, { applyCandidate }) {
       discardProposal,
       dispose,
       generate,
+      revertProposal,
       setPreviewFile,
       setProvider
     }

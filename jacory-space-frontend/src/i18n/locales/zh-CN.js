@@ -582,6 +582,7 @@ export default {
     outerDisplay: '外层状态',
     outerDisplayOn: '显示',
     outerDisplayOff: '关闭',
+    outerDisplayOnly: '仅外层',
     outerVisibility: '显示部位',
     outerVisibilityOn: '开启外层显示',
     outerVisibilityOff: '关闭外层显示',

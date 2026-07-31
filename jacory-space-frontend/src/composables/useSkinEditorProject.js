@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { createSkinCanvas, downloadCanvas, importSkinFile } from '../components/tools/minecraft-skin-editor/skin-core'
+import { createExportCanvas, createSkinCanvas, downloadCanvas, inferSkinModel, importSkinFile } from '../components/tools/minecraft-skin-editor/skin-core'
 
 const STORAGE_KEY = 'jacory-space.minecraft-skin-studio.project.v1'
 export const SKIN_PART_IDS = ['head', 'body', 'rightArm', 'leftArm', 'rightLeg', 'leftLeg']
@@ -8,13 +8,14 @@ export function useSkinEditorProject() {
   const state = reactive({
     skinCanvas: null,
     textureVersion: 0,
-    model: 'classic',
+    previewModel: 'classic',
+    skinModel: 'classic',
     activeLayer: 'base',
     activeTool: 'brush',
     brushColor: '#0e66c8',
     brushOpacity: 1,
     mirrorEnabled: false,
-    showOuterLayer: false,
+    outerLayerDisplay: 'hidden',
     visibleOuterParts: [],
     isCustomOuterPartsExpanded: false,
     previewError: ''
@@ -42,16 +43,17 @@ export function useSkinEditorProject() {
     state.textureVersion += 1
   }
 
-  function setOuterLayerDisplay(visible) {
-    if (visible && state.visibleOuterParts.length === 0) selectAllOuterParts()
-    state.showOuterLayer = visible
+  function setOuterLayerDisplay(display) {
+    if (!['hidden', 'shown', 'only'].includes(display)) return
+    if (display !== 'hidden' && state.visibleOuterParts.length === 0) selectAllOuterParts()
+    state.outerLayerDisplay = display
     state.textureVersion += 1
   }
 
   function resetOuterLayerForImportedSkin() {
     state.visibleOuterParts = [...SKIN_PART_IDS]
     state.isCustomOuterPartsExpanded = false
-    state.showOuterLayer = true
+    state.outerLayerDisplay = 'shown'
     state.textureVersion += 1
   }
 
@@ -69,12 +71,13 @@ export function useSkinEditorProject() {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify({
         skin: state.skinCanvas.toDataURL('image/png'),
-        model: state.model,
+        previewModel: state.previewModel,
+        skinModel: state.skinModel,
         activeLayer: state.activeLayer,
         brushColor: state.brushColor,
         brushOpacity: state.brushOpacity,
         mirrorEnabled: state.mirrorEnabled,
-        showOuterLayer: state.showOuterLayer,
+        outerLayerDisplay: state.outerLayerDisplay,
         visibleOuterParts: state.visibleOuterParts
       }))
     } catch {
@@ -105,30 +108,39 @@ export function useSkinEditorProject() {
     state.skinCanvas = await createSkinCanvas()
     const saved = restoreProject()
     if (!saved) return
-    state.model = saved.model === 'slim' ? 'slim' : 'classic'
+    const savedSkinModel = saved.skinModel === 'slim' ? 'slim' : saved.skinModel === 'classic' ? 'classic' : null
+    const savedPreviewModel = saved.previewModel === 'slim' ? 'slim' : saved.previewModel === 'classic' ? 'classic' : null
     state.activeLayer = saved.activeLayer === 'outer' ? 'outer' : 'base'
     state.brushColor = /^#[0-9a-f]{6}$/i.test(saved.brushColor) ? saved.brushColor : state.brushColor
     state.brushOpacity = Number.isFinite(saved.brushOpacity) ? Math.min(1, Math.max(0, saved.brushOpacity)) : state.brushOpacity
     state.mirrorEnabled = Boolean(saved.mirrorEnabled)
-    if (typeof saved.showOuterLayer === 'boolean') state.showOuterLayer = saved.showOuterLayer
+    if (['hidden', 'shown', 'only'].includes(saved.outerLayerDisplay)) {
+      state.outerLayerDisplay = saved.outerLayerDisplay
+    } else if (typeof saved.showOuterLayer === 'boolean') {
+      state.outerLayerDisplay = saved.showOuterLayer ? 'shown' : 'hidden'
+    }
     if (Array.isArray(saved.visibleOuterParts)) {
       state.visibleOuterParts = [...new Set(saved.visibleOuterParts.filter((part) => SKIN_PART_IDS.includes(part)))]
       state.isCustomOuterPartsExpanded = !allOuterPartsSelected()
     }
     await loadCanvasData(saved.skin)
+    state.skinModel = savedSkinModel || inferSkinModel(state.skinCanvas)
+    state.previewModel = savedPreviewModel || state.skinModel
   }
 
   async function handleImport(file) {
     if (!file || !state.skinCanvas) return
     const importedSkin = await importSkinFile(file, state.skinCanvas)
-    state.model = importedSkin.model === 'slim' ? 'slim' : 'classic'
+    state.skinModel = importedSkin.model === 'slim' ? 'slim' : 'classic'
+    state.previewModel = state.skinModel
     resetOuterLayerForImportedSkin()
     redraw()
   }
 
   async function startNewSkin() {
     state.skinCanvas = await createSkinCanvas()
-    state.model = 'classic'
+    state.previewModel = 'classic'
+    state.skinModel = 'classic'
     state.activeLayer = 'base'
     state.activeTool = 'brush'
     state.brushColor = '#0e66c8'
@@ -138,14 +150,8 @@ export function useSkinEditorProject() {
     saveProject()
   }
 
-  function applyGeneratedModel(model) {
-    state.model = model === 'slim' ? 'slim' : 'classic'
-    resetOuterLayerForImportedSkin()
-    redraw()
-  }
-
   function exportSkin() {
-    if (state.skinCanvas) downloadCanvas(state.skinCanvas)
+    if (state.skinCanvas) downloadCanvas(createExportCanvas(state.skinCanvas, state.skinModel))
   }
 
   function handlePreviewError(error) {
@@ -161,7 +167,6 @@ export function useSkinEditorProject() {
     state,
     actions: {
       allOuterPartsSelected,
-      applyGeneratedModel,
       dispose,
       exportSkin,
       handleImport,

@@ -32,13 +32,11 @@
         <button v-if="ai.state.isGenerating" type="button" class="border border-line px-3 py-2 text-xs text-muted-foreground transition-colors hover:border-line-strong hover:text-foreground" @click="ai.actions.cancel">停止</button>
       </div>
       <p v-if="ai.state.generationStatus" class="text-xs text-muted-foreground">{{ ai.state.generationStatus }}</p>
-      <div v-if="ai.state.proposalCanvas" class="border-t border-line pt-3.5">
-        <p class="text-xs leading-5 text-muted-foreground">完整皮肤候选已载入 2D / 3D 预览；应用前不会改动当前皮肤。</p>
+      <div v-if="ai.state.proposalResult" class="border-t border-line pt-3.5">
+        <p class="text-xs leading-5 text-muted-foreground">完整皮肤已直接应用到当前编辑器；本次替换已纳入撤回与恢复历史。</p>
         <p v-if="ai.state.proposalResult?.validation?.warnings?.length" class="mt-2 text-xs leading-5 text-haze">{{ ai.state.proposalResult.validation.warnings.join(' ') }}</p>
-        <div class="mt-3 grid grid-cols-3 gap-2">
-          <button type="button" class="border border-line px-2 py-2 text-xs text-muted-foreground transition-colors hover:border-blue hover:text-blue" @click="ai.state.showProposal = !ai.state.showProposal">{{ ai.state.showProposal ? '查看原皮肤' : '查看候选' }}</button>
-          <button type="button" class="border border-line px-2 py-2 text-xs text-muted-foreground transition-colors hover:border-line-strong hover:text-foreground" :disabled="ai.state.proposalApplied" @click="ai.actions.discardProposal">丢弃</button>
-          <button type="button" class="border border-foreground bg-foreground px-2 py-2 text-xs text-background transition-colors hover:border-blue hover:bg-blue disabled:cursor-not-allowed disabled:opacity-60" :disabled="ai.state.proposalApplied" @click="ai.actions.applyProposal">{{ ai.state.proposalApplied ? '已应用' : '应用候选' }}</button>
+        <div class="mt-3">
+          <button type="button" class="w-full border border-foreground bg-foreground px-2 py-2 text-xs text-background transition-colors hover:border-blue hover:bg-blue disabled:cursor-not-allowed disabled:opacity-60" :disabled="!ai.canRevertProposal" @click="ai.actions.revertProposal">{{ ai.state.proposalApplied ? '撤回本次生成' : '已撤回本次生成' }}</button>
         </div>
       </div>
     </div>
