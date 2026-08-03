@@ -5,6 +5,8 @@ import Blog from '../views/Blog.vue'
 import BlogPost from '../views/BlogPost.vue'
 import Tools from '../views/Tools.vue'
 import MinecraftSkinEditor from '../views/MinecraftSkinEditor.vue'
+import Library from '../views/Library.vue'
+import LibraryDetail from '../views/LibraryDetail.vue'
 
 export const routes = [
   {
@@ -48,6 +50,16 @@ export const routes = [
     path: '/blog/:slug',
     name: 'BlogPost',
     component: BlogPost
+  },
+  {
+    path: '/library',
+    name: 'Library',
+    component: Library
+  },
+  {
+    path: '/library/:id',
+    name: 'LibraryDetail',
+    component: LibraryDetail
   },
   {
     path: '/about',
