@@ -56,6 +56,16 @@ const pageMeta = computed(() => {
       path: route.path,
       type: 'article',
     },
+    Library: {
+      title: 'PlanTO — Jacory Space',
+      description: 'Jacory Space 的可复用 Prompt、Skill 与工作方法库。',
+      path: '/library',
+    },
+    LibraryDetail: {
+      title: 'PlanTO — Jacory Space',
+      description: 'Jacory Space 的可复用 Prompt 与 Skill 详情。',
+      path: route.path,
+    },
     About: {
       title: 'About — Jacory Space',
       description: '了解 Jacory Space 的个人工作系统、创作方向与联系方式。',

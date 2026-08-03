@@ -49,7 +49,7 @@ export default {
     projects: {
       mediaParser: { title: 'メディア解析ツール' },
       personalBlog: { title: '個人ブログ' },
-      workflowSystem: { title: 'ワークフローシステム' },
+      workflowSystem: { title: 'アイデアレシピ' },
       minecraftSkinStudio: { title: 'Minecraft スキンスタジオ' }
     },
     interfaceIndex: {
@@ -745,5 +745,21 @@ export default {
     canvasHint: 'テクスチャ上のピクセルをクリックすると、3D キャラクターも更新されます。',
     webglError: '3D プレビューを初期化できませんでした。WebGL 対応を確認してページを更新してください。',
     ready: 'READY'
+  },
+  library: {
+    kicker: 'PROMPT / SKILL ライブラリ', titleLead: 'アイデア', titleAccent: 'レシピ',
+    description: '再利用できるプロンプト、Agent Skill、仕事の方法をまとめた個人の資産庫です。見つけ、理解し、持ち帰れます。',
+    indexLabel: 'アセット索引', filterAria: 'アセットを絞り込む', searchLabel: 'アセットを検索', searchPlaceholder: 'タイトル、タグ、プラットフォームを検索', updatedLabel: '最終更新',
+    filters: { all: 'すべて', prompts: 'PROMPTS', skills: 'SKILLS' }, copy: 'コピー', copied: 'コピー済み', copySuccess: 'クリップボードにコピーしました', copyError: 'コピーに失敗しました。手動で選択してください。', empty: '一致するアセットはありません', backToLibrary: 'ライブラリに戻る', platformLabel: 'プラットフォーム', versionLabel: 'バージョン', aboutLabel: '用途', contentLabel: 'PROMPT CONTENT', usageLabel: '使い方', notesLabel: 'メモ', notFound: 'アセットが見つかりません',
+    entries: {
+      structuredPromptBuilder: { title: 'Structured Prompt Builder', description: '曖昧な依頼を、実行可能で検証できる構造化プロンプトに変換します。' },
+      fieldNoteEditor: { title: 'Field Note Editor', description: '断片的な記録を、判断と構造を持つ Field Note に編集します。' },
+      researchSynthesis: { title: 'Research Synthesis', description: '調査を情報源、判断、結論に分け、追跡可能な Agent ワークフローにします。' }
+    },
+    details: {
+      structuredPromptBuilder: { about: '複雑なタスクの前に、目的、境界、入力、出力、受け入れ条件を整理するために使います。', usage: '変数を置き換えてモデルに貼り付けます。実行前に前提を確認させてください。', notes: 'モデルに依存しない骨格です。複雑なタスクには例と禁止事項を追加してください。', content: 'あなたは構造化タスク設計アシスタントです。\n\n目的：[goal]\n背景：[context]\n制約：[constraints]\n期待する出力：[output_format]\n受け入れ条件：[acceptance_criteria]\n\nまず理解を言い換え、確認が必要な前提を列挙してください。その後、手順に沿って実行し、最後に受け入れ条件を確認してください。' },
+      fieldNoteEditor: { about: '会議メモ、断片、作業ログを読みやすく再利用できる個人知識の記録にします。', usage: '元の記録を入力してください。事実と判断を分け、不足情報を補わないでください。', notes: 'すべての観察を結論に変えず、簡潔さを保ちます。', content: '以下の元記録を Field Note に編集してください。\n\n要件：\n1. 重要な事実を残し、詳細を創作しない。\n2. 観察、判断、仮説を分ける。\n3. 明確なタイトルと 3—5 個のキーワードを作る。\n4. 宣伝文ではなく簡潔な段落で書く。\n\n元の記録：\n[raw_note]' },
+      researchSynthesis: { about: '調査型 Agent のための Skill の骨格です。比較、判断、統合の前に情報源の範囲を定めます。', usage: 'SKILL.md として保存し、実際の作業に合わせて references、テンプレート、検証スクリプトを追加してください。', notes: '安定した方法は Skill に、一度きりの指示は Prompt にします。', content: '---\nname: research-synthesis\ndescription: 調査を情報源、証拠、判断、結論に分解します。\n---\n\n# Research Synthesis\n\n## When to use\n複数の情報源を比較し、判断や証拠の連鎖が必要なときに使います。\n\n## Workflow\n1. 問いと範囲を定める。\n2. 情報源と信頼性を記録する。\n3. 事実と推論を分ける。\n4. 不確実性を示して結論を統合する。\n\n## Output\n問い、情報源表、主な発見、判断、未解決の問いを出力します。' }
+    }
   }
 }

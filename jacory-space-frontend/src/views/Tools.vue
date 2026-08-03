@@ -118,7 +118,7 @@ const projects = computed(() => [
   {
     id: '004', no: '004', title: t('tools.projects.workflowSystem.title'), layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
     pos: [6.2, 1.4], description: '沉淀可复用的任务步骤、自动化与验证节点，把重复工作组织成稳定的工作流。',
-    stack: ['Process', 'Automation', 'Validation'], version: 'v0.1.0', updated: '2026.07.16', href: '/tools'
+    stack: ['Prompt', 'Skill', 'Methods'], version: 'v0.1.0', updated: '2026.08.03', href: '/library'
   },
   {
     id: '005', no: '005', title: t('tools.projects.minecraftSkinStudio.title'), layer: 'TOOLS', category: 'tool', status: 'live',

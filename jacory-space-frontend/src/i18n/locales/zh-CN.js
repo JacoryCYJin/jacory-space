@@ -49,7 +49,7 @@ export default {
     projects: {
       mediaParser: { title: '媒体解析工具' },
       personalBlog: { title: '个人博客' },
-      workflowSystem: { title: '工作流系统' },
+      workflowSystem: { title: '灵感配方' },
       minecraftSkinStudio: { title: 'Minecraft 皮肤工作台' }
     },
     interfaceIndex: {
@@ -745,5 +745,55 @@ export default {
     canvasHint: '在纹理图上点击像素，中央的 3D 人物会同步更新。',
     webglError: '当前浏览器无法初始化 3D 预览，请检查 WebGL 支持后刷新页面。',
     ready: 'READY'
+  },
+  library: {
+    kicker: '提示词与技能资产库',
+    titleLead: '灵感',
+    titleAccent: '配方',
+    description: '沉淀可复用的提示词、Agent 技能与工作方法。找到一个资产，理解它，然后带走。',
+    indexLabel: '资产索引',
+    filterAria: '资产类型筛选',
+    searchLabel: '搜索资产',
+    searchPlaceholder: '搜索标题、标签或平台',
+    updatedLabel: '最后更新',
+    filters: { all: '全部', prompts: 'Prompts', skills: 'Skills' },
+    copy: '复制',
+    copied: '已复制',
+    copySuccess: '内容已复制到剪贴板',
+    copyError: '复制失败，请手动选择内容',
+    empty: '没有匹配的资产',
+    backToLibrary: '返回资产库',
+    platformLabel: '适用平台',
+    versionLabel: '版本',
+    aboutLabel: '用途',
+    contentLabel: 'Prompt 内容',
+    usageLabel: '使用方式',
+    notesLabel: '备注',
+    notFound: '资产不存在',
+    entries: {
+      structuredPromptBuilder: { title: 'Structured Prompt Builder', description: '把模糊需求整理成可执行、可验证的结构化 Prompt。' },
+      fieldNoteEditor: { title: 'Field Note Editor', description: '把原始记录编辑成有判断、有结构的 Field Note。' },
+      researchSynthesis: { title: 'Research Synthesis', description: '将调研任务拆成来源、判断与结论，形成可追溯的 Agent 工作流。' }
+    },
+    details: {
+      structuredPromptBuilder: {
+        about: '适合在开始一个复杂任务前，把目标、边界、输入、输出和验收标准整理清楚。',
+        usage: '替换变量后，把完整内容粘贴给模型。先让模型确认前提，再开始执行。',
+        notes: '这是一个通用骨架，不绑定具体模型；复杂任务建议补充示例和禁止事项。',
+        content: '你是一个结构化任务设计助手。\n\n目标：[goal]\n背景：[context]\n约束：[constraints]\n期望输出：[output_format]\n验收标准：[acceptance_criteria]\n\n请先复述你对任务的理解，列出仍需确认的前提。确认后，再按步骤完成任务，并在最后逐条检查验收标准。'
+      },
+      fieldNoteEditor: {
+        about: '适合将会议记录、灵感片段或工作日志整理成可阅读、可复用的个人知识记录。',
+        usage: '输入一段原始记录，保留事实与个人判断的区别，不要擅自补充不存在的信息。',
+        notes: '输出默认保持克制，不追求把所有内容都总结成结论。',
+        content: '请把下面的原始记录编辑成一篇 Field Note。\n\n要求：\n1. 保留关键事实，不虚构细节。\n2. 区分观察、判断与待验证假设。\n3. 提炼一个清晰标题和 3—5 个关键词。\n4. 用简洁段落组织，不写成营销文案。\n\n原始记录：\n[raw_note]'
+      },
+      researchSynthesis: {
+        about: '一个用于研究型 Agent 的 Skill 骨架，帮助它先建立来源边界，再进行比较、判断和综合。',
+        usage: '将内容保存为 SKILL.md，并根据实际任务补充 references、模板或验证脚本。',
+        notes: 'Skill 适合封装稳定的工作方法；临时的一次性指令仍然应该使用 Prompt。',
+        content: '---\nname: research-synthesis\ndescription: 将研究任务拆分为来源、证据、判断和结论。\n---\n\n# Research Synthesis\n\n## When to use\n当任务需要比较多个来源、形成判断或保留证据链时使用。\n\n## Workflow\n1. 明确问题与范围。\n2. 记录来源及其可靠性。\n3. 区分原文事实与推断。\n4. 综合结论，并标注不确定性。\n\n## Output\n输出问题定义、来源表、关键发现、判断与待验证事项。'
+      }
+    }
   }
 }

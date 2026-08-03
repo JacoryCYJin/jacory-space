@@ -49,7 +49,7 @@ export default {
     projects: {
       mediaParser: { title: 'Media Parser' },
       personalBlog: { title: 'Personal Blog' },
-      workflowSystem: { title: 'Workflow System' },
+      workflowSystem: { title: 'PlanTO' },
       minecraftSkinStudio: { title: 'Minecraft Skin Studio' }
     },
     interfaceIndex: {
@@ -745,5 +745,21 @@ export default {
     canvasHint: 'Click a pixel in the texture map and the 3D character will update in sync.',
     webglError: 'The 3D preview could not initialize. Check WebGL support and refresh the page.',
     ready: 'READY'
+  },
+  library: {
+    kicker: 'PROMPT & SKILL LIBRARY', titleLead: 'Plan', titleAccent: 'TO',
+    description: 'A curated shelf of reusable prompts, Agent skills, and working methods. Find one, understand it, and take it with you.',
+    indexLabel: 'ASSET INDEX', filterAria: 'Filter assets', searchLabel: 'Search assets', searchPlaceholder: 'Search title, tag, or platform', updatedLabel: 'LAST UPDATE',
+    filters: { all: 'ALL', prompts: 'PROMPTS', skills: 'SKILLS' }, copy: 'COPY', copied: 'COPIED', copySuccess: 'Copied to clipboard', copyError: 'Copy failed. Select the content manually.', empty: 'NO MATCHING ASSETS', backToLibrary: 'BACK TO LIBRARY', platformLabel: 'PLATFORM', versionLabel: 'VERSION', aboutLabel: 'PURPOSE', contentLabel: 'PROMPT CONTENT', usageLabel: 'USAGE', notesLabel: 'NOTES', notFound: 'ASSET NOT FOUND',
+    entries: {
+      structuredPromptBuilder: { title: 'Structured Prompt Builder', description: 'Turn an ambiguous request into an executable, verifiable structured prompt.' },
+      fieldNoteEditor: { title: 'Field Note Editor', description: 'Edit raw notes into a considered and structured Field Note.' },
+      researchSynthesis: { title: 'Research Synthesis', description: 'Break research into sources, judgments, and conclusions as a traceable Agent workflow.' }
+    },
+    details: {
+      structuredPromptBuilder: { about: 'Use this before a complex task to clarify the goal, boundaries, inputs, output, and acceptance criteria.', usage: 'Replace the variables and paste the complete prompt into your model. Ask it to confirm assumptions before execution.', notes: 'A model-agnostic skeleton. Add examples and prohibitions for more complex tasks.', content: 'You are a structured task design assistant.\n\nGoal: [goal]\nContext: [context]\nConstraints: [constraints]\nExpected output: [output_format]\nAcceptance criteria: [acceptance_criteria]\n\nFirst restate your understanding and list any assumptions that need confirmation. Then execute the task step by step and check each acceptance criterion at the end.' },
+      fieldNoteEditor: { about: 'Turn meeting notes, fragments, or work logs into readable and reusable personal knowledge records.', usage: 'Provide raw notes. Keep facts separate from personal judgment and do not invent missing information.', notes: 'The output stays restrained; it does not force every observation into a conclusion.', content: 'Edit the raw notes below into a Field Note.\n\nRequirements:\n1. Keep key facts; do not invent details.\n2. Separate observations, judgments, and hypotheses.\n3. Create a clear title and 3—5 keywords.\n4. Use concise paragraphs, not marketing copy.\n\nRaw notes:\n[raw_note]' },
+      researchSynthesis: { about: 'A Skill skeleton for research-oriented Agents: establish source boundaries before comparing, judging, and synthesizing.', usage: 'Save this as SKILL.md, then add references, templates, or validation scripts for the actual workflow.', notes: 'Use Skills for stable working methods; use a Prompt for a one-off instruction.', content: '---\nname: research-synthesis\ndescription: Break research into sources, evidence, judgments, and conclusions.\n---\n\n# Research Synthesis\n\n## When to use\nUse when a task requires comparing sources, forming judgments, or preserving an evidence chain.\n\n## Workflow\n1. Define the question and scope.\n2. Record sources and reliability.\n3. Separate facts from inference.\n4. Synthesize conclusions and mark uncertainty.\n\n## Output\nReturn the question, source table, key findings, judgments, and open questions.' }
+    }
   }
 }
