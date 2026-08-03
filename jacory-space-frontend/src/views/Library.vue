@@ -111,7 +111,6 @@
                 <p class="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{{ t(entry.descriptionKey) }}</p>
                 <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 font-mono text-xs uppercase tracking-[0.1em] text-haze">
                   <span v-for="tag in entry.tags" :key="tag"># {{ tagLabel(tag) }}</span>
-                  <span># {{ entry.platforms.join(' / ') }}</span>
                 </div>
               </div>
               <div class="flex items-end justify-between gap-5" :class="viewMode === 'list' ? 'md:flex-col md:items-end md:justify-between md:text-right' : 'mt-auto pt-8'">
@@ -140,7 +139,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ArrowUpRight, Copy, Folder, List, Search } from 'lucide-vue-next'
 import StatusToast from '../components/StatusToast.vue'
-import { libraryEntries } from '../content/library.js'
+import { libraryEntries } from '@library-index'
 
 const { t } = useI18n()
 const pageRoot = ref(null)
@@ -153,10 +152,7 @@ let toastTimer
 
 const promptCount = computed(() => libraryEntries.filter((entry) => entry.type === 'prompt').length)
 const skillCount = computed(() => libraryEntries.filter((entry) => entry.type === 'skill').length)
-const tags = computed(() => [
-  ...new Set(libraryEntries.flatMap((entry) => entry.tags)),
-  ...(libraryEntries.some((entry) => entry.platforms.length > 0) ? ['aiModels'] : []),
-])
+const tags = computed(() => [...new Set(libraryEntries.flatMap((entry) => entry.tags))])
 const filters = computed(() => [
   { id: 'all', label: t('library.filters.all'), count: String(libraryEntries.length).padStart(2, '0') },
   { id: 'prompt', label: t('library.filters.prompts'), count: String(promptCount.value).padStart(2, '0') },
@@ -167,8 +163,8 @@ const filteredEntries = computed(() => {
   const normalizedQuery = query.value.trim().toLowerCase()
   return libraryEntries.filter((entry) => {
     const matchesType = activeType.value === 'all' || entry.type === activeType.value
-    const matchesTags = selectedTags.value.every((tag) => tag === 'aiModels' ? entry.platforms.length > 0 : entry.tags.includes(tag))
-    const searchable = (t(entry.titleKey) + ' ' + t(entry.descriptionKey) + ' ' + entry.tags.map(tagLabel).join(' ') + ' ' + tagLabel('aiModels') + ' ' + entry.platforms.join(' ')).toLowerCase()
+    const matchesTags = selectedTags.value.every((tag) => entry.tags.includes(tag))
+    const searchable = (t(entry.titleKey) + ' ' + t(entry.descriptionKey) + ' ' + entry.tags.map(tagLabel).join(' ')).toLowerCase()
     return matchesType && matchesTags && (!normalizedQuery || searchable.includes(normalizedQuery))
   })
 })

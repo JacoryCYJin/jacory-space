@@ -4,7 +4,7 @@ import App from './App.vue'
 import { routes } from './router'
 import { i18n } from './i18n'
 import { getAllPostMeta } from './lib/blog/index.js'
-import { libraryEntries } from './content/library.js'
+import { libraryEntries } from '@library-index'
 
 export const createApp = ViteSSG(
   App,

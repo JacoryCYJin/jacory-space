@@ -19,7 +19,6 @@
         <div class="grid gap-12 pt-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-16 lg:pt-12">
           <aside class="border-b border-line pb-8 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
             <div class="grid gap-5 font-mono text-xs uppercase tracking-[0.12em]">
-              <div><p class="text-haze">{{ t('library.platformLabel') }}</p><p class="mt-2 text-foreground">{{ entry.platforms.join(' / ') }}</p></div>
               <div><p class="text-haze">{{ t('library.versionLabel') }}</p><p class="mt-2 text-foreground">{{ entry.version }}</p></div>
               <div><p class="text-haze">{{ t('library.updatedLabel') }}</p><p class="mt-2 text-foreground">{{ entry.updated }}</p></div>
             </div>
@@ -62,7 +61,7 @@ import { useI18n } from 'vue-i18n'
 import { Check, ChevronLeft, Copy } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
 import StatusToast from '../components/StatusToast.vue'
-import { getLibraryEntry } from '../content/library.js'
+import { getLibraryEntry } from '@library-index'
 
 const { t } = useI18n()
 const route = useRoute()
