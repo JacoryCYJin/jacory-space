@@ -752,11 +752,15 @@ export default {
     titleAccent: '配方',
     description: '沉淀可复用的提示词、Agent 技能与工作方法。找到一个资产，理解它，然后带走。',
     indexLabel: '资产索引',
+    browseLabel: '按分类浏览',
+    tagsLabel: '标签索引',
     filterAria: '资产类型筛选',
     searchLabel: '搜索资产',
     searchPlaceholder: '搜索标题、标签或平台',
     updatedLabel: '最后更新',
     filters: { all: '全部', prompts: 'Prompts', skills: 'Skills' },
+    tags: { podcast: '播客', summary: '总结', writing: '写作', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '图像生成', aiModels: 'AI 模型' },
+    clearTags: '清除',
     copy: '复制',
     copied: '已复制',
     copySuccess: '内容已复制到剪贴板',
@@ -765,35 +769,43 @@ export default {
     backToLibrary: '返回资产库',
     platformLabel: '适用平台',
     versionLabel: '版本',
+    assetsLabel: '资产',
+    promptsLabel: '提示词',
+    skillsLabel: '技能',
     aboutLabel: '用途',
     contentLabel: 'Prompt 内容',
     usageLabel: '使用方式',
     notesLabel: '备注',
+    switchToGrid: '切换为两列排列',
+    switchToList: '切换为单列索引',
     notFound: '资产不存在',
     entries: {
-      structuredPromptBuilder: { title: 'Structured Prompt Builder', description: '把模糊需求整理成可执行、可验证的结构化 Prompt。' },
-      fieldNoteEditor: { title: 'Field Note Editor', description: '把原始记录编辑成有判断、有结构的 Field Note。' },
-      researchSynthesis: { title: 'Research Synthesis', description: '将调研任务拆成来源、判断与结论，形成可追溯的 Agent 工作流。' }
+      podcastContentSummary: { title: '播客内容总结', description: '把口语化播客字幕整理成清晰、可阅读的内容总结与后续选题。' },
+      podcastToBlog: { title: '播客转博客初稿', description: '从播客字幕中提炼一条主线，写成去标识化的中文博客初稿。' },
+      blogMarkdownPolish: { title: '博客 Markdown 润色', description: '将已有草稿整理为符合 Jacory Space 格式的正式博客 Markdown。' },
+      minecraftSkinPreview: { title: 'Minecraft 角色双视角预览', description: '为后续皮肤转换生成标准 Minecraft Java 角色的双视角预览图。' }
     },
     details: {
-      structuredPromptBuilder: {
-        about: '适合在开始一个复杂任务前，把目标、边界、输入、输出和验收标准整理清楚。',
-        usage: '替换变量后，把完整内容粘贴给模型。先让模型确认前提，再开始执行。',
-        notes: '这是一个通用骨架，不绑定具体模型；复杂任务建议补充示例和禁止事项。',
-        content: '你是一个结构化任务设计助手。\n\n目标：[goal]\n背景：[context]\n约束：[constraints]\n期望输出：[output_format]\n验收标准：[acceptance_criteria]\n\n请先复述你对任务的理解，列出仍需确认的前提。确认后，再按步骤完成任务，并在最后逐条检查验收标准。'
+      podcastContentSummary: {
+        about: '从播客转录中提炼可阅读的内容总结、核心观点、内容脉络与后续选题。',
+        usage: '直接粘贴结构化转录内容，或上传包含 title、source、transcript 字段的 JSON 文件。',
+        notes: '只依据字幕内容整理；信息不足之处会明确标注，而不是补写。'
       },
-      fieldNoteEditor: {
-        about: '适合将会议记录、灵感片段或工作日志整理成可阅读、可复用的个人知识记录。',
-        usage: '输入一段原始记录，保留事实与个人判断的区别，不要擅自补充不存在的信息。',
-        notes: '输出默认保持克制，不追求把所有内容都总结成结论。',
-        content: '请把下面的原始记录编辑成一篇 Field Note。\n\n要求：\n1. 保留关键事实，不虚构细节。\n2. 区分观察、判断与待验证假设。\n3. 提炼一个清晰标题和 3—5 个关键词。\n4. 用简洁段落组织，不写成营销文案。\n\n原始记录：\n[raw_note]'
+      podcastToBlog: {
+        about: '将播客素材重组为一篇能独立阅读、保留个人思考边界的中文博客文章。',
+        usage: '输入播客转录；模型会自行判断最适合展开的一条主线，并输出可用的博客 Markdown 初稿。',
+        notes: '规则会主动去除可识别的来源与私人细节，不将原讲述者经历改写成作者亲历。'
       },
-      researchSynthesis: {
-        about: '一个用于研究型 Agent 的 Skill 骨架，帮助它先建立来源边界，再进行比较、判断和综合。',
-        usage: '将内容保存为 SKILL.md，并根据实际任务补充 references、模板或验证脚本。',
-        notes: 'Skill 适合封装稳定的工作方法；临时的一次性指令仍然应该使用 Prompt。',
-        content: '---\nname: research-synthesis\ndescription: 将研究任务拆分为来源、证据、判断和结论。\n---\n\n# Research Synthesis\n\n## When to use\n当任务需要比较多个来源、形成判断或保留证据链时使用。\n\n## Workflow\n1. 明确问题与范围。\n2. 记录来源及其可靠性。\n3. 区分原文事实与推断。\n4. 综合结论，并标注不确定性。\n\n## Output\n输出问题定义、来源表、关键发现、判断与待验证事项。'
-      }
+      blogMarkdownPolish: {
+        about: '在不改变作者核心观点的前提下，润色草稿的表达节奏、frontmatter、文件名和站内 Markdown 格式。',
+        usage: '粘贴一篇或多篇中文博客草稿；可附带临时文件名或未完成的 frontmatter。',
+        notes: '它是编辑与整理，不会把原文改写成另一篇全新的文章。'
+      },
+      minecraftSkinPreview: {
+        about: '为 Minecraft Java 皮肤制作流程建立长期图像生成对话，产出双联角色预览，而不是 UV 皮肤图。',
+        usage: '新建图像生成对话，先上传固定双视角示例图，再粘贴长期规则；后续发送文字需求或角色参考图。',
+        notes: '图片 1 只约束构图、视角和比例；角色设计由文字需求或后续上传的参考图决定。'
+      },
     }
   }
 }

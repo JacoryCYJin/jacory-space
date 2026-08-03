@@ -19,7 +19,7 @@
         <div class="grid gap-12 pt-8 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-16 lg:pt-12">
           <aside class="border-b border-line pb-8 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
             <div class="grid gap-5 font-mono text-xs uppercase tracking-[0.12em]">
-              <div><p class="text-haze">{{ t('library.platformLabel') }}</p><p class="mt-2 text-foreground">{{ entry.platform }}</p></div>
+              <div><p class="text-haze">{{ t('library.platformLabel') }}</p><p class="mt-2 text-foreground">{{ entry.platforms.join(' / ') }}</p></div>
               <div><p class="text-haze">{{ t('library.versionLabel') }}</p><p class="mt-2 text-foreground">{{ entry.version }}</p></div>
               <div><p class="text-haze">{{ t('library.updatedLabel') }}</p><p class="mt-2 text-foreground">{{ entry.updated }}</p></div>
             </div>
@@ -40,7 +40,7 @@
                   {{ copied ? t('library.copied') : t('library.copy') }}
                 </button>
               </div>
-              <pre class="overflow-x-auto border-y border-line bg-card px-5 py-6 font-mono text-sm leading-7 text-foreground md:px-7 md:py-8"><code>{{ t('library.details.' + entry.detailKey + '.content') }}</code></pre>
+              <pre class="overflow-x-auto border-y border-line bg-card px-5 py-6 font-mono text-sm leading-7 text-foreground md:px-7 md:py-8"><code>{{ entry.content }}</code></pre>
             </section>
 
             <section data-detail-enter class="grid gap-8 border-b border-line py-10 md:grid-cols-2">
@@ -83,7 +83,7 @@ function showToast(message, type = 'success') {
 async function copyContent() {
   if (!entry.value) return
   try {
-    await navigator.clipboard.writeText(t('library.details.' + entry.value.detailKey + '.content'))
+    await navigator.clipboard.writeText(entry.value.content)
     copied.value = true
     showToast(t('library.copySuccess'))
     window.setTimeout(() => { copied.value = false }, 2200)
