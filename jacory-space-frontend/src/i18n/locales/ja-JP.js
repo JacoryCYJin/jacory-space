@@ -762,7 +762,7 @@ export default {
     kicker: 'PROMPT / SKILL ライブラリ', titleLead: 'アイデア', titleAccent: 'レシピ',
     description: '再利用できるプロンプト、Agent Skill、仕事の方法をまとめた個人の資産庫です。見つけ、理解し、持ち帰れます。',
     indexLabel: 'アセット索引', browseLabel: 'カテゴリから探す', tagsLabel: 'タグ一覧', filterAria: 'アセットを絞り込む', searchLabel: 'アセットを検索', searchPlaceholder: 'タイトルまたはタグを検索', updatedLabel: '最終更新',
-    filters: { all: 'すべて', prompts: 'PROMPTS', skills: 'SKILLS' }, copy: 'コピー', copied: 'コピー済み', copySuccess: 'クリップボードにコピーしました', copyError: 'コピーに失敗しました。手動で選択してください。', empty: '一致するアセットはありません', backToLibrary: 'ライブラリに戻る', versionLabel: 'バージョン', assetsLabel: 'アセット', promptsLabel: 'PROMPTS', skillsLabel: 'SKILLS', aboutLabel: '用途', contentLabel: 'PROMPT CONTENT', usageLabel: '使い方', notesLabel: 'メモ', switchToGrid: '2列表示に切り替え', switchToList: 'リスト表示に切り替え', notFound: 'アセットが見つかりません',
+    filters: { all: 'すべて', prompts: 'PROMPTS', skills: 'SKILLS' }, copy: 'コピー', copied: 'コピー済み', expandContent: 'すべて表示', collapseContent: '折りたたむ', copySuccess: 'クリップボードにコピーしました', copyError: 'コピーに失敗しました。手動で選択してください。', empty: '一致するアセットはありません', backToLibrary: 'ライブラリに戻る', versionLabel: 'バージョン', assetsLabel: 'アセット', promptsLabel: 'PROMPTS', skillsLabel: 'SKILLS', aboutLabel: '用途', contentLabel: 'PROMPT CONTENT', usageLabel: '使い方', notesLabel: 'メモ', switchToGrid: '2列表示に切り替え', switchToList: 'リスト表示に切り替え', notFound: 'アセットが見つかりません',
     tags: { podcast: 'ポッドキャスト', summary: '要約', writing: '執筆', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '画像生成' },
     clearTags: 'クリア',
     entries: {

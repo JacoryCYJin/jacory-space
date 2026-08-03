@@ -787,6 +787,8 @@ export default {
     clearTags: '清除',
     copy: '复制',
     copied: '已复制',
+    expandContent: '展开全部',
+    collapseContent: '收起',
     copySuccess: '内容已复制到剪贴板',
     copyError: '复制失败，请手动选择内容',
     empty: '没有匹配的资产',
