@@ -55,11 +55,41 @@ gsap.registerPlugin(CustomEase)
 
 const emit = defineEmits(['complete'])
 const loaderRoot = ref(null)
-const DESKTOP_MIN_LOADING_DURATION = 3.8
-const MOBILE_MIN_LOADING_DURATION = 4.8
+const MINIMUM_LOADING_DURATION = 2
 const LOADER_EXIT_DURATION = 0.72
 let loaderContext
 let reducedMotionQuery
+let cancelPageLoadWait
+let minimumDurationTimer
+let exitFrame
+let exitTween
+let isUnmounted = false
+
+const waitForPageReady = () => {
+  const pageLoad = document.readyState === 'complete'
+    ? Promise.resolve()
+    : new Promise((resolve) => {
+        const handleLoad = () => {
+          cancelPageLoadWait = undefined
+          resolve()
+        }
+
+        cancelPageLoadWait = () => window.removeEventListener('load', handleLoad)
+        window.addEventListener('load', handleLoad, { once: true })
+      })
+
+  const fontsReady = document.fonts?.ready ?? Promise.resolve()
+  const minimumDuration = new Promise((resolve) => {
+    const delay = Math.max(0, MINIMUM_LOADING_DURATION - LOADER_EXIT_DURATION) * 1000
+
+    minimumDurationTimer = window.setTimeout(() => {
+      minimumDurationTimer = undefined
+      resolve()
+    }, delay)
+  })
+
+  return Promise.all([pageLoad, fontsReady, minimumDuration])
+}
 
 onMounted(() => {
   const loader = loaderRoot.value
@@ -76,7 +106,6 @@ onMounted(() => {
     }
 
     const mobileQuery = window.matchMedia('(max-width: 767px)')
-    const minimumLoadingDuration = mobileQuery.matches ? MOBILE_MIN_LOADING_DURATION : DESKTOP_MIN_LOADING_DURATION
     const strokeStagger = mobileQuery.matches ? 0.4 : 0.25
     const activeGeometry = loader.querySelector(mobileQuery.matches ? '.home-loader__geometry--mobile' : '.home-loader__geometry--desktop')
     const dividers = gsap.utils.toArray(activeGeometry?.querySelectorAll('.home-loader__dividers line') ?? [])
@@ -107,17 +136,29 @@ onMounted(() => {
         }, stepStart)
     })
 
-    timeline
-      .to(loader, {
-        autoAlpha: 0,
-        duration: LOADER_EXIT_DURATION,
-        pointerEvents: 'none',
-        onComplete: () => emit('complete')
-      }, minimumLoadingDuration - LOADER_EXIT_DURATION)
+    void waitForPageReady().then(() => {
+      if (isUnmounted) return
+
+      exitFrame = window.requestAnimationFrame(() => {
+        if (isUnmounted) return
+
+        exitTween = gsap.to(loader, {
+          autoAlpha: 0,
+          duration: LOADER_EXIT_DURATION,
+          pointerEvents: 'none',
+          onComplete: () => emit('complete')
+        })
+      })
+    })
   }, loader)
 })
 
 onBeforeUnmount(() => {
+  isUnmounted = true
+  cancelPageLoadWait?.()
+  if (minimumDurationTimer !== undefined) window.clearTimeout(minimumDurationTimer)
+  if (exitFrame !== undefined) window.cancelAnimationFrame(exitFrame)
+  exitTween?.kill()
   loaderContext?.revert()
 })
 </script>
