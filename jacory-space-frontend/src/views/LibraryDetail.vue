@@ -54,7 +54,15 @@
                   {{ copied ? t('library.copied') : t('library.copy') }}
                 </button>
               </div>
-              <pre id="library-prompt-content" class="overflow-x-auto overflow-y-hidden border border-line bg-card px-5 py-6 font-mono text-sm leading-7 text-foreground md:px-7 md:py-8" :class="entry.type === 'prompt' && !promptContentExpanded ? 'max-h-96' : ''"><code>{{ entry.content }}</code></pre>
+              <div
+                v-if="entry.type === 'prompt'"
+                id="library-prompt-content"
+                class="border border-line bg-card"
+                :class="promptContentExpanded ? '' : 'h-96 overflow-x-hidden overflow-y-scroll'"
+              >
+                <pre class="whitespace-pre-wrap break-words px-5 py-6 font-mono text-sm leading-7 text-foreground md:px-7 md:py-8"><code>{{ entry.content }}</code></pre>
+              </div>
+              <pre v-else id="library-prompt-content" class="overflow-x-auto border border-line bg-card px-5 py-6 font-mono text-sm leading-7 text-foreground md:px-7 md:py-8"><code>{{ entry.content }}</code></pre>
               <button
                 v-if="entry.type === 'prompt'"
                 type="button"

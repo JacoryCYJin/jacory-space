@@ -758,6 +758,30 @@ export default {
     webglError: 'The 3D preview could not initialize. Check WebGL support and refresh the page.',
     ready: 'READY'
   },
+  cyberpunk: {
+    backToSpace: 'Back to Jacory Space',
+    studyLabel: 'Visual Study / 06',
+    kicker: 'URBAN SIGNAL / NIGHT OBSERVATION',
+    titleLead: 'Urban',
+    titleAccent: 'Signal',
+    description: 'The technology has arrived; the city is still aging. A visual fragment of Japanese retro-futurist urban cyberpunk: analog texture, dense space, and clean modern animation.',
+    enterArchive: 'Enter archive',
+    signalLabel: 'SIGNAL / 06',
+    signalStatus: 'LOCAL CHANNEL · STABLE',
+    systemLabel: 'SYSTEM',
+    locationLabel: 'COORDINATES',
+    timeLabel: 'LOCAL TIME',
+    archiveKicker: 'VISUAL BREAKDOWN / COMPONENT LOG',
+    archiveTitle: 'Keep a human scale inside the city machine.',
+    archiveBody: 'This is not a set of neon decorations. It is a way to frame an interface: light, structure, noise, and quiet space build a future city that is advanced, worn-in, and lived in.',
+    footerLabel: '90s JP cyberpunk · analog texture · clean motion',
+    modules: {
+      analog: { title: 'Analog medium', description: 'Scanlines, grain, screen glare, and restrained signal noise give advanced systems the touch of old equipment.' },
+      density: { title: 'Urban density', description: 'Frames, cables, buildings, and distant points of light create depth while the primary content stays clear in the foreground.' },
+      linework: { title: 'Clean linework', description: 'Hard structural lines and restrained cel shadows meet a little haze and bloom, keeping the animated silhouette legible.' },
+      motion: { title: 'Clean motion', description: 'Move like a camera, monitor, or mechanical system: slow scans, small breaths, and quiet transitions with intent.' }
+    }
+  },
   library: {
     kicker: 'PROMPT & SKILL LIBRARY', titleLead: 'Plan', titleAccent: 'TO',
     description: 'A curated shelf of reusable prompts, Agent skills, and working methods. Find one, understand it, and take it with you.',
