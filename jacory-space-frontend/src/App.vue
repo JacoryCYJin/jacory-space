@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Navbar v-if="!isMinecraftSkinEditor" />
+    <Navbar v-if="!isFullBleedRoute" />
     <router-view />
   </div>
 </template>
@@ -12,7 +12,7 @@ import { useRoute } from 'vue-router'
 import Navbar from './components/Navbar.vue'
 
 const route = useRoute()
-const isMinecraftSkinEditor = computed(() => route.path === '/tools/minecraft-skin-editor')
+const isFullBleedRoute = computed(() => ['/tools/minecraft-skin-editor', '/experiments/cyberpunk'].includes(route.path))
 
 const siteUrl = 'https://jacoryspace.top'
 const pageMeta = computed(() => {
@@ -70,6 +70,11 @@ const pageMeta = computed(() => {
       title: 'About — Jacory Space',
       description: '了解 Jacory Space 的个人工作系统、创作方向与联系方式。',
       path: '/about',
+    },
+    CyberpunkStudy: {
+      title: 'Urban Signal — Jacory Space',
+      description: '日式复古未来都市赛博朋克视觉实验。',
+      path: '/experiments/cyberpunk',
     },
   }
 
