@@ -20,12 +20,18 @@
                   :key="character.index"
                   class="signal-cell"
                   :class="{
+                    'is-chinese-cell': isChineseCharacter(character.value),
                     'is-active': character.index === revealedCount && revealedCount < characters.length,
                     'is-revealed': character.index < revealedCount,
                     'is-placeholder': character.index > revealedCount,
                   }"
                 >
-                  <span v-if="character.index < revealedCount" class="signal-char" :data-char="character.value">{{ character.value }}</span>
+                  <span
+                    v-if="character.index < revealedCount"
+                    class="signal-char"
+                    :class="{ 'is-chinese': isChineseCharacter(character.value) }"
+                    :data-char="character.value"
+                  >{{ character.value }}</span>
                   <span v-else-if="character.index === revealedCount" class="signal-placeholder is-active">
                     <span class="signal-caret" aria-hidden="true" />
                   </span>
@@ -48,16 +54,16 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const testParagraphs = [
   [
-    '企業のネットが星を覆い、電子や光が駆け巡っても',
-    '国家や民族が消えてなくなる程',
-    '情報化されていない近未来',
+    '当电子信号穿过沉默的屏幕与褪色的光',
+    '老旧接口仍在保存尚未抵达的回应',
+    '未来只是被重新命名的现在',
   ],
   [
-    'アジアの一角に横たわる',
-    '奇妙な企業集合体国・・・・・・',
+    '在短暂失焦的光里',
+    '某种联系尚未中断・・・・',
   ],
 ]
 
@@ -81,6 +87,7 @@ const activeLineIndex = ref(0)
 const revealTimer = ref(null)
 
 const isLineStarted = (line) => activeLineIndex.value >= line.sequenceIndex
+const isChineseCharacter = (value) => locale.value.startsWith('zh') && /[\u3400-\u9fff\uf900-\ufaff]/u.test(value)
 
 const clearRevealTimer = () => {
   if (revealTimer.value !== null) {
@@ -133,6 +140,14 @@ onBeforeUnmount(clearRevealTimer)
 </script>
 
 <style scoped>
+@font-face {
+  font-family: "Source Han Sans SC";
+  src: url("../assets/fonts/SourceHanSansSC-VF.ttf.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+}
+
 .signal-study {
   --signal-paper: #edf0e8;
   --signal-cyan: rgba(93, 224, 214, 0.72);
@@ -193,6 +208,10 @@ onBeforeUnmount(clearRevealTimer)
   margin-left: 0.22em;
 }
 
+.signal-cell.is-chinese-cell + .signal-cell {
+  margin-left: 0.3em;
+}
+
 .signal-cell.is-space {
   width: 0.5em;
 }
@@ -213,6 +232,11 @@ onBeforeUnmount(clearRevealTimer)
     -0.06em 0 rgba(93, 224, 214, 0.64),
     0.06em 0 rgba(235, 93, 113, 0.56),
     0 0 0.48em rgba(237, 240, 232, 0.27);
+}
+
+.signal-char.is-chinese {
+  font-family: "Source Han Sans SC", sans-serif;
+  font-weight: 400;
 }
 
 .signal-placeholder {

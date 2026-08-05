@@ -760,8 +760,8 @@ export default {
   },
   retroFuturism: {
     signalLabel: 'Analog electronic subtitle signal study',
-    primaryLine: '企業のネットが星を覆い、電子や光が駆け巡っても 国家や民族が消えてなくなる程',
-    subtitle: '(In this near future, electronics and light cover the globe)'
+    primaryLine: 'When electronic signals pass through silent screens and faded light, old interfaces preserve replies that have not yet arrived.',
+    subtitle: 'The future is simply the present under a new name.'
   },
   library: {
     kicker: 'PROMPT & SKILL LIBRARY', titleLead: 'Plan', titleAccent: 'TO',
