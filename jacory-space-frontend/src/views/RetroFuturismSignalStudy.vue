@@ -7,17 +7,63 @@
       <div class="signal-vignette" aria-hidden="true" />
       <svg class="signal-filter-definitions" aria-hidden="true" focusable="false">
         <defs>
-          <filter id="signal-display-texture-a" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.72 0.16" numOctaves="1" seed="13" result="signalNoise" />
-            <feDisplacementMap in="SourceGraphic" in2="signalNoise" scale="0.34" xChannelSelector="R" yChannelSelector="G" />
+          <filter id="signal-shared-medium" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
+            <feColorMatrix
+              in="grainField"
+              type="matrix"
+              values="0.18 0.18 0.18 0 0.64
+                      0.2 0.2 0.2 0 0.67
+                      0.19 0.19 0.19 0 0.65
+                      0 0 0 0 0.42"
+              result="neutralGrain"
+            />
+            <feColorMatrix
+              in="scanField"
+              type="matrix"
+              values="0.08 0.08 0.08 0 0.71
+                      0.09 0.09 0.09 0 0.74
+                      0.09 0.09 0.09 0 0.72
+                      0 0 0 0 0.24"
+              result="scanLines"
+            />
+            <feBlend in="neutralGrain" in2="scanLines" mode="screen" result="mediumField" />
+            <feComposite in="mediumField" in2="SourceAlpha" operator="in" />
           </filter>
-          <filter id="signal-display-texture-b" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.66 0.19" numOctaves="1" seed="29" result="signalNoise" />
-            <feDisplacementMap in="SourceGraphic" in2="signalNoise" scale="0.38" xChannelSelector="R" yChannelSelector="G" />
+          <filter id="signal-chromatic-edge-cyan" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
+            <feMorphology in="SourceAlpha" operator="dilate" radius="0.42" result="expandedAlpha" />
+            <feComposite in="expandedAlpha" in2="SourceAlpha" operator="out" result="edgeAlpha" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.54 0.18" numOctaves="1" seed="59" result="edgeNoise" />
+            <feColorMatrix in="edgeNoise" type="luminanceToAlpha" result="edgeNoiseAlpha" />
+            <feComponentTransfer in="edgeNoiseAlpha" result="modulatedNoiseAlpha">
+              <feFuncA type="table" tableValues="0.24 0.78" />
+            </feComponentTransfer>
+            <feComposite in="edgeAlpha" in2="modulatedNoiseAlpha" operator="in" result="fragmentedEdgeAlpha" />
+            <feComposite in="SourceGraphic" in2="fragmentedEdgeAlpha" operator="in" />
           </filter>
-          <filter id="signal-display-texture-c" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.78 0.13" numOctaves="1" seed="47" result="signalNoise" />
-            <feDisplacementMap in="SourceGraphic" in2="signalNoise" scale="0.31" xChannelSelector="R" yChannelSelector="G" />
+          <filter id="signal-chromatic-edge-red" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
+            <feMorphology in="SourceAlpha" operator="dilate" radius="0.42" result="expandedAlpha" />
+            <feComposite in="expandedAlpha" in2="SourceAlpha" operator="out" result="edgeAlpha" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.43 0.25" numOctaves="1" seed="71" result="edgeNoise" />
+            <feColorMatrix in="edgeNoise" type="luminanceToAlpha" result="edgeNoiseAlpha" />
+            <feComponentTransfer in="edgeNoiseAlpha" result="modulatedNoiseAlpha">
+              <feFuncA type="table" tableValues="0.18 0.74" />
+            </feComponentTransfer>
+            <feComposite in="edgeAlpha" in2="modulatedNoiseAlpha" operator="in" result="fragmentedEdgeAlpha" />
+            <feComposite in="SourceGraphic" in2="fragmentedEdgeAlpha" operator="in" />
+          </filter>
+          <filter id="signal-foreground-sampling-a" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.72 0.16" numOctaves="1" seed="13" result="samplingNoise" />
+            <feDisplacementMap in="SourceGraphic" in2="samplingNoise" scale="0.34" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          <filter id="signal-foreground-sampling-b" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.66 0.19" numOctaves="1" seed="29" result="samplingNoise" />
+            <feDisplacementMap in="SourceGraphic" in2="samplingNoise" scale="0.38" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          <filter id="signal-foreground-sampling-c" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.78 0.13" numOctaves="1" seed="47" result="samplingNoise" />
+            <feDisplacementMap in="SourceGraphic" in2="samplingNoise" scale="0.31" xChannelSelector="R" yChannelSelector="G" />
           </filter>
         </defs>
       </svg>
@@ -35,12 +81,13 @@
                   v-for="character in line.characters"
                   :key="character.index"
                   class="signal-cell"
-                  :class="{
+                  :style="signalCellStyle(character)"
+                  :class="[signalCellVariant(character), {
                     'is-chinese-cell': isChineseCharacter(character.value),
                     'is-active': character.index === revealedCount && revealedCount < characters.length,
                     'is-revealed': character.index < revealedCount,
                     'is-placeholder': character.index > revealedCount,
-                  }"
+                  }]"
                 >
                   <span
                     v-if="character.index < revealedCount"
@@ -52,6 +99,34 @@
                     <span class="signal-caret" aria-hidden="true" />
                   </span>
                   <span v-else class="signal-placeholder" />
+                </span>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="signal-medium-glyphs text-left font-sans text-lg font-semibold leading-relaxed tracking-normal sm:text-xl md:text-3xl"
+          aria-hidden="true"
+        >
+          <div v-for="(paragraph, paragraphIndex) in textLayout" :key="paragraphIndex" class="signal-paragraph">
+            <div v-for="(line, lineIndex) in paragraph" :key="lineIndex" class="signal-line">
+              <template v-if="isLineStarted(line)">
+                <span
+                  v-for="character in line.characters"
+                  :key="character.index"
+                  class="signal-medium-cell"
+                  :class="{ 'is-chinese-cell': isChineseCharacter(character.value) }"
+                >
+                  <span
+                    v-if="character.index < revealedCount"
+                    class="signal-medium-char"
+                    :class="{ 'is-chinese': isChineseCharacter(character.value) }"
+                  >{{ character.value }}</span>
+                  <span v-else-if="character.index === revealedCount" class="signal-medium-placeholder is-active">
+                    <span class="signal-medium-caret" />
+                  </span>
+                  <span v-else class="signal-medium-placeholder" />
                 </span>
               </template>
             </div>
@@ -104,6 +179,43 @@ const revealTimer = ref(null)
 
 const isLineStarted = (line) => activeLineIndex.value >= line.sequenceIndex
 const isChineseCharacter = (value) => locale.value.startsWith('zh') && /[\u3400-\u9fff\uf900-\ufaff]/u.test(value)
+const stableUnit = (index, salt) => {
+  const value = Math.sin((index + 1) * 12.9898 + salt * 78.233) * 43758.5453
+  return value - Math.floor(value)
+}
+const signalCellVariant = (character) => {
+  const variantIndex = Math.min(2, Math.floor(stableUnit(character.index, 14) * 3))
+  return ['signal-variant-a', 'signal-variant-b', 'signal-variant-c'][variantIndex]
+}
+const signalCellStyle = (character) => {
+  const index = character.index
+  const cyanOpacity = 0.7 + stableUnit(index, 1) * 0.13
+  const redOpacity = 0.69 + stableUnit(index, 2) * 0.14
+  const lineOffset = stableUnit(index, 4) * 0.12
+  const grainX = stableUnit(index, 5) * 0.18
+  const grainY = stableUnit(index, 6) * 0.16
+  const blockLineOffset = stableUnit(index, 13) * 0.1
+
+  return {
+    '--cell-core-light': (0.94 + stableUnit(index, 3) * 0.05).toFixed(3),
+    '--cell-line-offset': `${lineOffset.toFixed(3)}em`,
+    '--cell-grain-x': `${grainX.toFixed(3)}em`,
+    '--cell-grain-y': `${grainY.toFixed(3)}em`,
+    '--cell-grain-x-inverse': `${(-grainX).toFixed(3)}em`,
+    '--cell-grain-y-inverse': `${(-grainY).toFixed(3)}em`,
+    '--cell-cyan-opacity': cyanOpacity.toFixed(3),
+    '--cell-red-opacity': redOpacity.toFixed(3),
+    '--cell-cyan-x': `${(-0.046 + stableUnit(index, 7) * 0.018).toFixed(3)}em`,
+    '--cell-cyan-y': `${(-0.004 + stableUnit(index, 8) * 0.014).toFixed(3)}em`,
+    '--cell-red-x': `${(0.038 + stableUnit(index, 9) * 0.018).toFixed(3)}em`,
+    '--cell-red-y': `${(-0.007 + stableUnit(index, 10) * 0.014).toFixed(3)}em`,
+    '--cell-block-cyan-x': `${(stableUnit(index, 11) * 0.07).toFixed(3)}em`,
+    '--cell-block-red-x': `${(stableUnit(index, 12) * 0.07).toFixed(3)}em`,
+    '--cell-block-line-offset': `${blockLineOffset.toFixed(3)}em`,
+    '--cell-block-line-offset-red': `${(blockLineOffset * 0.7).toFixed(3)}em`,
+    '--cell-block-edge-opacity': (0.21 + cyanOpacity * 0.1).toFixed(3),
+  }
+}
 
 const clearRevealTimer = () => {
   if (revealTimer.value !== null) {
@@ -191,7 +303,8 @@ onBeforeUnmount(clearRevealTimer)
   z-index: 10;
 }
 
-.signal-glyphs {
+.signal-glyphs,
+.signal-medium-glyphs {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -202,6 +315,18 @@ onBeforeUnmount(clearRevealTimer)
   line-height: 1.3;
   letter-spacing: 0;
   white-space: normal;
+}
+
+.signal-glyphs {
+  z-index: 2;
+}
+
+.signal-medium-glyphs {
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0.58;
+  filter: url("#signal-shared-medium");
+  mix-blend-mode: normal;
 }
 
 .signal-paragraph {
@@ -218,7 +343,8 @@ onBeforeUnmount(clearRevealTimer)
   margin-top: 1.6em;
 }
 
-.signal-cell {
+.signal-cell,
+.signal-medium-cell {
   position: relative;
   display: inline-block;
   width: 1em;
@@ -227,15 +353,18 @@ onBeforeUnmount(clearRevealTimer)
   vertical-align: top;
 }
 
-.signal-cell + .signal-cell {
+.signal-cell + .signal-cell,
+.signal-medium-cell + .signal-medium-cell {
   margin-left: 0.22em;
 }
 
-.signal-cell.is-chinese-cell + .signal-cell {
+.signal-cell.is-chinese-cell + .signal-cell,
+.signal-medium-cell.is-chinese-cell + .signal-medium-cell {
   margin-left: 0.3em;
 }
 
-.signal-cell.is-space {
+.signal-cell.is-space,
+.signal-medium-cell.is-space {
   width: 0.5em;
 }
 
@@ -252,16 +381,25 @@ onBeforeUnmount(clearRevealTimer)
   isolation: isolate;
   color: transparent;
   background:
-    linear-gradient(104deg, rgba(214, 228, 221, 0.8), rgba(255, 255, 251, 0.98) 38%, rgba(202, 222, 217, 0.78) 74%, rgba(244, 246, 238, 0.95)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.16) 0 0.025em, rgba(61, 83, 80, 0.24) 0.04em 0.075em, transparent 0.09em 0.15em),
-    radial-gradient(circle at 20% 26%, rgba(255, 255, 255, 0.62) 0 0.05em, transparent 0.11em),
-    radial-gradient(circle at 72% 68%, rgba(75, 109, 105, 0.42) 0 0.045em, transparent 0.1em);
-  background-size: 100% 100%, 100% 0.18em, 0.48em 0.42em, 0.57em 0.51em;
-  background-blend-mode: normal, multiply, screen, multiply;
+    linear-gradient(104deg, rgba(214, 228, 221, var(--cell-core-light)), rgba(255, 255, 251, 0.98) 38%, rgba(202, 222, 217, 0.88) 74%, rgba(244, 246, 238, 0.95)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.07) 0 0.022em, rgba(59, 78, 75, 0.1) 0.042em 0.065em, transparent 0.088em 0.14em),
+    radial-gradient(circle at 24% 32%, rgba(255, 255, 255, 0.2) 0 0.03em, transparent 0.072em),
+    radial-gradient(circle at 74% 66%, rgba(64, 93, 88, 0.13) 0 0.026em, transparent 0.065em);
+  background-position: 0 0, 0 var(--cell-line-offset), var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse);
+  background-size: 100% 100%, 100% 0.16em, 0.44em 0.4em, 0.54em 0.5em;
+  background-blend-mode: normal, multiply, soft-light, multiply;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: url("#signal-display-texture-a") blur(0.029em) drop-shadow(0 0 0.22em rgba(237, 240, 232, 0.15));
+  filter: url("#signal-foreground-sampling-b") blur(0.032em) drop-shadow(0 0 0.22em rgba(237, 240, 232, 0.15));
+}
+
+.signal-cell.signal-variant-a .signal-char {
+  filter: url("#signal-foreground-sampling-a") blur(0.03em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.14));
+}
+
+.signal-cell.signal-variant-c .signal-char {
+  filter: url("#signal-foreground-sampling-c") blur(0.034em) drop-shadow(0 0 0.24em rgba(237, 240, 232, 0.16));
 }
 
 .signal-char::before,
@@ -278,50 +416,40 @@ onBeforeUnmount(clearRevealTimer)
 .signal-char::before {
   color: rgba(74, 232, 215, 0.49);
   -webkit-text-fill-color: rgba(74, 232, 215, 0.49);
-  filter: blur(0.043em);
-  transform: translate(-0.041em, 0.006em);
+  filter: url("#signal-chromatic-edge-cyan") blur(0.046em);
+  opacity: var(--cell-cyan-opacity);
+  transform: translate(var(--cell-cyan-x), var(--cell-cyan-y));
 }
 
 .signal-char::after {
   color: rgba(244, 87, 111, 0.41);
   -webkit-text-fill-color: rgba(244, 87, 111, 0.41);
-  filter: blur(0.05em);
-  transform: translate(0.047em, -0.004em);
-}
-
-.signal-cell:nth-child(3n + 2) .signal-char,
-.signal-cell:nth-child(3n + 2) .signal-placeholder,
-.signal-cell:nth-child(3n + 2) .signal-caret {
-  filter: url("#signal-display-texture-b") blur(0.031em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.14));
-}
-
-.signal-cell:nth-child(3n) .signal-char,
-.signal-cell:nth-child(3n) .signal-placeholder,
-.signal-cell:nth-child(3n) .signal-caret {
-  filter: url("#signal-display-texture-c") blur(0.027em) drop-shadow(0 0 0.24em rgba(237, 240, 232, 0.16));
-}
-
-.signal-cell:nth-child(3n + 2) .signal-char::before {
-  opacity: 0.78;
-  transform: translate(-0.03em, -0.002em);
-}
-
-.signal-cell:nth-child(3n + 2) .signal-char::after {
-  opacity: 0.72;
-  transform: translate(0.058em, 0.005em);
-}
-
-.signal-cell:nth-child(3n) .signal-char::before {
-  opacity: 0.66;
-  transform: translate(-0.052em, 0.004em);
-}
-
-.signal-cell:nth-child(3n) .signal-char::after {
-  opacity: 0.82;
-  transform: translate(0.036em, -0.007em);
+  filter: url("#signal-chromatic-edge-red") blur(0.054em);
+  opacity: var(--cell-red-opacity);
+  transform: translate(var(--cell-red-x), var(--cell-red-y));
 }
 
 .signal-char.is-chinese {
+  font-family: "Source Han Sans SC", sans-serif;
+  font-weight: 400;
+}
+
+.signal-medium-char,
+.signal-medium-placeholder,
+.signal-medium-caret {
+  position: relative;
+  display: block;
+  color: #fff;
+  background: #fff;
+}
+
+.signal-medium-char {
+  height: 1.3em;
+  line-height: 1.3em;
+  background: none;
+}
+
+.signal-medium-char.is-chinese {
   font-family: "Source Han Sans SC", sans-serif;
   font-weight: 400;
 }
@@ -333,17 +461,29 @@ onBeforeUnmount(clearRevealTimer)
   overflow: hidden;
   border-radius: 0.12em;
   background:
-    linear-gradient(112deg, rgba(206, 223, 217, 0.8), rgba(255, 255, 253, 0.98) 42%, rgba(215, 227, 221, 0.76)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.22) 0 0.035em, rgba(68, 91, 87, 0.25) 0.055em 0.09em, transparent 0.11em 0.18em),
-    radial-gradient(circle at 18% 26%, rgba(255, 255, 255, 0.82) 0 0.045em, transparent 0.09em),
-    radial-gradient(circle at 76% 66%, rgba(72, 97, 93, 0.42) 0 0.04em, transparent 0.085em);
-  background-size: 100% 100%, 100% 0.2em, 0.42em 0.39em, 0.5em 0.48em;
-  background-blend-mode: normal, multiply, screen, multiply;
-  box-shadow:
-    -0.046em 0.004em rgba(74, 232, 215, 0.48),
-    0.054em -0.003em rgba(244, 87, 111, 0.4),
-    0 0 0.44em rgba(237, 240, 232, 0.18);
-  filter: url("#signal-display-texture-a") blur(0.026em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.12));
+    linear-gradient(112deg, rgba(206, 223, 217, var(--cell-core-light)), rgba(255, 255, 253, 0.98) 42%, rgba(215, 227, 221, 0.84)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 0.025em, rgba(66, 88, 84, 0.09) 0.045em 0.07em, transparent 0.09em 0.15em),
+    radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.18) 0 0.028em, transparent 0.065em);
+  background-position: 0 0, 0 var(--cell-line-offset), var(--cell-grain-x) var(--cell-grain-y);
+  background-size: 100% 100%, 100% 0.17em, 0.42em 0.39em;
+  background-blend-mode: normal, multiply, soft-light;
+  box-shadow: 0 0 0.44em rgba(237, 240, 232, 0.18);
+  filter: url("#signal-foreground-sampling-b") blur(0.028em) drop-shadow(0 0 0.22em rgba(237, 240, 232, 0.14));
+}
+
+.signal-cell.signal-variant-a .signal-placeholder {
+  filter: url("#signal-foreground-sampling-a") blur(0.028em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.12));
+}
+
+.signal-cell.signal-variant-c .signal-placeholder {
+  filter: url("#signal-foreground-sampling-c") blur(0.028em) drop-shadow(0 0 0.24em rgba(237, 240, 232, 0.16));
+}
+
+.signal-medium-placeholder {
+  width: 0.9em;
+  height: 0.98em;
+  margin-top: 0.16em;
+  border-radius: 0.12em;
 }
 
 .signal-space {
@@ -353,44 +493,37 @@ onBeforeUnmount(clearRevealTimer)
   margin-top: 0.16em;
 }
 
-.signal-placeholder::before {
-  position: absolute;
-  inset: 0;
-  content: "";
-  opacity: 0.28;
-  background:
-    radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.88) 0 0.035em, transparent 0.07em),
-    radial-gradient(circle at 78% 66%, rgba(56, 85, 80, 0.58) 0 0.03em, transparent 0.065em),
-    radial-gradient(circle at 52% 52%, rgba(255, 255, 255, 0.54) 0 0.025em, transparent 0.055em);
-  background-size: 0.39em 0.36em, 0.52em 0.48em, 0.31em 0.29em;
-  mix-blend-mode: soft-light;
-}
-
 .signal-placeholder::after {
   position: absolute;
   inset: 0;
   content: "";
-  opacity: 0.28;
+  opacity: var(--cell-block-edge-opacity);
   background:
-    repeating-linear-gradient(0deg, transparent 0 0.07em, rgba(46, 68, 65, 0.28) 0.085em 0.115em, transparent 0.14em 0.2em),
-    linear-gradient(90deg, rgba(74, 232, 215, 0.2), transparent 24% 74%, rgba(244, 87, 111, 0.18));
+    linear-gradient(90deg, rgba(74, 232, 215, 0.42) 0 0.085em, transparent 0.085em calc(100% - 0.085em), rgba(244, 87, 111, 0.38) calc(100% - 0.085em)),
+    linear-gradient(90deg, rgba(74, 232, 215, 0.22), transparent),
+    linear-gradient(270deg, rgba(244, 87, 111, 0.2), transparent);
+  background-position: 0 0, var(--cell-block-cyan-x) var(--cell-block-line-offset), calc(100% - var(--cell-block-red-x)) var(--cell-block-line-offset-red);
+  background-repeat: no-repeat, repeat-y, repeat-y;
+  background-size: 100% 100%, 58% 0.2em, 58% 0.2em;
+  -webkit-mask-image: repeating-linear-gradient(0deg, transparent 0 0.035em, rgba(0, 0, 0, 0.9) 0.055em 0.13em, transparent 0.155em 0.2em);
+  -webkit-mask-repeat: repeat;
+  mask-image: repeating-linear-gradient(0deg, transparent 0 0.035em, rgba(0, 0, 0, 0.9) 0.055em 0.13em, transparent 0.155em 0.2em);
+  mask-repeat: repeat;
   mix-blend-mode: multiply;
 }
 
-.signal-cell:nth-child(3n + 2) .signal-placeholder {
-  background-position: 0 0, 0 0.04em, 0.07em 0.02em, 0.11em 0.06em;
-  box-shadow:
-    -0.046em 0.004em rgba(74, 232, 215, 0.52),
-    0.054em -0.003em rgba(244, 87, 111, 0.34),
-    0 0 0.44em rgba(237, 240, 232, 0.17);
-}
-
-.signal-cell:nth-child(3n) .signal-placeholder {
-  background-position: 0 0, 0 0.09em, 0.13em 0.08em, 0.04em 0.12em;
-  box-shadow:
-    -0.046em 0.004em rgba(74, 232, 215, 0.42),
-    0.054em -0.003em rgba(244, 87, 111, 0.46),
-    0 0 0.44em rgba(237, 240, 232, 0.17);
+.signal-placeholder::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  opacity: 0.22;
+  background:
+    radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.72) 0 0.03em, transparent 0.07em),
+    radial-gradient(circle at 76% 66%, rgba(56, 85, 80, 0.38) 0 0.028em, transparent 0.065em),
+    repeating-linear-gradient(0deg, transparent 0 0.06em, rgba(244, 246, 238, 0.12) 0.075em 0.095em, transparent 0.12em 0.18em);
+  background-position: var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse), 0 var(--cell-block-line-offset);
+  background-size: 0.39em 0.36em, 0.52em 0.48em, 100% 0.2em;
+  mix-blend-mode: soft-light;
 }
 
 .signal-caret {
@@ -403,8 +536,23 @@ onBeforeUnmount(clearRevealTimer)
     -0.046em 0 rgba(93, 224, 214, 0.38),
     0.052em 0 rgba(235, 93, 113, 0.31),
     0 0 0.36em rgba(237, 240, 232, 0.22);
-  filter: url("#signal-display-texture-a") blur(0.024em) drop-shadow(0 0 0.16em rgba(237, 240, 232, 0.18));
+  filter: url("#signal-foreground-sampling-b") blur(0.024em) drop-shadow(0 0 0.16em rgba(237, 240, 232, 0.16));
   animation: signal-caret-blink 0.9s steps(1, end) infinite;
+}
+
+.signal-cell.signal-variant-a .signal-caret {
+  filter: url("#signal-foreground-sampling-a") blur(0.024em) drop-shadow(0 0 0.14em rgba(237, 240, 232, 0.14));
+}
+
+.signal-cell.signal-variant-c .signal-caret {
+  filter: url("#signal-foreground-sampling-c") blur(0.024em) drop-shadow(0 0 0.18em rgba(237, 240, 232, 0.18));
+}
+
+.signal-medium-caret {
+  width: 0.9em;
+  height: 0.14em;
+  align-self: flex-end;
+  margin-bottom: 0.16em;
 }
 
 .signal-placeholder.is-active .signal-caret {
@@ -418,6 +566,19 @@ onBeforeUnmount(clearRevealTimer)
 
 .signal-placeholder.is-active {
   overflow: visible;
+}
+
+.signal-medium-placeholder.is-active {
+  overflow: visible;
+}
+
+.signal-medium-placeholder.is-active .signal-medium-caret {
+  position: absolute;
+  right: 0;
+  bottom: -0.16em;
+  left: 0;
+  width: 100%;
+  margin-bottom: 0;
 }
 
 .signal-space-active {
