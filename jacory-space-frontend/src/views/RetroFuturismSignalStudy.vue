@@ -5,6 +5,22 @@
       <div class="signal-letterbox signal-letterbox-bottom" aria-hidden="true" />
       <div class="signal-noise" aria-hidden="true" />
       <div class="signal-vignette" aria-hidden="true" />
+      <svg class="signal-filter-definitions" aria-hidden="true" focusable="false">
+        <defs>
+          <filter id="signal-display-texture-a" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.72 0.16" numOctaves="1" seed="13" result="signalNoise" />
+            <feDisplacementMap in="SourceGraphic" in2="signalNoise" scale="0.34" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          <filter id="signal-display-texture-b" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.66 0.19" numOctaves="1" seed="29" result="signalNoise" />
+            <feDisplacementMap in="SourceGraphic" in2="signalNoise" scale="0.38" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          <filter id="signal-display-texture-c" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.78 0.13" numOctaves="1" seed="47" result="signalNoise" />
+            <feDisplacementMap in="SourceGraphic" in2="signalNoise" scale="0.31" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+        </defs>
+      </svg>
 
       <div class="signal-copy">
         <div
@@ -162,6 +178,13 @@ onBeforeUnmount(clearRevealTimer)
     var(--signal-ink);
 }
 
+.signal-filter-definitions {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 .signal-copy {
   position: absolute;
   inset: 0;
@@ -221,17 +244,81 @@ onBeforeUnmount(clearRevealTimer)
 .signal-caret {
   position: relative;
   display: block;
-  filter: blur(0.028em);
 }
 
 .signal-char {
   height: 1.3em;
   line-height: 1.3em;
-  color: var(--signal-paper);
-  text-shadow:
-    -0.06em 0 rgba(93, 224, 214, 0.64),
-    0.06em 0 rgba(235, 93, 113, 0.56),
-    0 0 0.48em rgba(237, 240, 232, 0.27);
+  isolation: isolate;
+  color: transparent;
+  background:
+    linear-gradient(104deg, rgba(214, 228, 221, 0.8), rgba(255, 255, 251, 0.98) 38%, rgba(202, 222, 217, 0.78) 74%, rgba(244, 246, 238, 0.95)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.16) 0 0.025em, rgba(61, 83, 80, 0.24) 0.04em 0.075em, transparent 0.09em 0.15em),
+    radial-gradient(circle at 20% 26%, rgba(255, 255, 255, 0.62) 0 0.05em, transparent 0.11em),
+    radial-gradient(circle at 72% 68%, rgba(75, 109, 105, 0.42) 0 0.045em, transparent 0.1em);
+  background-size: 100% 100%, 100% 0.18em, 0.48em 0.42em, 0.57em 0.51em;
+  background-blend-mode: normal, multiply, screen, multiply;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: url("#signal-display-texture-a") blur(0.029em) drop-shadow(0 0 0.22em rgba(237, 240, 232, 0.22));
+}
+
+.signal-char::before,
+.signal-char::after {
+  position: absolute;
+  inset: 0;
+  content: attr(data-char);
+  pointer-events: none;
+  font: inherit;
+  letter-spacing: inherit;
+  mix-blend-mode: screen;
+}
+
+.signal-char::before {
+  color: rgba(93, 224, 214, 0.42);
+  -webkit-text-fill-color: rgba(93, 224, 214, 0.42);
+  filter: blur(0.043em);
+  transform: translate(-0.041em, 0.006em);
+}
+
+.signal-char::after {
+  color: rgba(235, 93, 113, 0.34);
+  -webkit-text-fill-color: rgba(235, 93, 113, 0.34);
+  filter: blur(0.05em);
+  transform: translate(0.047em, -0.004em);
+}
+
+.signal-cell:nth-child(3n + 2) .signal-char,
+.signal-cell:nth-child(3n + 2) .signal-placeholder,
+.signal-cell:nth-child(3n + 2) .signal-caret {
+  filter: url("#signal-display-texture-b") blur(0.031em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.2));
+}
+
+.signal-cell:nth-child(3n) .signal-char,
+.signal-cell:nth-child(3n) .signal-placeholder,
+.signal-cell:nth-child(3n) .signal-caret {
+  filter: url("#signal-display-texture-c") blur(0.027em) drop-shadow(0 0 0.24em rgba(237, 240, 232, 0.24));
+}
+
+.signal-cell:nth-child(3n + 2) .signal-char::before {
+  opacity: 0.78;
+  transform: translate(-0.03em, -0.002em);
+}
+
+.signal-cell:nth-child(3n + 2) .signal-char::after {
+  opacity: 0.72;
+  transform: translate(0.058em, 0.005em);
+}
+
+.signal-cell:nth-child(3n) .signal-char::before {
+  opacity: 0.66;
+  transform: translate(-0.052em, 0.004em);
+}
+
+.signal-cell:nth-child(3n) .signal-char::after {
+  opacity: 0.82;
+  transform: translate(0.036em, -0.007em);
 }
 
 .signal-char.is-chinese {
@@ -246,13 +333,17 @@ onBeforeUnmount(clearRevealTimer)
   overflow: hidden;
   border-radius: 0.12em;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(218, 226, 220, 0.88)),
-    repeating-linear-gradient(0deg, rgba(43, 47, 47, 0.18) 0, rgba(43, 47, 47, 0.18) 0.06em, transparent 0.06em, transparent 0.16em);
-  background-blend-mode: normal, multiply;
+    linear-gradient(112deg, rgba(206, 223, 217, 0.8), rgba(255, 255, 253, 0.98) 42%, rgba(215, 227, 221, 0.76)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.22) 0 0.035em, rgba(68, 91, 87, 0.25) 0.055em 0.09em, transparent 0.11em 0.18em),
+    radial-gradient(circle at 18% 26%, rgba(255, 255, 255, 0.82) 0 0.045em, transparent 0.09em),
+    radial-gradient(circle at 76% 66%, rgba(72, 97, 93, 0.42) 0 0.04em, transparent 0.085em);
+  background-size: 100% 100%, 100% 0.2em, 0.42em 0.39em, 0.5em 0.48em;
+  background-blend-mode: normal, multiply, screen, multiply;
   box-shadow:
-    -0.06em 0 rgba(93, 224, 214, 0.58),
-    0.06em 0 rgba(235, 93, 113, 0.5),
-    0 0 0.5em rgba(237, 240, 232, 0.29);
+    -0.046em 0.004em rgba(93, 224, 214, 0.42),
+    0.054em -0.003em rgba(235, 93, 113, 0.34),
+    0 0 0.44em rgba(237, 240, 232, 0.25);
+  filter: url("#signal-display-texture-a") blur(0.026em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.18));
 }
 
 .signal-space {
@@ -266,20 +357,32 @@ onBeforeUnmount(clearRevealTimer)
   position: absolute;
   inset: 0;
   content: "";
-  opacity: 0.32;
+  opacity: 0.28;
   background:
-    radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.85) 0 0.04em, transparent 0.07em),
-    radial-gradient(circle at 78% 66%, rgba(72, 88, 85, 0.5) 0 0.035em, transparent 0.07em);
-  mix-blend-mode: multiply;
+    radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.88) 0 0.035em, transparent 0.07em),
+    radial-gradient(circle at 78% 66%, rgba(56, 85, 80, 0.58) 0 0.03em, transparent 0.065em),
+    radial-gradient(circle at 52% 52%, rgba(255, 255, 255, 0.54) 0 0.025em, transparent 0.055em);
+  background-size: 0.39em 0.36em, 0.52em 0.48em, 0.31em 0.29em;
+  mix-blend-mode: soft-light;
 }
 
 .signal-placeholder::after {
   position: absolute;
   inset: 0;
   content: "";
-  opacity: 0.2;
-  background: repeating-linear-gradient(90deg, transparent 0, transparent 0.18em, rgba(93, 224, 214, 0.35) 0.2em, transparent 0.23em);
+  opacity: 0.26;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 0.07em, rgba(46, 68, 65, 0.28) 0.085em 0.115em, transparent 0.14em 0.2em),
+    linear-gradient(90deg, rgba(93, 224, 214, 0.14), transparent 24% 74%, rgba(235, 93, 113, 0.12));
   mix-blend-mode: multiply;
+}
+
+.signal-cell:nth-child(3n + 2) .signal-placeholder {
+  background-position: 0 0, 0 0.04em, 0.07em 0.02em, 0.11em 0.06em;
+}
+
+.signal-cell:nth-child(3n) .signal-placeholder {
+  background-position: 0 0, 0 0.09em, 0.13em 0.08em, 0.04em 0.12em;
 }
 
 .signal-caret {
@@ -289,9 +392,10 @@ onBeforeUnmount(clearRevealTimer)
   margin-bottom: 0.16em;
   background: var(--signal-paper);
   box-shadow:
-    -0.06em 0 rgba(93, 224, 214, 0.48),
-    0.06em 0 rgba(235, 93, 113, 0.42),
-    0 0 0.38em rgba(237, 240, 232, 0.24);
+    -0.046em 0 rgba(93, 224, 214, 0.38),
+    0.052em 0 rgba(235, 93, 113, 0.31),
+    0 0 0.36em rgba(237, 240, 232, 0.22);
+  filter: url("#signal-display-texture-a") blur(0.024em) drop-shadow(0 0 0.16em rgba(237, 240, 232, 0.18));
   animation: signal-caret-blink 0.9s steps(1, end) infinite;
 }
 
