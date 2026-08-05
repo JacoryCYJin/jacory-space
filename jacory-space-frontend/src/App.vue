@@ -12,7 +12,7 @@ import { useRoute } from 'vue-router'
 import Navbar from './components/Navbar.vue'
 
 const route = useRoute()
-const isFullBleedRoute = computed(() => ['/tools/minecraft-skin-editor', '/experiments/cyberpunk'].includes(route.path))
+const isFullBleedRoute = computed(() => ['/tools/minecraft-skin-editor', '/experiments/retro-futurism'].includes(route.path))
 
 const siteUrl = 'https://jacoryspace.top'
 const pageMeta = computed(() => {
@@ -71,10 +71,10 @@ const pageMeta = computed(() => {
       description: '了解 Jacory Space 的个人工作系统、创作方向与联系方式。',
       path: '/about',
     },
-    CyberpunkStudy: {
-      title: 'Urban Signal — Jacory Space',
-      description: '日式复古未来都市赛博朋克视觉实验。',
-      path: '/experiments/cyberpunk',
+    RetroFuturismSignalStudy: {
+      title: 'Retro-Futurism Signal Study — Jacory Space',
+      description: '日式复古未来主义视觉实验：模拟媒介、老化技术与清爽现代图形表现。',
+      path: '/experiments/retro-futurism',
     },
   }
 

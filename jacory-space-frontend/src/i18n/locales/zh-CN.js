@@ -770,29 +770,10 @@ export default {
     webglError: '当前浏览器无法初始化 3D 预览，请检查 WebGL 支持后刷新页面。',
     ready: 'READY'
   },
-  cyberpunk: {
-    backToSpace: '返回 Jacory Space',
-    studyLabel: '视觉实验 / 06',
-    kicker: '城市信号 / 夜间观测',
-    titleLead: 'Urban',
-    titleAccent: 'Signal',
-    description: '技术已经抵达，城市仍在老化。一个关于日式复古未来都市赛博朋克的界面片段：模拟电子质感、高密度空间与清晰现代作画。',
-    enterArchive: '进入档案',
-    signalLabel: 'SIGNAL / 06',
-    signalStatus: 'LOCAL CHANNEL · STABLE',
-    systemLabel: '系统',
-    locationLabel: '坐标',
-    timeLabel: '本地时间',
-    archiveKicker: '视觉拆解 / 组件记录',
-    archiveTitle: '在城市机器内部保持人的尺度。',
-    archiveBody: '这不是一组霓虹装饰，而是一种看待界面的方式：让光线、结构、噪声和留白共同建立一个先进却已经生活多年的未来城市。',
-    footerLabel: '90s JP cyberpunk · analog texture · clean motion',
-    modules: {
-      analog: { title: '模拟媒介', description: '扫描线、颗粒、屏幕反光和低强度信号噪声，让先进系统拥有旧时代设备的触感。' },
-      density: { title: '高密度都市', description: '用窗框、管线、楼体和远处的微光制造空间层次，但把主要内容留在清晰的前景。' },
-      linework: { title: '清爽作画', description: '硬朗的结构线与克制的平涂阴影，叠加少量雾气和泛光，保持动画般的明确轮廓。' },
-      motion: { title: '干净运动', description: '像摄影机、监视器和机械系统一样运动：慢速扫描、细微呼吸、安静而有目的的切换。' }
-    }
+  retroFuturism: {
+    signalLabel: '模拟电子字幕信号实验',
+    primaryLine: '企業のネットが星を覆い、電子や光が駆け巡っても 国家や民族が消えてなくなる程',
+    subtitle: '（在这个近未来 电子与光在覆盖全球的）'
   },
   library: {
     kicker: '提示词与技能资产库',

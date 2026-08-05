@@ -7,7 +7,7 @@ import Tools from '../views/Tools.vue'
 import MinecraftSkinEditor from '../views/MinecraftSkinEditor.vue'
 import Library from '../views/Library.vue'
 import LibraryDetail from '../views/LibraryDetail.vue'
-import CyberpunkStudy from '../views/CyberpunkStudy.vue'
+import RetroFuturismSignalStudy from '../views/RetroFuturismSignalStudy.vue'
 
 export const routes = [
   {
@@ -68,8 +68,8 @@ export const routes = [
     component: About
   },
   {
-    path: '/experiments/cyberpunk',
-    name: 'CyberpunkStudy',
-    component: CyberpunkStudy
+    path: '/experiments/retro-futurism',
+    name: 'RetroFuturismSignalStudy',
+    component: RetroFuturismSignalStudy
   }
 ]
