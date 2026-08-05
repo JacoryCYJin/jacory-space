@@ -261,7 +261,7 @@ onBeforeUnmount(clearRevealTimer)
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: url("#signal-display-texture-a") blur(0.029em) drop-shadow(0 0 0.22em rgba(237, 240, 232, 0.22));
+  filter: url("#signal-display-texture-a") blur(0.029em) drop-shadow(0 0 0.22em rgba(237, 240, 232, 0.15));
 }
 
 .signal-char::before,
@@ -276,15 +276,15 @@ onBeforeUnmount(clearRevealTimer)
 }
 
 .signal-char::before {
-  color: rgba(93, 224, 214, 0.42);
-  -webkit-text-fill-color: rgba(93, 224, 214, 0.42);
+  color: rgba(74, 232, 215, 0.49);
+  -webkit-text-fill-color: rgba(74, 232, 215, 0.49);
   filter: blur(0.043em);
   transform: translate(-0.041em, 0.006em);
 }
 
 .signal-char::after {
-  color: rgba(235, 93, 113, 0.34);
-  -webkit-text-fill-color: rgba(235, 93, 113, 0.34);
+  color: rgba(244, 87, 111, 0.41);
+  -webkit-text-fill-color: rgba(244, 87, 111, 0.41);
   filter: blur(0.05em);
   transform: translate(0.047em, -0.004em);
 }
@@ -292,13 +292,13 @@ onBeforeUnmount(clearRevealTimer)
 .signal-cell:nth-child(3n + 2) .signal-char,
 .signal-cell:nth-child(3n + 2) .signal-placeholder,
 .signal-cell:nth-child(3n + 2) .signal-caret {
-  filter: url("#signal-display-texture-b") blur(0.031em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.2));
+  filter: url("#signal-display-texture-b") blur(0.031em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.14));
 }
 
 .signal-cell:nth-child(3n) .signal-char,
 .signal-cell:nth-child(3n) .signal-placeholder,
 .signal-cell:nth-child(3n) .signal-caret {
-  filter: url("#signal-display-texture-c") blur(0.027em) drop-shadow(0 0 0.24em rgba(237, 240, 232, 0.24));
+  filter: url("#signal-display-texture-c") blur(0.027em) drop-shadow(0 0 0.24em rgba(237, 240, 232, 0.16));
 }
 
 .signal-cell:nth-child(3n + 2) .signal-char::before {
@@ -340,10 +340,10 @@ onBeforeUnmount(clearRevealTimer)
   background-size: 100% 100%, 100% 0.2em, 0.42em 0.39em, 0.5em 0.48em;
   background-blend-mode: normal, multiply, screen, multiply;
   box-shadow:
-    -0.046em 0.004em rgba(93, 224, 214, 0.42),
-    0.054em -0.003em rgba(235, 93, 113, 0.34),
-    0 0 0.44em rgba(237, 240, 232, 0.25);
-  filter: url("#signal-display-texture-a") blur(0.026em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.18));
+    -0.046em 0.004em rgba(74, 232, 215, 0.48),
+    0.054em -0.003em rgba(244, 87, 111, 0.4),
+    0 0 0.44em rgba(237, 240, 232, 0.18);
+  filter: url("#signal-display-texture-a") blur(0.026em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.12));
 }
 
 .signal-space {
@@ -370,19 +370,27 @@ onBeforeUnmount(clearRevealTimer)
   position: absolute;
   inset: 0;
   content: "";
-  opacity: 0.26;
+  opacity: 0.28;
   background:
     repeating-linear-gradient(0deg, transparent 0 0.07em, rgba(46, 68, 65, 0.28) 0.085em 0.115em, transparent 0.14em 0.2em),
-    linear-gradient(90deg, rgba(93, 224, 214, 0.14), transparent 24% 74%, rgba(235, 93, 113, 0.12));
+    linear-gradient(90deg, rgba(74, 232, 215, 0.2), transparent 24% 74%, rgba(244, 87, 111, 0.18));
   mix-blend-mode: multiply;
 }
 
 .signal-cell:nth-child(3n + 2) .signal-placeholder {
   background-position: 0 0, 0 0.04em, 0.07em 0.02em, 0.11em 0.06em;
+  box-shadow:
+    -0.046em 0.004em rgba(74, 232, 215, 0.52),
+    0.054em -0.003em rgba(244, 87, 111, 0.34),
+    0 0 0.44em rgba(237, 240, 232, 0.17);
 }
 
 .signal-cell:nth-child(3n) .signal-placeholder {
   background-position: 0 0, 0 0.09em, 0.13em 0.08em, 0.04em 0.12em;
+  box-shadow:
+    -0.046em 0.004em rgba(74, 232, 215, 0.42),
+    0.054em -0.003em rgba(244, 87, 111, 0.46),
+    0 0 0.44em rgba(237, 240, 232, 0.17);
 }
 
 .signal-caret {
