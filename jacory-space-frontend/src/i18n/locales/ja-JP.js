@@ -758,29 +758,10 @@ export default {
     webglError: '3D プレビューを初期化できませんでした。WebGL 対応を確認してページを更新してください。',
     ready: 'READY'
   },
-  cyberpunk: {
-    backToSpace: 'Jacory Space に戻る',
-    studyLabel: 'ビジュアルスタディ / 06',
-    kicker: '都市信号 / 夜間観測',
-    titleLead: 'Urban',
-    titleAccent: 'Signal',
-    description: 'テクノロジーは到達した。都市はまだ老いている。アナログの質感、高密度な空間、現代的で明快な作画による、日式レトロフューチャー都市サイバーパンクの断片。',
-    enterArchive: 'アーカイブへ',
-    signalLabel: 'SIGNAL / 06',
-    signalStatus: 'LOCAL CHANNEL · STABLE',
-    systemLabel: 'システム',
-    locationLabel: '座標',
-    timeLabel: '現地時刻',
-    archiveKicker: 'ビジュアル分解 / コンポーネントログ',
-    archiveTitle: '都市の機械の中で、人間の尺度を保つ。',
-    archiveBody: 'これはネオンの装飾集ではありません。光、構造、ノイズ、静かな余白で、先進的でありながら長く暮らされてきた未来都市としてインターフェースを組み立てます。',
-    footerLabel: '90s JP cyberpunk · analog texture · clean motion',
-    modules: {
-      analog: { title: 'アナログメディア', description: '走査線、粒子、画面の反射、控えめな信号ノイズで、先進的なシステムに古い機器の手触りを与えます。' },
-      density: { title: '都市の密度', description: '窓枠、ケーブル、建物、遠くの小さな光で奥行きをつくり、主役の情報は前景に明瞭に残します。' },
-      linework: { title: '明快な線画', description: '硬質な構造線と控えめなセル影に、少量の霞とブルームを重ね、アニメーションの輪郭を保ちます。' },
-      motion: { title: 'クリーンな動き', description: 'カメラ、モニター、機械のように動かします。ゆっくりした走査、小さな呼吸、意図のある静かな切り替え。' }
-    }
+  retroFuturism: {
+    signalLabel: 'アナログ電子字幕信号の実験',
+    primaryLine: '企業のネットが星を覆い、電子や光が駆け巡っても 国家や民族が消えてなくなる程',
+    subtitle: '（この近未来、電子と光が世界を覆う）'
   },
   library: {
     kicker: 'PROMPT / SKILL ライブラリ', titleLead: 'アイデア', titleAccent: 'レシピ',
