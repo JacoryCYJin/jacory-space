@@ -37,28 +37,6 @@
             <feBlend in="neutralGrain" in2="scanLines" mode="screen" result="mediumField" />
             <feComposite in="mediumField" in2="contentAlpha" operator="in" />
           </filter>
-          <filter id="signal-chromatic-edge-cyan" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
-            <feMorphology in="SourceAlpha" operator="dilate" radius="0.42" result="expandedAlpha" />
-            <feComposite in="expandedAlpha" in2="SourceAlpha" operator="out" result="edgeAlpha" />
-            <feTurbulence type="fractalNoise" baseFrequency="0.54 0.18" numOctaves="1" seed="59" result="edgeNoise" />
-            <feColorMatrix in="edgeNoise" type="luminanceToAlpha" result="edgeNoiseAlpha" />
-            <feComponentTransfer in="edgeNoiseAlpha" result="modulatedNoiseAlpha">
-              <feFuncA type="table" tableValues="0.24 0.78" />
-            </feComponentTransfer>
-            <feComposite in="edgeAlpha" in2="modulatedNoiseAlpha" operator="in" result="fragmentedEdgeAlpha" />
-            <feComposite in="SourceGraphic" in2="fragmentedEdgeAlpha" operator="in" />
-          </filter>
-          <filter id="signal-chromatic-edge-red" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
-            <feMorphology in="SourceAlpha" operator="dilate" radius="0.42" result="expandedAlpha" />
-            <feComposite in="expandedAlpha" in2="SourceAlpha" operator="out" result="edgeAlpha" />
-            <feTurbulence type="fractalNoise" baseFrequency="0.43 0.25" numOctaves="1" seed="71" result="edgeNoise" />
-            <feColorMatrix in="edgeNoise" type="luminanceToAlpha" result="edgeNoiseAlpha" />
-            <feComponentTransfer in="edgeNoiseAlpha" result="modulatedNoiseAlpha">
-              <feFuncA type="table" tableValues="0.18 0.74" />
-            </feComponentTransfer>
-            <feComposite in="edgeAlpha" in2="modulatedNoiseAlpha" operator="in" result="fragmentedEdgeAlpha" />
-            <feComposite in="SourceGraphic" in2="fragmentedEdgeAlpha" operator="in" />
-          </filter>
           <filter id="signal-foreground-sampling-a" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
             <feTurbulence type="fractalNoise" baseFrequency="0.72 0.16" numOctaves="1" seed="13" result="samplingNoise" />
             <feDisplacementMap in="SourceGraphic" in2="samplingNoise" scale="0.34" xChannelSelector="R" yChannelSelector="G" />
@@ -70,6 +48,48 @@
           <filter id="signal-foreground-sampling-c" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
             <feTurbulence type="fractalNoise" baseFrequency="0.78 0.13" numOctaves="1" seed="47" result="samplingNoise" />
             <feDisplacementMap in="SourceGraphic" in2="samplingNoise" scale="0.31" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          <filter id="signal-shared-chromatic-residual-small" x="-4%" y="-8%" width="108%" height="116%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feOffset in="SourceAlpha" dx="-0.63" dy="-0.108" result="cyanOffsetAlpha" />
+            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="out" result="cyanResidualAlpha" />
+            <feFlood flood-color="#4ae8d7" flood-opacity="0.441" result="cyanPaint" />
+            <feComposite in="cyanPaint" in2="cyanResidualAlpha" operator="in" result="cyanResidual" />
+            <feOffset in="SourceAlpha" dx="0.72" dy="0.108" result="redOffsetAlpha" />
+            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="out" result="redResidualAlpha" />
+            <feFlood flood-color="#f4576f" flood-opacity="0.3608" result="redPaint" />
+            <feComposite in="redPaint" in2="redResidualAlpha" operator="in" result="redResidual" />
+            <feMerge>
+              <feMergeNode in="cyanResidual" />
+              <feMergeNode in="redResidual" />
+            </feMerge>
+          </filter>
+          <filter id="signal-shared-chromatic-residual-medium" x="-4%" y="-8%" width="108%" height="116%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feOffset in="SourceAlpha" dx="-0.7" dy="-0.12" result="cyanOffsetAlpha" />
+            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="out" result="cyanResidualAlpha" />
+            <feFlood flood-color="#4ae8d7" flood-opacity="0.441" result="cyanPaint" />
+            <feComposite in="cyanPaint" in2="cyanResidualAlpha" operator="in" result="cyanResidual" />
+            <feOffset in="SourceAlpha" dx="0.8" dy="0.12" result="redOffsetAlpha" />
+            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="out" result="redResidualAlpha" />
+            <feFlood flood-color="#f4576f" flood-opacity="0.3608" result="redPaint" />
+            <feComposite in="redPaint" in2="redResidualAlpha" operator="in" result="redResidual" />
+            <feMerge>
+              <feMergeNode in="cyanResidual" />
+              <feMergeNode in="redResidual" />
+            </feMerge>
+          </filter>
+          <filter id="signal-shared-chromatic-residual-large" x="-4%" y="-8%" width="108%" height="116%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feOffset in="SourceAlpha" dx="-1.05" dy="-0.18" result="cyanOffsetAlpha" />
+            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="out" result="cyanResidualAlpha" />
+            <feFlood flood-color="#4ae8d7" flood-opacity="0.441" result="cyanPaint" />
+            <feComposite in="cyanPaint" in2="cyanResidualAlpha" operator="in" result="cyanResidual" />
+            <feOffset in="SourceAlpha" dx="1.2" dy="0.18" result="redOffsetAlpha" />
+            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="out" result="redResidualAlpha" />
+            <feFlood flood-color="#f4576f" flood-opacity="0.3608" result="redPaint" />
+            <feComposite in="redPaint" in2="redResidualAlpha" operator="in" result="redResidual" />
+            <feMerge>
+              <feMergeNode in="cyanResidual" />
+              <feMergeNode in="redResidual" />
+            </feMerge>
           </filter>
         </defs>
       </svg>
@@ -99,12 +119,39 @@
                     v-if="character.index < revealedCount"
                     class="signal-char"
                     :class="{ 'is-chinese': isChineseCharacter(character.value) }"
-                    :data-char="character.value"
                   >{{ character.value }}</span>
                   <span v-else-if="character.index === revealedCount" class="signal-placeholder is-active">
                     <span class="signal-caret" aria-hidden="true" />
                   </span>
                   <span v-else class="signal-placeholder" />
+                </span>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="signal-chromatic-residual-glyphs text-left font-sans text-lg font-semibold leading-relaxed tracking-normal sm:text-xl md:text-3xl"
+          aria-hidden="true"
+        >
+          <div v-for="(paragraph, paragraphIndex) in textLayout" :key="paragraphIndex" class="signal-paragraph">
+            <div v-for="(line, lineIndex) in paragraph" :key="lineIndex" class="signal-line">
+              <template v-if="isLineStarted(line)">
+                <span
+                  v-for="character in line.characters"
+                  :key="character.index"
+                  class="signal-medium-cell"
+                  :class="{ 'is-chinese-cell': isChineseCharacter(character.value) }"
+                >
+                  <span
+                    v-if="character.index < revealedCount"
+                    class="signal-medium-char"
+                    :class="{ 'is-chinese': isChineseCharacter(character.value) }"
+                  >{{ character.value }}</span>
+                  <span v-else-if="character.index === revealedCount" class="signal-medium-placeholder is-active">
+                    <span class="signal-medium-caret" />
+                  </span>
+                  <span v-else class="signal-medium-placeholder" />
                 </span>
               </template>
             </div>
@@ -195,8 +242,6 @@ const signalCellVariant = (character) => {
 }
 const signalCellStyle = (character) => {
   const index = character.index
-  const cyanOpacity = 0.7 + stableUnit(index, 1) * 0.13
-  const redOpacity = 0.69 + stableUnit(index, 2) * 0.14
   const lineOffset = stableUnit(index, 4) * 0.12
   const grainX = stableUnit(index, 5) * 0.18
   const grainY = stableUnit(index, 6) * 0.16
@@ -209,17 +254,10 @@ const signalCellStyle = (character) => {
     '--cell-grain-y': `${grainY.toFixed(3)}em`,
     '--cell-grain-x-inverse': `${(-grainX).toFixed(3)}em`,
     '--cell-grain-y-inverse': `${(-grainY).toFixed(3)}em`,
-    '--cell-cyan-opacity': cyanOpacity.toFixed(3),
-    '--cell-red-opacity': redOpacity.toFixed(3),
-    '--cell-cyan-x': `${(-0.046 + stableUnit(index, 7) * 0.018).toFixed(3)}em`,
-    '--cell-cyan-y': `${(-0.004 + stableUnit(index, 8) * 0.014).toFixed(3)}em`,
-    '--cell-red-x': `${(0.038 + stableUnit(index, 9) * 0.018).toFixed(3)}em`,
-    '--cell-red-y': `${(-0.007 + stableUnit(index, 10) * 0.014).toFixed(3)}em`,
     '--cell-block-cyan-x': `${(stableUnit(index, 11) * 0.07).toFixed(3)}em`,
     '--cell-block-red-x': `${(stableUnit(index, 12) * 0.07).toFixed(3)}em`,
     '--cell-block-line-offset': `${blockLineOffset.toFixed(3)}em`,
     '--cell-block-line-offset-red': `${(blockLineOffset * 0.7).toFixed(3)}em`,
-    '--cell-block-edge-opacity': (0.21 + cyanOpacity * 0.1).toFixed(3),
   }
 }
 
@@ -310,7 +348,8 @@ onBeforeUnmount(clearRevealTimer)
 }
 
 .signal-glyphs,
-.signal-medium-glyphs {
+.signal-medium-glyphs,
+.signal-chromatic-residual-glyphs {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -325,6 +364,26 @@ onBeforeUnmount(clearRevealTimer)
 
 .signal-glyphs {
   z-index: 2;
+}
+
+.signal-chromatic-residual-glyphs {
+  z-index: 1;
+  overflow: visible;
+  pointer-events: none;
+  mix-blend-mode: normal;
+  filter: url("#signal-shared-chromatic-residual-small");
+}
+
+@media (min-width: 640px) {
+  .signal-chromatic-residual-glyphs {
+    filter: url("#signal-shared-chromatic-residual-medium");
+  }
+}
+
+@media (min-width: 768px) {
+  .signal-chromatic-residual-glyphs {
+    filter: url("#signal-shared-chromatic-residual-large");
+  }
 }
 
 .signal-medium-glyphs {
@@ -408,33 +467,6 @@ onBeforeUnmount(clearRevealTimer)
   filter: url("#signal-foreground-sampling-c") blur(0.034em) drop-shadow(0 0 0.24em rgba(237, 240, 232, 0.16));
 }
 
-.signal-char::before,
-.signal-char::after {
-  position: absolute;
-  inset: 0;
-  content: attr(data-char);
-  pointer-events: none;
-  font: inherit;
-  letter-spacing: inherit;
-  mix-blend-mode: screen;
-}
-
-.signal-char::before {
-  color: rgba(74, 232, 215, 0.49);
-  -webkit-text-fill-color: rgba(74, 232, 215, 0.49);
-  filter: url("#signal-chromatic-edge-cyan") blur(0.046em);
-  opacity: var(--cell-cyan-opacity);
-  transform: translate(var(--cell-cyan-x), var(--cell-cyan-y));
-}
-
-.signal-char::after {
-  color: rgba(244, 87, 111, 0.41);
-  -webkit-text-fill-color: rgba(244, 87, 111, 0.41);
-  filter: url("#signal-chromatic-edge-red") blur(0.054em);
-  opacity: var(--cell-red-opacity);
-  transform: translate(var(--cell-red-x), var(--cell-red-y));
-}
-
 .signal-char.is-chinese {
   font-family: "Source Han Sans SC", sans-serif;
   font-weight: 400;
@@ -503,14 +535,13 @@ onBeforeUnmount(clearRevealTimer)
   position: absolute;
   inset: 0;
   content: "";
-  opacity: var(--cell-block-edge-opacity);
+  opacity: 0.18;
   background:
-    linear-gradient(90deg, rgba(74, 232, 215, 0.42) 0 0.085em, transparent 0.085em calc(100% - 0.085em), rgba(244, 87, 111, 0.38) calc(100% - 0.085em)),
     linear-gradient(90deg, rgba(74, 232, 215, 0.22), transparent),
     linear-gradient(270deg, rgba(244, 87, 111, 0.2), transparent);
-  background-position: 0 0, var(--cell-block-cyan-x) var(--cell-block-line-offset), calc(100% - var(--cell-block-red-x)) var(--cell-block-line-offset-red);
-  background-repeat: no-repeat, no-repeat, no-repeat;
-  background-size: 100% 100%, 40% 0.15em, 40% 0.15em;
+  background-position: var(--cell-block-cyan-x) var(--cell-block-line-offset), calc(100% - var(--cell-block-red-x)) var(--cell-block-line-offset-red);
+  background-repeat: no-repeat, no-repeat;
+  background-size: 40% 0.15em, 40% 0.15em;
   -webkit-mask-image: repeating-linear-gradient(0deg, transparent 0 0.035em, rgba(0, 0, 0, 0.9) 0.055em 0.13em, transparent 0.155em 0.2em);
   -webkit-mask-repeat: repeat;
   mask-image: repeating-linear-gradient(0deg, transparent 0 0.035em, rgba(0, 0, 0, 0.9) 0.055em 0.13em, transparent 0.155em 0.2em);
