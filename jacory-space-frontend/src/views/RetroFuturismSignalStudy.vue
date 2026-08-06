@@ -7,35 +7,65 @@
       <div class="signal-vignette" aria-hidden="true" />
       <svg class="signal-filter-definitions" aria-hidden="true" focusable="false">
         <defs>
-          <filter id="signal-shared-medium" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
+          <filter id="signal-shared-medium-small" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
             <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
             <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
-            <feColorMatrix
-              in="grainField"
-              type="matrix"
-              values="0.18 0.18 0.18 0 0.64
-                      0.2 0.2 0.2 0 0.67
-                      0.19 0.19 0.19 0 0.65
-                      0 0 0 0 0.48"
-              result="neutralGrain"
-            />
-            <feColorMatrix
-              in="scanField"
-              type="matrix"
-              values="0.08 0.08 0.08 0 0.71
-                      0.09 0.09 0.09 0 0.74
-                      0.09 0.09 0.09 0 0.72
-                      0 0 0 0 0.32"
-              result="scanLines"
-            />
+            <feComposite in="grainField" in2="scanField" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="rawMediumField" />
+            <feComponentTransfer in="rawMediumField" result="neutralMediumField">
+              <feFuncR type="linear" slope="0.16" intercept="0.42" />
+              <feFuncG type="linear" slope="0.16" intercept="0.42" />
+              <feFuncB type="linear" slope="0.16" intercept="0.42" />
+            </feComponentTransfer>
             <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
             <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
             <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
               <feFuncA type="table" tableValues="0.88 1" />
             </feComponentTransfer>
-            <feComposite in="SourceAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
-            <feBlend in="neutralGrain" in2="scanLines" mode="screen" result="mediumField" />
-            <feComposite in="mediumField" in2="contentAlpha" operator="in" />
+            <feMorphology in="SourceAlpha" operator="erode" radius="0.52 0.22" result="erodedContentAlpha" />
+            <feGaussianBlur in="erodedContentAlpha" stdDeviation="0.34 0.14" result="softenedInteriorAlpha" />
+            <feComposite in="softenedInteriorAlpha" in2="SourceAlpha" operator="in" result="interiorContentAlpha" />
+            <feComposite in="interiorContentAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
+            <feComposite in="neutralMediumField" in2="contentAlpha" operator="in" />
+          </filter>
+          <filter id="signal-shared-medium-medium" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
+            <feComposite in="grainField" in2="scanField" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="rawMediumField" />
+            <feComponentTransfer in="rawMediumField" result="neutralMediumField">
+              <feFuncR type="linear" slope="0.16" intercept="0.42" />
+              <feFuncG type="linear" slope="0.16" intercept="0.42" />
+              <feFuncB type="linear" slope="0.16" intercept="0.42" />
+            </feComponentTransfer>
+            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
+            <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
+            <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
+              <feFuncA type="table" tableValues="0.88 1" />
+            </feComponentTransfer>
+            <feMorphology in="SourceAlpha" operator="erode" radius="0.58 0.24" result="erodedContentAlpha" />
+            <feGaussianBlur in="erodedContentAlpha" stdDeviation="0.38 0.16" result="softenedInteriorAlpha" />
+            <feComposite in="softenedInteriorAlpha" in2="SourceAlpha" operator="in" result="interiorContentAlpha" />
+            <feComposite in="interiorContentAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
+            <feComposite in="neutralMediumField" in2="contentAlpha" operator="in" />
+          </filter>
+          <filter id="signal-shared-medium-large" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
+            <feComposite in="grainField" in2="scanField" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="rawMediumField" />
+            <feComponentTransfer in="rawMediumField" result="neutralMediumField">
+              <feFuncR type="linear" slope="0.16" intercept="0.42" />
+              <feFuncG type="linear" slope="0.16" intercept="0.42" />
+              <feFuncB type="linear" slope="0.16" intercept="0.42" />
+            </feComponentTransfer>
+            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
+            <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
+            <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
+              <feFuncA type="table" tableValues="0.88 1" />
+            </feComponentTransfer>
+            <feMorphology in="SourceAlpha" operator="erode" radius="0.86 0.36" result="erodedContentAlpha" />
+            <feGaussianBlur in="erodedContentAlpha" stdDeviation="0.56 0.24" result="softenedInteriorAlpha" />
+            <feComposite in="softenedInteriorAlpha" in2="SourceAlpha" operator="in" result="interiorContentAlpha" />
+            <feComposite in="interiorContentAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
+            <feComposite in="neutralMediumField" in2="contentAlpha" operator="in" />
           </filter>
           <filter id="signal-foreground-sampling-a" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
             <feTurbulence type="fractalNoise" baseFrequency="0.72 0.16" numOctaves="1" seed="13" result="samplingNoise" />
@@ -384,21 +414,28 @@ onBeforeUnmount(clearRevealTimer)
   .signal-chromatic-residual-glyphs {
     filter: url("#signal-shared-chromatic-residual-medium");
   }
+
+  .signal-medium-glyphs {
+    filter: url("#signal-shared-medium-medium");
+  }
 }
 
 @media (min-width: 768px) {
   .signal-chromatic-residual-glyphs {
     filter: url("#signal-shared-chromatic-residual-large");
   }
+
+  .signal-medium-glyphs {
+    filter: url("#signal-shared-medium-large");
+  }
 }
 
 .signal-medium-glyphs {
   z-index: 3;
-  visibility: hidden;
   pointer-events: none;
   opacity: 0.68;
-  filter: url("#signal-shared-medium");
-  mix-blend-mode: normal;
+  filter: url("#signal-shared-medium-small");
+  mix-blend-mode: soft-light;
 }
 
 .signal-paragraph {
