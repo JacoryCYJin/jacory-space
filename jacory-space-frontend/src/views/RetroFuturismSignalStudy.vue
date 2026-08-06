@@ -16,7 +16,7 @@
               values="0.18 0.18 0.18 0 0.64
                       0.2 0.2 0.2 0 0.67
                       0.19 0.19 0.19 0 0.65
-                      0 0 0 0 0.42"
+                      0 0 0 0 0.48"
               result="neutralGrain"
             />
             <feColorMatrix
@@ -25,11 +25,17 @@
               values="0.08 0.08 0.08 0 0.71
                       0.09 0.09 0.09 0 0.74
                       0.09 0.09 0.09 0 0.72
-                      0 0 0 0 0.24"
+                      0 0 0 0 0.32"
               result="scanLines"
             />
+            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
+            <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
+            <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
+              <feFuncA type="table" tableValues="0.88 1" />
+            </feComponentTransfer>
+            <feComposite in="SourceAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
             <feBlend in="neutralGrain" in2="scanLines" mode="screen" result="mediumField" />
-            <feComposite in="mediumField" in2="SourceAlpha" operator="in" />
+            <feComposite in="mediumField" in2="contentAlpha" operator="in" />
           </filter>
           <filter id="signal-chromatic-edge-cyan" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
             <feMorphology in="SourceAlpha" operator="dilate" radius="0.42" result="expandedAlpha" />
@@ -197,7 +203,7 @@ const signalCellStyle = (character) => {
   const blockLineOffset = stableUnit(index, 13) * 0.1
 
   return {
-    '--cell-core-light': (0.94 + stableUnit(index, 3) * 0.05).toFixed(3),
+    '--cell-core-light': (0.975 + stableUnit(index, 3) * 0.015).toFixed(3),
     '--cell-line-offset': `${lineOffset.toFixed(3)}em`,
     '--cell-grain-x': `${grainX.toFixed(3)}em`,
     '--cell-grain-y': `${grainY.toFixed(3)}em`,
@@ -324,7 +330,7 @@ onBeforeUnmount(clearRevealTimer)
 .signal-medium-glyphs {
   z-index: 3;
   pointer-events: none;
-  opacity: 0.58;
+  opacity: 0.68;
   filter: url("#signal-shared-medium");
   mix-blend-mode: normal;
 }
@@ -382,9 +388,9 @@ onBeforeUnmount(clearRevealTimer)
   color: transparent;
   background:
     linear-gradient(104deg, rgba(214, 228, 221, var(--cell-core-light)), rgba(255, 255, 251, 0.98) 38%, rgba(202, 222, 217, 0.88) 74%, rgba(244, 246, 238, 0.95)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.07) 0 0.022em, rgba(59, 78, 75, 0.1) 0.042em 0.065em, transparent 0.088em 0.14em),
-    radial-gradient(circle at 24% 32%, rgba(255, 255, 255, 0.2) 0 0.03em, transparent 0.072em),
-    radial-gradient(circle at 74% 66%, rgba(64, 93, 88, 0.13) 0 0.026em, transparent 0.065em);
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 0.022em, rgba(59, 78, 75, 0.035) 0.042em 0.065em, transparent 0.088em 0.14em),
+    radial-gradient(circle at 24% 32%, rgba(255, 255, 255, 0.06) 0 0.03em, transparent 0.072em),
+    radial-gradient(circle at 74% 66%, rgba(64, 93, 88, 0.04) 0 0.026em, transparent 0.065em);
   background-position: 0 0, 0 var(--cell-line-offset), var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse);
   background-size: 100% 100%, 100% 0.16em, 0.44em 0.4em, 0.54em 0.5em;
   background-blend-mode: normal, multiply, soft-light, multiply;
@@ -462,8 +468,8 @@ onBeforeUnmount(clearRevealTimer)
   border-radius: 0.12em;
   background:
     linear-gradient(112deg, rgba(206, 223, 217, var(--cell-core-light)), rgba(255, 255, 253, 0.98) 42%, rgba(215, 227, 221, 0.84)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.08) 0 0.025em, rgba(66, 88, 84, 0.09) 0.045em 0.07em, transparent 0.09em 0.15em),
-    radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.18) 0 0.028em, transparent 0.065em);
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 0.025em, rgba(66, 88, 84, 0.03) 0.045em 0.07em, transparent 0.09em 0.15em),
+    radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.05) 0 0.028em, transparent 0.065em);
   background-position: 0 0, 0 var(--cell-line-offset), var(--cell-grain-x) var(--cell-grain-y);
   background-size: 100% 100%, 100% 0.17em, 0.42em 0.39em;
   background-blend-mode: normal, multiply, soft-light;
@@ -503,8 +509,8 @@ onBeforeUnmount(clearRevealTimer)
     linear-gradient(90deg, rgba(74, 232, 215, 0.22), transparent),
     linear-gradient(270deg, rgba(244, 87, 111, 0.2), transparent);
   background-position: 0 0, var(--cell-block-cyan-x) var(--cell-block-line-offset), calc(100% - var(--cell-block-red-x)) var(--cell-block-line-offset-red);
-  background-repeat: no-repeat, repeat-y, repeat-y;
-  background-size: 100% 100%, 58% 0.2em, 58% 0.2em;
+  background-repeat: no-repeat, no-repeat, no-repeat;
+  background-size: 100% 100%, 40% 0.15em, 40% 0.15em;
   -webkit-mask-image: repeating-linear-gradient(0deg, transparent 0 0.035em, rgba(0, 0, 0, 0.9) 0.055em 0.13em, transparent 0.155em 0.2em);
   -webkit-mask-repeat: repeat;
   mask-image: repeating-linear-gradient(0deg, transparent 0 0.035em, rgba(0, 0, 0, 0.9) 0.055em 0.13em, transparent 0.155em 0.2em);
@@ -516,11 +522,11 @@ onBeforeUnmount(clearRevealTimer)
   position: absolute;
   inset: 0;
   content: "";
-  opacity: 0.22;
+  opacity: 0.06;
   background:
     radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.72) 0 0.03em, transparent 0.07em),
     radial-gradient(circle at 76% 66%, rgba(56, 85, 80, 0.38) 0 0.028em, transparent 0.065em),
-    repeating-linear-gradient(0deg, transparent 0 0.06em, rgba(244, 246, 238, 0.12) 0.075em 0.095em, transparent 0.12em 0.18em);
+    repeating-linear-gradient(0deg, transparent 0 0.06em, rgba(244, 246, 238, 0.035) 0.075em 0.095em, transparent 0.12em 0.18em);
   background-position: var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse), 0 var(--cell-block-line-offset);
   background-size: 0.39em 0.36em, 0.52em 0.48em, 100% 0.2em;
   mix-blend-mode: soft-light;
