@@ -82,49 +82,106 @@
           <filter id="signal-shared-chromatic-residual-small" x="-4%" y="-8%" width="108%" height="116%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
             <feOffset in="SourceAlpha" dx="-0.63" dy="-0.108" result="cyanOffsetAlpha" />
             <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="out" result="cyanResidualAlpha" />
-            <feMorphology in="cyanResidualAlpha" operator="dilate" radius="0.58 0.22" result="cyanBandAlpha" />
-            <feFlood flood-color="#4ae8d7" flood-opacity="0.58" result="cyanPaint" />
-            <feComposite in="cyanPaint" in2="cyanBandAlpha" operator="in" result="cyanResidual" />
+            <feMorphology in="cyanResidualAlpha" operator="dilate" radius="0.58 0.22" result="cyanOuterBandAlpha" />
+            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="in" result="cyanOverlapAlpha" />
+            <feMorphology in="SourceAlpha" operator="erode" radius="0.36 0.075" result="cyanCoreAlpha" />
+            <feComposite in="cyanOverlapAlpha" in2="cyanCoreAlpha" operator="out" result="cyanInnerBandAlpha" />
+            <feFlood flood-color="#d1d1d1" flood-opacity="0.58" result="cyanPaint" />
+            <feComposite in="cyanPaint" in2="cyanOuterBandAlpha" operator="in" result="cyanOuterBand" />
             <feOffset in="SourceAlpha" dx="0.72" dy="0.108" result="redOffsetAlpha" />
             <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="out" result="redResidualAlpha" />
-            <feMorphology in="redResidualAlpha" operator="dilate" radius="0.62 0.24" result="redBandAlpha" />
-            <feFlood flood-color="#f4576f" flood-opacity="0.50" result="redPaint" />
-            <feComposite in="redPaint" in2="redBandAlpha" operator="in" result="redResidual" />
+            <feMorphology in="redResidualAlpha" operator="dilate" radius="0.62 0.24" result="redOuterBandAlpha" />
+            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="in" result="redOverlapAlpha" />
+            <feMorphology in="SourceAlpha" operator="erode" radius="0.4 0.08" result="redCoreAlpha" />
+            <feComposite in="redOverlapAlpha" in2="redCoreAlpha" operator="out" result="redInnerBandAlpha" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="167" result="chromaScanField" />
+            <feColorMatrix in="chromaScanField" type="luminanceToAlpha" result="chromaScanLuma" />
+            <feComponentTransfer in="chromaScanLuma" result="chromaScanAlpha">
+              <feFuncA type="table" tableValues="0.66 1" />
+            </feComponentTransfer>
+            <feComposite in="cyanInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="cyanScannedInnerBandAlpha" />
+            <feGaussianBlur in="cyanScannedInnerBandAlpha" stdDeviation="0.1 0.035" result="cyanSoftInnerBandAlpha" />
+            <feComposite in="cyanPaint" in2="cyanSoftInnerBandAlpha" operator="in" result="cyanInnerBand" />
+            <feFlood flood-color="#8e8e8e" flood-opacity="0.50" result="redPaint" />
+            <feComposite in="redPaint" in2="redOuterBandAlpha" operator="in" result="redOuterBand" />
+            <feComposite in="redInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="redScannedInnerBandAlpha" />
+            <feGaussianBlur in="redScannedInnerBandAlpha" stdDeviation="0.1 0.035" result="redSoftInnerBandAlpha" />
+            <feComposite in="redPaint" in2="redSoftInnerBandAlpha" operator="in" result="redInnerBand" />
             <feMerge>
-              <feMergeNode in="cyanResidual" />
-              <feMergeNode in="redResidual" />
+              <feMergeNode in="cyanOuterBand" />
+              <feMergeNode in="cyanInnerBand" />
+              <feMergeNode in="redOuterBand" />
+              <feMergeNode in="redInnerBand" />
             </feMerge>
           </filter>
           <filter id="signal-shared-chromatic-residual-medium" x="-4%" y="-8%" width="108%" height="116%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
             <feOffset in="SourceAlpha" dx="-0.7" dy="-0.12" result="cyanOffsetAlpha" />
             <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="out" result="cyanResidualAlpha" />
-            <feMorphology in="cyanResidualAlpha" operator="dilate" radius="0.64 0.24" result="cyanBandAlpha" />
-            <feFlood flood-color="#4ae8d7" flood-opacity="0.58" result="cyanPaint" />
-            <feComposite in="cyanPaint" in2="cyanBandAlpha" operator="in" result="cyanResidual" />
+            <feMorphology in="cyanResidualAlpha" operator="dilate" radius="0.64 0.24" result="cyanOuterBandAlpha" />
+            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="in" result="cyanOverlapAlpha" />
+            <feMorphology in="SourceAlpha" operator="erode" radius="0.4 0.085" result="cyanCoreAlpha" />
+            <feComposite in="cyanOverlapAlpha" in2="cyanCoreAlpha" operator="out" result="cyanInnerBandAlpha" />
+            <feFlood flood-color="#d1d1d1" flood-opacity="0.58" result="cyanPaint" />
+            <feComposite in="cyanPaint" in2="cyanOuterBandAlpha" operator="in" result="cyanOuterBand" />
             <feOffset in="SourceAlpha" dx="0.8" dy="0.12" result="redOffsetAlpha" />
             <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="out" result="redResidualAlpha" />
-            <feMorphology in="redResidualAlpha" operator="dilate" radius="0.68 0.26" result="redBandAlpha" />
-            <feFlood flood-color="#f4576f" flood-opacity="0.50" result="redPaint" />
-            <feComposite in="redPaint" in2="redBandAlpha" operator="in" result="redResidual" />
+            <feMorphology in="redResidualAlpha" operator="dilate" radius="0.68 0.26" result="redOuterBandAlpha" />
+            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="in" result="redOverlapAlpha" />
+            <feMorphology in="SourceAlpha" operator="erode" radius="0.44 0.095" result="redCoreAlpha" />
+            <feComposite in="redOverlapAlpha" in2="redCoreAlpha" operator="out" result="redInnerBandAlpha" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="167" result="chromaScanField" />
+            <feColorMatrix in="chromaScanField" type="luminanceToAlpha" result="chromaScanLuma" />
+            <feComponentTransfer in="chromaScanLuma" result="chromaScanAlpha">
+              <feFuncA type="table" tableValues="0.66 1" />
+            </feComponentTransfer>
+            <feComposite in="cyanInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="cyanScannedInnerBandAlpha" />
+            <feGaussianBlur in="cyanScannedInnerBandAlpha" stdDeviation="0.11 0.04" result="cyanSoftInnerBandAlpha" />
+            <feComposite in="cyanPaint" in2="cyanSoftInnerBandAlpha" operator="in" result="cyanInnerBand" />
+            <feFlood flood-color="#8e8e8e" flood-opacity="0.50" result="redPaint" />
+            <feComposite in="redPaint" in2="redOuterBandAlpha" operator="in" result="redOuterBand" />
+            <feComposite in="redInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="redScannedInnerBandAlpha" />
+            <feGaussianBlur in="redScannedInnerBandAlpha" stdDeviation="0.11 0.04" result="redSoftInnerBandAlpha" />
+            <feComposite in="redPaint" in2="redSoftInnerBandAlpha" operator="in" result="redInnerBand" />
             <feMerge>
-              <feMergeNode in="cyanResidual" />
-              <feMergeNode in="redResidual" />
+              <feMergeNode in="cyanOuterBand" />
+              <feMergeNode in="cyanInnerBand" />
+              <feMergeNode in="redOuterBand" />
+              <feMergeNode in="redInnerBand" />
             </feMerge>
           </filter>
           <filter id="signal-shared-chromatic-residual-large" x="-4%" y="-8%" width="108%" height="116%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
             <feOffset in="SourceAlpha" dx="-1.05" dy="-0.18" result="cyanOffsetAlpha" />
             <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="out" result="cyanResidualAlpha" />
-            <feMorphology in="cyanResidualAlpha" operator="dilate" radius="0.90 0.34" result="cyanBandAlpha" />
-            <feFlood flood-color="#4ae8d7" flood-opacity="0.58" result="cyanPaint" />
-            <feComposite in="cyanPaint" in2="cyanBandAlpha" operator="in" result="cyanResidual" />
+            <feMorphology in="cyanResidualAlpha" operator="dilate" radius="0.90 0.34" result="cyanOuterBandAlpha" />
+            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="in" result="cyanOverlapAlpha" />
+            <feMorphology in="SourceAlpha" operator="erode" radius="0.6 0.13" result="cyanCoreAlpha" />
+            <feComposite in="cyanOverlapAlpha" in2="cyanCoreAlpha" operator="out" result="cyanInnerBandAlpha" />
+            <feFlood flood-color="#d1d1d1" flood-opacity="0.58" result="cyanPaint" />
+            <feComposite in="cyanPaint" in2="cyanOuterBandAlpha" operator="in" result="cyanOuterBand" />
             <feOffset in="SourceAlpha" dx="1.2" dy="0.18" result="redOffsetAlpha" />
             <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="out" result="redResidualAlpha" />
-            <feMorphology in="redResidualAlpha" operator="dilate" radius="0.96 0.36" result="redBandAlpha" />
-            <feFlood flood-color="#f4576f" flood-opacity="0.50" result="redPaint" />
-            <feComposite in="redPaint" in2="redBandAlpha" operator="in" result="redResidual" />
+            <feMorphology in="redResidualAlpha" operator="dilate" radius="0.96 0.36" result="redOuterBandAlpha" />
+            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="in" result="redOverlapAlpha" />
+            <feMorphology in="SourceAlpha" operator="erode" radius="0.66 0.14" result="redCoreAlpha" />
+            <feComposite in="redOverlapAlpha" in2="redCoreAlpha" operator="out" result="redInnerBandAlpha" />
+            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="167" result="chromaScanField" />
+            <feColorMatrix in="chromaScanField" type="luminanceToAlpha" result="chromaScanLuma" />
+            <feComponentTransfer in="chromaScanLuma" result="chromaScanAlpha">
+              <feFuncA type="table" tableValues="0.66 1" />
+            </feComponentTransfer>
+            <feComposite in="cyanInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="cyanScannedInnerBandAlpha" />
+            <feGaussianBlur in="cyanScannedInnerBandAlpha" stdDeviation="0.16 0.055" result="cyanSoftInnerBandAlpha" />
+            <feComposite in="cyanPaint" in2="cyanSoftInnerBandAlpha" operator="in" result="cyanInnerBand" />
+            <feFlood flood-color="#8e8e8e" flood-opacity="0.50" result="redPaint" />
+            <feComposite in="redPaint" in2="redOuterBandAlpha" operator="in" result="redOuterBand" />
+            <feComposite in="redInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="redScannedInnerBandAlpha" />
+            <feGaussianBlur in="redScannedInnerBandAlpha" stdDeviation="0.16 0.055" result="redSoftInnerBandAlpha" />
+            <feComposite in="redPaint" in2="redSoftInnerBandAlpha" operator="in" result="redInnerBand" />
             <feMerge>
-              <feMergeNode in="cyanResidual" />
-              <feMergeNode in="redResidual" />
+              <feMergeNode in="cyanOuterBand" />
+              <feMergeNode in="cyanInnerBand" />
+              <feMergeNode in="redOuterBand" />
+              <feMergeNode in="redInnerBand" />
             </feMerge>
           </filter>
         </defs>
@@ -290,10 +347,7 @@ const signalCellStyle = (character) => {
     '--cell-grain-y': `${grainY.toFixed(3)}em`,
     '--cell-grain-x-inverse': `${(-grainX).toFixed(3)}em`,
     '--cell-grain-y-inverse': `${(-grainY).toFixed(3)}em`,
-    '--cell-block-cyan-x': `${(stableUnit(index, 11) * 0.07).toFixed(3)}em`,
-    '--cell-block-red-x': `${(stableUnit(index, 12) * 0.07).toFixed(3)}em`,
     '--cell-block-line-offset': `${blockLineOffset.toFixed(3)}em`,
-    '--cell-block-line-offset-red': `${(blockLineOffset * 0.7).toFixed(3)}em`,
   }
 }
 
@@ -358,8 +412,6 @@ onBeforeUnmount(clearRevealTimer)
 
 .signal-study {
   --signal-paper: #edf0e8;
-  --signal-cyan: rgba(93, 224, 214, 0.72);
-  --signal-red: rgba(235, 93, 113, 0.66);
   --signal-ink: #030405;
   font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Noto Sans CJK JP", sans-serif;
 }
@@ -575,24 +627,6 @@ onBeforeUnmount(clearRevealTimer)
   margin-top: 0.16em;
 }
 
-.signal-placeholder::after {
-  position: absolute;
-  inset: 0;
-  content: "";
-  opacity: 0.18;
-  background:
-    linear-gradient(90deg, rgba(74, 232, 215, 0.22), transparent),
-    linear-gradient(270deg, rgba(244, 87, 111, 0.2), transparent);
-  background-position: var(--cell-block-cyan-x) var(--cell-block-line-offset), calc(100% - var(--cell-block-red-x)) var(--cell-block-line-offset-red);
-  background-repeat: no-repeat, no-repeat;
-  background-size: 40% 0.15em, 40% 0.15em;
-  -webkit-mask-image: repeating-linear-gradient(0deg, transparent 0 0.035em, rgba(0, 0, 0, 0.9) 0.055em 0.13em, transparent 0.155em 0.2em);
-  -webkit-mask-repeat: repeat;
-  mask-image: repeating-linear-gradient(0deg, transparent 0 0.035em, rgba(0, 0, 0, 0.9) 0.055em 0.13em, transparent 0.155em 0.2em);
-  mask-repeat: repeat;
-  mix-blend-mode: multiply;
-}
-
 .signal-placeholder::before {
   position: absolute;
   inset: 0;
@@ -614,8 +648,6 @@ onBeforeUnmount(clearRevealTimer)
   margin-bottom: 0.16em;
   background: var(--signal-paper);
   box-shadow:
-    -0.046em 0 rgba(93, 224, 214, 0.38),
-    0.052em 0 rgba(235, 93, 113, 0.31),
     0 0 0.36em rgba(237, 240, 232, 0.22);
   filter: url("#signal-foreground-sampling-b") blur(0.024em) drop-shadow(0 0 0.16em rgba(237, 240, 232, 0.16));
   animation: signal-caret-blink 0.9s steps(1, end) infinite;
