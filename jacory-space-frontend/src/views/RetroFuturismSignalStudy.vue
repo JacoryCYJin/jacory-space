@@ -6,7 +6,8 @@
       <div class="signal-noise" aria-hidden="true" />
       <div class="signal-vignette" aria-hidden="true" />
 
-      <div ref="signalCopyRef" class="signal-copy">
+      <div class="signal-copy">
+        <CrtChromaLayer />
         <CrtPhosphorDiffusionLayer
           :text-layout="textLayout"
           :revealed-count="revealedCount"
@@ -14,7 +15,6 @@
           :is-chinese-character="isChineseCharacter"
         />
         <CrtLumaLayer
-          ref="lumaLayerRef"
           :text-layout="textLayout"
           :characters="characters"
           :revealed-count="revealedCount"
@@ -22,30 +22,12 @@
           :is-chinese-character="isChineseCharacter"
           :signal-cell-style="signalCellStyle"
           :signal-cell-variant="signalCellVariant"
-          :scan-gate-href="sharedScanGateHref"
-          :scan-pitch="sharedScanGrid.scanPitch"
-          :local-scan-phase-y="lumaScanPhaseY"
-        />
-        <CrtChromaLayer
-          ref="chromaLayerRef"
-          :text-layout="textLayout"
-          :characters="characters"
-          :revealed-count="revealedCount"
-          :is-line-started="isLineStarted"
-          :is-chinese-character="isChineseCharacter"
-          :scan-gate-href="sharedScanGateHref"
-          :scan-pitch="sharedScanGrid.scanPitch"
-          :local-scan-phase-y="chromaScanPhaseY"
         />
         <CrtMediumLayer
-          ref="mediumLayerRef"
           :text-layout="textLayout"
           :revealed-count="revealedCount"
           :is-line-started="isLineStarted"
           :is-chinese-character="isChineseCharacter"
-          :scan-gate-href="sharedScanGateHref"
-          :scan-pitch="sharedScanGrid.scanPitch"
-          :local-scan-phase-y="mediumScanPhaseY"
         />
 
         <p class="sr-only" aria-live="polite">{{ testText }}</p>
@@ -57,7 +39,7 @@
 </template>
 
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import CrtChromaLayer from '../components/experiments/retro-futurism/CrtChromaLayer.vue'
 import CrtLumaLayer from '../components/experiments/retro-futurism/CrtLumaLayer.vue'
@@ -95,26 +77,6 @@ const testText = testParagraphs.map((paragraph) => paragraph.join('\n')).join('\
 const revealedCount = ref(0)
 const activeLineIndex = ref(0)
 const revealTimer = ref(null)
-const signalCopyRef = ref(null)
-const chromaLayerRef = ref(null)
-const lumaLayerRef = ref(null)
-const mediumLayerRef = ref(null)
-const chromaScanPhaseY = ref(0)
-const lumaScanPhaseY = ref(0)
-const mediumScanPhaseY = ref(0)
-
-const sharedScanGrid = Object.freeze({
-  scanPitch: 3.6,
-  litBandHeight: 2.2,
-  darkGapHeight: 1.4,
-  bandSoftness: 0.22,
-  scanPhase: 0,
-})
-const sharedScanGateSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="3.6" viewBox="0 0 1 3.6" preserveAspectRatio="none"><linearGradient id="g" x1="0" y1="0" x2="0" y2="1" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#000"/><stop offset="6.111111%" stop-color="#fff"/><stop offset="55%" stop-color="#fff"/><stop offset="61.111111%" stop-color="#000"/><stop offset="100%" stop-color="#000"/></linearGradient><rect width="1" height="3.6" fill="url(#g)"/></svg>'
-const sharedScanGateHref = `data:image/svg+xml,${encodeURIComponent(sharedScanGateSvg)}`
-
-let scanPhaseObserver = null
-let scanPhaseFrame = null
 
 const isLineStarted = (line) => activeLineIndex.value >= line.sequenceIndex
 const isChineseCharacter = (value) => locale.value.startsWith('zh') && /[\u3400-\u9fff\uf900-\ufaff]/u.test(value)
@@ -128,56 +90,20 @@ const signalCellVariant = (character) => {
 }
 const signalCellStyle = (character) => {
   const index = character.index
+  const lineOffset = stableUnit(index, 4) * 0.12
   const grainX = stableUnit(index, 5) * 0.18
   const grainY = stableUnit(index, 6) * 0.16
+  const blockLineOffset = stableUnit(index, 13) * 0.1
 
   return {
     '--cell-core-light': (0.975 + stableUnit(index, 3) * 0.015).toFixed(3),
+    '--cell-line-offset': `${lineOffset.toFixed(3)}em`,
     '--cell-grain-x': `${grainX.toFixed(3)}em`,
     '--cell-grain-y': `${grainY.toFixed(3)}em`,
     '--cell-grain-x-inverse': `${(-grainX).toFixed(3)}em`,
     '--cell-grain-y-inverse': `${(-grainY).toFixed(3)}em`,
+    '--cell-block-line-offset': `${blockLineOffset.toFixed(3)}em`,
   }
-}
-
-const modulo = (value, divisor) => ((value % divisor) + divisor) % divisor
-const getScanRoot = (layer) => layer?.scanRoot?.value ?? layer?.scanRoot ?? null
-const syncScanPhases = () => {
-  const signalCopy = signalCopyRef.value
-  const chromaRoot = getScanRoot(chromaLayerRef.value)
-  const lumaRoot = getScanRoot(lumaLayerRef.value)
-  const mediumRoot = getScanRoot(mediumLayerRef.value)
-
-  if (!signalCopy || !chromaRoot || !lumaRoot || !mediumRoot) return
-
-  const originY = signalCopy.getBoundingClientRect().top + sharedScanGrid.scanPhase
-  chromaScanPhaseY.value = modulo(originY - chromaRoot.getBoundingClientRect().top, sharedScanGrid.scanPitch)
-  lumaScanPhaseY.value = modulo(originY - lumaRoot.getBoundingClientRect().top, sharedScanGrid.scanPitch)
-  mediumScanPhaseY.value = modulo(originY - mediumRoot.getBoundingClientRect().top, sharedScanGrid.scanPitch)
-}
-const scheduleScanPhaseSync = () => {
-  if (scanPhaseFrame !== null) return
-
-  scanPhaseFrame = window.requestAnimationFrame(() => {
-    scanPhaseFrame = null
-    syncScanPhases()
-  })
-}
-const startScanPhaseSync = () => {
-  const signalCopy = signalCopyRef.value
-  const chromaRoot = getScanRoot(chromaLayerRef.value)
-  const lumaRoot = getScanRoot(lumaLayerRef.value)
-  const mediumRoot = getScanRoot(mediumLayerRef.value)
-
-  if (!signalCopy || !chromaRoot || !lumaRoot || !mediumRoot) return
-
-  scanPhaseObserver = new ResizeObserver(scheduleScanPhaseSync)
-  scanPhaseObserver.observe(signalCopy)
-  scanPhaseObserver.observe(chromaRoot)
-  scanPhaseObserver.observe(lumaRoot)
-  scanPhaseObserver.observe(mediumRoot)
-  document.fonts?.ready?.then(scheduleScanPhaseSync)
-  scheduleScanPhaseSync()
 }
 
 const clearRevealTimer = () => {
@@ -226,19 +152,8 @@ const beginReveal = () => {
   revealNext(900)
 }
 
-onMounted(async () => {
-  beginReveal()
-  await nextTick()
-  startScanPhaseSync()
-})
-onBeforeUnmount(() => {
-  clearRevealTimer()
-  scanPhaseObserver?.disconnect()
-
-  if (scanPhaseFrame !== null) {
-    window.cancelAnimationFrame(scanPhaseFrame)
-  }
-})
+onMounted(beginReveal)
+onBeforeUnmount(clearRevealTimer)
 </script>
 
 <style scoped>

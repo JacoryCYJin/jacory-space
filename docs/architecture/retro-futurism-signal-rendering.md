@@ -16,6 +16,8 @@ RetroFuturismSignalStudy.vue
 
 `RetroFuturismSignalStudy.vue` 统一保存文本、字符索引、逐字播放状态和屏幕级背景效果。四层不维护计时器，也不相互调用；它们只接收父组件已计算好的显示状态。
 
+当前基线是“四层已拆分、Chroma 空输出”的版本：页面不包含共享扫描坐标接线、扫描 gate 或红青色层。后续重新设计色度时，必须从这个无色基线单独建立方案，不能把试验性输出写回 Luma、Phosphor 或 Medium。
+
 当前 CSS 合成顺序固定为：
 
 | 层 | Root class | z-index | 当前状态 |

@@ -1,7 +1,6 @@
 <template>
   <div
     id="signal-caption"
-    ref="scanRoot"
     class="signal-luma-glyphs text-left font-sans text-lg font-semibold leading-relaxed tracking-normal sm:text-xl md:text-3xl"
     aria-hidden="true"
   >
@@ -18,17 +17,6 @@
         <filter id="signal-foreground-sampling-c" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
           <feTurbulence type="fractalNoise" baseFrequency="0.78 0.13" numOctaves="1" seed="47" result="samplingNoise" />
           <feDisplacementMap in="SourceGraphic" in2="samplingNoise" scale="0.31" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-        <filter id="signal-luma-shared-scan" x="-16%" y="-16%" width="132%" height="132%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-          <feImage :href="scanGateHref" x="0" :y="localScanPhaseY" width="1" :height="scanPitch" preserveAspectRatio="none" result="scanTile" />
-          <feTile in="scanTile" result="scanField" />
-          <feComponentTransfer in="scanField" result="scanBrightness">
-            <feFuncR type="linear" slope="0.18" intercept="0.82" />
-            <feFuncG type="linear" slope="0.18" intercept="0.82" />
-          <feFuncB type="linear" slope="0.18" intercept="0.82" />
-          </feComponentTransfer>
-          <feComposite in="scanBrightness" in2="SourceAlpha" operator="in" result="maskedScanBrightness" />
-          <feBlend in="SourceGraphic" in2="maskedScanBrightness" mode="multiply" />
         </filter>
       </defs>
     </svg>
@@ -65,10 +53,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
-const scanRoot = ref(null)
-
 defineProps({
   textLayout: { type: Array, required: true },
   revealedCount: { type: Number, required: true },
@@ -77,12 +61,7 @@ defineProps({
   isChineseCharacter: { type: Function, required: true },
   signalCellStyle: { type: Function, required: true },
   signalCellVariant: { type: Function, required: true },
-  scanGateHref: { type: String, required: true },
-  scanPitch: { type: Number, required: true },
-  localScanPhaseY: { type: Number, required: true },
 })
-
-defineExpose({ scanRoot })
 </script>
 
 <style scoped>
@@ -98,7 +77,6 @@ defineExpose({ scanRoot })
   letter-spacing: 0;
   white-space: normal;
   z-index: 2;
-  filter: url("#signal-luma-shared-scan");
 }
 
 .signal-filter-definitions {
@@ -157,11 +135,12 @@ defineExpose({ scanRoot })
   color: transparent;
   background:
     linear-gradient(104deg, rgba(214, 228, 221, var(--cell-core-light)), rgba(255, 255, 251, 0.98) 38%, rgba(202, 222, 217, 0.88) 74%, rgba(244, 246, 238, 0.95)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 0.022em, rgba(59, 78, 75, 0.035) 0.042em 0.065em, transparent 0.088em 0.14em),
     radial-gradient(circle at 24% 32%, rgba(255, 255, 255, 0.06) 0 0.03em, transparent 0.072em),
     radial-gradient(circle at 74% 66%, rgba(64, 93, 88, 0.04) 0 0.026em, transparent 0.065em);
-  background-position: 0 0, var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse);
-  background-size: 100% 100%, 0.44em 0.4em, 0.54em 0.5em;
-  background-blend-mode: normal, soft-light, multiply;
+  background-position: 0 0, 0 var(--cell-line-offset), var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse);
+  background-size: 100% 100%, 100% 0.16em, 0.44em 0.4em, 0.54em 0.5em;
+  background-blend-mode: normal, multiply, soft-light, multiply;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -189,10 +168,11 @@ defineExpose({ scanRoot })
   border-radius: 0.12em;
   background:
     linear-gradient(112deg, rgba(206, 223, 217, var(--cell-core-light)), rgba(255, 255, 253, 0.98) 42%, rgba(215, 227, 221, 0.84)),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 0.025em, rgba(66, 88, 84, 0.03) 0.045em 0.07em, transparent 0.09em 0.15em),
     radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.05) 0 0.028em, transparent 0.065em);
-  background-position: 0 0, var(--cell-grain-x) var(--cell-grain-y);
-  background-size: 100% 100%, 0.42em 0.39em;
-  background-blend-mode: normal, soft-light;
+  background-position: 0 0, 0 var(--cell-line-offset), var(--cell-grain-x) var(--cell-grain-y);
+  background-size: 100% 100%, 100% 0.17em, 0.42em 0.39em;
+  background-blend-mode: normal, multiply, soft-light;
   box-shadow: 0 0 0.44em rgba(237, 240, 232, 0.18);
   filter: url("#signal-foreground-sampling-b") blur(0.028em) drop-shadow(0 0 0.22em rgba(237, 240, 232, 0.14));
 }
@@ -219,9 +199,10 @@ defineExpose({ scanRoot })
   opacity: 0.06;
   background:
     radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.72) 0 0.03em, transparent 0.07em),
-    radial-gradient(circle at 76% 66%, rgba(56, 85, 80, 0.38) 0 0.028em, transparent 0.065em);
-  background-position: var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse);
-  background-size: 0.39em 0.36em, 0.52em 0.48em;
+    radial-gradient(circle at 76% 66%, rgba(56, 85, 80, 0.38) 0 0.028em, transparent 0.065em),
+    repeating-linear-gradient(0deg, transparent 0 0.06em, rgba(244, 246, 238, 0.035) 0.075em 0.095em, transparent 0.12em 0.18em);
+  background-position: var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse), 0 var(--cell-block-line-offset);
+  background-size: 0.39em 0.36em, 0.52em 0.48em, 100% 0.2em;
   mix-blend-mode: soft-light;
 }
 
