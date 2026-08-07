@@ -5,279 +5,30 @@
       <div class="signal-letterbox signal-letterbox-bottom" aria-hidden="true" />
       <div class="signal-noise" aria-hidden="true" />
       <div class="signal-vignette" aria-hidden="true" />
-      <svg class="signal-filter-definitions" aria-hidden="true" focusable="false">
-        <defs>
-          <filter id="signal-shared-medium-small" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
-            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
-            <feComposite in="grainField" in2="scanField" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="rawMediumField" />
-            <feComponentTransfer in="rawMediumField" result="neutralMediumField">
-              <feFuncR type="linear" slope="0.16" intercept="0.42" />
-              <feFuncG type="linear" slope="0.16" intercept="0.42" />
-              <feFuncB type="linear" slope="0.16" intercept="0.42" />
-            </feComponentTransfer>
-            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
-            <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
-            <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
-              <feFuncA type="table" tableValues="0.88 1" />
-            </feComponentTransfer>
-            <feMorphology in="SourceAlpha" operator="erode" radius="0.52 0.22" result="erodedContentAlpha" />
-            <feGaussianBlur in="erodedContentAlpha" stdDeviation="0.34 0.14" result="softenedInteriorAlpha" />
-            <feComposite in="softenedInteriorAlpha" in2="SourceAlpha" operator="in" result="interiorContentAlpha" />
-            <feComposite in="interiorContentAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
-            <feComposite in="neutralMediumField" in2="contentAlpha" operator="in" />
-          </filter>
-          <filter id="signal-shared-medium-medium" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
-            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
-            <feComposite in="grainField" in2="scanField" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="rawMediumField" />
-            <feComponentTransfer in="rawMediumField" result="neutralMediumField">
-              <feFuncR type="linear" slope="0.16" intercept="0.42" />
-              <feFuncG type="linear" slope="0.16" intercept="0.42" />
-              <feFuncB type="linear" slope="0.16" intercept="0.42" />
-            </feComponentTransfer>
-            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
-            <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
-            <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
-              <feFuncA type="table" tableValues="0.88 1" />
-            </feComponentTransfer>
-            <feMorphology in="SourceAlpha" operator="erode" radius="0.58 0.24" result="erodedContentAlpha" />
-            <feGaussianBlur in="erodedContentAlpha" stdDeviation="0.38 0.16" result="softenedInteriorAlpha" />
-            <feComposite in="softenedInteriorAlpha" in2="SourceAlpha" operator="in" result="interiorContentAlpha" />
-            <feComposite in="interiorContentAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
-            <feComposite in="neutralMediumField" in2="contentAlpha" operator="in" />
-          </filter>
-          <filter id="signal-shared-medium-large" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
-            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
-            <feComposite in="grainField" in2="scanField" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="rawMediumField" />
-            <feComponentTransfer in="rawMediumField" result="neutralMediumField">
-              <feFuncR type="linear" slope="0.16" intercept="0.42" />
-              <feFuncG type="linear" slope="0.16" intercept="0.42" />
-              <feFuncB type="linear" slope="0.16" intercept="0.42" />
-            </feComponentTransfer>
-            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
-            <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
-            <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
-              <feFuncA type="table" tableValues="0.88 1" />
-            </feComponentTransfer>
-            <feMorphology in="SourceAlpha" operator="erode" radius="0.86 0.36" result="erodedContentAlpha" />
-            <feGaussianBlur in="erodedContentAlpha" stdDeviation="0.56 0.24" result="softenedInteriorAlpha" />
-            <feComposite in="softenedInteriorAlpha" in2="SourceAlpha" operator="in" result="interiorContentAlpha" />
-            <feComposite in="interiorContentAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
-            <feComposite in="neutralMediumField" in2="contentAlpha" operator="in" />
-          </filter>
-          <filter id="signal-foreground-sampling-a" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.72 0.16" numOctaves="1" seed="13" result="samplingNoise" />
-            <feDisplacementMap in="SourceGraphic" in2="samplingNoise" scale="0.34" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-          <filter id="signal-foreground-sampling-b" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.66 0.19" numOctaves="1" seed="29" result="samplingNoise" />
-            <feDisplacementMap in="SourceGraphic" in2="samplingNoise" scale="0.38" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-          <filter id="signal-foreground-sampling-c" x="-16%" y="-16%" width="132%" height="132%" color-interpolation-filters="sRGB">
-            <feTurbulence type="fractalNoise" baseFrequency="0.78 0.13" numOctaves="1" seed="47" result="samplingNoise" />
-            <feDisplacementMap in="SourceGraphic" in2="samplingNoise" scale="0.31" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-          <filter id="signal-shared-chromatic-residual-small" x="-4%" y="-8%" width="108%" height="116%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-            <feOffset in="SourceAlpha" dx="-0.63" dy="-0.108" result="cyanOffsetAlpha" />
-            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="out" result="cyanResidualAlpha" />
-            <feMorphology in="cyanResidualAlpha" operator="dilate" radius="0.58 0.22" result="cyanOuterBandAlpha" />
-            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="in" result="cyanOverlapAlpha" />
-            <feMorphology in="SourceAlpha" operator="erode" radius="0.36 0.075" result="cyanCoreAlpha" />
-            <feComposite in="cyanOverlapAlpha" in2="cyanCoreAlpha" operator="out" result="cyanInnerBandAlpha" />
-            <feFlood flood-color="#d1d1d1" flood-opacity="0.58" result="cyanPaint" />
-            <feComposite in="cyanPaint" in2="cyanOuterBandAlpha" operator="in" result="cyanOuterBand" />
-            <feOffset in="SourceAlpha" dx="0.72" dy="0.108" result="redOffsetAlpha" />
-            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="out" result="redResidualAlpha" />
-            <feMorphology in="redResidualAlpha" operator="dilate" radius="0.62 0.24" result="redOuterBandAlpha" />
-            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="in" result="redOverlapAlpha" />
-            <feMorphology in="SourceAlpha" operator="erode" radius="0.4 0.08" result="redCoreAlpha" />
-            <feComposite in="redOverlapAlpha" in2="redCoreAlpha" operator="out" result="redInnerBandAlpha" />
-            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="167" result="chromaScanField" />
-            <feColorMatrix in="chromaScanField" type="luminanceToAlpha" result="chromaScanLuma" />
-            <feComponentTransfer in="chromaScanLuma" result="chromaScanAlpha">
-              <feFuncA type="table" tableValues="0.66 1" />
-            </feComponentTransfer>
-            <feComposite in="cyanInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="cyanScannedInnerBandAlpha" />
-            <feGaussianBlur in="cyanScannedInnerBandAlpha" stdDeviation="0.1 0.035" result="cyanSoftInnerBandAlpha" />
-            <feComposite in="cyanPaint" in2="cyanSoftInnerBandAlpha" operator="in" result="cyanInnerBand" />
-            <feFlood flood-color="#8e8e8e" flood-opacity="0.50" result="redPaint" />
-            <feComposite in="redPaint" in2="redOuterBandAlpha" operator="in" result="redOuterBand" />
-            <feComposite in="redInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="redScannedInnerBandAlpha" />
-            <feGaussianBlur in="redScannedInnerBandAlpha" stdDeviation="0.1 0.035" result="redSoftInnerBandAlpha" />
-            <feComposite in="redPaint" in2="redSoftInnerBandAlpha" operator="in" result="redInnerBand" />
-            <feMerge>
-              <feMergeNode in="cyanOuterBand" />
-              <feMergeNode in="cyanInnerBand" />
-              <feMergeNode in="redOuterBand" />
-              <feMergeNode in="redInnerBand" />
-            </feMerge>
-          </filter>
-          <filter id="signal-shared-chromatic-residual-medium" x="-4%" y="-8%" width="108%" height="116%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-            <feOffset in="SourceAlpha" dx="-0.7" dy="-0.12" result="cyanOffsetAlpha" />
-            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="out" result="cyanResidualAlpha" />
-            <feMorphology in="cyanResidualAlpha" operator="dilate" radius="0.64 0.24" result="cyanOuterBandAlpha" />
-            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="in" result="cyanOverlapAlpha" />
-            <feMorphology in="SourceAlpha" operator="erode" radius="0.4 0.085" result="cyanCoreAlpha" />
-            <feComposite in="cyanOverlapAlpha" in2="cyanCoreAlpha" operator="out" result="cyanInnerBandAlpha" />
-            <feFlood flood-color="#d1d1d1" flood-opacity="0.58" result="cyanPaint" />
-            <feComposite in="cyanPaint" in2="cyanOuterBandAlpha" operator="in" result="cyanOuterBand" />
-            <feOffset in="SourceAlpha" dx="0.8" dy="0.12" result="redOffsetAlpha" />
-            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="out" result="redResidualAlpha" />
-            <feMorphology in="redResidualAlpha" operator="dilate" radius="0.68 0.26" result="redOuterBandAlpha" />
-            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="in" result="redOverlapAlpha" />
-            <feMorphology in="SourceAlpha" operator="erode" radius="0.44 0.095" result="redCoreAlpha" />
-            <feComposite in="redOverlapAlpha" in2="redCoreAlpha" operator="out" result="redInnerBandAlpha" />
-            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="167" result="chromaScanField" />
-            <feColorMatrix in="chromaScanField" type="luminanceToAlpha" result="chromaScanLuma" />
-            <feComponentTransfer in="chromaScanLuma" result="chromaScanAlpha">
-              <feFuncA type="table" tableValues="0.66 1" />
-            </feComponentTransfer>
-            <feComposite in="cyanInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="cyanScannedInnerBandAlpha" />
-            <feGaussianBlur in="cyanScannedInnerBandAlpha" stdDeviation="0.11 0.04" result="cyanSoftInnerBandAlpha" />
-            <feComposite in="cyanPaint" in2="cyanSoftInnerBandAlpha" operator="in" result="cyanInnerBand" />
-            <feFlood flood-color="#8e8e8e" flood-opacity="0.50" result="redPaint" />
-            <feComposite in="redPaint" in2="redOuterBandAlpha" operator="in" result="redOuterBand" />
-            <feComposite in="redInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="redScannedInnerBandAlpha" />
-            <feGaussianBlur in="redScannedInnerBandAlpha" stdDeviation="0.11 0.04" result="redSoftInnerBandAlpha" />
-            <feComposite in="redPaint" in2="redSoftInnerBandAlpha" operator="in" result="redInnerBand" />
-            <feMerge>
-              <feMergeNode in="cyanOuterBand" />
-              <feMergeNode in="cyanInnerBand" />
-              <feMergeNode in="redOuterBand" />
-              <feMergeNode in="redInnerBand" />
-            </feMerge>
-          </filter>
-          <filter id="signal-shared-chromatic-residual-large" x="-4%" y="-8%" width="108%" height="116%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-            <feOffset in="SourceAlpha" dx="-1.05" dy="-0.18" result="cyanOffsetAlpha" />
-            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="out" result="cyanResidualAlpha" />
-            <feMorphology in="cyanResidualAlpha" operator="dilate" radius="0.90 0.34" result="cyanOuterBandAlpha" />
-            <feComposite in="cyanOffsetAlpha" in2="SourceAlpha" operator="in" result="cyanOverlapAlpha" />
-            <feMorphology in="SourceAlpha" operator="erode" radius="0.6 0.13" result="cyanCoreAlpha" />
-            <feComposite in="cyanOverlapAlpha" in2="cyanCoreAlpha" operator="out" result="cyanInnerBandAlpha" />
-            <feFlood flood-color="#d1d1d1" flood-opacity="0.58" result="cyanPaint" />
-            <feComposite in="cyanPaint" in2="cyanOuterBandAlpha" operator="in" result="cyanOuterBand" />
-            <feOffset in="SourceAlpha" dx="1.2" dy="0.18" result="redOffsetAlpha" />
-            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="out" result="redResidualAlpha" />
-            <feMorphology in="redResidualAlpha" operator="dilate" radius="0.96 0.36" result="redOuterBandAlpha" />
-            <feComposite in="redOffsetAlpha" in2="SourceAlpha" operator="in" result="redOverlapAlpha" />
-            <feMorphology in="SourceAlpha" operator="erode" radius="0.66 0.14" result="redCoreAlpha" />
-            <feComposite in="redOverlapAlpha" in2="redCoreAlpha" operator="out" result="redInnerBandAlpha" />
-            <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="167" result="chromaScanField" />
-            <feColorMatrix in="chromaScanField" type="luminanceToAlpha" result="chromaScanLuma" />
-            <feComponentTransfer in="chromaScanLuma" result="chromaScanAlpha">
-              <feFuncA type="table" tableValues="0.66 1" />
-            </feComponentTransfer>
-            <feComposite in="cyanInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="cyanScannedInnerBandAlpha" />
-            <feGaussianBlur in="cyanScannedInnerBandAlpha" stdDeviation="0.16 0.055" result="cyanSoftInnerBandAlpha" />
-            <feComposite in="cyanPaint" in2="cyanSoftInnerBandAlpha" operator="in" result="cyanInnerBand" />
-            <feFlood flood-color="#8e8e8e" flood-opacity="0.50" result="redPaint" />
-            <feComposite in="redPaint" in2="redOuterBandAlpha" operator="in" result="redOuterBand" />
-            <feComposite in="redInnerBandAlpha" in2="chromaScanAlpha" operator="in" result="redScannedInnerBandAlpha" />
-            <feGaussianBlur in="redScannedInnerBandAlpha" stdDeviation="0.16 0.055" result="redSoftInnerBandAlpha" />
-            <feComposite in="redPaint" in2="redSoftInnerBandAlpha" operator="in" result="redInnerBand" />
-            <feMerge>
-              <feMergeNode in="cyanOuterBand" />
-              <feMergeNode in="cyanInnerBand" />
-              <feMergeNode in="redOuterBand" />
-              <feMergeNode in="redInnerBand" />
-            </feMerge>
-          </filter>
-        </defs>
-      </svg>
 
       <div class="signal-copy">
-        <div
-          id="signal-caption"
-          class="signal-glyphs text-left font-sans text-lg font-semibold leading-relaxed tracking-normal sm:text-xl md:text-3xl"
-          aria-hidden="true"
-        >
-          <div v-for="(paragraph, paragraphIndex) in textLayout" :key="paragraphIndex" class="signal-paragraph">
-            <div v-for="(line, lineIndex) in paragraph" :key="lineIndex" class="signal-line">
-              <template v-if="isLineStarted(line)">
-                <span
-                  v-for="character in line.characters"
-                  :key="character.index"
-                  class="signal-cell"
-                  :style="signalCellStyle(character)"
-                  :class="[signalCellVariant(character), {
-                    'is-chinese-cell': isChineseCharacter(character.value),
-                    'is-active': character.index === revealedCount && revealedCount < characters.length,
-                    'is-revealed': character.index < revealedCount,
-                    'is-placeholder': character.index > revealedCount,
-                  }]"
-                >
-                  <span
-                    v-if="character.index < revealedCount"
-                    class="signal-char"
-                    :class="{ 'is-chinese': isChineseCharacter(character.value) }"
-                  >{{ character.value }}</span>
-                  <span v-else-if="character.index === revealedCount" class="signal-placeholder is-active">
-                    <span class="signal-caret" aria-hidden="true" />
-                  </span>
-                  <span v-else class="signal-placeholder" />
-                </span>
-              </template>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="signal-chromatic-residual-glyphs text-left font-sans text-lg font-semibold leading-relaxed tracking-normal sm:text-xl md:text-3xl"
-          aria-hidden="true"
-        >
-          <div v-for="(paragraph, paragraphIndex) in textLayout" :key="paragraphIndex" class="signal-paragraph">
-            <div v-for="(line, lineIndex) in paragraph" :key="lineIndex" class="signal-line">
-              <template v-if="isLineStarted(line)">
-                <span
-                  v-for="character in line.characters"
-                  :key="character.index"
-                  class="signal-medium-cell"
-                  :class="{ 'is-chinese-cell': isChineseCharacter(character.value) }"
-                >
-                  <span
-                    v-if="character.index < revealedCount"
-                    class="signal-medium-char"
-                    :class="{ 'is-chinese': isChineseCharacter(character.value) }"
-                  >{{ character.value }}</span>
-                  <span v-else-if="character.index === revealedCount" class="signal-medium-placeholder is-active">
-                    <span class="signal-medium-caret" />
-                  </span>
-                  <span v-else class="signal-medium-placeholder" />
-                </span>
-              </template>
-            </div>
-          </div>
-        </div>
-
-        <div
-          class="signal-medium-glyphs text-left font-sans text-lg font-semibold leading-relaxed tracking-normal sm:text-xl md:text-3xl"
-          aria-hidden="true"
-        >
-          <div v-for="(paragraph, paragraphIndex) in textLayout" :key="paragraphIndex" class="signal-paragraph">
-            <div v-for="(line, lineIndex) in paragraph" :key="lineIndex" class="signal-line">
-              <template v-if="isLineStarted(line)">
-                <span
-                  v-for="character in line.characters"
-                  :key="character.index"
-                  class="signal-medium-cell"
-                  :class="{ 'is-chinese-cell': isChineseCharacter(character.value) }"
-                >
-                  <span
-                    v-if="character.index < revealedCount"
-                    class="signal-medium-char"
-                    :class="{ 'is-chinese': isChineseCharacter(character.value) }"
-                  >{{ character.value }}</span>
-                  <span v-else-if="character.index === revealedCount" class="signal-medium-placeholder is-active">
-                    <span class="signal-medium-caret" />
-                  </span>
-                  <span v-else class="signal-medium-placeholder" />
-                </span>
-              </template>
-            </div>
-          </div>
-        </div>
+        <CrtChromaLayer />
+        <CrtPhosphorDiffusionLayer
+          :text-layout="textLayout"
+          :revealed-count="revealedCount"
+          :is-line-started="isLineStarted"
+          :is-chinese-character="isChineseCharacter"
+        />
+        <CrtLumaLayer
+          :text-layout="textLayout"
+          :characters="characters"
+          :revealed-count="revealedCount"
+          :is-line-started="isLineStarted"
+          :is-chinese-character="isChineseCharacter"
+          :signal-cell-style="signalCellStyle"
+          :signal-cell-variant="signalCellVariant"
+        />
+        <CrtMediumLayer
+          :text-layout="textLayout"
+          :revealed-count="revealedCount"
+          :is-line-started="isLineStarted"
+          :is-chinese-character="isChineseCharacter"
+        />
 
         <p class="sr-only" aria-live="polite">{{ testText }}</p>
       </div>
@@ -290,6 +41,10 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import CrtChromaLayer from '../components/experiments/retro-futurism/CrtChromaLayer.vue'
+import CrtLumaLayer from '../components/experiments/retro-futurism/CrtLumaLayer.vue'
+import CrtMediumLayer from '../components/experiments/retro-futurism/CrtMediumLayer.vue'
+import CrtPhosphorDiffusionLayer from '../components/experiments/retro-futurism/CrtPhosphorDiffusionLayer.vue'
 
 const { t, locale } = useI18n()
 const testParagraphs = [
@@ -422,289 +177,10 @@ onBeforeUnmount(clearRevealTimer)
     var(--signal-ink);
 }
 
-.signal-filter-definitions {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
 .signal-copy {
   position: absolute;
   inset: 0;
   z-index: 10;
-}
-
-.signal-glyphs,
-.signal-medium-glyphs,
-.signal-chromatic-residual-glyphs {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: fit-content;
-  max-width: min(52.5rem, calc(100% - 2.5rem));
-  color: var(--signal-paper);
-  transform: translate(-50%, -50%);
-  line-height: 1.3;
-  letter-spacing: 0;
-  white-space: normal;
-}
-
-.signal-glyphs {
-  z-index: 2;
-}
-
-.signal-chromatic-residual-glyphs {
-  z-index: 1;
-  overflow: visible;
-  pointer-events: none;
-  mix-blend-mode: normal;
-  filter: url("#signal-shared-chromatic-residual-small");
-}
-
-@media (min-width: 640px) {
-  .signal-chromatic-residual-glyphs {
-    filter: url("#signal-shared-chromatic-residual-medium");
-  }
-
-  .signal-medium-glyphs {
-    filter: url("#signal-shared-medium-medium");
-  }
-}
-
-@media (min-width: 768px) {
-  .signal-chromatic-residual-glyphs {
-    filter: url("#signal-shared-chromatic-residual-large");
-  }
-
-  .signal-medium-glyphs {
-    filter: url("#signal-shared-medium-large");
-  }
-}
-
-.signal-medium-glyphs {
-  z-index: 3;
-  pointer-events: none;
-  opacity: 0.68;
-  filter: url("#signal-shared-medium-small");
-  mix-blend-mode: soft-light;
-}
-
-.signal-paragraph {
-  display: grid;
-  row-gap: 0.38em;
-}
-
-.signal-line {
-  min-height: 1.3em;
-  line-height: 1.3;
-}
-
-.signal-paragraph + .signal-paragraph {
-  margin-top: 1.6em;
-}
-
-.signal-cell,
-.signal-medium-cell {
-  position: relative;
-  display: inline-block;
-  width: 1em;
-  height: 1.3em;
-  line-height: 1.3em;
-  vertical-align: top;
-}
-
-.signal-cell + .signal-cell,
-.signal-medium-cell + .signal-medium-cell {
-  margin-left: 0.22em;
-}
-
-.signal-cell.is-chinese-cell + .signal-cell,
-.signal-medium-cell.is-chinese-cell + .signal-medium-cell {
-  margin-left: 0.3em;
-}
-
-.signal-cell.is-space,
-.signal-medium-cell.is-space {
-  width: 0.5em;
-}
-
-.signal-char,
-.signal-placeholder,
-.signal-caret {
-  position: relative;
-  display: block;
-}
-
-.signal-char {
-  height: 1.3em;
-  line-height: 1.3em;
-  isolation: isolate;
-  color: transparent;
-  background:
-    linear-gradient(104deg, rgba(214, 228, 221, var(--cell-core-light)), rgba(255, 255, 251, 0.98) 38%, rgba(202, 222, 217, 0.88) 74%, rgba(244, 246, 238, 0.95)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 0.022em, rgba(59, 78, 75, 0.035) 0.042em 0.065em, transparent 0.088em 0.14em),
-    radial-gradient(circle at 24% 32%, rgba(255, 255, 255, 0.06) 0 0.03em, transparent 0.072em),
-    radial-gradient(circle at 74% 66%, rgba(64, 93, 88, 0.04) 0 0.026em, transparent 0.065em);
-  background-position: 0 0, 0 var(--cell-line-offset), var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse);
-  background-size: 100% 100%, 100% 0.16em, 0.44em 0.4em, 0.54em 0.5em;
-  background-blend-mode: normal, multiply, soft-light, multiply;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: url("#signal-foreground-sampling-b") blur(0.032em) drop-shadow(0 0 0.22em rgba(237, 240, 232, 0.15));
-}
-
-.signal-cell.signal-variant-a .signal-char {
-  filter: url("#signal-foreground-sampling-a") blur(0.03em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.14));
-}
-
-.signal-cell.signal-variant-c .signal-char {
-  filter: url("#signal-foreground-sampling-c") blur(0.034em) drop-shadow(0 0 0.24em rgba(237, 240, 232, 0.16));
-}
-
-.signal-char.is-chinese {
-  font-family: "Source Han Sans SC", sans-serif;
-  font-weight: 400;
-}
-
-.signal-medium-char,
-.signal-medium-placeholder,
-.signal-medium-caret {
-  position: relative;
-  display: block;
-  color: #fff;
-  background: #fff;
-}
-
-.signal-medium-char {
-  height: 1.3em;
-  line-height: 1.3em;
-  background: none;
-}
-
-.signal-medium-char.is-chinese {
-  font-family: "Source Han Sans SC", sans-serif;
-  font-weight: 400;
-}
-
-.signal-placeholder {
-  width: 0.9em;
-  height: 0.98em;
-  margin-top: 0.16em;
-  overflow: hidden;
-  border-radius: 0.12em;
-  background:
-    linear-gradient(112deg, rgba(206, 223, 217, var(--cell-core-light)), rgba(255, 255, 253, 0.98) 42%, rgba(215, 227, 221, 0.84)),
-    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.025) 0 0.025em, rgba(66, 88, 84, 0.03) 0.045em 0.07em, transparent 0.09em 0.15em),
-    radial-gradient(circle at 25% 30%, rgba(255, 255, 255, 0.05) 0 0.028em, transparent 0.065em);
-  background-position: 0 0, 0 var(--cell-line-offset), var(--cell-grain-x) var(--cell-grain-y);
-  background-size: 100% 100%, 100% 0.17em, 0.42em 0.39em;
-  background-blend-mode: normal, multiply, soft-light;
-  box-shadow: 0 0 0.44em rgba(237, 240, 232, 0.18);
-  filter: url("#signal-foreground-sampling-b") blur(0.028em) drop-shadow(0 0 0.22em rgba(237, 240, 232, 0.14));
-}
-
-.signal-cell.signal-variant-a .signal-placeholder {
-  filter: url("#signal-foreground-sampling-a") blur(0.028em) drop-shadow(0 0 0.2em rgba(237, 240, 232, 0.12));
-}
-
-.signal-cell.signal-variant-c .signal-placeholder {
-  filter: url("#signal-foreground-sampling-c") blur(0.028em) drop-shadow(0 0 0.24em rgba(237, 240, 232, 0.16));
-}
-
-.signal-medium-placeholder {
-  width: 0.9em;
-  height: 0.98em;
-  margin-top: 0.16em;
-  border-radius: 0.12em;
-}
-
-.signal-space {
-  display: block;
-  width: 0.5em;
-  height: 0.92em;
-  margin-top: 0.16em;
-}
-
-.signal-placeholder::before {
-  position: absolute;
-  inset: 0;
-  content: "";
-  opacity: 0.06;
-  background:
-    radial-gradient(circle at 22% 30%, rgba(255, 255, 255, 0.72) 0 0.03em, transparent 0.07em),
-    radial-gradient(circle at 76% 66%, rgba(56, 85, 80, 0.38) 0 0.028em, transparent 0.065em),
-    repeating-linear-gradient(0deg, transparent 0 0.06em, rgba(244, 246, 238, 0.035) 0.075em 0.095em, transparent 0.12em 0.18em);
-  background-position: var(--cell-grain-x) var(--cell-grain-y), var(--cell-grain-x-inverse) var(--cell-grain-y-inverse), 0 var(--cell-block-line-offset);
-  background-size: 0.39em 0.36em, 0.52em 0.48em, 100% 0.2em;
-  mix-blend-mode: soft-light;
-}
-
-.signal-caret {
-  width: 0.9em;
-  height: 0.14em;
-  align-self: flex-end;
-  margin-bottom: 0.16em;
-  background: var(--signal-paper);
-  box-shadow:
-    0 0 0.36em rgba(237, 240, 232, 0.22);
-  filter: url("#signal-foreground-sampling-b") blur(0.024em) drop-shadow(0 0 0.16em rgba(237, 240, 232, 0.16));
-  animation: signal-caret-blink 0.9s steps(1, end) infinite;
-}
-
-.signal-cell.signal-variant-a .signal-caret {
-  filter: url("#signal-foreground-sampling-a") blur(0.024em) drop-shadow(0 0 0.14em rgba(237, 240, 232, 0.14));
-}
-
-.signal-cell.signal-variant-c .signal-caret {
-  filter: url("#signal-foreground-sampling-c") blur(0.024em) drop-shadow(0 0 0.18em rgba(237, 240, 232, 0.18));
-}
-
-.signal-medium-caret {
-  width: 0.9em;
-  height: 0.14em;
-  align-self: flex-end;
-  margin-bottom: 0.16em;
-}
-
-.signal-placeholder.is-active .signal-caret {
-  position: absolute;
-  right: 0;
-  bottom: -0.16em;
-  left: 0;
-  width: 100%;
-  margin-bottom: 0;
-}
-
-.signal-placeholder.is-active {
-  overflow: visible;
-}
-
-.signal-medium-placeholder.is-active {
-  overflow: visible;
-}
-
-.signal-medium-placeholder.is-active .signal-medium-caret {
-  position: absolute;
-  right: 0;
-  bottom: -0.16em;
-  left: 0;
-  width: 100%;
-  margin-bottom: 0;
-}
-
-.signal-space-active {
-  position: relative;
-}
-
-.signal-space-active .signal-caret {
-  position: absolute;
-  right: 0;
-  bottom: -0.16em;
-  left: 0;
-  width: 100%;
-  margin-bottom: 0;
 }
 
 .signal-noise,
@@ -752,11 +228,6 @@ onBeforeUnmount(clearRevealTimer)
   bottom: 0;
 }
 
-@keyframes signal-caret-blink {
-  0%, 45% { opacity: 1; }
-  46%, 100% { opacity: 0.22; }
-}
-
 @keyframes signal-noise-drift {
   0% { transform: translate3d(0, 0, 0); }
   50% { transform: translate3d(-0.1%, 0.25%, 0); }
@@ -764,7 +235,6 @@ onBeforeUnmount(clearRevealTimer)
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .signal-caret,
   .signal-noise {
     animation: none;
   }
