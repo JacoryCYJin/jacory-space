@@ -1,19 +1,21 @@
 <template>
   <div
+    ref="scanRoot"
     class="signal-medium-glyphs text-left font-sans text-lg font-semibold leading-relaxed tracking-normal sm:text-xl md:text-3xl"
     aria-hidden="true"
   >
     <svg class="signal-filter-definitions" aria-hidden="true" focusable="false">
       <defs>
-        <filter id="signal-shared-medium-small" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
+        <filter id="signal-shared-medium-small" x="-2%" y="-3%" width="104%" height="106%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
           <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
-          <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
-          <feComposite in="grainField" in2="scanField" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="rawMediumField" />
-          <feComponentTransfer in="rawMediumField" result="neutralMediumField">
+          <feComponentTransfer in="grainField" result="neutralMediumField">
             <feFuncR type="linear" slope="0.16" intercept="0.42" />
             <feFuncG type="linear" slope="0.16" intercept="0.42" />
             <feFuncB type="linear" slope="0.16" intercept="0.42" />
           </feComponentTransfer>
+          <feImage :href="scanGateHref" x="0" :y="localScanPhaseY" width="1" :height="scanPitch" preserveAspectRatio="none" result="scanTile" />
+          <feTile in="scanTile" result="scanField" />
+          <feComposite in="neutralMediumField" in2="scanField" operator="arithmetic" k1="0" k2="1" k3="0.032" k4="-0.020" result="scanAlignedMediumField" />
           <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
           <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
           <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
@@ -23,17 +25,18 @@
           <feGaussianBlur in="erodedContentAlpha" stdDeviation="0.34 0.14" result="softenedInteriorAlpha" />
           <feComposite in="softenedInteriorAlpha" in2="SourceAlpha" operator="in" result="interiorContentAlpha" />
           <feComposite in="interiorContentAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
-          <feComposite in="neutralMediumField" in2="contentAlpha" operator="in" />
+          <feComposite in="scanAlignedMediumField" in2="contentAlpha" operator="in" />
         </filter>
-        <filter id="signal-shared-medium-medium" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
+        <filter id="signal-shared-medium-medium" x="-2%" y="-3%" width="104%" height="106%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
           <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
-          <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
-          <feComposite in="grainField" in2="scanField" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="rawMediumField" />
-          <feComponentTransfer in="rawMediumField" result="neutralMediumField">
+          <feComponentTransfer in="grainField" result="neutralMediumField">
             <feFuncR type="linear" slope="0.16" intercept="0.42" />
             <feFuncG type="linear" slope="0.16" intercept="0.42" />
             <feFuncB type="linear" slope="0.16" intercept="0.42" />
           </feComponentTransfer>
+          <feImage :href="scanGateHref" x="0" :y="localScanPhaseY" width="1" :height="scanPitch" preserveAspectRatio="none" result="scanTile" />
+          <feTile in="scanTile" result="scanField" />
+          <feComposite in="neutralMediumField" in2="scanField" operator="arithmetic" k1="0" k2="1" k3="0.032" k4="-0.020" result="scanAlignedMediumField" />
           <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
           <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
           <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
@@ -43,17 +46,18 @@
           <feGaussianBlur in="erodedContentAlpha" stdDeviation="0.38 0.16" result="softenedInteriorAlpha" />
           <feComposite in="softenedInteriorAlpha" in2="SourceAlpha" operator="in" result="interiorContentAlpha" />
           <feComposite in="interiorContentAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
-          <feComposite in="neutralMediumField" in2="contentAlpha" operator="in" />
+          <feComposite in="scanAlignedMediumField" in2="contentAlpha" operator="in" />
         </filter>
-        <filter id="signal-shared-medium-large" x="-2%" y="-3%" width="104%" height="106%" color-interpolation-filters="sRGB">
+        <filter id="signal-shared-medium-large" x="-2%" y="-3%" width="104%" height="106%" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
           <feTurbulence type="fractalNoise" baseFrequency="0.42 0.56" numOctaves="1" seed="101" result="grainField" />
-          <feTurbulence type="fractalNoise" baseFrequency="0.003 1.45" numOctaves="1" seed="127" result="scanField" />
-          <feComposite in="grainField" in2="scanField" operator="arithmetic" k1="0" k2="0.5" k3="0.5" k4="0" result="rawMediumField" />
-          <feComponentTransfer in="rawMediumField" result="neutralMediumField">
+          <feComponentTransfer in="grainField" result="neutralMediumField">
             <feFuncR type="linear" slope="0.16" intercept="0.42" />
             <feFuncG type="linear" slope="0.16" intercept="0.42" />
             <feFuncB type="linear" slope="0.16" intercept="0.42" />
           </feComponentTransfer>
+          <feImage :href="scanGateHref" x="0" :y="localScanPhaseY" width="1" :height="scanPitch" preserveAspectRatio="none" result="scanTile" />
+          <feTile in="scanTile" result="scanField" />
+          <feComposite in="neutralMediumField" in2="scanField" operator="arithmetic" k1="0" k2="1" k3="0.032" k4="-0.020" result="scanAlignedMediumField" />
           <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="1" seed="139" result="illuminationField" />
           <feColorMatrix in="illuminationField" type="luminanceToAlpha" result="illuminationLuma" />
           <feComponentTransfer in="illuminationLuma" result="modulatedTextAlpha">
@@ -63,7 +67,7 @@
           <feGaussianBlur in="erodedContentAlpha" stdDeviation="0.56 0.24" result="softenedInteriorAlpha" />
           <feComposite in="softenedInteriorAlpha" in2="SourceAlpha" operator="in" result="interiorContentAlpha" />
           <feComposite in="interiorContentAlpha" in2="modulatedTextAlpha" operator="in" result="contentAlpha" />
-          <feComposite in="neutralMediumField" in2="contentAlpha" operator="in" />
+          <feComposite in="scanAlignedMediumField" in2="contentAlpha" operator="in" />
         </filter>
       </defs>
     </svg>
@@ -94,12 +98,21 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+
+const scanRoot = ref(null)
+
 defineProps({
   textLayout: { type: Array, required: true },
   revealedCount: { type: Number, required: true },
   isLineStarted: { type: Function, required: true },
   isChineseCharacter: { type: Function, required: true },
+  scanGateHref: { type: String, required: true },
+  scanPitch: { type: Number, required: true },
+  localScanPhaseY: { type: Number, required: true },
 })
+
+defineExpose({ scanRoot })
 </script>
 
 <style scoped>
