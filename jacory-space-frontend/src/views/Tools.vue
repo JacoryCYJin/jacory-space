@@ -124,6 +124,11 @@ const projects = computed(() => [
     id: '005', no: '005', title: t('tools.projects.minecraftSkinStudio.title'), layer: 'TOOLS', category: 'tool', status: 'live',
     pos: [1.4, -1.45], description: '在浏览器中绘制、预览并导出可直接用于 Minecraft 的 64 × 64 皮肤。',
     stack: ['Vue', 'skinview3d', 'WebGL'], version: 'v0.1.0', updated: '2026.07.23', href: '/tools/minecraft-skin-editor'
+  },
+  {
+    id: '006', no: '006', title: t('tools.projects.retroFuturismSignalStudy.title'), layer: 'EXPERIMENTS', category: 'experiment', status: 'live',
+    pos: [-2.0, -1.1], description: t('tools.projects.retroFuturismSignalStudy.description'),
+    stack: ['Vue', 'SVG Filters', 'CRT Study'], version: 'v0.1.0', updated: '2026.08.08', href: '/experiments/retro-futurism'
   }
 ])
 

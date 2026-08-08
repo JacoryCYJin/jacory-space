@@ -62,7 +62,11 @@ export default {
       mediaParser: { title: 'メディア解析ツール' },
       personalBlog: { title: '個人ブログ' },
       workflowSystem: { title: 'アイデアレシピ' },
-      minecraftSkinStudio: { title: 'Minecraft スキンスタジオ' }
+      minecraftSkinStudio: { title: 'Minecraft スキンスタジオ' },
+      retroFuturismSignalStudy: {
+        title: 'CRT 信号文字実験',
+        description: '中国語のドット字形、蛍光体拡散、ニュートラルな表示媒体で、旧式 CRT の文字成像を研究する実験。'
+      }
     },
     interfaceIndex: {
       kicker: '01 — インターフェース索引',
