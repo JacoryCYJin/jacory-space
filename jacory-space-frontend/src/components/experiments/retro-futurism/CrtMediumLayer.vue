@@ -191,7 +191,7 @@ defineProps({
 }
 
 .signal-medium-char.is-chinese {
-  font-family: "Source Han Sans SC", sans-serif;
+  font-family: "GNU Unifont CRT SC", sans-serif;
   font-weight: 400;
 }
 

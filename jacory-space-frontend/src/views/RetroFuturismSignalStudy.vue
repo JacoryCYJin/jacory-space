@@ -158,10 +158,10 @@ onBeforeUnmount(clearRevealTimer)
 
 <style scoped>
 @font-face {
-  font-family: "Source Han Sans SC";
-  src: url("../assets/fonts/SourceHanSansSC-VF.ttf.woff2") format("woff2");
+  font-family: "GNU Unifont CRT SC";
+  src: url("../assets/fonts/GNUUnifont16-CrtSC.otf") format("opentype");
   font-style: normal;
-  font-weight: 200 900;
+  font-weight: 400;
   font-display: swap;
 }
 
