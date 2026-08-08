@@ -38,7 +38,7 @@ RetroFuturismSignalStudy.vue
 | [`CrtPhosphorDiffusionLayer.vue`](../../jacory-space-frontend/src/components/experiments/retro-futurism/CrtPhosphorDiffusionLayer.vue) | 无色扩散字形副本、三档 Phosphor filter 和该层自己的布局 / 源 Alpha 样式。 |
 | [`CrtLumaLayer.vue`](../../jacory-space-frontend/src/components/experiments/retro-futurism/CrtLumaLayer.vue) | 灰白 Luma 字形、占位块、光标、A/B/C 采样 filter、前景样式和光标闪烁。 |
 | [`CrtMediumLayer.vue`](../../jacory-space-frontend/src/components/experiments/retro-futurism/CrtMediumLayer.vue) | Medium 字形副本、三档 Medium filter、`soft-light` 合成和该层源 Alpha 样式。 |
-| [`SourceHanSansSC-VF.ttf.woff2`](../../jacory-space-frontend/src/assets/fonts/SourceHanSansSC-VF.ttf.woff2) | 中文字形使用的本地 Source Han Sans SC 可变字体。 |
+| [`GNUUnifont16-CrtSC.otf`](../../jacory-space-frontend/src/assets/fonts/GNUUnifont16-CrtSC.otf) | 当前页面文案的 GNU Unifont 16px 中文点阵子集。 |
 
 四个组件当前故意保留重复的行、段落、cell 和源字形 CSS。它们是从原页面逐项迁出的独立实现；不要在未重新验证画面的前提下抽取通用 layer、glyph renderer、composable、共享 CSS 或 SVG wrapper。
 
@@ -57,6 +57,14 @@ RetroFuturismSignalStudy.vue
 
 逐字逻辑只在父组件中存在：页面挂载后等待 `900ms`，行内按 `88ms` 替换字符，行边界停顿 `720ms`；`prefers-reduced-motion: reduce` 时直接显示完整文字。四个 layer 不维护自己的状态、随机数或计时器。
 
+## 中文 CRT 点阵字形
+
+父组件通过 `@font-face` 注册 `GNU Unifont CRT SC`，源文件是 GNU Unifont 16.0.04 的当前文案子集。Luma、Phosphor 与 Medium 的 `.is-chinese` 规则均指定这个字体和 `font-weight: 400`，因此同一个汉字在三层始终使用相同的 Alpha 几何。
+
+该字体的字模原生为 16px 点阵；本页为保持已确认的排版与响应式字号，仍使用原有 `18 / 20 / 30px` 尺寸。它当前用于验证中文点阵字形与 CRT 柔化的组合，不代表页面已进入严格的原生 16px 像素对齐排版。
+
+字体文件只包含当前页面的中文文案。修改文案、增加新的中文字符前，必须重新从 GNU Unifont 16.0.04 做覆盖验证并更新子集；不要依赖浏览器 fallback，否则 Luma、Phosphor 与 Medium 的字形可能失去一致性。
+
 ## CRT Luma / Core
 
 Luma 只负责可读的灰白主体：
@@ -74,7 +82,7 @@ Luma 只负责可读的灰白主体：
 | B | `.66 .19` | `29` | `.38` |
 | C | `.78 .13` | `47` | `.31` |
 
-文字、占位块和光标的 blur、drop-shadow、box-shadow、灰白 gradient、局部横纹与稳定变量均属于 Luma；当前参数是已确认的基线。`signalCellVariant(character)` 与 `signalCellStyle(character)` 仅以全局 `character.index` 为输入，因此同一格从占位块变为真实字时不会跳变。
+文字、占位块和光标的 blur、drop-shadow、box-shadow、灰白 gradient、局部横纹与稳定变量均属于 Luma；当前参数是已确认的基线。中文真实文字使用 `GNU Unifont CRT SC`；`signalCellVariant(character)` 与 `signalCellStyle(character)` 仅以全局 `character.index` 为输入，因此同一格从占位块变为真实字时不会跳变。
 
 ## CRT Phosphor Diffusion
 
