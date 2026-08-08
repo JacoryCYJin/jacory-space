@@ -54,27 +54,8 @@
                   {{ copied ? t('library.copied') : t('library.copy') }}
                 </button>
               </div>
-              <div
-                v-if="entry.type === 'prompt'"
-                id="library-prompt-content"
-                class="border border-line bg-card"
-                :class="promptContentExpanded ? '' : 'h-96 overflow-x-hidden overflow-y-scroll'"
-              >
-                <pre class="whitespace-pre-wrap break-words px-5 py-6 font-mono text-sm leading-7 text-foreground md:px-7 md:py-8"><code>{{ entry.content }}</code></pre>
-              </div>
-              <pre v-else id="library-prompt-content" class="overflow-x-auto border border-line bg-card px-5 py-6 font-mono text-sm leading-7 text-foreground md:px-7 md:py-8"><code>{{ entry.content }}</code></pre>
-              <button
-                v-if="entry.type === 'prompt'"
-                type="button"
-                class="mt-4 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-blue"
-                :aria-controls="'library-prompt-content'"
-                :aria-expanded="promptContentExpanded"
-                @click="promptContentExpanded = !promptContentExpanded"
-              >
-                <ChevronUp v-if="promptContentExpanded" :size="14" stroke-width="1.5" aria-hidden="true" />
-                <ChevronDown v-else :size="14" stroke-width="1.5" aria-hidden="true" />
-                {{ promptContentExpanded ? t('library.collapseContent') : t('library.expandContent') }}
-              </button>
+              <PromptContent v-if="entry.type === 'prompt'" :content="entry.content" />
+              <SkillContent v-else :content="entry.content" />
             </section>
           </article>
         </div>
@@ -88,16 +69,17 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Check, ChevronDown, ChevronLeft, ChevronUp, Copy } from 'lucide-vue-next'
+import { Check, ChevronLeft, Copy } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
 import StatusToast from '../components/StatusToast.vue'
+import PromptContent from '../components/library/PromptContent.vue'
+import SkillContent from '../components/library/SkillContent.vue'
 import { getLibraryEntry } from '@library-index'
 
 const { t } = useI18n()
 const route = useRoute()
 const pageRoot = ref(null)
 const copied = ref(false)
-const promptContentExpanded = ref(false)
 const toast = reactive({ visible: false, message: '', type: 'success' })
 let toastTimer
 const entry = computed(() => getLibraryEntry(route.params.id))
