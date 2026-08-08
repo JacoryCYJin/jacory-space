@@ -62,7 +62,11 @@ export default {
       mediaParser: { title: 'Media Parser' },
       personalBlog: { title: 'Personal Blog' },
       workflowSystem: { title: 'PlanTO' },
-      minecraftSkinStudio: { title: 'Minecraft Skin Studio' }
+      minecraftSkinStudio: { title: 'Minecraft Skin Studio' },
+      retroFuturismSignalStudy: {
+        title: 'CRT Signal Text Study',
+        description: 'A study of old CRT text imaging through Chinese bitmap glyphs, phosphor diffusion, and a neutral display medium.'
+      }
     },
     interfaceIndex: {
       kicker: '01 — INTERFACE INDEX',

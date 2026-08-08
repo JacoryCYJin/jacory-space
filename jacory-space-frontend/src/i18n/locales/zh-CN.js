@@ -74,7 +74,11 @@ export default {
       mediaParser: { title: '媒体解析工具' },
       personalBlog: { title: '个人博客' },
       workflowSystem: { title: '灵感配方' },
-      minecraftSkinStudio: { title: 'Minecraft 皮肤工作台' }
+      minecraftSkinStudio: { title: 'Minecraft 皮肤工作台' },
+      retroFuturismSignalStudy: {
+        title: 'CRT 信号文字实验',
+        description: '以中文点阵字形、磷光扩散与中性显示介质模拟老式显像管文字成像。'
+      }
     },
     interfaceIndex: {
       kicker: '01 — 界面索引',
