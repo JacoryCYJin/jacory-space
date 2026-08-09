@@ -141,8 +141,9 @@ const { t, locale } = useI18n()
 const navLinks = computed(() => [
   { to: '/', index: '00', label: t('nav.home') },
   { to: '/tools', index: '01', label: t('nav.tools') },
-  { to: '/blog', index: '02', label: t('nav.blog') },
-  { to: '/about', index: '03', label: t('nav.about') },
+  { to: '/library', index: '02', label: t('nav.library') },
+  { to: '/blog', index: '03', label: t('nav.blog') },
+  { to: '/about', index: '04', label: t('nav.about') },
 ])
 
 const isActive = (path) => (path === '/' ? route.path === '/' : route.path.startsWith(path))

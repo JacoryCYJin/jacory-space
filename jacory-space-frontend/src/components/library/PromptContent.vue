@@ -3,7 +3,7 @@
     <div
       :id="contentId"
       class="border border-line bg-card"
-      :class="expanded ? '' : 'h-96 overflow-x-hidden overflow-y-scroll'"
+      :class="expanded ? '' : 'h-96 overflow-x-hidden overflow-y-scroll lg:h-auto lg:min-h-0 lg:flex-1'"
     >
       <pre class="whitespace-pre-wrap break-words px-5 py-6 font-mono text-sm leading-7 text-foreground md:px-7 md:py-8"><code>{{ content }}</code></pre>
     </div>

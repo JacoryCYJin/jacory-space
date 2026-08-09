@@ -132,12 +132,14 @@
     </section>
     <StatusToast :visible="toast.visible" :message="toast.message" :type="toast.type" />
   </main>
+  <Footer />
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ArrowUpRight, Copy, Folder, List, Search } from 'lucide-vue-next'
+import Footer from '../components/Footer.vue'
 import StatusToast from '../components/StatusToast.vue'
 import { libraryEntries } from '@library-index'
 
