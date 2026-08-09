@@ -26,7 +26,7 @@
           </div>
         </header>
 
-        <div class="grid gap-12 pt-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-16 lg:pt-12">
+        <div class="grid gap-12 pt-8 lg:min-h-[calc(100dvh-27rem)] lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-16 lg:pt-12">
           <aside class="flex flex-col gap-8 border-b border-line pb-8 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
             <section data-detail-enter class="border-b border-line pb-8">
               <p class="tech mb-6 text-xs text-blue">01 — {{ t('library.aboutLabel') }}</p>
@@ -44,8 +44,8 @@
             </section>
           </aside>
 
-          <article class="min-w-0">
-            <section data-detail-enter>
+          <article class="min-w-0 lg:flex">
+            <section data-detail-enter class="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
               <div class="mb-5 flex items-center justify-between gap-4">
                 <p class="tech text-xs text-blue">04 — {{ entry.type === 'skill' ? 'SKILL.md' : t('library.contentLabel') }}</p>
                 <button type="button" class="inline-flex items-center gap-2 border border-line-strong px-3 py-2 font-mono text-xs uppercase tracking-[0.12em] text-foreground transition-colors hover:border-blue hover:text-blue" @click="copyContent">
@@ -54,7 +54,7 @@
                   {{ copied ? t('library.copied') : t('library.copy') }}
                 </button>
               </div>
-              <PromptContent v-if="entry.type === 'prompt'" :content="entry.content" />
+              <PromptContent v-if="entry.type === 'prompt'" class="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col" :content="entry.content" />
               <SkillContent v-else :content="entry.content" />
             </section>
           </article>
@@ -64,6 +64,7 @@
     <div v-else class="page-gutter pt-20"><div class="page-frame pb-20"><p class="font-mono text-sm uppercase tracking-[0.12em] text-muted-foreground">{{ t('library.notFound') }}</p></div></div>
     <StatusToast :visible="toast.visible" :message="toast.message" :type="toast.type" />
   </main>
+  <Footer />
 </template>
 
 <script setup>
@@ -71,6 +72,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Check, ChevronLeft, Copy } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
+import Footer from '../components/Footer.vue'
 import StatusToast from '../components/StatusToast.vue'
 import PromptContent from '../components/library/PromptContent.vue'
 import SkillContent from '../components/library/SkillContent.vue'

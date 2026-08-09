@@ -14,6 +14,7 @@ export default {
   nav: {
     home: '索引',
     tools: 'ツール',
+    library: 'PlanTO',
     videoParser: '動画解析',
     blog: 'ノート',
     about: '自己紹介',
@@ -210,18 +211,6 @@ export default {
       filterTopic: 'テーマ',
       filterYear: '年',
       filterAria: 'ブログアーカイブを絞り込む',
-      endOfIndex: 'Jacory Space',
-      footerNote: '仕組みが整ったら、次はページそのものへ。文章、ツール、ポートフォリオを、このクールホワイトの言語でひとつにつないでいきます。',
-      footer: {
-        system: 'システム',
-        systemValue: 'Personal OS / v.01',
-        surface: '入口',
-        surfaceValue: 'ツール / ブログ / プロフィール',
-        accent: '連絡',
-        accentValue: 'Email / GitHub',
-        status: '状態',
-        statusValue: '公開しながら構築中'
-      }
     },
     post: {
       onThisNote: 'この記事の目次',
@@ -242,6 +231,19 @@ export default {
     },
     entryTopics: {
       PRODUCT: 'プロダクト'
+    }
+  },
+  siteFooter: {
+    brand: 'Jacory Space',
+    note: '仕組みが整ったら、次はページそのものへ。文章、ツール、ポートフォリオを、このクールホワイトの言語でひとつにつないでいきます。',
+    meta: {
+      system: 'システム',
+      systemValue: 'Personal OS / v.01',
+      surface: '入口',
+      accent: '連絡',
+      accentValue: 'Email / GitHub',
+      status: '状態',
+      statusValue: '公開しながら構築中'
     }
   },
   about: {

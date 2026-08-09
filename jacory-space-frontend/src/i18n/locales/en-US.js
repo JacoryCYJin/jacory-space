@@ -14,6 +14,7 @@ export default {
   nav: {
     home: 'Index',
     tools: 'Tools',
+    library: 'PlanTO',
     videoParser: 'Video Parser',
     blog: 'Notes',
     about: 'About',
@@ -210,18 +211,6 @@ export default {
       filterTopic: 'Topic',
       filterYear: 'Year',
       filterAria: 'Filter blog archive',
-      endOfIndex: 'Jacory Space',
-      footerNote: 'Once the system is in place, the pages can follow: writing, tools, and a portfolio, all held together by the same cool-white language.',
-      footer: {
-        system: 'System',
-        systemValue: 'Personal OS / v.01',
-        surface: 'Explore',
-        surfaceValue: 'Tools / Blog / About',
-        accent: 'Contact',
-        accentValue: 'Email / GitHub',
-        status: 'Status',
-        statusValue: 'Building in public'
-      }
     },
     post: {
       onThisNote: 'On this note',
@@ -242,6 +231,19 @@ export default {
     },
     entryTopics: {
       PRODUCT: 'PRODUCT'
+    }
+  },
+  siteFooter: {
+    brand: 'Jacory Space',
+    note: 'Once the system is in place, the pages can follow: writing, tools, and a portfolio, all held together by the same cool-white language.',
+    meta: {
+      system: 'System',
+      systemValue: 'Personal OS / v.01',
+      surface: 'Explore',
+      accent: 'Contact',
+      accentValue: 'Email / GitHub',
+      status: 'Status',
+      statusValue: 'Building in public'
     }
   },
   about: {

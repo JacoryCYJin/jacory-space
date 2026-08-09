@@ -7,7 +7,7 @@
             {{ footerBrandLead }}<span class="text-blue">{{ footerBrandAccent }}</span>
           </p>
           <p class="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            {{ t('blog.fieldNotes.footerNote') }}
+            {{ t('siteFooter.note') }}
           </p>
         </div>
 
@@ -48,13 +48,13 @@ import { RouterLink } from 'vue-router'
 const { t } = useI18n()
 
 const footerBrandLead = computed(() => {
-  const title = t('blog.fieldNotes.endOfIndex')
+  const title = t('siteFooter.brand')
   const lastSpaceIndex = title.lastIndexOf(' ')
   return lastSpaceIndex === -1 ? title : `${title.slice(0, lastSpaceIndex)} `
 })
 
 const footerBrandAccent = computed(() => {
-  const title = t('blog.fieldNotes.endOfIndex')
+  const title = t('siteFooter.brand')
   const lastSpaceIndex = title.lastIndexOf(' ')
   return lastSpaceIndex === -1 ? '' : title.slice(lastSpaceIndex + 1)
 })
@@ -65,22 +65,23 @@ const footerValueLines = (value, links = []) => value
   .filter((line) => line.label)
 
 const footerMeta = computed(() => [
-  { key: t('blog.fieldNotes.footer.system'), valueLines: footerValueLines(t('blog.fieldNotes.footer.systemValue')) },
+  { key: t('siteFooter.meta.system'), valueLines: footerValueLines(t('siteFooter.meta.systemValue')) },
   {
-    key: t('blog.fieldNotes.footer.surface'),
-    valueLines: footerValueLines(t('blog.fieldNotes.footer.surfaceValue'), [
-      { to: '/tools' },
-      { to: '/blog' },
-      { to: '/about' },
-    ]),
+    key: t('siteFooter.meta.surface'),
+    valueLines: [
+      { label: t('nav.tools'), to: '/tools' },
+      { label: t('nav.library'), to: '/library' },
+      { label: t('nav.blog'), to: '/blog' },
+      { label: t('nav.about'), to: '/about' },
+    ],
   },
   {
-    key: t('blog.fieldNotes.footer.accent'),
-    valueLines: footerValueLines(t('blog.fieldNotes.footer.accentValue'), [
+    key: t('siteFooter.meta.accent'),
+    valueLines: footerValueLines(t('siteFooter.meta.accentValue'), [
       { href: 'mailto:chengyue.jin@outlook.com' },
       { href: 'https://github.com/JacoryCYJin', external: true },
     ]),
   },
-  { key: t('blog.fieldNotes.footer.status'), valueLines: footerValueLines(t('blog.fieldNotes.footer.statusValue')) },
+  { key: t('siteFooter.meta.status'), valueLines: footerValueLines(t('siteFooter.meta.statusValue')) },
 ])
 </script>

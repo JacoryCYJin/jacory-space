@@ -26,6 +26,7 @@ export default {
   nav: {
     home: '总览',
     tools: '工具',
+    library: '配方',
     videoParser: '视频解析',
     blog: '手记',
     about: '关于',
@@ -222,18 +223,6 @@ export default {
       filterTopic: '主题',
       filterYear: '年份',
       filterAria: '筛选博客归档',
-      endOfIndex: 'Jacory Space',
-      footerNote: '这套系统就绪后，下一步才是具体的页面：写作、工具、作品集——都将活在这套冷白的语言里。',
-      footer: {
-        system: '系统',
-        systemValue: 'Personal OS / v.01',
-        surface: '入口',
-        surfaceValue: '工具库 / 博客 / 关于我',
-        accent: '联系',
-        accentValue: 'Email / GitHub',
-        status: '状态',
-        statusValue: '持续构建中'
-      }
     },
     post: {
       onThisNote: '本篇目录',
@@ -254,6 +243,19 @@ export default {
     },
     entryTopics: {
       PRODUCT: '产品'
+    }
+  },
+  siteFooter: {
+    brand: 'Jacory Space',
+    note: '这套系统就绪后，下一步才是具体的页面：写作、工具、作品集——都将活在这套冷白的语言里。',
+    meta: {
+      system: '系统',
+      systemValue: 'Personal OS / v.01',
+      surface: '入口',
+      accent: '联系',
+      accentValue: 'Email / GitHub',
+      status: '状态',
+      statusValue: '持续构建中'
     }
   },
   about: {
