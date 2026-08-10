@@ -37,28 +37,29 @@
         <div
           ref="detailGrid"
           class="grid gap-12 pt-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-16 lg:pt-8 lg:pb-9 2xl:pt-12 2xl:pb-14"
-          :class="isViewportBound ? 'lg:min-h-0 lg:flex-1 lg:items-start' : ''"
+          :class="isViewportBound ? 'lg:min-h-0 lg:flex-1' : ''"
         >
           <aside
-            ref="detailAside"
-            class="flex flex-col gap-8 border-b border-line pb-8 lg:min-h-0 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8"
+            class="border-b border-line pb-8 lg:min-h-0 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8"
             :class="isAsideOverflowing ? 'lg:overflow-y-auto lg:overscroll-contain' : ''"
             :style="detailAsideStyle"
           >
-            <section data-detail-enter class="border-b border-line pb-8">
-              <p class="tech mb-6 text-xs text-blue">01 — {{ t('library.aboutLabel') }}</p>
-              <p class="text-sm leading-7 text-foreground">{{ t('library.details.' + entry.detailKey + '.about') }}</p>
-            </section>
+            <div ref="detailAsideContent" class="flex flex-col gap-8">
+              <section data-detail-enter class="border-b border-line pb-8">
+                <p class="tech mb-6 text-xs text-blue">01 — {{ t('library.aboutLabel') }}</p>
+                <p class="text-sm leading-7 text-foreground">{{ t('library.details.' + entry.detailKey + '.about') }}</p>
+              </section>
 
-            <section data-detail-enter class="border-b border-line pb-8">
-              <p class="tech mb-6 text-xs text-blue">02 — {{ t('library.usageLabel') }}</p>
-              <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.usage') }}</p>
-            </section>
+              <section data-detail-enter class="border-b border-line pb-8">
+                <p class="tech mb-6 text-xs text-blue">02 — {{ t('library.usageLabel') }}</p>
+                <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.usage') }}</p>
+              </section>
 
-            <section data-detail-enter>
-              <p class="tech mb-6 text-xs text-blue">03 — {{ t('library.notesLabel') }}</p>
-              <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.notes') }}</p>
-            </section>
+              <section data-detail-enter>
+                <p class="tech mb-6 text-xs text-blue">03 — {{ t('library.notesLabel') }}</p>
+                <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.notes') }}</p>
+              </section>
+            </div>
           </aside>
 
           <article class="min-w-0 lg:flex lg:min-h-0" :style="detailArticleStyle">
@@ -113,7 +114,7 @@ const { t, locale } = useI18n()
 const route = useRoute()
 const pageRoot = ref(null)
 const detailGrid = ref(null)
-const detailAside = ref(null)
+const detailAsideContent = ref(null)
 const copied = ref(false)
 const promptContentExpanded = ref(false)
 const isDesktop = ref(false)
@@ -138,7 +139,7 @@ const detailAsideStyle = computed(() => (
 ))
 
 function syncDetailPanelHeight() {
-  if (!isDesktopViewportBound.value || !detailGrid.value || !detailAside.value) {
+  if (!isDesktopViewportBound.value || !detailGrid.value || !detailAsideContent.value) {
     detailAvailableHeight.value = 0
     isAsideOverflowing.value = false
     return
@@ -147,7 +148,7 @@ function syncDetailPanelHeight() {
   const gridStyle = window.getComputedStyle(detailGrid.value)
   const verticalPadding = Number.parseFloat(gridStyle.paddingTop) + Number.parseFloat(gridStyle.paddingBottom)
   const availableHeight = Math.max(0, detailGrid.value.clientHeight - verticalPadding)
-  const naturalAsideHeight = detailAside.value.scrollHeight
+  const naturalAsideHeight = detailAsideContent.value.scrollHeight
 
   detailAvailableHeight.value = availableHeight
   isAsideOverflowing.value = naturalAsideHeight > availableHeight
@@ -201,7 +202,7 @@ onMounted(() => {
     if (typeof ResizeObserver !== 'undefined') {
       detailResizeObserver = new ResizeObserver(scheduleDetailPanelHeight)
       if (detailGrid.value) detailResizeObserver.observe(detailGrid.value)
-      if (detailAside.value) detailResizeObserver.observe(detailAside.value)
+      if (detailAsideContent.value) detailResizeObserver.observe(detailAsideContent.value)
     }
   })
 })
