@@ -26,7 +26,7 @@ export const libraryEntries = [
     updated: '2026.08.10',
     sourceUrl: 'https://github.com/CloudAI-X/threejs-skills',
     sourceRef: { commit: 'b1c623076c661fc9b03dac19292e825a5d106823' },
-    license: 'MIT (README)',
+    license: 'MIT',
     outline: [
       { level: 1, title: 'threejs-animation' },
       { level: 1, title: 'threejs-fundamentals' },
