@@ -101,7 +101,7 @@
             >
               <div :class="viewMode === 'list' ? 'flex items-start justify-between md:block' : 'flex items-start justify-between'">
                 <span class="font-mono text-2xl text-blue">{{ entry.no }}</span>
-                <span class="tech text-xs text-blue" :class="viewMode === 'list' ? 'md:mt-8 md:block' : ''">{{ entry.type === 'skill' ? 'SKILL' : 'PROMPT' }}</span>
+                <span class="tech text-xs text-blue" :class="viewMode === 'list' ? 'md:mt-8 md:block' : ''">{{ entryTypeLabel(entry) }}</span>
               </div>
               <div class="min-w-0">
                 <router-link :to="'/library/' + entry.id" class="inline-flex items-center gap-3 font-sans text-2xl font-medium tracking-tight text-foreground transition-colors duration-300 group-hover:text-blue" :class="viewMode === 'list' ? 'md:text-3xl' : ''">
@@ -114,9 +114,9 @@
                 </div>
               </div>
               <div class="flex items-end justify-between gap-5" :class="viewMode === 'list' ? 'md:flex-col md:items-end md:justify-between md:text-right' : 'mt-auto pt-8'">
-                <div class="font-mono text-xs leading-6 text-muted-foreground"><p>{{ entry.version }}</p><p>{{ t('library.updatedLabel') }} {{ entry.updated }}</p></div>
+                <div class="font-mono text-xs leading-6 text-muted-foreground"><p>{{ entryVersion(entry) }}</p><p>{{ entry.type === 'skill' && entry.sourceType === 'external' ? t('library.catalogedAtLabel') : t('library.updatedLabel') }} {{ entry.updated }}</p></div>
                 <div class="flex items-center gap-4">
-                  <button type="button" class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-foreground transition-colors hover:text-blue" @click="copyEntry(entry)">
+                  <button v-if="canCopyEntry(entry)" type="button" class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-foreground transition-colors hover:text-blue" @click="copyEntry(entry)">
                     <Copy :size="14" stroke-width="1.5" aria-hidden="true" />
                     {{ t('library.copy') }}
                   </button>
@@ -175,6 +175,20 @@ const latestUpdate = computed(() => libraryEntries.map((entry) => entry.updated)
 
 function tagLabel(tag) {
   return t('library.tags.' + tag)
+}
+
+function entryTypeLabel(entry) {
+  if (entry.type === 'skill' && entry.sourceType === 'external') return t('library.externalSkillLabel')
+  return entry.type === 'skill' ? 'SKILL' : 'PROMPT'
+}
+
+function entryVersion(entry) {
+  if (entry.type === 'skill' && entry.sourceType === 'external') return entry.sourceRef?.version || entry.sourceRef?.tag || entry.sourceRef?.commit?.slice(0, 7) || '—'
+  return entry.version
+}
+
+function canCopyEntry(entry) {
+  return entry.type === 'prompt' || (entry.type === 'skill' && entry.sourceType === 'original')
 }
 
 function toggleTag(tag) {
