@@ -1,7 +1,7 @@
 import { createI18n } from 'vue-i18n'
-import zhCN from './locales/zh-CN'
-import enUS from './locales/en-US'
-import jaJP from './locales/ja-JP'
+import zhCN from './locales/zh-CN/index.js'
+import enUS from './locales/en-US/index.js'
+import jaJP from './locales/ja-JP/index.js'
 
 const STORAGE_KEY = 'jacory_locale'
 
