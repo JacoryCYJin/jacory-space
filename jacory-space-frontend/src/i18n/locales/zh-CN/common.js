@@ -1,7 +1,7 @@
 export default {
   nav: {
-    home: '总览',
-    tools: '工具',
+    home: '空间',
+    tools: '索引',
     library: '配方',
     videoParser: '视频解析',
     blog: '手记',

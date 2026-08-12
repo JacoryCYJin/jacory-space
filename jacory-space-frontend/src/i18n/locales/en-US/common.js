@@ -1,7 +1,7 @@
 export default {
   nav: {
-    home: 'Index',
-    tools: 'Tools',
+    home: 'Space',
+    tools: 'Index',
     library: 'PlanTO',
     videoParser: 'Video Parser',
     blog: 'Notes',

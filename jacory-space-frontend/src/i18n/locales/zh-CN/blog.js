@@ -42,8 +42,8 @@ export default {
     fieldNotes: {
       journalLabel: '02 — 手记',
       archiveOpen: '{count} 篇 / 归档已开放',
-      titleLead: 'Field',
-      titleAccent: ' Notes',
+      titleLead: '观察',
+      titleAccent: '手记',
       subtitleLead: 'Personal OS 的公开日志',
       subtitleBody: '所有记录都是未寄出的信，所有归档都是未完成的自证。',
       readEntry: '阅读全文',

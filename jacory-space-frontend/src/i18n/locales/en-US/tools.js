@@ -12,6 +12,8 @@ export default {
     },
     interfaceIndex: {
       kicker: '01 — INTERFACE INDEX',
+      titleLead: 'Interface',
+      titleAccent: 'Index',
       description: 'A curated index of tools, works, interface experiments, and system components.',
       categoriesAria: 'Interface categories',
       summaryLabel: 'SUMMARY',
