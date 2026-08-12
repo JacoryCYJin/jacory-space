@@ -72,8 +72,8 @@
 
             <section data-detail-enter class="border-b border-line pb-8">
               <template v-if="isExternalSkill">
-                <p class="tech mb-6 text-xs text-blue">02 — {{ t('library.usageLabel') }}</p>
-                <p class="text-sm leading-7 text-muted-foreground">{{ t(entry.descriptionKey) }}</p>
+                <p class="tech mb-6 text-xs text-blue">02 — {{ t('library.coreContentLabel') }}</p>
+                <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.usage') }}</p>
               </template>
               <template v-else>
                 <p class="tech mb-6 text-xs text-blue">02 — {{ t('library.usageLabel') }}</p>
@@ -82,8 +82,8 @@
             </section>
 
             <section data-detail-enter>
-              <p class="tech mb-6 text-xs text-blue">03 — {{ isExternalSkill ? t('library.precautionsLabel') : t('library.notesLabel') }}</p>
-              <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + (isExternalSkill ? '.usage' : '.notes')) }}</p>
+              <p class="tech mb-6 text-xs text-blue">03 — {{ isExternalSkill ? t('library.capabilityBoundaryLabel') : t('library.notesLabel') }}</p>
+              <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.notes') }}</p>
             </section>
             </div>
           </aside>
