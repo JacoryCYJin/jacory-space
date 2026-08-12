@@ -794,7 +794,7 @@ export default {
     searchPlaceholder: '搜索标题或标签',
     updatedLabel: '最后更新',
     filters: { all: '全部', prompts: 'Prompts', skills: 'Skills' },
-    tags: { podcast: '播客', summary: '总结', writing: '写作', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '图像生成' },
+    tags: { podcast: '播客', summary: '总结', writing: '写作', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '图像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: '动画' },
     clearTags: '清除',
     copy: '复制',
     copied: '已复制',
@@ -805,19 +805,35 @@ export default {
     empty: '没有匹配的资产',
     backToLibrary: '返回资产库',
     versionLabel: '版本',
+    commitLabel: 'Commit',
+    licenseLabel: '许可',
+    catalogedAtLabel: '收录时间',
     assetsLabel: '资产',
     promptsLabel: '提示词',
     skillsLabel: '技能',
     aboutLabel: '用途',
     contentLabel: 'Prompt 内容',
+    skillContentLabel: 'SKILL 内容',
+    externalSkillLabel: 'EXTERNAL SKILL',
     usageLabel: '使用方式',
     notesLabel: '备注',
+    useCasesLabel: '适用场景',
+    precautionsLabel: '注意事项',
+    contentOutlineLabel: '内容目录',
+    sourceAndDeploymentLabel: '来源与部署',
+    sourceRepositoryLabel: '来源仓库',
+    sourcePathLabel: '文件路径',
+    deploymentCommandLabel: '部署命令',
+    copyInstallCommand: '复制部署命令',
+    installCommandCopied: '部署命令已复制到剪贴板',
     switchToGrid: '切换为两列排列',
     switchToList: '切换为单列索引',
     notFound: '资产不存在',
     entries: {
       ...developmentLibraryEntries,
-      minecraftSkinPreview: { title: 'Minecraft 角色双视角预览', description: '为后续皮肤转换生成标准 Minecraft Java 角色的双视角预览图。' }
+      minecraftSkinPreview: { title: 'Minecraft 角色双视角预览', description: '为后续皮肤转换生成标准 Minecraft Java 角色的双视角预览图。' },
+      threejsFundamentals: { title: 'Three.js Fundamentals', description: '面向 Three.js 场景、相机、渲染器与对象层级的基础能力收录。' },
+      gsapCore: { title: 'GSAP Core', description: '面向 GSAP 核心补间、缓动、交错与响应式动画的官方能力收录。' }
     },
     details: {
       ...developmentLibraryDetails,
@@ -825,6 +841,14 @@ export default {
         about: '为 Minecraft Java 皮肤制作流程建立长期图像生成对话，产出双联角色预览，而不是 UV 皮肤图。',
         usage: '新建图像生成对话，先上传固定双视角示例图，再粘贴长期规则；后续发送文字需求或角色参考图。',
         notes: '图片 1 只约束构图、视角和比例；角色设计由文字需求或后续上传的参考图决定。'
+      },
+      threejsFundamentals: {
+        about: '在新建或审查 Three.js 场景、相机、渲染器、对象层级、坐标变换与资源清理时使用。',
+        usage: '适用于 Vue / Vite 等前端界面的 Three.js 基础实现；涉及材质、灯光、加载器或后期处理时，可继续查看来源仓库中的对应专项 Skill。'
+      },
+      gsapCore: {
+        about: '在编写或审查 GSAP 核心补间、缓动、交错动画、DOM / SVG 动画以及响应式动效时使用。',
+        usage: '适合需要时间线、运行时控制或 `gsap.matchMedia()` 响应式分支的界面动效；滚动驱动与插件能力请查看来源仓库中的相关 Skill。'
       },
     }
   }

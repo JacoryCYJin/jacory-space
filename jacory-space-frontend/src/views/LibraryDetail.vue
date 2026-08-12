@@ -17,19 +17,39 @@
           </router-link>
           <div class="mt-12 grid gap-10 lg:mt-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-end lg:gap-16 2xl:mt-12">
             <div data-detail-enter class="min-w-0">
-              <p class="tech mb-5 text-xs text-blue">{{ entry.no }} · {{ entry.type === 'skill' ? 'SKILL' : 'PROMPT' }}</p>
+              <p class="tech mb-5 text-xs text-blue">{{ entry.no }} · {{ entryTypeLabel }}</p>
               <h1 class="max-w-4xl font-sans text-5xl font-medium leading-[0.95] tracking-tight text-foreground md:text-7xl">{{ t(entry.titleKey) }}</h1>
               <p class="mt-7 max-w-2xl text-base leading-8 text-foreground">{{ t(entry.descriptionKey) }}</p>
             </div>
             <dl data-detail-enter class="grid grid-cols-2 gap-5 border-t border-line pt-4 font-mono text-xs uppercase tracking-[0.12em] lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
-              <div>
-                <dt class="text-haze">{{ t('library.versionLabel') }}</dt>
-                <dd class="mt-3 text-foreground">{{ entry.version }}</dd>
-              </div>
-              <div>
-                <dt class="text-haze">{{ t('library.updatedLabel') }}</dt>
-                <dd class="mt-3 text-foreground">{{ entry.updated }}</dd>
-              </div>
+              <template v-if="isExternalSkill">
+                <div v-if="externalVersion">
+                  <dt class="text-haze">{{ t('library.versionLabel') }}</dt>
+                  <dd class="mt-3 text-foreground">{{ externalVersion }}</dd>
+                </div>
+                <div v-if="externalCommit">
+                  <dt class="text-haze">{{ t('library.commitLabel') }}</dt>
+                  <dd class="mt-3 text-foreground">{{ externalCommit }}</dd>
+                </div>
+                <div v-if="entry.license">
+                  <dt class="text-haze">{{ t('library.licenseLabel') }}</dt>
+                  <dd class="mt-3 text-foreground">{{ entry.license }}</dd>
+                </div>
+                <div>
+                  <dt class="text-haze">{{ t('library.catalogedAtLabel') }}</dt>
+                  <dd class="mt-3 text-foreground">{{ entry.updated }}</dd>
+                </div>
+              </template>
+              <template v-else>
+                <div>
+                  <dt class="text-haze">{{ t('library.versionLabel') }}</dt>
+                  <dd class="mt-3 text-foreground">{{ entry.version }}</dd>
+                </div>
+                <div>
+                  <dt class="text-haze">{{ t('library.updatedLabel') }}</dt>
+                  <dd class="mt-3 text-foreground">{{ entry.updated }}</dd>
+                </div>
+              </template>
             </dl>
           </div>
         </header>
@@ -46,26 +66,32 @@
           >
             <div ref="detailAsideContent" class="flex flex-col gap-8">
               <section data-detail-enter class="border-b border-line pb-8">
-                <p class="tech mb-6 text-xs text-blue">01 — {{ t('library.aboutLabel') }}</p>
-                <p class="text-sm leading-7 text-foreground">{{ t('library.details.' + entry.detailKey + '.about') }}</p>
-              </section>
+              <p class="tech mb-6 text-xs text-blue">01 — {{ isExternalSkill ? t('library.useCasesLabel') : t('library.aboutLabel') }}</p>
+              <p class="text-sm leading-7 text-foreground">{{ t('library.details.' + entry.detailKey + '.about') }}</p>
+            </section>
 
-              <section data-detail-enter class="border-b border-line pb-8">
+            <section data-detail-enter class="border-b border-line pb-8">
+              <template v-if="isExternalSkill">
+                <p class="tech mb-6 text-xs text-blue">02 — {{ t('library.usageLabel') }}</p>
+                <p class="text-sm leading-7 text-muted-foreground">{{ t(entry.descriptionKey) }}</p>
+              </template>
+              <template v-else>
                 <p class="tech mb-6 text-xs text-blue">02 — {{ t('library.usageLabel') }}</p>
                 <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.usage') }}</p>
-              </section>
+              </template>
+            </section>
 
-              <section data-detail-enter>
-                <p class="tech mb-6 text-xs text-blue">03 — {{ t('library.notesLabel') }}</p>
-                <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.notes') }}</p>
-              </section>
+            <section data-detail-enter>
+              <p class="tech mb-6 text-xs text-blue">03 — {{ isExternalSkill ? t('library.precautionsLabel') : t('library.notesLabel') }}</p>
+              <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + (isExternalSkill ? '.usage' : '.notes')) }}</p>
+            </section>
             </div>
           </aside>
 
           <article class="min-w-0 lg:flex lg:min-h-0" :style="detailArticleStyle">
             <section data-detail-enter class="lg:flex lg:min-h-0 lg:flex-1 lg:flex-col">
-              <div class="mb-5 flex shrink-0 items-center justify-between gap-4" :class="entry.type === 'prompt' ? 'lg:hidden' : ''">
-                <p class="tech text-xs text-blue">04 — {{ entry.type === 'skill' ? 'SKILL.md' : t('library.contentLabel') }}</p>
+              <div v-if="!isExternalSkill" class="mb-5 flex shrink-0 items-center justify-between gap-4" :class="entry.type === 'prompt' ? 'lg:hidden' : ''">
+                <p class="tech text-xs text-blue">04 — {{ entry.type === 'skill' ? t('library.skillContentLabel') : t('library.contentLabel') }}</p>
                 <button type="button" class="inline-flex items-center gap-2 border border-line-strong px-3 py-2 font-mono text-xs uppercase tracking-[0.12em] text-foreground transition-colors hover:border-blue hover:text-blue" @click="copyContent">
                   <Check v-if="copied" :size="14" stroke-width="1.5" aria-hidden="true" />
                   <Copy v-else :size="14" stroke-width="1.5" aria-hidden="true" />
@@ -87,10 +113,12 @@
                   </button>
                 </template>
               </PromptContent>
-              <SkillContent v-else :content="entry.content" />
+              <SkillContent v-else-if="isOriginalSkill" :content="entry.content" :content-id="`library-skill-${entry.id}`" />
+              <ExternalSkillContent v-else-if="isExternalSkill" :entry="entry" @copy-install-command="copyInstallCommand" />
             </section>
           </article>
         </div>
+
       </div>
     </section>
     <div v-else class="page-gutter pt-20"><div class="page-frame pb-20"><p class="font-mono text-sm uppercase tracking-[0.12em] text-muted-foreground">{{ t('library.notFound') }}</p></div></div>
@@ -108,6 +136,7 @@ import Footer from '../components/Footer.vue'
 import StatusToast from '../components/StatusToast.vue'
 import PromptContent from '../components/library/PromptContent.vue'
 import SkillContent from '../components/library/SkillContent.vue'
+import ExternalSkillContent from '../components/library/ExternalSkillContent.vue'
 import { getLibraryEntry } from '@library-index'
 
 const { t, locale } = useI18n()
@@ -125,6 +154,14 @@ let toastTimer
 let detailResizeObserver
 let detailHeightFrame
 const entry = computed(() => getLibraryEntry(route.params.id))
+const isOriginalSkill = computed(() => entry.value?.type === 'skill' && entry.value.sourceType === 'original')
+const isExternalSkill = computed(() => entry.value?.type === 'skill' && entry.value.sourceType === 'external')
+const externalVersion = computed(() => entry.value?.sourceRef?.version || entry.value?.sourceRef?.tag)
+const externalCommit = computed(() => entry.value?.sourceRef?.commit?.slice(0, 7))
+const entryTypeLabel = computed(() => {
+  if (isExternalSkill.value) return t('library.externalSkillLabel')
+  return entry.value?.type === 'skill' ? 'SKILL' : 'PROMPT'
+})
 const isViewportBound = computed(() => entry.value?.type === 'prompt' && !promptContentExpanded.value)
 const isDesktopViewportBound = computed(() => isViewportBound.value && isDesktop.value)
 const detailArticleStyle = computed(() => (
@@ -179,6 +216,15 @@ async function copyContent() {
     copied.value = true
     showToast(t('library.copySuccess'))
     window.setTimeout(() => { copied.value = false }, 2200)
+  } catch {
+    showToast(t('library.copyError'), 'error')
+  }
+}
+
+async function copyInstallCommand(command) {
+  try {
+    await navigator.clipboard.writeText(command)
+    showToast(t('library.installCommandCopied'))
   } catch {
     showToast(t('library.copyError'), 'error')
   }
