@@ -5,19 +5,15 @@
     </div>
 
     <div class="p-5 md:p-7">
-      <dl class="space-y-3 font-mono text-sm">
+      <dl class="font-mono text-sm">
         <div class="grid gap-2 md:grid-cols-[9rem_minmax(0,1fr)] md:gap-6">
-          <dt class="tech text-xs text-haze">{{ t('library.sourceRepositoryLabel') }}</dt>
+          <dt class="tech text-xs text-blue">{{ t('library.sourceRepositoryLabel') }}</dt>
           <dd class="min-w-0">
-            <a :href="entry.sourceUrl" target="_blank" rel="noreferrer" class="inline-flex max-w-full items-center gap-2 break-all text-foreground transition-colors hover:text-blue">
+            <a :href="entry.sourceUrl" target="_blank" rel="noreferrer" class="inline-flex max-w-full items-center gap-2 break-all font-mono text-sm leading-7 text-foreground transition-colors hover:text-blue">
               <span>{{ entry.sourceUrl }}</span>
               <ExternalLink :size="14" stroke-width="1.5" class="shrink-0" aria-hidden="true" />
             </a>
           </dd>
-        </div>
-        <div class="grid gap-2 md:grid-cols-[9rem_minmax(0,1fr)] md:gap-6">
-          <dt class="tech text-xs text-haze">{{ t('library.sourcePathLabel') }}</dt>
-          <dd class="break-all text-foreground">{{ entry.sourcePath }}</dd>
         </div>
       </dl>
 
