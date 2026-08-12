@@ -21,8 +21,8 @@ export default {
     entries: {
       ...developmentLibraryEntries,
       minecraftSkinPreview: { title: 'Minecraft キャラクター両視点プレビュー', description: '後続のスキン変換工程向けに、標準 Minecraft Java キャラクターの両視点プレビューを生成します。' },
-      threejsFundamentals: { title: 'Three.js Fundamentals', description: 'Three.js のシーン、カメラ、レンダラー、オブジェクト階層のための外部 Skill を収録します。' },
-      gsapCore: { title: 'GSAP Core', description: 'GSAP のコア Tween、イージング、Stagger、レスポンシブアニメーションの公式 Skill を収録します。' }
+      threejsFundamentals: { title: 'Three.js', description: 'Three.js のシーン、カメラ、レンダラー、オブジェクト階層のための外部 Skill を収録します。' },
+      gsapCore: { title: 'GSAP', description: 'GSAP のコア Tween、イージング、Stagger、レスポンシブアニメーションの公式 Skill を収録します。' }
     },
     details: {
       ...developmentLibraryDetails,

@@ -74,8 +74,8 @@ export default {
     entries: {
       ...developmentLibraryEntries,
       minecraftSkinPreview: { title: 'Minecraft 角色双视角预览', description: '为后续皮肤转换生成标准 Minecraft Java 角色的双视角预览图。' },
-      threejsFundamentals: { title: 'Three.js Fundamentals', description: '面向 Three.js 场景、相机、渲染器与对象层级的基础能力收录。' },
-      gsapCore: { title: 'GSAP Core', description: '面向 GSAP 核心补间、缓动、交错与响应式动画的官方能力收录。' }
+      threejsFundamentals: { title: 'Three.js', description: '面向 Three.js 场景、相机、渲染器与对象层级的基础能力收录。' },
+      gsapCore: { title: 'GSAP', description: '面向 GSAP 核心补间、缓动、交错与响应式动画的官方能力收录。' }
     },
     details: {
       ...developmentLibraryDetails,

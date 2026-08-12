@@ -21,8 +21,8 @@ export default {
     entries: {
       ...developmentLibraryEntries,
       minecraftSkinPreview: { title: 'Minecraft Dual-View Preview', description: 'Generate a standard Minecraft Java character preview for the downstream skin-conversion workflow.' },
-      threejsFundamentals: { title: 'Three.js Fundamentals', description: 'A curated external skill for Three.js scenes, cameras, renderers, and object hierarchies.' },
-      gsapCore: { title: 'GSAP Core', description: 'A curated official skill for GSAP core tweens, easing, staggering, and responsive animation.' }
+      threejsFundamentals: { title: 'Three.js', description: 'A curated external skill for Three.js scenes, cameras, renderers, and object hierarchies.' },
+      gsapCore: { title: 'GSAP', description: 'A curated official skill for GSAP core tweens, easing, staggering, and responsive animation.' }
     },
     details: {
       ...developmentLibraryDetails,
