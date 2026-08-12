@@ -64,7 +64,6 @@ export const libraryEntries = [
     version: 'v1.0.0',
     updated: '2026.08.10',
     sourceUrl: 'https://github.com/CloudAI-X/threejs-skills',
-    sourcePath: 'skills/threejs-fundamentals/SKILL.md',
     sourceRef: { commit: 'b1c623076c661fc9b03dac19292e825a5d106823' },
     license: 'MIT (README)',
     outline: [
@@ -92,7 +91,6 @@ export const libraryEntries = [
     version: 'v1.0.0',
     updated: '2026.08.10',
     sourceUrl: 'https://github.com/greensock/gsap-skills',
-    sourcePath: 'skills/gsap-core/SKILL.md',
     sourceRef: { commit: 'aed9cfd3277740755f6bfc1155c7aa645403b760' },
     license: 'MIT',
     installCommand: 'npx skills add https://github.com/greensock/gsap-skills',

@@ -66,7 +66,6 @@ export default {
     contentOutlineLabel: '内容目录',
     sourceAndDeploymentLabel: '来源与部署',
     sourceRepositoryLabel: '来源仓库',
-    sourcePathLabel: '文件路径',
     deploymentCommandLabel: '部署命令',
     copyInstallCommand: '复制部署命令',
     installCommandCopied: '部署命令已复制到剪贴板',
