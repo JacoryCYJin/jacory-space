@@ -61,6 +61,8 @@ export default {
     notesLabel: '备注',
     useCasesLabel: '适用场景',
     precautionsLabel: '注意事项',
+    coreContentLabel: '核心内容',
+    capabilityBoundaryLabel: '能力边界',
     contentOutlineLabel: '内容目录',
     sourceAndDeploymentLabel: '来源与部署',
     sourceRepositoryLabel: '来源仓库',
@@ -85,12 +87,14 @@ export default {
         notes: '图片 1 只约束构图、视角和比例；角色设计由文字需求或后续上传的参考图决定。'
       },
       threejsFundamentals: {
-        about: '在新建或审查 Three.js 场景、相机、渲染器、对象层级、坐标变换与资源清理时使用。',
-        usage: '适用于 Vue / Vite 等前端界面的 Three.js 基础实现；涉及材质、灯光、加载器或后期处理时，可继续查看来源仓库中的对应专项 Skill。'
+        about: '在新建或审查 Three.js 项目时，用于处理场景、相机、渲染器、对象层级、坐标变换与资源清理等基础问题。',
+        usage: '涵盖场景、相机与渲染器配置，Object3D / Group / Mesh 层级与坐标变换、常用数学工具，以及动画循环、尺寸响应、资源清理、加载与性能处理。',
+        notes: '主要覆盖 Three.js 的基础实现；材质、灯光、加载器或后期处理等专项能力，可继续查看来源仓库中的对应 Skill。'
       },
       gsapCore: {
         about: '在编写或审查 GSAP 核心补间、缓动、交错动画、DOM / SVG 动画以及响应式动效时使用。',
-        usage: '适合需要时间线、运行时控制或 `gsap.matchMedia()` 响应式分支的界面动效；滚动驱动与插件能力请查看来源仓库中的相关 Skill。'
+        usage: '涵盖 `gsap.to()`、`from()`、`fromTo()` 与 `set()` 的补间写法，时长、缓动、交错与重复等配置，DOM / SVG 变换、动画实例控制，以及 `gsap.matchMedia()` 的响应式与减少动效设置。',
+        notes: '主要覆盖 GSAP 的核心动画能力；滚动驱动、框架集成、插件与性能等专项内容，可继续查看来源仓库中的对应 Skill。'
       },
     }
   }
