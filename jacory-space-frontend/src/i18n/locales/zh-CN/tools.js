@@ -12,6 +12,8 @@ export default {
     },
     interfaceIndex: {
       kicker: '01 — 界面索引',
+      titleLead: '实践',
+      titleAccent: '索引',
       description: '自建工具、界面实验、作品项目与系统组件的统一索引。',
       categoriesAria: '界面分类',
       summaryLabel: '摘要',

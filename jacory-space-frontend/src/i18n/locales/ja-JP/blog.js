@@ -42,8 +42,8 @@ export default {
     fieldNotes: {
       journalLabel: '02 — ノート',
       archiveOpen: '{count}件 / アーカイブ公開中',
-      titleLead: 'Field',
-      titleAccent: ' Notes',
+      titleLead: '観察',
+      titleAccent: 'ノート',
       subtitleLead: 'Personal OS の公開日誌',
       subtitleBody: 'すべての記録は送られなかった手紙であり、すべてのアーカイブは未完の自己証明です。',
       readEntry: '記事を読む',

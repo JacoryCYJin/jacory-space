@@ -12,6 +12,8 @@ export default {
     },
     interfaceIndex: {
       kicker: '01 — インターフェース索引',
+      titleLead: '実践',
+      titleAccent: '索引',
       description: '自作ツール、作品、インターフェース実験、システム部品をまとめた索引。',
       categoriesAria: 'インターフェースのカテゴリー',
       summaryLabel: '概要',

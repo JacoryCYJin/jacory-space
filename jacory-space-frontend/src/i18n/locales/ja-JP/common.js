@@ -1,7 +1,7 @@
 export default {
   nav: {
-    home: '索引',
-    tools: 'ツール',
+    home: '空間',
+    tools: '索引',
     library: 'PlanTO',
     videoParser: '動画解析',
     blog: 'ノート',

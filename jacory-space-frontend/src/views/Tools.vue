@@ -15,8 +15,8 @@
               <div class="grid gap-6 lg:gap-4 xl:gap-7">
                 <p class="font-mono text-xs tracking-[0.18em] text-blue">{{ t('tools.interfaceIndex.kicker') }}</p>
                 <h1 class="font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-[4.15rem] lg:text-[3.55rem] xl:text-[4.15rem]">
-                  Interface
-                  <span class="block italic text-blue">Index</span>
+                  {{ t('tools.interfaceIndex.titleLead') }}
+                  <span class="block italic text-blue">{{ t('tools.interfaceIndex.titleAccent') }}</span>
                 </h1>
               </div>
               <div class="grid max-w-[25rem] text-[15px] leading-[1.72] text-muted-foreground">
