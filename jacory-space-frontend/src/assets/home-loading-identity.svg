@@ -16,6 +16,15 @@
     <clipPath id="home-loading-identity-right" clipPathUnits="userSpaceOnUse">
       <rect x="900" width="900" height="700" />
     </clipPath>
+    <clipPath id="home-loading-i-reveal" clipPathUnits="userSpaceOnUse">
+      <rect class="identity-i-reveal-mask" x="840" width="120" height="700" />
+    </clipPath>
+    <clipPath id="home-loading-m-reveal" clipPathUnits="userSpaceOnUse">
+      <rect class="identity-m-reveal-mask" x="735" width="330" height="700" />
+    </clipPath>
+    <clipPath id="home-loading-name-reveal" clipPathUnits="userSpaceOnUse">
+      <rect class="identity-name-reveal-mask" x="260" width="1280" height="700" />
+    </clipPath>
 
     <path id="home-loading-glyph-i" d="M40 0V205L191 237V1218L40 1250V1456H692V1250L541 1218V237L692 205V0Z" />
     <path id="home-loading-glyph-m" d="M32 0V205L182 237V1218L32 1250V1456H719L1071 497H1077L1419 1456H2098V1250L1947 1218V237L2098 205V0H1446V205L1603 237V427L1611 1112L1605 1113L1193 0H917L499 1100L492 1099L516 475V237L685 205V0Z" />
@@ -43,7 +52,7 @@
   </defs>
 
   <g fill="currentColor">
-    <use class="identity-i-full" href="#home-loading-i-source" />
+    <use class="identity-i-full" href="#home-loading-i-source" clip-path="url(#home-loading-i-reveal)" />
 
     <g class="identity-i-halves">
       <g class="identity-i-left">
@@ -54,7 +63,7 @@
       </g>
     </g>
 
-    <use class="identity-m-full" href="#home-loading-m-source" />
+    <use class="identity-m-full" href="#home-loading-m-source" clip-path="url(#home-loading-m-reveal)" />
 
     <g class="identity-m-halves">
       <g class="identity-m-left">
@@ -65,6 +74,6 @@
       </g>
     </g>
 
-    <use class="identity-name" href="#home-loading-name-source" />
+    <use class="identity-name" href="#home-loading-name-source" clip-path="url(#home-loading-name-reveal)" />
   </g>
 </svg>

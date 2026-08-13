@@ -86,6 +86,7 @@ const emit = defineEmits(['complete'])
 const loaderRoot = ref(null)
 const counter = ref('000')
 
+const INTRO_DURATION = 3.9
 const EXIT_DURATION = 0.72
 
 let loaderMedia
@@ -168,6 +169,9 @@ onMounted(() => {
       const mLeft = root.querySelector('.identity-m-left')
       const mRight = root.querySelector('.identity-m-right')
       const name = root.querySelector('.identity-name')
+      const iRevealMask = root.querySelector('.identity-i-reveal-mask')
+      const mRevealMask = root.querySelector('.identity-m-reveal-mask')
+      const nameRevealMask = root.querySelector('.identity-name-reveal-mask')
       const activeGeometry = root.querySelector(
         context.conditions.isMobile
           ? '.home-loading-identity__geometry--mobile'
@@ -186,9 +190,13 @@ onMounted(() => {
         })
       })
 
-      gsap.set([iFull, iHalves, mFull, mHalves, name], { autoAlpha: 0 })
+      gsap.set([iFull, mFull, name], { autoAlpha: 1 })
+      gsap.set([iHalves, mHalves], { autoAlpha: 0 })
       gsap.set([iLeft, iRight, mLeft, mRight], { x: 0 })
-      gsap.set([iFull, mFull, name], { y: 12, transformOrigin: 'center center' })
+      gsap.set([iRevealMask, mRevealMask, nameRevealMask], {
+        scaleX: 0,
+        svgOrigin: '900 350'
+      })
 
       introTimeline = gsap.timeline({
         paused: true,
@@ -202,25 +210,25 @@ onMounted(() => {
 
       introTimeline
         .addLabel('iIn', 0)
-        .to(iFull, { autoAlpha: 1, y: 0, duration: 0.68 }, 'iIn')
+        .to(iRevealMask, { scaleX: 1, duration: 0.68 }, 'iIn')
         .addLabel('iSplit', '+=0.28')
         .set(iFull, { autoAlpha: 0 }, 'iSplit')
         .set(iHalves, { autoAlpha: 1 }, 'iSplit')
         .to(iLeft, { x: -180, duration: 0.78, ease: 'power3.inOut' }, 'iSplit')
         .to(iRight, { x: 180, duration: 0.78, ease: 'power3.inOut' }, 'iSplit')
-        .addLabel('mIn', '>-0.1')
-        .to(mFull, { autoAlpha: 1, y: 0, duration: 0.64 }, 'mIn')
-        .addLabel('mSplit', '+=0.26')
+        .addLabel('mIn', 'iSplit')
+        .to(mRevealMask, { scaleX: 1, duration: 0.78, ease: 'power3.inOut' }, 'mIn')
+        .addLabel('mSplit', 'iSplit+=1.58')
         .set(mFull, { autoAlpha: 0 }, 'mSplit')
         .set(mHalves, { autoAlpha: 1 }, 'mSplit')
         .to(iLeft, { x: -800, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
         .to(iRight, { x: 800, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
         .to(mLeft, { x: -640, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
         .to(mRight, { x: 640, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
-        .addLabel('nameIn', '>-0.12')
-        .to(name, { autoAlpha: 1, y: 0, duration: 0.66 }, 'nameIn')
+        .addLabel('nameIn', 'mSplit')
+        .to(nameRevealMask, { scaleX: 1, duration: 0.82, ease: 'power3.inOut' }, 'nameIn')
 
-      const introDuration = introTimeline.duration()
+      const introDuration = INTRO_DURATION
       const strokeDuration = 0.78
       const strokeStep = dividers.length > 1
         ? (introDuration - strokeDuration) / (dividers.length - 1)
