@@ -1,6 +1,6 @@
 <template>
   <main ref="heroRoot" class="grain bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
-    <HomeLoadingOverlay @complete="handleLoadingComplete" />
+    <HomeLoadingIdentity @complete="handleLoadingComplete" />
 
     <section
       id="top"
@@ -81,7 +81,7 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
-import HomeLoadingOverlay from '../components/HomeLoadingOverlay.vue'
+import HomeLoadingIdentity from '../components/HomeLoadingIdentity.vue'
 
 gsap.registerPlugin(CustomEase)
 

@@ -1,0 +1,70 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 1800 700"
+  class="home-loading-identity__svg"
+  aria-hidden="true"
+>
+  <!--
+    Roboto Slab Black outlines converted to SVG for the Jacory loading identity.
+    Copyright 2018 The Roboto Slab Project Authors.
+    Licensed under the Apache License, Version 2.0.
+  -->
+  <defs>
+    <clipPath id="home-loading-identity-left" clipPathUnits="userSpaceOnUse">
+      <rect width="900" height="700" />
+    </clipPath>
+    <clipPath id="home-loading-identity-right" clipPathUnits="userSpaceOnUse">
+      <rect x="900" width="900" height="700" />
+    </clipPath>
+
+    <path id="home-loading-glyph-i" d="M40 0V205L191 237V1218L40 1250V1456H692V1250L541 1218V237L692 205V0Z" />
+    <path id="home-loading-glyph-m" d="M32 0V205L182 237V1218L32 1250V1456H719L1071 497H1077L1419 1456H2098V1250L1947 1218V237L2098 205V0H1446V205L1603 237V427L1611 1112L1605 1113L1193 0H917L499 1100L492 1099L516 475V237L685 205V0Z" />
+    <path id="home-loading-glyph-j" d="M584 -21Q328 -21 178 101.5Q28 224 19 483L21 489H348Q358 348 409.5 299.5Q461 251 539 251Q606 251 663.5 297Q721 343 721 452V1218L523 1251V1456H1222V1250L1070 1218V452Q1070 232 943.5 105.5Q817 -21 584 -21Z" />
+    <path id="home-loading-glyph-a" d="M23 0V205L125 220L559 1456H939L1374 220L1476 205V0H932V205L1027 223L983 381H515L473 223L568 205V0ZM589 627H908L766 1068L750 1119H744L727 1063Z" />
+    <path id="home-loading-glyph-c" d="M755 -21Q547 -21 384 63Q221 147 128 306.5Q35 466 35 694V761Q35 971 120.5 1132.5Q206 1294 364.5 1385.5Q523 1477 741 1477Q893 1477 1030.5 1436.5Q1168 1396 1286 1298V923H1031L996 1138Q945 1173 886 1193Q827 1213 753 1213Q587 1213 486 1095.5Q385 978 385 763V694Q385 560 432 458.5Q479 357 563.5 300Q648 243 759 243Q818 243 879 255.5Q940 268 997 289L1032 495H1288V128Q1201 68 1066 23.5Q931 -21 755 -21Z" />
+    <path id="home-loading-glyph-o" d="M753 -21Q602 -21 475.5 34.5Q349 90 256 190Q163 290 112.5 424.5Q62 559 62 717V740Q62 897 112.5 1031Q163 1165 255.5 1265Q348 1365 474 1421Q600 1477 751 1477Q899 1477 1026 1421Q1153 1365 1248.5 1265Q1344 1165 1397 1031Q1450 897 1450 740V717Q1450 559 1397 424.5Q1344 290 1249 190Q1154 90 1027 34.5Q900 -21 753 -21ZM753 245Q918 245 1009.5 374.5Q1101 504 1101 717V742Q1101 951 1009 1080.5Q917 1210 751 1210Q576 1210 494.5 1082Q413 954 413 742V717Q413 503 496 374Q579 245 753 245Z" />
+    <path id="home-loading-glyph-r" d="M40 0V205L191 237V1218L40 1250V1457H756Q929 1457 1056 1402Q1183 1347 1252 1245.5Q1321 1144 1321 1005Q1321 886 1260.5 782Q1200 678 1096 611L1248 239L1386 204V0H962L781 525L542 528V237L693 205V0ZM542 797H760Q862 797 917 844.5Q972 892 972 982Q972 1075 916 1131.5Q860 1188 756 1188H542Z" />
+    <path id="home-loading-glyph-y" d="M441 0V205L592 237V480L170 1229L18 1250V1456H648V1250L558 1234L758 835L781 784H790L814 832L1048 1234L896 1250V1456H1514V1250L1360 1229L942 508V237L1094 205V0Z" />
+
+    <g id="home-loading-i-source" transform="translate(846.38671875 457) scale(0.146484375 -0.146484375)">
+      <use href="#home-loading-glyph-i" />
+    </g>
+    <g id="home-loading-m-source" transform="translate(744.873046875 457) scale(0.146484375 -0.146484375)">
+      <use href="#home-loading-glyph-m" />
+    </g>
+    <g id="home-loading-name-source" transform="translate(275.6103515625 457) scale(0.146484375 -0.146484375)">
+      <use href="#home-loading-glyph-j" />
+      <use href="#home-loading-glyph-a" x="1222" />
+      <use href="#home-loading-glyph-c" x="2721" />
+      <use href="#home-loading-glyph-o" x="4061" />
+      <use href="#home-loading-glyph-r" x="5566" />
+      <use href="#home-loading-glyph-y" x="6988" />
+    </g>
+  </defs>
+
+  <g fill="currentColor">
+    <use class="identity-i-full" href="#home-loading-i-source" />
+
+    <g class="identity-i-halves">
+      <g class="identity-i-left">
+        <use href="#home-loading-i-source" clip-path="url(#home-loading-identity-left)" />
+      </g>
+      <g class="identity-i-right">
+        <use href="#home-loading-i-source" clip-path="url(#home-loading-identity-right)" />
+      </g>
+    </g>
+
+    <use class="identity-m-full" href="#home-loading-m-source" />
+
+    <g class="identity-m-halves">
+      <g class="identity-m-left">
+        <use href="#home-loading-m-source" clip-path="url(#home-loading-identity-left)" />
+      </g>
+      <g class="identity-m-right">
+        <use href="#home-loading-m-source" clip-path="url(#home-loading-identity-right)" />
+      </g>
+    </g>
+
+    <use class="identity-name" href="#home-loading-name-source" />
+  </g>
+</svg>
