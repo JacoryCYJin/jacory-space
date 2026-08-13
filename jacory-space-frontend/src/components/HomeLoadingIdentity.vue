@@ -70,6 +70,8 @@
       {{ counter }}
     </span>
 
+    <HomeLoadingCrtEffect />
+
     <span class="sr-only" aria-live="polite">Loading {{ counter }} percent</span>
   </div>
 </template>
@@ -78,6 +80,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import identityArtwork from '../assets/home-loading-identity.svg?raw'
+import HomeLoadingCrtEffect from './HomeLoadingCrtEffect.vue'
 
 const emit = defineEmits(['complete'])
 const loaderRoot = ref(null)
