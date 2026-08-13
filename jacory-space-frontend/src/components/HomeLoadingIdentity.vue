@@ -79,12 +79,14 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
-import identityArtwork from '../assets/home-loading-identity.svg?raw'
+import identityArtworkSource from '../assets/home-loading/home-loading-identity.svg?raw'
+import jacoryOSculptureUrl from '../assets/home-loading/jacory-o-sculpture.png'
 import HomeLoadingCrtEffect from './HomeLoadingCrtEffect.vue'
 
 const emit = defineEmits(['complete'])
 const loaderRoot = ref(null)
 const counter = ref('000')
+const identityArtwork = identityArtworkSource.replace('__JACORY_O_SCULPTURE_URL__', jacoryOSculptureUrl)
 
 const INTRO_DURATION = 3.9
 const EXIT_DURATION = 0.72
@@ -221,10 +223,10 @@ onMounted(() => {
         .addLabel('mSplit', 'iSplit+=1.58')
         .set(mFull, { autoAlpha: 0 }, 'mSplit')
         .set(mHalves, { autoAlpha: 1 }, 'mSplit')
-        .to(iLeft, { x: -492, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
-        .to(iRight, { x: 492, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
-        .to(mLeft, { x: -379, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
-        .to(mRight, { x: 379, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
+        .to(iLeft, { x: -547, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
+        .to(iRight, { x: 547, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
+        .to(mLeft, { x: -434, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
+        .to(mRight, { x: 434, duration: 0.82, ease: 'power3.inOut' }, 'mSplit')
         .addLabel('nameIn', 'mSplit')
         .to(nameRevealMask, { scaleX: 1, duration: 0.82, ease: 'power3.inOut' }, 'nameIn')
 
