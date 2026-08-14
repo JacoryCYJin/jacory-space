@@ -27,7 +27,12 @@ const SCENE_CONFIG = {
   sphereRadius: 0.56,
   sphereSegments: 64,
   batScale: 1.3,
-  batPreparationAngle: -(Math.PI * 3) / 4,
+  batImpactScaleMultiplier: 1.5,
+  batImpactScaleStart: 0.68,
+  batCenterOffset: 0.96,
+  batHeadOffset: 0.97,
+  batRevealAngle: THREE.MathUtils.degToRad(-155),
+  batImpactAngle: THREE.MathUtils.degToRad(-140),
   navbarHeight: 64,
   pinScrollMultiplier: 2.2,
   pixelRatioCap: 2,
@@ -124,6 +129,8 @@ const layout = {
   startBatPivot: new THREE.Vector3(),
   batArcControl: new THREE.Vector3(),
   batImpactPivot: new THREE.Vector3(),
+  batImpactDirection: new THREE.Vector3(),
+  scaledBatImpactPivot: new THREE.Vector3(),
   finalSphereDistance: 1
 }
 
@@ -613,7 +620,7 @@ function createScene() {
   bat = new THREE.Mesh(createBatGeometry(), batMaterial)
   bat.rotation.z = -Math.PI / 2
   bat.scale.setScalar(SCENE_CONFIG.batScale)
-  bat.position.x = 0.96 * SCENE_CONFIG.batScale
+  bat.position.x = SCENE_CONFIG.batCenterOffset * SCENE_CONFIG.batScale
   bat.visible = false
   bat.add(createBatAsciiArtLayer())
   batPivot.add(bat)
@@ -671,20 +678,25 @@ function updateLayout() {
     SCENE_CONFIG.cameraZ - layout.finalSphereDistance
   )
 
-  const batCenterOffset = 0.96 * SCENE_CONFIG.batScale
-  const batHeadOffset = (0.96 + 0.97) * SCENE_CONFIG.batScale
-  const batDirectionX = Math.cos(SCENE_CONFIG.batPreparationAngle)
-  const batDirectionY = Math.sin(SCENE_CONFIG.batPreparationAngle)
+  const batCenterOffset = SCENE_CONFIG.batCenterOffset * SCENE_CONFIG.batScale
+  const batHeadOffset = (
+    SCENE_CONFIG.batCenterOffset + SCENE_CONFIG.batHeadOffset
+  ) * SCENE_CONFIG.batScale
+  const revealDirectionX = Math.cos(SCENE_CONFIG.batRevealAngle)
+  const revealDirectionY = Math.sin(SCENE_CONFIG.batRevealAngle)
+  const impactDirectionX = Math.cos(SCENE_CONFIG.batImpactAngle)
+  const impactDirectionY = Math.sin(SCENE_CONFIG.batImpactAngle)
+  layout.batImpactDirection.set(impactDirectionX, impactDirectionY, 0)
 
   layout.startBatPivot.set(
-    startX - batCenterOffset * batDirectionX,
-    0.06 - batCenterOffset * batDirectionY,
+    startX - batCenterOffset * revealDirectionX,
+    0.06 - batCenterOffset * revealDirectionY,
     -14
   )
   layout.batArcControl.set(startX + 1.1, 0.82, -2.4)
   layout.batImpactPivot.set(
-    startX + SCENE_CONFIG.sphereRadius * 0.76 - batHeadOffset * batDirectionX,
-    0.06 - batHeadOffset * batDirectionY,
+    startX + SCENE_CONFIG.sphereRadius * 0.76 - batHeadOffset * impactDirectionX,
+    0.06 - batHeadOffset * impactDirectionY,
     -0.2
   )
 
@@ -706,18 +718,40 @@ function applySceneProgress(value) {
   const batArcWindow = impactStart + 0.08 - sphereStillEnd
   const batArcProgress = clamp01((progress - sphereStillEnd) / batArcWindow)
   const batArc = batArcProgress * batArcProgress
+  const batImpactScaleProgress = smoothStep(
+    (batArcProgress - SCENE_CONFIG.batImpactScaleStart)
+      / (1 - SCENE_CONFIG.batImpactScaleStart)
+  )
+  const batScale = lerp(
+    SCENE_CONFIG.batScale,
+    SCENE_CONFIG.batScale * SCENE_CONFIG.batImpactScaleMultiplier,
+    batImpactScaleProgress
+  )
+  const batHeadScaleDifference = (
+    SCENE_CONFIG.batCenterOffset + SCENE_CONFIG.batHeadOffset
+  ) * (batScale - SCENE_CONFIG.batScale)
+  const batAngle = lerp(
+    SCENE_CONFIG.batRevealAngle,
+    SCENE_CONFIG.batImpactAngle,
+    smoothStep(batArcProgress)
+  )
   const impact = phaseProgress(progress, impactStart, impactEnd)
   const flight = phaseProgress(progress, flightStart, flightEnd)
 
   bat.visible = batArcProgress > 0.025
+  bat.scale.setScalar(batScale)
+  bat.position.x = SCENE_CONFIG.batCenterOffset * batScale
+  layout.scaledBatImpactPivot
+    .copy(layout.batImpactPivot)
+    .addScaledVector(layout.batImpactDirection, -batHeadScaleDifference)
   setQuadraticBezier(
     batPivot.position,
     layout.startBatPivot,
     layout.batArcControl,
-    layout.batImpactPivot,
+    layout.scaledBatImpactPivot,
     batArc
   )
-  batPivot.rotation.set(0, 0, SCENE_CONFIG.batPreparationAngle)
+  batPivot.rotation.set(0, 0, batAngle)
   batPivot.position.z = lerp(batPivot.position.z, -1.65, flight)
 
   const flightEase = smoothStep(flight)
