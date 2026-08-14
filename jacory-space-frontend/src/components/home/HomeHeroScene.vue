@@ -26,6 +26,7 @@ const SCENE_CONFIG = {
   cameraZ: 6,
   sphereRadius: 0.56,
   sphereSegments: 64,
+  compositionOffsetY: -0.2,
   batScale: 5,
   batImpactScaleMultiplier: 1.03,
   batImpactScaleStart: 0.68,
@@ -662,8 +663,9 @@ function updateLayout() {
 
   const halfHeightAtStart = Math.tan(THREE.MathUtils.degToRad(SCENE_CONFIG.cameraFov / 2)) * SCENE_CONFIG.cameraZ
   const halfWidthAtStart = halfHeightAtStart * layout.aspect
-  const startX = halfWidthAtStart * 0.38
-  layout.startSphere.set(startX, 0.06, 0)
+  const startX = 0
+  const startY = SCENE_CONFIG.compositionOffsetY
+  layout.startSphere.set(startX, startY, 0)
 
   const halfFov = THREE.MathUtils.degToRad(SCENE_CONFIG.cameraFov / 2)
   const cornerAngle = Math.atan(Math.hypot(Math.tan(halfFov) * layout.aspect, Math.tan(halfFov)))
@@ -689,13 +691,13 @@ function updateLayout() {
 
   layout.startBatPivot.set(
     startX - batCenterOffset * revealDirectionX,
-    0.06 - batCenterOffset * revealDirectionY,
+    startY - batCenterOffset * revealDirectionY,
     -14
   )
-  layout.batArcControl.set(startX + 1.1, 0.82, -2.4)
+  layout.batArcControl.set(startX + 1.1, startY + 0.76, -2.4)
   layout.batImpactPivot.set(
     startX + SCENE_CONFIG.sphereRadius * SCENE_CONFIG.batImpactOffsetX - batImpactOffset * impactDirectionX,
-    SCENE_CONFIG.batImpactOffsetY - batImpactOffset * impactDirectionY,
+    startY + SCENE_CONFIG.batImpactOffsetY - batImpactOffset * impactDirectionY,
     -0.2
   )
 
