@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -24,7 +24,13 @@ import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixCon
 
 gsap.registerPlugin(ScrollTrigger)
 
-const emit = defineEmits(['takeover-change'])
+const emit = defineEmits(['takeover-change', 'ready'])
+const props = defineProps({
+  active: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const sceneRoot = ref(null)
 const baseCanvasEl = ref(null)
@@ -131,6 +137,7 @@ let sceneContext
 let progressTimeline
 let progressState
 let sceneSection
+let sceneActive = false
 
 const layout = {
   width: 1,
@@ -904,12 +911,65 @@ function renderMatrixLayer(renderer, matrixOutput) {
 }
 
 function renderScene() {
-  if (!baseRenderer || !ballRenderer || !scene || !camera) return
+  if (!sceneActive || !baseRenderer || !ballRenderer || !scene || !camera) {
+    renderFrame = 0
+    return
+  }
 
   renderMatrixLayer(baseRenderer, baseMatrixOutput)
   renderMatrixLayer(ballRenderer, ballMatrixOutput)
 
   renderFrame = window.requestAnimationFrame(renderScene)
+}
+
+function activateScene() {
+  if (sceneActive || !sceneRoot.value || !scene) return
+
+  sceneActive = true
+  resizeObserver = new ResizeObserver(scheduleResize)
+  resizeObserver.observe(sceneRoot.value)
+  window.addEventListener('resize', scheduleResize)
+
+  motionMedia = gsap.matchMedia()
+  motionMedia.add('(prefers-reduced-motion: no-preference)', () => {
+    createScrollScene()
+    return () => {
+      sceneContext?.revert()
+      sceneContext = null
+      progressTimeline = null
+    }
+  })
+
+  motionMedia.add('(prefers-reduced-motion: reduce)', () => {
+    applySceneProgress(0)
+  })
+
+  renderScene()
+  document.fonts?.ready?.then(() => {
+    window.requestAnimationFrame(() => ScrollTrigger.refresh())
+  })
+}
+
+async function prepareInitialFrame() {
+  const batVisibility = bat?.visible
+  if (bat) bat.visible = true
+
+  try {
+    await Promise.all([
+      baseRenderer?.compileAsync(scene, camera),
+      ballRenderer?.compileAsync(scene, camera),
+      baseRenderer?.compileAsync(baseMatrixOutput?.matrixScene, baseMatrixOutput?.matrixCamera),
+      ballRenderer?.compileAsync(ballMatrixOutput?.matrixScene, ballMatrixOutput?.matrixCamera)
+    ])
+  } catch {
+    // The first render below remains the fallback for WebGL contexts without parallel compilation.
+  } finally {
+    if (bat) bat.visible = batVisibility
+  }
+
+  renderMatrixLayer(baseRenderer, baseMatrixOutput)
+  renderMatrixLayer(ballRenderer, ballMatrixOutput)
+  await new Promise((resolve) => window.requestAnimationFrame(resolve))
 }
 
 function scheduleResize() {
@@ -997,37 +1057,32 @@ function disposeScene() {
 
 onMounted(async () => {
   await nextTick()
-  if (!sceneRoot.value || !baseCanvasEl.value || !ballCanvasEl.value) return
+  if (!sceneRoot.value || !baseCanvasEl.value || !ballCanvasEl.value) {
+    emit('ready')
+    return
+  }
 
-  sceneSection = sceneRoot.value.parentElement
-  createScene()
-  updateLayout()
-  renderScene()
+  try {
+    sceneSection = sceneRoot.value.parentElement
+    createScene()
+    updateLayout()
+    await prepareInitialFrame()
+  } catch {
+    // Do not leave the loading identity waiting forever when WebGL is unavailable.
+    emit('ready')
+    return
+  }
 
-  resizeObserver = new ResizeObserver(scheduleResize)
-  resizeObserver.observe(sceneRoot.value)
-  window.addEventListener('resize', scheduleResize)
+  emit('ready')
+  if (props.active) activateScene()
+})
 
-  motionMedia = gsap.matchMedia()
-  motionMedia.add('(prefers-reduced-motion: no-preference)', () => {
-    createScrollScene()
-    return () => {
-      sceneContext?.revert()
-      sceneContext = null
-      progressTimeline = null
-    }
-  })
-
-  motionMedia.add('(prefers-reduced-motion: reduce)', () => {
-    applySceneProgress(0)
-  })
-
-  document.fonts?.ready?.then(() => {
-    window.requestAnimationFrame(() => ScrollTrigger.refresh())
-  })
+watch(() => props.active, (isActive) => {
+  if (isActive) activateScene()
 })
 
 onBeforeUnmount(() => {
+  sceneActive = false
   motionMedia?.revert()
   sceneContext?.revert()
   resizeObserver?.disconnect()
