@@ -1,7 +1,7 @@
 <template>
   <div
     ref="sceneRoot"
-    class="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+    class="pointer-events-none absolute inset-0 overflow-hidden"
     aria-hidden="true"
   >
     <canvas ref="baseCanvasEl" class="absolute inset-0 block h-full w-full" />
@@ -20,13 +20,17 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { baseballAsciiArt } from './homeBallAsciiArt'
 import { batAsciiArt } from './homeBatAsciiArt'
+import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixConfig'
 
 gsap.registerPlugin(ScrollTrigger)
+
+const emit = defineEmits(['takeover-change'])
 
 const sceneRoot = ref(null)
 const baseCanvasEl = ref(null)
 const ballCanvasEl = ref(null)
 const isBallForeground = ref(false)
+let isTakeoverComplete = false
 
 const SCENE_LAYER = 0
 const BALL_MASK_LAYER = 1
@@ -61,12 +65,9 @@ const SCENE_CONFIG = {
 }
 
 const DOT_MATRIX_CONFIG = {
-  columns: 280,
-  rowDensity: 1,
+  ...HOME_DOT_MATRIX_CONFIG,
   threshold: 0.12,
   contrast: 1.22,
-  dotSize: 0.76,
-  gap: 0.1,
   minOpacity: 0.16,
   maxOpacity: 0.92
 }
@@ -513,13 +514,17 @@ function createDotMatrixOutput(splitMode) {
       ballMaskTexture: { value: ballMaskRenderTarget.texture },
       gridResolution: { value: new THREE.Vector2(1, 1) },
       dotColor: { value: new THREE.Color(readToken('--foreground')) },
+      backgroundColor: { value: new THREE.Color(readToken('--background')) },
+      fieldDotColor: { value: new THREE.Color(readToken('--line-strong')) },
       threshold: { value: DOT_MATRIX_CONFIG.threshold },
       contrast: { value: DOT_MATRIX_CONFIG.contrast },
       dotSize: { value: DOT_MATRIX_CONFIG.dotSize },
       gap: { value: DOT_MATRIX_CONFIG.gap },
       minOpacity: { value: DOT_MATRIX_CONFIG.minOpacity },
       maxOpacity: { value: DOT_MATRIX_CONFIG.maxOpacity },
-      splitMode: { value: splitMode }
+      splitMode: { value: splitMode },
+      foregroundMatte: { value: 0 },
+      takeoverProgress: { value: 0 }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -534,6 +539,8 @@ function createDotMatrixOutput(splitMode) {
       uniform sampler2D ballMaskTexture;
       uniform vec2 gridResolution;
       uniform vec3 dotColor;
+      uniform vec3 backgroundColor;
+      uniform vec3 fieldDotColor;
       uniform float threshold;
       uniform float contrast;
       uniform float dotSize;
@@ -541,6 +548,8 @@ function createDotMatrixOutput(splitMode) {
       uniform float minOpacity;
       uniform float maxOpacity;
       uniform float splitMode;
+      uniform float foregroundMatte;
+      uniform float takeoverProgress;
 
       varying vec2 vUv;
 
@@ -549,25 +558,53 @@ function createDotMatrixOutput(splitMode) {
         vec2 sampleUv = (gridCell + 0.5) / gridResolution;
         vec4 source = texture2D(sourceTexture, sampleUv);
         float ballMask = texture2D(ballMaskTexture, sampleUv).a;
+        bool isBallLayer = splitMode > 0.5;
+        float fieldProgress = isBallLayer ? takeoverProgress : 0.0;
 
         if (splitMode < 0.5 && ballMask > 0.5) discard;
-        if (splitMode > 0.5 && ballMask <= 0.5) discard;
-
-        if (source.a < 0.015) discard;
-
-        float brightness = dot(source.rgb, vec3(0.2126, 0.7152, 0.0722));
-        brightness = clamp((brightness - 0.5) * contrast + 0.5, 0.0, 1.0);
-        float intensity = clamp((brightness - threshold) / max(0.0001, 1.0 - threshold), 0.0, 1.0);
-
-        if (intensity <= 0.0) discard;
+        if (isBallLayer && ballMask <= 0.5 && fieldProgress <= 0.001) discard;
 
         vec2 cellUv = fract(vUv * gridResolution) - 0.5;
         float resolvedDotSize = min(dotSize, 1.0 - gap);
+        bool fieldDot = max(abs(cellUv.x), abs(cellUv.y)) <= resolvedDotSize * 0.5;
+        vec4 baseOutput = vec4(0.0);
 
-        if (max(abs(cellUv.x), abs(cellUv.y)) > resolvedDotSize * 0.5) discard;
+        if (!isBallLayer || ballMask > 0.5) {
+          bool isForegroundBall = isBallLayer && foregroundMatte > 0.5;
 
-        float opacity = mix(minOpacity, maxOpacity, intensity) * source.a;
-        gl_FragColor = vec4(dotColor, opacity);
+          if (source.a < 0.015) {
+            if (isForegroundBall) baseOutput = vec4(backgroundColor, 1.0);
+          } else {
+            float brightness = dot(source.rgb, vec3(0.2126, 0.7152, 0.0722));
+            brightness = clamp((brightness - 0.5) * contrast + 0.5, 0.0, 1.0);
+            float intensity = clamp((brightness - threshold) / max(0.0001, 1.0 - threshold), 0.0, 1.0);
+            bool drawDot = intensity > 0.0 && fieldDot;
+
+            if (drawDot) {
+              float opacity = mix(minOpacity, maxOpacity, intensity) * source.a;
+              baseOutput = isForegroundBall
+                ? vec4(mix(backgroundColor, dotColor, opacity), 1.0)
+                : vec4(dotColor, opacity);
+            } else if (isForegroundBall) {
+              baseOutput = vec4(backgroundColor, 1.0);
+            }
+          }
+        }
+
+        if (fieldProgress > 0.001) {
+          vec3 fieldColor = fieldDot ? fieldDotColor : backgroundColor;
+          float outputAlpha = fieldProgress + baseOutput.a * (1.0 - fieldProgress);
+          vec3 outputColor = (
+            fieldColor * fieldProgress
+            + baseOutput.rgb * baseOutput.a * (1.0 - fieldProgress)
+          ) / max(outputAlpha, 0.0001);
+
+          gl_FragColor = vec4(outputColor, outputAlpha);
+        } else if (baseOutput.a > 0.001) {
+          gl_FragColor = baseOutput;
+        } else {
+          discard;
+        }
       }
     `
   })
@@ -713,10 +750,7 @@ function updateLayout() {
   baseRenderer.setSize(layout.width, layout.height, false)
   ballRenderer.setSize(layout.width, layout.height, false)
 
-  const rows = Math.max(
-    1,
-    Math.round((DOT_MATRIX_CONFIG.columns / layout.aspect) * DOT_MATRIX_CONFIG.rowDensity)
-  )
+  const rows = resolveDotMatrixRows(layout.width, layout.height)
   resizeMatrixOutput(baseMatrixOutput, rows)
   resizeMatrixOutput(ballMatrixOutput, rows)
 
@@ -797,8 +831,21 @@ function applySceneProgress(value) {
   )
   const impact = phaseProgress(progress, impactStart, impactEnd)
   const flight = phaseProgress(progress, flightStart, flightEnd)
+  const artRelease = phaseProgress(progress, SCENE_CONFIG.phase.flightEnd, SCENE_CONFIG.phase.takeoverEnd)
+  const takeoverComplete = progress >= SCENE_CONFIG.phase.takeoverEnd - 0.0001
 
-  isBallForeground.value = flight > 0.1
+  if (takeoverComplete !== isTakeoverComplete) {
+    isTakeoverComplete = takeoverComplete
+    emit('takeover-change', takeoverComplete)
+  }
+
+  const isForegroundBall = flight > 0.1
+  isBallForeground.value = isForegroundBall
+
+  if (ballMatrixOutput) {
+    ballMatrixOutput.matrixMaterial.uniforms.foregroundMatte.value = isForegroundBall ? 1 : 0
+    ballMatrixOutput.matrixMaterial.uniforms.takeoverProgress.value = artRelease
+  }
 
   bat.visible = batArcProgress > 0.025
   bat.scale.setScalar(batScale)
@@ -817,7 +864,6 @@ function applySceneProgress(value) {
   batPivot.position.z = lerp(batPivot.position.z, -1.65, flight)
 
   const flightEase = smoothStep(flight)
-  const artRelease = phaseProgress(progress, SCENE_CONFIG.phase.flightEnd, SCENE_CONFIG.phase.takeoverEnd)
 
   if (asciiArtMaterial) {
     asciiArtMaterial.uniforms.visibility.value = 1 - artRelease
@@ -887,7 +933,7 @@ function createScrollScene() {
         start: () => `top top+=${SCENE_CONFIG.navbarHeight}`,
         end: () => `+=${Math.max(sceneSection.offsetHeight * SCENE_CONFIG.pinScrollMultiplier, 1200)}`,
         pin: true,
-        scrub: 1,
+        scrub: true,
         anticipatePin: 1,
         invalidateOnRefresh: true,
         onRefresh: updateLayout

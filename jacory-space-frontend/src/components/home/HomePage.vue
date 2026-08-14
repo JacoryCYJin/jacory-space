@@ -7,13 +7,13 @@
       data-home-hero-section
       class="relative mt-[var(--navbar-height)] flex h-[calc(100svh-var(--navbar-height))] w-full flex-col justify-center px-5 [--navbar-height:4rem] md:px-8"
     >
-      <HomeHeroScene />
+      <HomeHeroScene @takeover-change="handleTakeoverChange" />
 
       <h1
         class="home-hero-brand absolute inset-x-5 top-28 z-10 overflow-visible font-display font-normal leading-[0.84] tracking-[-0.03em] text-foreground md:inset-x-8 md:top-32"
       >
         <span data-hero-brand-line class="block text-center text-[clamp(5rem,13.6vw,14rem)]">
-          WHO? JACORY
+          WHO AM I?
         </span>
       </h1>
 
@@ -32,8 +32,11 @@
     <section
       data-home-transition-target
       aria-hidden="true"
-      class="min-h-screen bg-background"
-    />
+      class="home-transition-target relative z-30 h-[calc(100svh-var(--navbar-height))] bg-background [--navbar-height:4rem]"
+      :class="transitionReady ? 'visible' : 'invisible'"
+    >
+      <HomeDotMatrixField />
+    </section>
   </main>
 </template>
 
@@ -42,11 +45,13 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 import HomeLoadingIdentity from '../HomeLoadingIdentity.vue'
+import HomeDotMatrixField from './HomeDotMatrixField.vue'
 import HomeHeroScene from './HomeHeroScene.vue'
 
 gsap.registerPlugin(CustomEase)
 
 const heroRoot = ref(null)
+const transitionReady = ref(false)
 let heroContext
 let heroTimeline
 let reducedMotionQuery
@@ -63,12 +68,17 @@ const handleLoadingComplete = () => {
   playHeroIntro()
 }
 
+const handleTakeoverChange = (isComplete) => {
+  transitionReady.value = isComplete
+}
+
 onMounted(() => {
   const root = heroRoot.value
   if (!root) return
 
   const heroEase = CustomEase.create('personal-os-hero', '0.16,1,0.3,1')
   reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+  transitionReady.value = reducedMotionQuery.matches
 
   heroContext = gsap.context(() => {
     const brandLine = root.querySelector('[data-hero-brand-line]')
@@ -128,6 +138,12 @@ onBeforeUnmount(() => {
 
   .home-hero-statement {
     bottom: 4rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-transition-target {
+    margin-top: calc(-1 * (100svh - var(--navbar-height)));
   }
 }
 </style>
