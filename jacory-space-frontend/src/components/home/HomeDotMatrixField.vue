@@ -13,6 +13,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixConfig'
 
+const emit = defineEmits(['ready'])
 const fieldRoot = ref(null)
 const canvasEl = ref(null)
 
@@ -55,35 +56,50 @@ function scheduleResize() {
   })
 }
 
+async function prepareInitialFrame() {
+  try {
+    await renderer?.compileAsync(scene, camera)
+  } catch {
+    // The first render below remains the fallback for WebGL contexts without parallel compilation.
+  }
+
+  renderField()
+  await new Promise((resolve) => window.requestAnimationFrame(resolve))
+}
+
 onMounted(async () => {
   await nextTick()
-  if (!canvasEl.value || !fieldRoot.value) return
+  if (!canvasEl.value || !fieldRoot.value) {
+    emit('ready')
+    return
+  }
 
-  renderer = new THREE.WebGLRenderer({
-    canvas: canvasEl.value,
-    alpha: true,
-    antialias: false,
-    powerPreference: 'high-performance'
-  })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.outputColorSpace = THREE.SRGBColorSpace
-  renderer.setClearColor(0x000000, 0)
+  try {
+    renderer = new THREE.WebGLRenderer({
+      canvas: canvasEl.value,
+      alpha: true,
+      antialias: false,
+      powerPreference: 'high-performance'
+    })
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    renderer.outputColorSpace = THREE.SRGBColorSpace
+    renderer.setClearColor(0x000000, 0)
 
-  scene = new THREE.Scene()
-  camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
-  geometry = new THREE.PlaneGeometry(2, 2)
-  material = new THREE.ShaderMaterial({
-    depthTest: false,
-    depthWrite: false,
-    toneMapped: false,
-    uniforms: {
-      gridResolution: { value: new THREE.Vector2(1, 1) },
-      backgroundColor: { value: new THREE.Color(readToken('--background')) },
-      dotColor: { value: new THREE.Color(readToken('--line-strong')) },
-      dotSize: { value: HOME_DOT_MATRIX_CONFIG.dotSize },
-      gap: { value: HOME_DOT_MATRIX_CONFIG.gap }
-    },
-    vertexShader: `
+    scene = new THREE.Scene()
+    camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
+    geometry = new THREE.PlaneGeometry(2, 2)
+    material = new THREE.ShaderMaterial({
+      depthTest: false,
+      depthWrite: false,
+      toneMapped: false,
+      uniforms: {
+        gridResolution: { value: new THREE.Vector2(1, 1) },
+        backgroundColor: { value: new THREE.Color(readToken('--background')) },
+        dotColor: { value: new THREE.Color(readToken('--line-strong')) },
+        dotSize: { value: HOME_DOT_MATRIX_CONFIG.dotSize },
+        gap: { value: HOME_DOT_MATRIX_CONFIG.gap }
+      },
+      vertexShader: `
       varying vec2 vUv;
 
       void main() {
@@ -91,7 +107,7 @@ onMounted(async () => {
         gl_Position = vec4(position.xy, 0.0, 1.0);
       }
     `,
-    fragmentShader: `
+      fragmentShader: `
       uniform vec2 gridResolution;
       uniform vec3 backgroundColor;
       uniform vec3 dotColor;
@@ -107,11 +123,19 @@ onMounted(async () => {
 
         gl_FragColor = vec4(isDot ? dotColor : backgroundColor, 1.0);
       }
-    `
-  })
-  scene.add(new THREE.Mesh(geometry, material))
+      `
+    })
+    scene.add(new THREE.Mesh(geometry, material))
 
-  updateLayout()
+    updateLayout()
+    await prepareInitialFrame()
+  } catch {
+    // A failed optional WebGL field must not block the page loader indefinitely.
+    emit('ready')
+    return
+  }
+
+  emit('ready')
   resizeObserver = new ResizeObserver(scheduleResize)
   resizeObserver.observe(fieldRoot.value)
 })

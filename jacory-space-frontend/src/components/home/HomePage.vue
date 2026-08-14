@@ -1,13 +1,21 @@
 <template>
   <main ref="heroRoot" class="grain w-full bg-background">
-    <HomeLoadingIdentity @complete="handleLoadingComplete" />
+    <HomeLoadingIdentity
+      :hero-ready="heroSceneReady"
+      :dot-matrix-ready="dotMatrixReady"
+      @complete="handleLoadingComplete"
+    />
 
     <section
       id="top"
       data-home-hero-section
       class="relative mt-[var(--navbar-height)] flex h-[calc(100svh-var(--navbar-height))] w-full flex-col justify-center px-5 [--navbar-height:4rem] md:px-8"
     >
-      <HomeHeroScene @takeover-change="handleTakeoverChange" />
+      <HomeHeroScene
+        :active="loadingComplete"
+        @ready="handleHeroSceneReady"
+        @takeover-change="handleTakeoverChange"
+      />
 
       <h1
         class="home-hero-brand absolute inset-x-5 top-28 z-10 overflow-visible font-display font-normal leading-[0.84] tracking-[-0.03em] text-foreground md:inset-x-8 md:top-32"
@@ -35,7 +43,7 @@
       class="home-transition-target relative z-30 h-[calc(100svh-var(--navbar-height))] bg-background [--navbar-height:4rem]"
       :class="transitionReady ? 'visible' : 'invisible'"
     >
-      <HomeDotMatrixField />
+      <HomeDotMatrixField @ready="handleDotMatrixReady" />
     </section>
   </main>
 </template>
@@ -52,24 +60,36 @@ gsap.registerPlugin(CustomEase)
 
 const heroRoot = ref(null)
 const transitionReady = ref(false)
+const heroSceneReady = ref(false)
+const dotMatrixReady = ref(false)
 let heroContext
 let heroTimeline
 let reducedMotionQuery
 let heroReady = false
-let loadingComplete = false
+const loadingComplete = ref(false)
 
 const playHeroIntro = () => {
-  if (!heroReady || !loadingComplete) return
+  if (!heroReady || !loadingComplete.value) return
   heroTimeline?.play(0)
 }
 
 const handleLoadingComplete = () => {
-  loadingComplete = true
+  loadingComplete.value = true
   playHeroIntro()
 }
 
 const handleTakeoverChange = (isComplete) => {
   transitionReady.value = isComplete
+}
+
+const handleHeroSceneReady = () => {
+  heroSceneReady.value = true
+  if (import.meta.env.DEV) performance.mark('home-loader:hero-ready')
+}
+
+const handleDotMatrixReady = () => {
+  dotMatrixReady.value = true
+  if (import.meta.env.DEV) performance.mark('home-loader:dot-matrix-ready')
 }
 
 onMounted(() => {
