@@ -84,6 +84,7 @@ export default {
     fontFamily: {
       sans: ["Geist", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       mono: ["Geist Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+      display: ["Anton", "Impact", "sans-serif"],
     },
     extend: {
       transitionTimingFunction: {

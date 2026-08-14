@@ -10,20 +10,20 @@
       <HomeHeroScene />
 
       <h1
-        data-hero-line-mask
-        class="absolute inset-x-5 top-28 z-10 overflow-hidden font-sans font-medium leading-[0.84] tracking-[-0.065em] text-foreground md:inset-x-8 md:top-32"
+        class="home-hero-brand absolute inset-x-5 top-28 z-10 overflow-visible font-display font-normal leading-[0.84] tracking-[-0.03em] text-foreground md:inset-x-8 md:top-32"
       >
-        <span data-hero-title-line class="block text-center text-[clamp(5rem,13.6vw,14rem)]">
+        <span data-hero-brand-line class="block text-center text-[clamp(5rem,13.6vw,14rem)]">
           WHO? JACORY
         </span>
       </h1>
 
       <p
-        data-hero-line-mask
-        class="absolute inset-x-5 bottom-28 z-10 overflow-hidden text-center font-sans font-medium leading-none tracking-[-0.055em] text-foreground md:inset-x-8 md:bottom-32"
+        class="home-hero-statement absolute inset-x-5 bottom-28 z-10 overflow-visible text-center font-display font-normal leading-none tracking-[-0.03em] text-foreground md:inset-x-8 md:bottom-32"
       >
-        <span data-hero-title-line class="block text-[clamp(2rem,3.4vw,4.25rem)]">
-          Makes Ideas Move
+        <span data-hero-statement-line class="flex justify-center gap-[0.16em] text-[clamp(2rem,3.4vw,4.25rem)]">
+          <span data-hero-statement-word class="inline-block">Makes</span>
+          <span data-hero-statement-word class="inline-block">Ideas</span>
+          <span data-hero-statement-word class="inline-block">Move</span>
         </span>
       </p>
 
@@ -71,40 +71,44 @@ onMounted(() => {
   reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
   heroContext = gsap.context(() => {
-    const titleMasks = gsap.utils.toArray('[data-hero-line-mask]')
-    const titleLines = gsap.utils.toArray('[data-hero-title-line]')
+    const brandLine = root.querySelector('[data-hero-brand-line]')
+    const statementLine = root.querySelector('[data-hero-statement-line]')
+    const statementWords = Array.from(root.querySelectorAll('[data-hero-statement-word]'))
+    const titleLines = [brandLine, statementLine, ...statementWords].filter(Boolean)
     if (reducedMotionQuery.matches) {
-      gsap.set([...titleMasks, ...titleLines], {
+      gsap.set(titleLines, {
         clearProps: 'all',
         autoAlpha: 1,
-        y: 0,
-        clipPath: 'inset(0% 0% -30% 0%)'
+        y: 0
       })
       heroReady = true
       return
     }
 
-    gsap.set(titleMasks, {
-      clipPath: 'inset(0% 0% 100% 0%)'
+    gsap.set([brandLine, ...statementWords], {
+      autoAlpha: 0
     })
-    gsap.set(titleLines, {
-      autoAlpha: 0,
-      y: 32
+    gsap.set(brandLine, {
+      x: -52,
+      transformOrigin: '50% 50%'
+    })
+    gsap.set(statementWords, {
+      x: -18
     })
     heroTimeline = gsap.timeline({ paused: true, defaults: { ease: heroEase } })
 
     heroTimeline
-      .to(titleMasks, {
-        clipPath: 'inset(0% 0% -30% 0%)',
-        duration: 1.05,
-        stagger: 0.14
-      }, 0.28)
-      .to(titleLines, {
+      .to(brandLine, {
         autoAlpha: 1,
-        y: 0,
-        duration: 1.05,
-        stagger: 0.14
-      }, 0.28)
+        x: 0,
+        duration: 0.68
+      }, 0.08)
+      .to(statementWords, {
+        autoAlpha: 1,
+        x: 0,
+        duration: 0.46,
+        stagger: 0.12
+      }, 0.72)
 
     heroReady = true
     playHeroIntro()
@@ -115,3 +119,15 @@ onBeforeUnmount(() => {
   heroContext?.revert()
 })
 </script>
+
+<style scoped>
+@media (max-height: 1100px) {
+  .home-hero-brand {
+    top: 4rem;
+  }
+
+  .home-hero-statement {
+    bottom: 4rem;
+  }
+}
+</style>
