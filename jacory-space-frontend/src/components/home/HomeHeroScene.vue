@@ -4,7 +4,12 @@
     class="pointer-events-none absolute inset-0 z-0 overflow-hidden"
     aria-hidden="true"
   >
-    <canvas ref="canvasEl" class="block h-full w-full" />
+    <canvas ref="baseCanvasEl" class="absolute inset-0 block h-full w-full" />
+    <canvas
+      ref="ballCanvasEl"
+      class="absolute inset-0 block h-full w-full"
+      :class="isBallForeground ? 'z-20' : 'z-[5]'"
+    />
   </div>
 </template>
 
@@ -19,7 +24,12 @@ import { batAsciiArt } from './homeBatAsciiArt'
 gsap.registerPlugin(ScrollTrigger)
 
 const sceneRoot = ref(null)
-const canvasEl = ref(null)
+const baseCanvasEl = ref(null)
+const ballCanvasEl = ref(null)
+const isBallForeground = ref(false)
+
+const SCENE_LAYER = 0
+const BALL_MASK_LAYER = 1
 
 const SCENE_CONFIG = {
   cameraFov: 32,
@@ -92,14 +102,12 @@ const ASCII_ART_DENSITY = {
   '@': 1
 }
 
-let renderer
+let baseRenderer
+let ballRenderer
 let scene
 let camera
-let matrixRenderTarget
-let matrixScene
-let matrixCamera
-let matrixGeometry
-let matrixMaterial
+let baseMatrixOutput
+let ballMatrixOutput
 let sphereGroup
 let batPivot
 let bat
@@ -111,8 +119,9 @@ let asciiArtMaterial
 let batAsciiArtTexture
 let batAsciiArtGeometry
 let batAsciiArtMaterial
-let environmentTarget
-let pmremGenerator
+let environmentTexture
+let ballMaskGeometry
+let ballMaskMaterial
 let renderFrame = 0
 let resizeFrame = 0
 let resizeObserver
@@ -463,20 +472,14 @@ function createEnvironment() {
   paintSoftReflection(context, 1030, 790, 980, 220, inkColor, 0.38)
   paintSoftReflection(context, 90, 650, 520, 280, lineColor, 0.48)
 
-  const sourceTexture = new THREE.CanvasTexture(environmentCanvas)
-  sourceTexture.colorSpace = THREE.SRGBColorSpace
-  sourceTexture.mapping = THREE.EquirectangularReflectionMapping
-
-  pmremGenerator = new THREE.PMREMGenerator(renderer)
-  environmentTarget = pmremGenerator.fromEquirectangular(sourceTexture)
-  scene.environment = environmentTarget.texture
-  sourceTexture.dispose()
-  pmremGenerator.dispose()
-  pmremGenerator = null
+  environmentTexture = new THREE.CanvasTexture(environmentCanvas)
+  environmentTexture.colorSpace = THREE.SRGBColorSpace
+  environmentTexture.mapping = THREE.EquirectangularReflectionMapping
+  scene.environment = environmentTexture
 }
 
-function createDotMatrixOutput() {
-  matrixRenderTarget = new THREE.WebGLRenderTarget(1, 1, {
+function createDotMatrixOutput(splitMode) {
+  const sourceRenderTarget = new THREE.WebGLRenderTarget(1, 1, {
     depthBuffer: true,
     stencilBuffer: false,
     format: THREE.RGBAFormat,
@@ -484,19 +487,30 @@ function createDotMatrixOutput() {
     magFilter: THREE.NearestFilter,
     minFilter: THREE.NearestFilter
   })
-  matrixRenderTarget.texture.generateMipmaps = false
+  sourceRenderTarget.texture.generateMipmaps = false
 
-  matrixScene = new THREE.Scene()
-  matrixCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
+  const ballMaskRenderTarget = new THREE.WebGLRenderTarget(1, 1, {
+    depthBuffer: false,
+    stencilBuffer: false,
+    format: THREE.RGBAFormat,
+    type: THREE.UnsignedByteType,
+    magFilter: THREE.NearestFilter,
+    minFilter: THREE.NearestFilter
+  })
+  ballMaskRenderTarget.texture.generateMipmaps = false
+
+  const matrixScene = new THREE.Scene()
+  const matrixCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
   matrixCamera.position.z = 1
-  matrixGeometry = new THREE.PlaneGeometry(2, 2)
-  matrixMaterial = new THREE.ShaderMaterial({
+  const matrixGeometry = new THREE.PlaneGeometry(2, 2)
+  const matrixMaterial = new THREE.ShaderMaterial({
     transparent: true,
     depthTest: false,
     depthWrite: false,
     toneMapped: false,
     uniforms: {
-      sourceTexture: { value: matrixRenderTarget.texture },
+      sourceTexture: { value: sourceRenderTarget.texture },
+      ballMaskTexture: { value: ballMaskRenderTarget.texture },
       gridResolution: { value: new THREE.Vector2(1, 1) },
       dotColor: { value: new THREE.Color(readToken('--foreground')) },
       threshold: { value: DOT_MATRIX_CONFIG.threshold },
@@ -504,7 +518,8 @@ function createDotMatrixOutput() {
       dotSize: { value: DOT_MATRIX_CONFIG.dotSize },
       gap: { value: DOT_MATRIX_CONFIG.gap },
       minOpacity: { value: DOT_MATRIX_CONFIG.minOpacity },
-      maxOpacity: { value: DOT_MATRIX_CONFIG.maxOpacity }
+      maxOpacity: { value: DOT_MATRIX_CONFIG.maxOpacity },
+      splitMode: { value: splitMode }
     },
     vertexShader: `
       varying vec2 vUv;
@@ -516,6 +531,7 @@ function createDotMatrixOutput() {
     `,
     fragmentShader: `
       uniform sampler2D sourceTexture;
+      uniform sampler2D ballMaskTexture;
       uniform vec2 gridResolution;
       uniform vec3 dotColor;
       uniform float threshold;
@@ -524,6 +540,7 @@ function createDotMatrixOutput() {
       uniform float gap;
       uniform float minOpacity;
       uniform float maxOpacity;
+      uniform float splitMode;
 
       varying vec2 vUv;
 
@@ -531,6 +548,10 @@ function createDotMatrixOutput() {
         vec2 gridCell = floor(vUv * gridResolution);
         vec2 sampleUv = (gridCell + 0.5) / gridResolution;
         vec4 source = texture2D(sourceTexture, sampleUv);
+        float ballMask = texture2D(ballMaskTexture, sampleUv).a;
+
+        if (splitMode < 0.5 && ballMask > 0.5) discard;
+        if (splitMode > 0.5 && ballMask <= 0.5) discard;
 
         if (source.a < 0.015) discard;
 
@@ -552,6 +573,32 @@ function createDotMatrixOutput() {
   })
 
   matrixScene.add(new THREE.Mesh(matrixGeometry, matrixMaterial))
+
+  return {
+    sourceRenderTarget,
+    ballMaskRenderTarget,
+    matrixScene,
+    matrixCamera,
+    matrixGeometry,
+    matrixMaterial
+  }
+}
+
+function createRenderer(canvas) {
+  const nextRenderer = new THREE.WebGLRenderer({
+    canvas,
+    antialias: true,
+    alpha: true,
+    powerPreference: 'high-performance'
+  })
+
+  nextRenderer.setPixelRatio(Math.min(window.devicePixelRatio, SCENE_CONFIG.pixelRatioCap))
+  nextRenderer.outputColorSpace = THREE.SRGBColorSpace
+  nextRenderer.toneMapping = THREE.ACESFilmicToneMapping
+  nextRenderer.toneMappingExposure = 1.05
+  nextRenderer.setClearColor(0x000000, 0)
+
+  return nextRenderer
 }
 
 function createScene() {
@@ -567,17 +614,8 @@ function createScene() {
   camera.position.set(0, 0, SCENE_CONFIG.cameraZ)
   camera.lookAt(0, 0, 0)
 
-  renderer = new THREE.WebGLRenderer({
-    canvas: canvasEl.value,
-    antialias: true,
-    alpha: true,
-    powerPreference: 'high-performance'
-  })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, SCENE_CONFIG.pixelRatioCap))
-  renderer.outputColorSpace = THREE.SRGBColorSpace
-  renderer.toneMapping = THREE.ACESFilmicToneMapping
-  renderer.toneMappingExposure = 1.05
-  renderer.setClearColor(0x000000, 0)
+  baseRenderer = createRenderer(baseCanvasEl.value)
+  ballRenderer = createRenderer(ballCanvasEl.value)
 
   createEnvironment()
 
@@ -614,6 +652,19 @@ function createScene() {
   )
   sphereGroup.add(sphere)
   sphereGroup.add(createAsciiArtLayer())
+
+  ballMaskGeometry = new THREE.SphereGeometry(
+    SCENE_CONFIG.sphereRadius,
+    SCENE_CONFIG.sphereSegments,
+    SCENE_CONFIG.sphereSegments
+  )
+  ballMaskMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    toneMapped: false
+  })
+  const ballMask = new THREE.Mesh(ballMaskGeometry, ballMaskMaterial)
+  ballMask.layers.set(BALL_MASK_LAYER)
+  sphereGroup.add(ballMask)
   scene.add(sphereGroup)
 
   batPivot = new THREE.Group()
@@ -634,14 +685,23 @@ function createScene() {
   fillLight.position.set(4, -1, 2)
   scene.add(fillLight)
 
-  createDotMatrixOutput()
+  baseMatrixOutput = createDotMatrixOutput(0)
+  ballMatrixOutput = createDotMatrixOutput(1)
 
   progressState = { value: 0 }
   applySceneProgress(0)
 }
 
+function resizeMatrixOutput(matrixOutput, rows) {
+  if (!matrixOutput) return
+
+  matrixOutput.sourceRenderTarget.setSize(DOT_MATRIX_CONFIG.columns, rows)
+  matrixOutput.ballMaskRenderTarget.setSize(DOT_MATRIX_CONFIG.columns, rows)
+  matrixOutput.matrixMaterial.uniforms.gridResolution.value.set(DOT_MATRIX_CONFIG.columns, rows)
+}
+
 function updateLayout() {
-  if (!renderer || !camera || !sceneRoot.value) return
+  if (!baseRenderer || !ballRenderer || !camera || !sceneRoot.value) return
 
   const rect = sceneRoot.value.getBoundingClientRect()
   layout.width = Math.max(1, rect.width)
@@ -650,16 +710,15 @@ function updateLayout() {
 
   camera.aspect = layout.aspect
   camera.updateProjectionMatrix()
-  renderer.setSize(layout.width, layout.height, false)
+  baseRenderer.setSize(layout.width, layout.height, false)
+  ballRenderer.setSize(layout.width, layout.height, false)
 
-  if (matrixRenderTarget && matrixMaterial) {
-    const rows = Math.max(
-      1,
-      Math.round((DOT_MATRIX_CONFIG.columns / layout.aspect) * DOT_MATRIX_CONFIG.rowDensity)
-    )
-    matrixRenderTarget.setSize(DOT_MATRIX_CONFIG.columns, rows)
-    matrixMaterial.uniforms.gridResolution.value.set(DOT_MATRIX_CONFIG.columns, rows)
-  }
+  const rows = Math.max(
+    1,
+    Math.round((DOT_MATRIX_CONFIG.columns / layout.aspect) * DOT_MATRIX_CONFIG.rowDensity)
+  )
+  resizeMatrixOutput(baseMatrixOutput, rows)
+  resizeMatrixOutput(ballMatrixOutput, rows)
 
   const halfHeightAtStart = Math.tan(THREE.MathUtils.degToRad(SCENE_CONFIG.cameraFov / 2)) * SCENE_CONFIG.cameraZ
   const halfWidthAtStart = halfHeightAtStart * layout.aspect
@@ -739,6 +798,8 @@ function applySceneProgress(value) {
   const impact = phaseProgress(progress, impactStart, impactEnd)
   const flight = phaseProgress(progress, flightStart, flightEnd)
 
+  isBallForeground.value = flight > 0.1
+
   bat.visible = batArcProgress > 0.025
   bat.scale.setScalar(batScale)
   bat.position.x = SCENE_CONFIG.batCenterOffset * batScale
@@ -777,13 +838,30 @@ function applySceneProgress(value) {
   )
 }
 
-function renderScene() {
-  if (!renderer || !scene || !camera || !matrixRenderTarget || !matrixScene || !matrixCamera) return
+function renderMatrixLayer(renderer, matrixOutput) {
+  if (!renderer || !matrixOutput) return
 
-  renderer.setRenderTarget(matrixRenderTarget)
+  camera.layers.set(SCENE_LAYER)
+  renderer.setRenderTarget(matrixOutput.sourceRenderTarget)
+  renderer.clear()
   renderer.render(scene, camera)
+
+  camera.layers.set(BALL_MASK_LAYER)
+  renderer.setRenderTarget(matrixOutput.ballMaskRenderTarget)
+  renderer.clear()
+  renderer.render(scene, camera)
+
+  camera.layers.set(SCENE_LAYER)
   renderer.setRenderTarget(null)
-  renderer.render(matrixScene, matrixCamera)
+  renderer.clear()
+  renderer.render(matrixOutput.matrixScene, matrixOutput.matrixCamera)
+}
+
+function renderScene() {
+  if (!baseRenderer || !ballRenderer || !scene || !camera) return
+
+  renderMatrixLayer(baseRenderer, baseMatrixOutput)
+  renderMatrixLayer(ballRenderer, ballMatrixOutput)
 
   renderFrame = window.requestAnimationFrame(renderScene)
 }
@@ -825,6 +903,15 @@ function createScrollScene() {
   }, sceneRoot.value)
 }
 
+function disposeMatrixOutput(matrixOutput) {
+  if (!matrixOutput) return
+
+  matrixOutput.sourceRenderTarget.dispose()
+  matrixOutput.ballMaskRenderTarget.dispose()
+  matrixOutput.matrixGeometry.dispose()
+  matrixOutput.matrixMaterial.dispose()
+}
+
 function disposeScene() {
   if (!scene) return
 
@@ -833,14 +920,12 @@ function disposeScene() {
     if (Array.isArray(object.material)) object.material.forEach((material) => material.dispose())
     else object.material?.dispose()
   })
-  environmentTarget?.dispose()
-  environmentTarget = null
-  matrixRenderTarget?.dispose()
-  matrixRenderTarget = null
-  matrixGeometry?.dispose()
-  matrixGeometry = null
-  matrixMaterial?.dispose()
-  matrixMaterial = null
+  environmentTexture?.dispose()
+  environmentTexture = null
+  disposeMatrixOutput(baseMatrixOutput)
+  disposeMatrixOutput(ballMatrixOutput)
+  baseMatrixOutput = null
+  ballMatrixOutput = null
   asciiArtTexture?.dispose()
   asciiArtTexture = null
   asciiArtGeometry = null
@@ -849,10 +934,12 @@ function disposeScene() {
   batAsciiArtTexture = null
   batAsciiArtGeometry = null
   batAsciiArtMaterial = null
-  matrixScene = null
-  matrixCamera = null
-  renderer?.dispose()
-  renderer = null
+  ballMaskGeometry = null
+  ballMaskMaterial = null
+  baseRenderer?.dispose()
+  baseRenderer = null
+  ballRenderer?.dispose()
+  ballRenderer = null
   scene = null
   camera = null
   sphereGroup = null
@@ -864,7 +951,7 @@ function disposeScene() {
 
 onMounted(async () => {
   await nextTick()
-  if (!sceneRoot.value || !canvasEl.value) return
+  if (!sceneRoot.value || !baseCanvasEl.value || !ballCanvasEl.value) return
 
   sceneSection = sceneRoot.value.parentElement
   createScene()
