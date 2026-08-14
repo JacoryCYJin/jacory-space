@@ -1,24 +1,13 @@
 <template>
-  <main ref="heroRoot" class="grain bg-background pt-[var(--navbar-height)] [--navbar-height:4rem]">
+  <main ref="heroRoot" class="grain w-full bg-background">
     <HomeLoadingIdentity @complete="handleLoadingComplete" />
 
     <section
       id="top"
-      class="relative flex min-h-[calc(100svh-var(--navbar-height))] flex-col justify-between px-5 pb-10 pt-8 md:px-8 md:pt-12"
+      data-home-hero-section
+      class="relative mt-[var(--navbar-height)] flex h-[calc(100svh-var(--navbar-height))] w-full flex-col justify-between px-5 pb-10 pt-8 [--navbar-height:4rem] md:px-8 md:pt-12"
     >
-      <div
-        aria-hidden="true"
-        class="pointer-events-none absolute inset-x-5 bottom-0 top-0 hidden md:block md:inset-x-8"
-      >
-        <div class="mx-auto grid h-full w-full max-w-[1440px] grid-cols-12">
-          <div
-            v-for="column in 12"
-            :key="column"
-            data-hero-grid-line
-            class="border-l border-line/50 last:border-r"
-          />
-        </div>
-      </div>
+      <HomeHeroScene />
 
       <div class="relative mx-auto grid w-full max-w-[1440px] grid-cols-12 gap-y-8">
         <div data-hero-meta class="col-span-12 max-w-sm md:col-span-4 md:col-start-2">
@@ -73,6 +62,12 @@
         </p>
       </div>
     </section>
+
+    <section
+      data-home-transition-target
+      aria-hidden="true"
+      class="min-h-screen bg-background"
+    />
   </main>
 </template>
 
@@ -82,6 +77,7 @@ import { useI18n } from 'vue-i18n'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 import HomeLoadingIdentity from '../HomeLoadingIdentity.vue'
+import HomeHeroScene from './HomeHeroScene.vue'
 
 gsap.registerPlugin(CustomEase)
 
@@ -113,7 +109,6 @@ onMounted(() => {
   reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
   heroContext = gsap.context(() => {
-    const gridLines = gsap.utils.toArray('[data-hero-grid-line]')
     const titleMasks = gsap.utils.toArray('[data-hero-line-mask]')
     const titleLines = gsap.utils.toArray('[data-hero-title-line]')
     const meta = root.querySelector('[data-hero-meta]')
@@ -123,7 +118,7 @@ onMounted(() => {
     const dot = root.querySelector('[data-hero-dot]')
 
     if (reducedMotionQuery.matches) {
-      gsap.set([...gridLines, ...titleMasks, ...titleLines, meta, sideMeta, osMarker, bottomLine, dot], {
+      gsap.set([...titleMasks, ...titleLines, meta, sideMeta, osMarker, bottomLine, dot], {
         clearProps: 'all',
         autoAlpha: 1,
         y: 0,
@@ -134,7 +129,6 @@ onMounted(() => {
       return
     }
 
-    gsap.set(gridLines, { autoAlpha: 0 })
     gsap.set(meta, { autoAlpha: 0, y: 10 })
     gsap.set(sideMeta, { autoAlpha: 0, y: 8 })
     gsap.set(titleMasks, {
@@ -151,11 +145,6 @@ onMounted(() => {
     heroTimeline = gsap.timeline({ paused: true, defaults: { ease: heroEase } })
 
     heroTimeline
-      .to(gridLines, {
-        autoAlpha: 1,
-        duration: 0.9,
-        stagger: { each: 0.035, from: 'start' }
-      })
       .to(meta, { autoAlpha: 1, y: 0, duration: 0.75 }, 0.12)
       .to(titleMasks, {
         clipPath: 'inset(0% 0% -30% 0%)',
