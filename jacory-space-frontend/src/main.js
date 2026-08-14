@@ -1,4 +1,5 @@
 import { ViteSSG } from 'vite-ssg'
+import '@fontsource/anton/400.css'
 import './style.css'
 import App from './App.vue'
 import { routes } from './router'
