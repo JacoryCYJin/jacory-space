@@ -13,8 +13,8 @@ import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import baseballAsciiArt from '../../../../assets/ascii-art (5).txt?raw'
-import batAsciiArt from '../../../../assets/ascii-art (6).txt?raw'
+import { baseballAsciiArt } from './homeBallAsciiArt'
+import { batAsciiArt } from './homeBatAsciiArt'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -26,11 +26,13 @@ const SCENE_CONFIG = {
   cameraZ: 6,
   sphereRadius: 0.56,
   sphereSegments: 64,
-  batScale: 1.3,
-  batImpactScaleMultiplier: 1.5,
+  batScale: 5,
+  batImpactScaleMultiplier: 1.03,
   batImpactScaleStart: 0.68,
   batCenterOffset: 0.96,
-  batHeadOffset: 0.97,
+  batImpactContactOffset: 0.42,
+  batImpactOffsetX: 0.92,
+  batImpactOffsetY: 0.12,
   batRevealAngle: THREE.MathUtils.degToRad(-155),
   batImpactAngle: THREE.MathUtils.degToRad(-140),
   navbarHeight: 64,
@@ -676,8 +678,8 @@ function updateLayout() {
   )
 
   const batCenterOffset = SCENE_CONFIG.batCenterOffset * SCENE_CONFIG.batScale
-  const batHeadOffset = (
-    SCENE_CONFIG.batCenterOffset + SCENE_CONFIG.batHeadOffset
+  const batImpactOffset = (
+    SCENE_CONFIG.batCenterOffset + SCENE_CONFIG.batImpactContactOffset
   ) * SCENE_CONFIG.batScale
   const revealDirectionX = Math.cos(SCENE_CONFIG.batRevealAngle)
   const revealDirectionY = Math.sin(SCENE_CONFIG.batRevealAngle)
@@ -692,8 +694,8 @@ function updateLayout() {
   )
   layout.batArcControl.set(startX + 1.1, 0.82, -2.4)
   layout.batImpactPivot.set(
-    startX + SCENE_CONFIG.sphereRadius * 0.76 - batHeadOffset * impactDirectionX,
-    0.06 - batHeadOffset * impactDirectionY,
+    startX + SCENE_CONFIG.sphereRadius * SCENE_CONFIG.batImpactOffsetX - batImpactOffset * impactDirectionX,
+    SCENE_CONFIG.batImpactOffsetY - batImpactOffset * impactDirectionY,
     -0.2
   )
 
@@ -724,8 +726,8 @@ function applySceneProgress(value) {
     SCENE_CONFIG.batScale * SCENE_CONFIG.batImpactScaleMultiplier,
     batImpactScaleProgress
   )
-  const batHeadScaleDifference = (
-    SCENE_CONFIG.batCenterOffset + SCENE_CONFIG.batHeadOffset
+  const batImpactScaleDifference = (
+    SCENE_CONFIG.batCenterOffset + SCENE_CONFIG.batImpactContactOffset
   ) * (batScale - SCENE_CONFIG.batScale)
   const batAngle = lerp(
     SCENE_CONFIG.batRevealAngle,
@@ -740,7 +742,7 @@ function applySceneProgress(value) {
   bat.position.x = SCENE_CONFIG.batCenterOffset * batScale
   layout.scaledBatImpactPivot
     .copy(layout.batImpactPivot)
-    .addScaledVector(layout.batImpactDirection, -batHeadScaleDifference)
+    .addScaledVector(layout.batImpactDirection, -batImpactScaleDifference)
   setQuadraticBezier(
     batPivot.position,
     layout.startBatPivot,
