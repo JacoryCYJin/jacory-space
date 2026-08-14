@@ -13,8 +13,8 @@ import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { baseballAsciiArt } from './homeBallAsciiArt'
-import { batAsciiArt } from './homeBatAsciiArt'
+import baseballAsciiArt from '../../../../assets/ascii-art (5).txt?raw'
+import batAsciiArt from '../../../../assets/ascii-art (6).txt?raw'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -52,8 +52,7 @@ const DOT_MATRIX_CONFIG = {
   rowDensity: 1,
   threshold: 0.12,
   contrast: 1.22,
-  minDotSize: 0.14,
-  maxDotSize: 0.76,
+  dotSize: 0.76,
   gap: 0.1,
   minOpacity: 0.16,
   maxOpacity: 0.92
@@ -499,8 +498,7 @@ function createDotMatrixOutput() {
       dotColor: { value: new THREE.Color(readToken('--foreground')) },
       threshold: { value: DOT_MATRIX_CONFIG.threshold },
       contrast: { value: DOT_MATRIX_CONFIG.contrast },
-      minDotSize: { value: DOT_MATRIX_CONFIG.minDotSize },
-      maxDotSize: { value: DOT_MATRIX_CONFIG.maxDotSize },
+      dotSize: { value: DOT_MATRIX_CONFIG.dotSize },
       gap: { value: DOT_MATRIX_CONFIG.gap },
       minOpacity: { value: DOT_MATRIX_CONFIG.minOpacity },
       maxOpacity: { value: DOT_MATRIX_CONFIG.maxOpacity }
@@ -519,8 +517,7 @@ function createDotMatrixOutput() {
       uniform vec3 dotColor;
       uniform float threshold;
       uniform float contrast;
-      uniform float minDotSize;
-      uniform float maxDotSize;
+      uniform float dotSize;
       uniform float gap;
       uniform float minOpacity;
       uniform float maxOpacity;
@@ -541,9 +538,9 @@ function createDotMatrixOutput() {
         if (intensity <= 0.0) discard;
 
         vec2 cellUv = fract(vUv * gridResolution) - 0.5;
-        float dotSize = min(mix(minDotSize, maxDotSize, intensity), 1.0 - gap);
+        float resolvedDotSize = min(dotSize, 1.0 - gap);
 
-        if (max(abs(cellUv.x), abs(cellUv.y)) > dotSize * 0.5) discard;
+        if (max(abs(cellUv.x), abs(cellUv.y)) > resolvedDotSize * 0.5) discard;
 
         float opacity = mix(minOpacity, maxOpacity, intensity) * source.a;
         gl_FragColor = vec4(dotColor, opacity);
