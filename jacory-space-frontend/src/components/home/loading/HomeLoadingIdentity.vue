@@ -79,8 +79,8 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
-import identityArtworkSource from '../assets/home-loading/home-loading-identity.svg?raw'
-import jacoryOSculptureUrl from '../assets/home-loading/jacory-o-sculpture.png'
+import identityArtworkSource from '../../../assets/home-loading/home-loading-identity.svg?raw'
+import jacoryOSculptureUrl from '../../../assets/home-loading/jacory-o-sculpture.png'
 import HomeLoadingCrtEffect from './HomeLoadingCrtEffect.vue'
 
 const emit = defineEmits(['complete'])

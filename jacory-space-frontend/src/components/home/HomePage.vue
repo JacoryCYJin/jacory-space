@@ -52,7 +52,7 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
-import HomeLoadingIdentity from '../HomeLoadingIdentity.vue'
+import HomeLoadingIdentity from './loading/HomeLoadingIdentity.vue'
 import HomeDotMatrixField from './HomeDotMatrixField.vue'
 import HomeHeroScene from './HomeHeroScene.vue'
 
