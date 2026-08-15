@@ -24,6 +24,7 @@ let camera
 let geometry
 let material
 let nameMaskTexture
+let leadingLetterMaskTexture
 let titleMaskTexture
 let titleMaskRows = 0
 let resizeObserver
@@ -78,6 +79,41 @@ function createTextMaskTexture(
   context.scale(horizontalScale, scaleY)
   context.translate(-canvas.width / 2, -centerY)
   context.fillText(text, canvas.width / 2, textBaseline)
+  context.restore()
+
+  const texture = new THREE.CanvasTexture(canvas)
+  texture.colorSpace = THREE.NoColorSpace
+  texture.generateMipmaps = false
+  texture.magFilter = THREE.NearestFilter
+  texture.minFilter = THREE.NearestFilter
+  return texture
+}
+
+function createLeadingLetterMaskTexture(text, letter, fontSize, centerY, scaleY = 1) {
+  const canvas = document.createElement('canvas')
+  canvas.width = 2048
+  canvas.height = 1024
+
+  const context = canvas.getContext('2d')
+  if (!context) return null
+
+  context.clearRect(0, 0, canvas.width, canvas.height)
+  context.fillStyle = readToken('--card')
+  context.font = `${fontSize}px "Anton"`
+  context.textAlign = 'left'
+  context.textBaseline = 'alphabetic'
+  const textMetrics = context.measureText(text)
+  const horizontalScale = Math.min(1, (canvas.width * 0.94) / textMetrics.width)
+  const textBaseline = centerY + (
+    textMetrics.actualBoundingBoxAscent - textMetrics.actualBoundingBoxDescent
+  ) / 2
+  const textStart = canvas.width / 2 - textMetrics.width / 2
+
+  context.save()
+  context.translate(canvas.width / 2, centerY)
+  context.scale(horizontalScale, scaleY)
+  context.translate(-canvas.width / 2, -centerY)
+  context.fillText(letter, textStart, textBaseline)
   context.restore()
 
   const texture = new THREE.CanvasTexture(canvas)
@@ -173,10 +209,12 @@ onMounted(async () => {
       uniforms: {
         gridResolution: { value: new THREE.Vector2(1, 1) },
         backgroundColor: { value: new THREE.Color(readToken('--background')) },
-        dotColor: { value: new THREE.Color(readToken('--line-strong')) },
+        dotColor: { value: new THREE.Color(readToken('--home-dot-matrix-dot')) },
         nameColor: { value: new THREE.Color(readToken('--primary')) },
-        titleColor: { value: new THREE.Color(readToken('--muted-foreground')) },
+        leadingLetterColor: { value: new THREE.Color(readToken('--home-dot-matrix-accent')) },
+        titleColor: { value: new THREE.Color(readToken('--primary')) },
         nameMaskTexture: { value: null },
+        leadingLetterMaskTexture: { value: null },
         titleMaskTexture: { value: null },
         dotSize: { value: HOME_DOT_MATRIX_CONFIG.dotSize },
         gap: { value: HOME_DOT_MATRIX_CONFIG.gap }
@@ -194,8 +232,10 @@ onMounted(async () => {
       uniform vec3 backgroundColor;
       uniform vec3 dotColor;
       uniform vec3 nameColor;
+      uniform vec3 leadingLetterColor;
       uniform vec3 titleColor;
       uniform sampler2D nameMaskTexture;
+      uniform sampler2D leadingLetterMaskTexture;
       uniform sampler2D titleMaskTexture;
       uniform float dotSize;
       uniform float gap;
@@ -209,16 +249,24 @@ onMounted(async () => {
         float resolvedDotSize = min(dotSize, 1.0 - gap);
         bool isDot = max(abs(cellUv.x), abs(cellUv.y)) <= resolvedDotSize * 0.5;
         float nameMask = texture2D(nameMaskTexture, sampleUv).a;
+        float leadingLetterMask = texture2D(leadingLetterMaskTexture, sampleUv).a;
         float titleMask = texture2D(titleMaskTexture, sampleUv).a;
-        vec3 resolvedDotColor = mix(dotColor, nameColor, step(0.1, nameMask));
-        resolvedDotColor = mix(resolvedDotColor, titleColor, step(0.1, titleMask));
+        float nameCell = step(0.1, nameMask);
+        float leadingLetterCell = step(0.1, leadingLetterMask);
+        float titleCell = step(0.1, titleMask);
+        float identityCell = max(max(nameCell, leadingLetterCell), titleCell);
+        vec3 resolvedDotColor = mix(dotColor, nameColor, nameCell);
+        resolvedDotColor = mix(resolvedDotColor, leadingLetterColor, leadingLetterCell);
+        resolvedDotColor = mix(resolvedDotColor, titleColor, titleCell);
 
-        gl_FragColor = vec4(isDot ? resolvedDotColor : backgroundColor, 1.0);
+        gl_FragColor = vec4(identityCell > 0.5 || isDot ? resolvedDotColor : backgroundColor, 1.0);
       }
       `
     })
     nameMaskTexture = createTextMaskTexture('JACORY', 670, 1024 * 0.4, 1.23)
+    leadingLetterMaskTexture = createLeadingLetterMaskTexture('JACORY', 'J', 670, 1024 * 0.4, 1.23)
     material.uniforms.nameMaskTexture.value = nameMaskTexture
+    material.uniforms.leadingLetterMaskTexture.value = leadingLetterMaskTexture
     scene.add(new THREE.Mesh(geometry, material))
 
     updateLayout()
@@ -240,6 +288,7 @@ onBeforeUnmount(() => {
   geometry?.dispose()
   material?.dispose()
   nameMaskTexture?.dispose()
+  leadingLetterMaskTexture?.dispose()
   titleMaskTexture?.dispose()
   titleMaskRows = 0
   renderer?.dispose()
