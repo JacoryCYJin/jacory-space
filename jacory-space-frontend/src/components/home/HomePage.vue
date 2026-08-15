@@ -39,11 +39,15 @@
 
     <section
       data-home-transition-target
-      aria-hidden="true"
       class="home-transition-target relative z-30 h-[calc(100svh-var(--navbar-height))] bg-background [--navbar-height:4rem]"
       :class="transitionReady ? 'visible' : 'invisible'"
     >
       <HomeDotMatrixField @ready="handleDotMatrixReady" />
+
+      <div class="sr-only">
+        <p>JACORY</p>
+        <p>DESIGNER · DEVELOPER · WRITER · CREATOR</p>
+      </div>
     </section>
   </main>
 </template>
