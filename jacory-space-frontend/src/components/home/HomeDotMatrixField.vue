@@ -259,7 +259,7 @@ onMounted(async () => {
         resolvedDotColor = mix(resolvedDotColor, leadingLetterColor, leadingLetterCell);
         resolvedDotColor = mix(resolvedDotColor, titleColor, titleCell);
 
-        gl_FragColor = vec4(identityCell > 0.5 || isDot ? resolvedDotColor : backgroundColor, 1.0);
+        gl_FragColor = vec4(isDot ? resolvedDotColor : backgroundColor, 1.0);
       }
       `
     })
