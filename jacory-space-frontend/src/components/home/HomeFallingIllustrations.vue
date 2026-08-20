@@ -85,8 +85,8 @@ const particleSlots = [
     mobileX: 0.05,
     initialProgress: 0.16,
     staticY: 0.46,
-    speed: 25,
-    drift: 32,
+    speed: 48,
+    drift: 112,
     driftFrequency: 0.28,
     driftPhase: 0.6,
     rotation: -10,
@@ -100,8 +100,8 @@ const particleSlots = [
     mobileX: 0.92,
     initialProgress: 0.43,
     staticY: 0.68,
-    speed: 31,
-    drift: 40,
+    speed: 58,
+    drift: 148,
     driftFrequency: 0.34,
     driftPhase: 2.4,
     rotation: 14,
@@ -115,8 +115,8 @@ const particleSlots = [
     mobileX: 0.34,
     initialProgress: 0.72,
     staticY: 0.72,
-    speed: 23,
-    drift: 26,
+    speed: 44,
+    drift: 96,
     driftFrequency: 0.24,
     driftPhase: 4.5,
     rotation: -16,
@@ -130,8 +130,8 @@ const particleSlots = [
     mobileX: 0.76,
     initialProgress: 0.25,
     staticY: 0.42,
-    speed: 29,
-    drift: 30,
+    speed: 54,
+    drift: 132,
     driftFrequency: 0.3,
     driftPhase: 5.2,
     rotation: 9,
@@ -145,8 +145,8 @@ const particleSlots = [
     mobileX: 0.43,
     initialProgress: 0.54,
     staticY: 0.55,
-    speed: 21,
-    drift: 22,
+    speed: 42,
+    drift: 80,
     driftFrequency: 0.22,
     driftPhase: 1.8,
     rotation: -6,
@@ -160,8 +160,8 @@ const particleSlots = [
     mobileX: 0.61,
     initialProgress: 0.84,
     staticY: 0.74,
-    speed: 27,
-    drift: 24,
+    speed: 50,
+    drift: 104,
     driftFrequency: 0.26,
     driftPhase: 3.7,
     rotation: 12,
@@ -213,7 +213,7 @@ function setParticleTransform(particle, progress) {
   const drift = reducedMotion
     ? 0
     : Math.sin(elapsed * particle.config.driftFrequency + particle.config.driftPhase)
-      * particle.config.drift
+      * particle.drift
 
   particle.setX(particle.baseX + drift)
   particle.setY(particle.y)
@@ -395,6 +395,7 @@ function layoutParticles({ isDesktop, preserveProgress = true }) {
     particle.endY = height + size * 0.14
     particle.distance = particle.endY - particle.startY
     particle.baseX = width * anchor - size * 0.5
+    particle.drift = particle.config.drift * (isDesktop ? 1 : 0.42)
     particle.y = particle.startY + particle.distance * (
       preserveProgress ? previousProgress : particle.config.initialProgress
     )
@@ -491,6 +492,7 @@ onMounted(() => {
       startY: 0,
       endY: 0,
       distance: 0,
+      drift: particleSlots[index].drift,
       y: 0,
       rotation: particleSlots[index].rotation,
       assetIndex: particleSlots[index].initialAssetIndex
