@@ -4,7 +4,7 @@
     class="pointer-events-none absolute inset-0 overflow-hidden"
     aria-hidden="true"
   >
-    <canvas ref="baseCanvasEl" class="absolute inset-0 block h-full w-full" />
+    <canvas ref="baseCanvasEl" class="absolute inset-0 z-[2] block h-full w-full" />
     <canvas
       ref="ballCanvasEl"
       class="absolute inset-0 block h-full w-full"
@@ -530,7 +530,6 @@ function createDotMatrixOutput(splitMode) {
       minOpacity: { value: DOT_MATRIX_CONFIG.minOpacity },
       maxOpacity: { value: DOT_MATRIX_CONFIG.maxOpacity },
       splitMode: { value: splitMode },
-      foregroundMatte: { value: 0 },
       takeoverProgress: { value: 0 }
     },
     vertexShader: `
@@ -555,7 +554,6 @@ function createDotMatrixOutput(splitMode) {
       uniform float minOpacity;
       uniform float maxOpacity;
       uniform float splitMode;
-      uniform float foregroundMatte;
       uniform float takeoverProgress;
 
       varying vec2 vUv;
@@ -577,10 +575,10 @@ function createDotMatrixOutput(splitMode) {
         vec4 baseOutput = vec4(0.0);
 
         if (!isBallLayer || ballMask > 0.5) {
-          bool isForegroundBall = isBallLayer && foregroundMatte > 0.5;
+          bool hasBallMatte = isBallLayer && ballMask > 0.5;
 
           if (source.a < 0.015) {
-            if (isForegroundBall) baseOutput = vec4(backgroundColor, 1.0);
+            if (hasBallMatte) baseOutput = vec4(backgroundColor, 1.0);
           } else {
             float brightness = dot(source.rgb, vec3(0.2126, 0.7152, 0.0722));
             brightness = clamp((brightness - 0.5) * contrast + 0.5, 0.0, 1.0);
@@ -589,10 +587,10 @@ function createDotMatrixOutput(splitMode) {
 
             if (drawDot) {
               float opacity = mix(minOpacity, maxOpacity, intensity) * source.a;
-              baseOutput = isForegroundBall
+              baseOutput = hasBallMatte
                 ? vec4(mix(backgroundColor, dotColor, opacity), 1.0)
                 : vec4(dotColor, opacity);
-            } else if (isForegroundBall) {
+            } else if (hasBallMatte) {
               baseOutput = vec4(backgroundColor, 1.0);
             }
           }
@@ -850,7 +848,6 @@ function applySceneProgress(value) {
   isBallForeground.value = isForegroundBall
 
   if (ballMatrixOutput) {
-    ballMatrixOutput.matrixMaterial.uniforms.foregroundMatte.value = isForegroundBall ? 1 : 0
     ballMatrixOutput.matrixMaterial.uniforms.takeoverProgress.value = artRelease
   }
 
