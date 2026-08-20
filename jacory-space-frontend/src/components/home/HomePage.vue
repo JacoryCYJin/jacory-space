@@ -37,18 +37,14 @@
 
     </section>
 
-    <section
-      data-home-transition-target
-      class="home-transition-target relative z-30 h-[calc(100svh-var(--navbar-height))] bg-background [--navbar-height:4rem]"
-      :class="transitionReady ? 'visible' : 'invisible'"
-    >
-      <HomeDotMatrixField @ready="handleDotMatrixReady" />
-
-      <div class="sr-only">
-        <p>JACORY</p>
-        <p>A Creator, Self-Proclaimed</p>
-      </div>
-    </section>
+    <HomeCreativeCapabilities :identity-visible="transitionReady">
+      <template #identity="{ scatterProgress }">
+        <HomeDotMatrixField
+          :scatter-progress="scatterProgress"
+          @ready="handleDotMatrixReady"
+        />
+      </template>
+    </HomeCreativeCapabilities>
   </main>
 </template>
 
@@ -57,6 +53,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 import HomeLoadingIdentity from './loading/HomeLoadingIdentity.vue'
+import HomeCreativeCapabilities from './HomeCreativeCapabilities.vue'
 import HomeDotMatrixField from './HomeDotMatrixField.vue'
 import HomeHeroScene from './HomeHeroScene.vue'
 
@@ -165,9 +162,4 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .home-transition-target {
-    margin-top: calc(-1 * (100svh - var(--navbar-height)));
-  }
-}
 </style>
