@@ -17,6 +17,8 @@
         @takeover-change="handleTakeoverChange"
       />
 
+      <HomeFallingIllustrations :active="loadingComplete" />
+
       <h1
         class="home-hero-brand absolute inset-x-5 top-28 z-10 overflow-visible font-display font-normal leading-[0.84] tracking-[-0.03em] text-foreground md:inset-x-8 md:top-32"
       >
@@ -55,6 +57,7 @@ import { CustomEase } from 'gsap/CustomEase'
 import HomeLoadingIdentity from './loading/HomeLoadingIdentity.vue'
 import HomeCreativeCapabilities from './HomeCreativeCapabilities.vue'
 import HomeDotMatrixField from './HomeDotMatrixField.vue'
+import HomeFallingIllustrations from './HomeFallingIllustrations.vue'
 import HomeHeroScene from './HomeHeroScene.vue'
 
 gsap.registerPlugin(CustomEase)
