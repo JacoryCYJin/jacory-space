@@ -522,7 +522,7 @@ function createDotMatrixOutput(splitMode) {
       gridResolution: { value: new THREE.Vector2(1, 1) },
       dotColor: { value: new THREE.Color(readToken('--foreground')) },
       backgroundColor: { value: new THREE.Color(readToken('--background')) },
-      fieldDotColor: { value: new THREE.Color(readToken('--line-strong')) },
+      fieldDotColor: { value: new THREE.Color(readToken('--home-dot-matrix-dot')) },
       threshold: { value: DOT_MATRIX_CONFIG.threshold },
       contrast: { value: DOT_MATRIX_CONFIG.contrast },
       dotSize: { value: DOT_MATRIX_CONFIG.dotSize },
