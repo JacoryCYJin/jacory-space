@@ -21,7 +21,7 @@
         class="home-hero-brand absolute inset-x-5 top-28 z-10 overflow-visible font-display font-normal leading-[0.84] tracking-[-0.03em] text-foreground md:inset-x-8 md:top-32"
       >
         <span data-hero-brand-line class="block text-center text-[clamp(5rem,13.6vw,14rem)]">
-          WHO AM I?
+          WHO AM I ?
         </span>
       </h1>
 
@@ -46,7 +46,7 @@
 
       <div class="sr-only">
         <p>JACORY</p>
-        <p>DESIGNER · DEVELOPER · WRITER · CREATOR</p>
+        <p>A Creator, Self-Proclaimed</p>
       </div>
     </section>
   </main>

@@ -11,7 +11,7 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import * as THREE from 'three'
-import '@fontsource-variable/roboto-flex/wght.css'
+import '@fontsource/space-grotesk/600.css'
 import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixConfig'
 
 const emit = defineEmits(['ready'])
@@ -126,12 +126,12 @@ function createLeadingLetterMaskTexture(text, letter, fontSize, centerY, scaleY 
 
 function createTitleMaskTexture(gridRows) {
   return createTextMaskTexture(
-    'DESIGNER · DEVELOPER · WRITER · CREATOR',
+    'A Creator, Self-Proclaimed',
     96,
     1024 * 0.88,
     2,
-    'Roboto Flex Variable',
-    650,
+    'Space Grotesk',
+    600,
     [0.785, 0.97],
     gridRows
   )
@@ -186,8 +186,8 @@ onMounted(async () => {
 
   try {
     await document.fonts.load(
-      '650 96px "Roboto Flex Variable"',
-      'DESIGNER · DEVELOPER · WRITER · CREATOR'
+      '600 96px "Space Grotesk"',
+      'A Creator, Self-Proclaimed'
     )
     renderer = new THREE.WebGLRenderer({
       canvas: canvasEl.value,
