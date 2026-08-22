@@ -158,13 +158,22 @@ onBeforeUnmount(() => {
     column-gap: 3rem;
   }
 
+  .footer-reveal__gridline::before,
   .footer-reveal__gridline::after {
-    grid-column: 1;
-    justify-self: end;
     width: 1px;
     height: 100%;
     content: "";
     background: color-mix(in srgb, var(--card) 24%, transparent);
+  }
+
+  .footer-reveal__gridline::before {
+    grid-column: 1;
+    justify-self: end;
+  }
+
+  .footer-reveal__gridline::after {
+    grid-column: 2;
+    justify-self: end;
   }
 }
 
