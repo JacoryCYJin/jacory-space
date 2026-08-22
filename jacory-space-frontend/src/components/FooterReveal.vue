@@ -154,7 +154,7 @@ onBeforeUnmount(() => {
     height: var(--footer-reveal-divider-height, 0px);
     padding-inline: var(--page-gutter);
     pointer-events: none;
-    grid-template-columns: 3fr 2fr 2fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     column-gap: 3rem;
   }
 

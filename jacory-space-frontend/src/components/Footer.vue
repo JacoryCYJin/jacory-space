@@ -1,9 +1,9 @@
 <template>
   <footer class="footer-shell page-gutter bg-ink text-card">
-    <div class="page-frame flex min-h-[38rem] flex-col py-8 md:py-10 lg:min-h-[36rem] lg:py-12">
-      <div class="footer-stage grid flex-1 gap-10 lg:grid-cols-[3fr_2fr_2fr] lg:gap-12 xl:gap-16">
+    <div class="page-frame flex min-h-[38rem] flex-col py-8 md:py-10 lg:min-h-[28rem] lg:py-8">
+      <div class="footer-stage grid flex-1 gap-10 lg:grid-cols-3 lg:gap-12 xl:gap-16">
         <section class="footer-brand-zone flex min-h-[18rem] items-center justify-center lg:min-h-0">
-          <div class="flex max-w-full flex-col items-center text-center">
+          <div class="flex w-fit max-w-full flex-col items-start text-left">
             <h2 class="footer-wordmark flex items-center gap-[0.18em] font-display font-normal leading-[0.84] tracking-[-0.03em]" :aria-label="t('siteFooter.brand')">
               <img :src="jacoryLogoWhite" alt="" class="h-[1.68em] w-auto shrink-0" />
               <span class="flex flex-col items-center">
@@ -11,10 +11,6 @@
                 <span class="whitespace-nowrap">Space</span>
               </span>
             </h2>
-
-            <p class="mt-6 max-w-xs text-sm leading-relaxed text-card opacity-60">
-              {{ t('siteFooter.meta.description') }}
-            </p>
           </div>
         </section>
 
@@ -99,7 +95,7 @@ const contactLines = computed(() => footerValueLines(t('siteFooter.meta.accentVa
 }
 
 .footer-wordmark {
-  font-size: clamp(2.75rem, 5vw, 10rem);
+  font-size: clamp(2.5rem, 4.25vw, 8.5rem);
   font-weight: 400;
   color: var(--card);
 }
