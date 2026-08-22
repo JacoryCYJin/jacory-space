@@ -53,7 +53,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import jacoryLogo from '../assets/jacory-logo.png'
+import jacoryLogo from '../assets/jacory-logo.svg'
 import StatusToast from '../components/StatusToast.vue'
 import AiPartGenerationPanel from '../components/tools/minecraft-skin-editor/AiPartGenerationPanel.vue'
 import ColorPickerPanel from '../components/tools/minecraft-skin-editor/ColorPickerPanel.vue'

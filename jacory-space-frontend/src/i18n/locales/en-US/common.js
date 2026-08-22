@@ -25,7 +25,8 @@ export default {
       surface: 'Explore',
       accent: 'Contact',
       accentValue: 'Email / GitHub',
-      statusValue: 'Building in public'
+      statusValue: 'Building in public',
+      description: 'A personal digital space for notes, tools, and ongoing work.'
     }
   }
 }
