@@ -19,7 +19,6 @@ export default {
   },
   siteFooter: {
     brand: 'Jacory Space',
-    note: '这套系统就绪后，下一步才是具体的页面：写作、工具、作品集——都将活在这套冷白的语言里。',
     meta: {
       system: '系统',
       systemValue: 'Personal OS / v.01',

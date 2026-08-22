@@ -19,7 +19,6 @@ export default {
   },
   siteFooter: {
     brand: 'Jacory Space',
-    note: '仕組みが整ったら、次はページそのものへ。文章、ツール、ポートフォリオを、このクールホワイトの言語でひとつにつないでいきます。',
     meta: {
       system: 'システム',
       systemValue: 'Personal OS / v.01',

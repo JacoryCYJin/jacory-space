@@ -1,9 +1,10 @@
 <template>
-  <main
-    ref="pageRoot"
-    class="grain bg-background"
-    :class="isViewportBound ? 'min-h-screen lg:h-[100dvh] lg:min-h-0 lg:overflow-hidden lg:pt-16' : 'min-h-screen'"
-  >
+  <FooterReveal>
+    <main
+      ref="pageRoot"
+      class="grain bg-background"
+      :class="isViewportBound ? 'min-h-screen lg:h-[100dvh] lg:min-h-0 lg:overflow-hidden lg:pt-16' : 'min-h-screen'"
+    >
     <section
       v-if="entry"
       class="page-gutter pt-20 md:pt-24"
@@ -60,6 +61,7 @@
           :class="isViewportBound ? 'lg:min-h-0 lg:flex-1' : ''"
         >
           <aside
+            data-lenis-prevent
             class="border-b border-line pb-8 lg:min-h-0 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8"
             :class="isAsideOverflowing ? 'lg:overflow-y-auto lg:overscroll-contain' : ''"
             :style="detailAsideStyle"
@@ -123,8 +125,8 @@
     </section>
     <div v-else class="page-gutter pt-20"><div class="page-frame pb-20"><p class="font-mono text-sm uppercase tracking-[0.12em] text-muted-foreground">{{ t('library.notFound') }}</p></div></div>
     <StatusToast :visible="toast.visible" :message="toast.message" :type="toast.type" />
-  </main>
-  <Footer />
+    </main>
+  </FooterReveal>
 </template>
 
 <script setup>
@@ -132,7 +134,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } 
 import { useI18n } from 'vue-i18n'
 import { Check, ChevronLeft, Copy } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
-import Footer from '../components/Footer.vue'
+import FooterReveal from '../components/FooterReveal.vue'
 import StatusToast from '../components/StatusToast.vue'
 import PromptContent from '../components/library/PromptContent.vue'
 import SkillContent from '../components/library/SkillContent.vue'

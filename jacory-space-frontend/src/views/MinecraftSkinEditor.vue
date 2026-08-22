@@ -33,7 +33,7 @@
         />
       </div>
 
-      <div v-if="isLayerPanelOpen || isColorPanelOpen || (isDevelopment && isAiPanelOpen) || isMotionPanelOpen" class="workspace-scroll pointer-events-auto absolute left-[5.125rem] top-20 z-20 flex max-h-[calc(100dvh-6.25rem)] w-[min(20rem,calc(100vw-6.5rem))] flex-col items-start gap-1.5 overflow-x-hidden overflow-y-auto overscroll-contain pb-1">
+      <div v-if="isLayerPanelOpen || isColorPanelOpen || (isDevelopment && isAiPanelOpen) || isMotionPanelOpen" data-lenis-prevent class="workspace-scroll pointer-events-auto absolute left-[5.125rem] top-20 z-20 flex max-h-[calc(100dvh-6.25rem)] w-[min(20rem,calc(100vw-6.5rem))] flex-col items-start gap-1.5 overflow-x-hidden overflow-y-auto overscroll-contain pb-1">
         <OuterLayerPanel v-if="isLayerPanelOpen" class="shrink-0" :display="project.state.outerLayerDisplay" :visible-parts="project.state.visibleOuterParts" :custom-expanded="project.state.isCustomOuterPartsExpanded" :all-selected="project.actions.allOuterPartsSelected()" @set-display="project.actions.setOuterLayerDisplay" @select-all="project.actions.selectAllOuterParts" @expand-custom="project.state.isCustomOuterPartsExpanded = true" @toggle-part="project.actions.toggleOuterPart" />
         <ColorPickerPanel v-if="isColorPanelOpen" v-model="project.state.brushColor" v-model:opacity="project.state.brushOpacity" :recent-colors="editing.state.recentColors" class="w-full shrink-0 overflow-hidden rounded-[10px]" @commit="editing.actions.rememberColor" @select-recent="editing.actions.selectRecentColor" />
         <Transition name="ai-panel">

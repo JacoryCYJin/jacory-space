@@ -19,7 +19,6 @@ export default {
   },
   siteFooter: {
     brand: 'Jacory Space',
-    note: 'Once the system is in place, the pages can follow: writing, tools, and a portfolio, all held together by the same cool-white language.',
     meta: {
       system: 'System',
       systemValue: 'Personal OS / v.01',

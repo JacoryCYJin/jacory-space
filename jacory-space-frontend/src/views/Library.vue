@@ -1,5 +1,6 @@
 <template>
-  <main ref="pageRoot" class="grain min-h-screen bg-background">
+  <FooterReveal>
+    <main ref="pageRoot" class="grain min-h-screen bg-background">
     <section class="page-gutter pt-20 md:pt-24">
       <div class="page-frame">
         <header class="grid gap-12 border-b border-line pb-10 md:pb-14 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,34rem)] lg:items-end lg:gap-16">
@@ -131,15 +132,15 @@
       </div>
     </section>
     <StatusToast :visible="toast.visible" :message="toast.message" :type="toast.type" />
-  </main>
-  <Footer />
+    </main>
+  </FooterReveal>
 </template>
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ArrowUpRight, Copy, Folder, List, Search } from 'lucide-vue-next'
-import Footer from '../components/Footer.vue'
+import FooterReveal from '../components/FooterReveal.vue'
 import StatusToast from '../components/StatusToast.vue'
 import { libraryEntries } from '@library-index'
 
