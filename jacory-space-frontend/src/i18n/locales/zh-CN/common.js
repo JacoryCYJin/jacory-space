@@ -25,7 +25,6 @@ export default {
       surface: '入口',
       accent: '联系',
       accentValue: 'Email / GitHub',
-      status: '状态',
       statusValue: '持续构建中'
     }
   }

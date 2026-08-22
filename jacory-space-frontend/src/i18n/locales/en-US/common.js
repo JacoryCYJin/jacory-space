@@ -25,7 +25,6 @@ export default {
       surface: 'Explore',
       accent: 'Contact',
       accentValue: 'Email / GitHub',
-      status: 'Status',
       statusValue: 'Building in public'
     }
   }
