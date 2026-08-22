@@ -78,14 +78,27 @@ onBeforeUnmount(() => {
 }
 
 .footer-reveal__extension {
-  height: var(--footer-reveal-overlap-height);
+  position: relative;
+  height: calc(var(--footer-reveal-overlap-height) + 1px);
+  margin-top: -1px;
+  overflow: hidden;
   background: var(--background);
   clip-path: polygon(
-    0 0,
-    100% 0,
+    0 -1px,
+    100% -1px,
     calc(100% - var(--footer-reveal-notch-width)) 100%,
     var(--footer-reveal-notch-width) 100%
   );
+}
+
+.footer-reveal__extension::after {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0.04;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .footer-reveal__panel {

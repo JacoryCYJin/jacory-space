@@ -87,6 +87,9 @@ export default {
       display: ["Anton", "Impact", "sans-serif"],
     },
     extend: {
+      fontSize: {
+        "footer-brand": "clamp(3.5rem, 10.75vw, 25rem)",
+      },
       transitionTimingFunction: {
         premium: "var(--ease-premium)",
       },
