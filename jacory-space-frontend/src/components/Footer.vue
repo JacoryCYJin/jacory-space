@@ -1,51 +1,61 @@
 <template>
   <footer class="footer-shell page-gutter bg-ink text-card">
     <div class="page-frame flex min-h-[38rem] flex-col py-8 md:py-10 lg:min-h-[36rem] lg:py-12">
-      <div class="footer-stage grid flex-1 gap-10 lg:grid-cols-[minmax(0,1.35fr)_minmax(22rem,0.65fr)] lg:gap-16">
-        <section class="footer-brand-zone flex min-h-[18rem] flex-col justify-center lg:min-h-0">
-          <h2 class="footer-wordmark whitespace-nowrap font-display font-normal leading-[0.84] tracking-[-0.03em] text-footer-brand" :aria-label="t('siteFooter.brand')">
-            {{ t('siteFooter.brand') }}
-          </h2>
+      <div class="footer-stage grid flex-1 gap-10 lg:grid-cols-[3fr_2fr_2fr] lg:gap-12 xl:gap-16">
+        <section class="footer-brand-zone flex min-h-[18rem] items-center justify-center lg:min-h-0">
+          <div class="flex max-w-full flex-col items-center text-center">
+            <h2 class="footer-wordmark flex items-center gap-[0.18em] font-display font-normal leading-[0.84] tracking-[-0.03em]" :aria-label="t('siteFooter.brand')">
+              <img :src="jacoryLogoWhite" alt="" class="h-[1.68em] w-auto shrink-0" />
+              <span class="flex flex-col items-center">
+                <span class="whitespace-nowrap">Jacory</span>
+                <span class="whitespace-nowrap">Space</span>
+              </span>
+            </h2>
+
+            <p class="mt-6 max-w-xs text-sm leading-relaxed text-card opacity-60">
+              {{ t('siteFooter.meta.description') }}
+            </p>
+          </div>
         </section>
 
-        <aside class="footer-console flex flex-col pl-6 sm:pl-8 lg:pl-10">
-          <div class="flex flex-1 flex-col">
-            <p class="ml-auto font-mono text-sm leading-relaxed text-card">
-              {{ t('siteFooter.meta.statusValue') }}
-            </p>
-
-            <dl class="mt-auto space-y-8 pt-8 lg:pt-10">
-              <div class="grid gap-4 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6">
-                <dt class="tech text-card opacity-60">{{ t('siteFooter.meta.surface') }}</dt>
-                <dd class="grid grid-cols-2 gap-x-4 gap-y-4">
+        <section class="footer-directory flex min-h-[14rem] items-center lg:min-h-0" :aria-label="t('siteFooter.meta.surface')">
+          <div class="grid w-full grid-cols-2 gap-x-8 sm:gap-x-12">
+            <div>
+              <h3 class="font-sans text-2xl font-medium tracking-[-0.04em] text-card">{{ t('siteFooter.meta.surface') }}</h3>
+              <nav class="mt-5 flex flex-col gap-3" :aria-label="t('siteFooter.meta.surface')">
                 <RouterLink
-                  v-for="(line, index) in navigationLines"
+                  v-for="line in navigationLines"
                   :key="line.label"
                   :to="line.to"
-                  class="footer-nav-link font-sans text-card text-lg tracking-[-0.04em] transition-colors duration-300"
+                  class="footer-nav-link font-sans text-xl tracking-[-0.04em] transition-colors duration-300"
                 >
-                  <span class="tech mr-2 text-blue">0{{ index + 1 }}</span>{{ line.label }}
+                  {{ line.label }}
                 </RouterLink>
-                </dd>
-              </div>
+              </nav>
+            </div>
 
-              <div class="grid gap-4 pt-8 sm:grid-cols-[5rem_minmax(0,1fr)] sm:gap-6">
-                <dt class="tech text-card opacity-60">{{ t('siteFooter.meta.accent') }}</dt>
-                <dd class="flex flex-wrap gap-x-5 gap-y-3 font-mono text-sm text-card">
-                  <a
-                    v-for="line in contactLines"
-                    :key="line.label"
-                    :href="line.href"
-                    :target="line.external ? '_blank' : undefined"
-                    :rel="line.external ? 'noopener noreferrer' : undefined"
-                    class="footer-contact-link transition-colors duration-300"
-                  >
-                    {{ line.label }} ↗
-                  </a>
-                </dd>
+            <div>
+              <h3 class="font-sans text-2xl font-medium tracking-[-0.04em] text-card">{{ t('siteFooter.meta.accent') }}</h3>
+              <div class="mt-5 flex flex-col gap-3 font-mono text-xl text-card">
+                <a
+                  v-for="line in contactLines"
+                  :key="line.label"
+                  :href="line.href"
+                  :target="line.external ? '_blank' : undefined"
+                  :rel="line.external ? 'noopener noreferrer' : undefined"
+                  class="footer-contact-link transition-colors duration-300"
+                >
+                  {{ line.label }} ↗
+                </a>
               </div>
-            </dl>
+            </div>
           </div>
+        </section>
+
+        <aside class="footer-status flex min-h-[8rem] items-start justify-end lg:min-h-0">
+          <p class="font-mono text-sm leading-relaxed text-card">
+            {{ t('siteFooter.meta.statusValue') }}
+          </p>
         </aside>
       </div>
 
@@ -61,6 +71,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
+import jacoryLogoWhite from '../assets/jacory-logo-white.svg'
 
 const { t } = useI18n()
 
@@ -87,11 +98,8 @@ const contactLines = computed(() => footerValueLines(t('siteFooter.meta.accentVa
   border-color: color-mix(in srgb, var(--card) 24%, transparent);
 }
 
-.footer-brand-zone {
-  border-color: color-mix(in srgb, var(--card) 24%, transparent);
-}
-
 .footer-wordmark {
+  font-size: clamp(2.75rem, 5vw, 10rem);
   font-weight: 400;
   color: var(--card);
 }

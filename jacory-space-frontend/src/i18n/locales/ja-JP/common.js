@@ -25,7 +25,8 @@ export default {
       surface: '入口',
       accent: '連絡',
       accentValue: 'Email / GitHub',
-      statusValue: '公開しながら構築中'
+      statusValue: '公開しながら構築中',
+      description: '思考と制作を記録する個人のデジタル空間。'
     }
   }
 }

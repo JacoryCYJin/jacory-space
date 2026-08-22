@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+  <path
+    fill="#fafbfc"
+    d="M24 25h186v5c0 97.8-83.3 177-186 177V25Z"
+  />
+  <path
+    fill="#fafbfc"
+    d="M358 26h16v179c0 93-78.3 167-176 167H24c0-92 68.5-166.7 170-178C193.7 120.7 250.5 39.1 347 27L358 26Z"
+  />
+</svg>

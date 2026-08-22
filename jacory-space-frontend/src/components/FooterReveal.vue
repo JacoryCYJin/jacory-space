@@ -4,7 +4,8 @@
       <slot />
       <div class="footer-reveal__extension" aria-hidden="true" />
     </div>
-    <div class="footer-reveal__panel">
+    <div ref="panelRef" class="footer-reveal__panel">
+      <div class="footer-reveal__gridline" aria-hidden="true" />
       <div class="footer-reveal__header" aria-hidden="true" />
       <Footer ref="footerRef" />
     </div>
@@ -16,15 +17,25 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import Footer from './Footer.vue'
 
 const footerRef = ref(null)
+const panelRef = ref(null)
 const footerBodyHeight = ref(0)
+const footerDividerHeight = ref(0)
 let footerResizeObserver
 let measureFrame
 
-const revealStyle = computed(() => (
-  footerBodyHeight.value > 0
-    ? { '--footer-reveal-body-height': `${footerBodyHeight.value}px` }
-    : undefined
-))
+const revealStyle = computed(() => {
+  const style = {}
+
+  if (footerBodyHeight.value > 0) {
+    style['--footer-reveal-body-height'] = `${footerBodyHeight.value}px`
+  }
+
+  if (footerDividerHeight.value > 0) {
+    style['--footer-reveal-divider-height'] = `${footerDividerHeight.value}px`
+  }
+
+  return Object.keys(style).length > 0 ? style : undefined
+})
 
 function footerElement() {
   return footerRef.value?.$el ?? footerRef.value
@@ -34,6 +45,15 @@ function measureFooterBody() {
   const footer = footerElement()
   if (!footer) return
   footerBodyHeight.value = Math.ceil(footer.getBoundingClientRect().height)
+
+  const footerRule = footer.querySelector('.footer-rule')
+  const panel = panelRef.value
+  if (footerRule && panel) {
+    footerDividerHeight.value = Math.max(
+      0,
+      footerRule.getBoundingClientRect().top - panel.getBoundingClientRect().top,
+    )
+  }
 }
 
 function scheduleFooterMeasure() {
@@ -110,6 +130,10 @@ onBeforeUnmount(() => {
   background: var(--ink);
 }
 
+.footer-reveal__gridline {
+  display: none;
+}
+
 .footer-reveal__header {
   height: var(--footer-reveal-overlap-height);
   background: var(--ink);
@@ -118,6 +142,35 @@ onBeforeUnmount(() => {
 @media (min-width: 768px) {
   .footer-reveal {
     --footer-reveal-body-height: 20rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .footer-reveal__gridline {
+    position: absolute;
+    inset: 0 auto auto 0;
+    display: grid;
+    width: 100%;
+    height: var(--footer-reveal-divider-height, 0px);
+    padding-inline: var(--page-gutter);
+    pointer-events: none;
+    grid-template-columns: 3fr 2fr 2fr;
+    column-gap: 3rem;
+  }
+
+  .footer-reveal__gridline::after {
+    grid-column: 1;
+    justify-self: end;
+    width: 1px;
+    height: 100%;
+    content: "";
+    background: color-mix(in srgb, var(--card) 24%, transparent);
+  }
+}
+
+@media (min-width: 1280px) {
+  .footer-reveal__gridline {
+    column-gap: 4rem;
   }
 }
 
