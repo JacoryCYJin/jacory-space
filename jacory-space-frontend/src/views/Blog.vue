@@ -1,5 +1,6 @@
 <template>
-  <main ref="pageRoot" class="grain min-h-screen bg-background">
+  <FooterReveal>
+    <main ref="pageRoot" class="grain min-h-screen bg-background">
     <section class="page-gutter pt-20 md:pt-24">
       <div class="page-frame">
         <div class="reveal blog-reveal flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-line pb-4">
@@ -216,8 +217,8 @@
       </div>
     </section>
 
-    <Footer />
-  </main>
+    </main>
+  </FooterReveal>
 </template>
 
 <script setup>
@@ -225,7 +226,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import { ChevronDown, ListFilter } from 'lucide-vue-next'
-import Footer from '../components/Footer.vue'
+import FooterReveal from '../components/FooterReveal.vue'
 import { blogCategories } from '../content/blog-categories.js'
 import { blogTopics } from '../content/blog-topics.js'
 import { listPosts } from '../lib/blog/index.js'

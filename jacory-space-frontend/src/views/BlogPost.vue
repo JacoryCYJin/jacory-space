@@ -1,5 +1,6 @@
 <template>
-  <main ref="pageRoot" class="grain min-h-screen bg-background">
+  <FooterReveal>
+    <main ref="pageRoot" class="grain min-h-screen bg-background">
     <section v-if="isLoading || loadError" class="page-gutter pt-40">
       <div class="page-frame">
         <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
@@ -137,7 +138,6 @@
         </div>
       </section>
 
-      <Footer />
     </template>
 
     <section v-else class="page-gutter pt-40">
@@ -156,7 +156,8 @@
         </RouterLink>
       </div>
     </section>
-  </main>
+    </main>
+  </FooterReveal>
 </template>
 
 <script setup>
@@ -167,7 +168,7 @@ import { useRoute } from 'vue-router'
 import { gsap } from 'gsap'
 import { getPost } from '../lib/blog/index.js'
 import MarkdownArticle from '../components/blog/MarkdownArticle.vue'
-import Footer from '../components/Footer.vue'
+import FooterReveal from '../components/FooterReveal.vue'
 
 const route = useRoute()
 const { t } = useI18n()

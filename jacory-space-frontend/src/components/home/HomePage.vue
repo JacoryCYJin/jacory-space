@@ -1,5 +1,6 @@
 <template>
-  <main ref="heroRoot" class="grain w-full bg-background">
+  <FooterReveal>
+    <main ref="heroRoot" class="grain w-full bg-background">
     <HomeLoadingIdentity
       :hero-ready="heroSceneReady"
       :dot-matrix-ready="dotMatrixReady"
@@ -45,7 +46,8 @@
         />
       </template>
     </HomeCreativeCapabilities>
-  </main>
+    </main>
+  </FooterReveal>
 </template>
 
 <script setup>
@@ -56,6 +58,7 @@ import HomeLoadingIdentity from './loading/HomeLoadingIdentity.vue'
 import HomeCreativeCapabilities from './HomeCreativeCapabilities.vue'
 import HomeDotMatrixField from './HomeDotMatrixField.vue'
 import HomeHeroScene from './HomeHeroScene.vue'
+import FooterReveal from '../FooterReveal.vue'
 
 gsap.registerPlugin(CustomEase)
 

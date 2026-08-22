@@ -5,6 +5,7 @@
     </div>
     <div
       :id="contentId"
+      data-lenis-prevent
       class="border border-line bg-card lg:border-0"
       :class="expanded ? '' : 'h-96 overflow-x-hidden overflow-y-scroll lg:h-auto lg:min-h-0 lg:flex-1'"
     >

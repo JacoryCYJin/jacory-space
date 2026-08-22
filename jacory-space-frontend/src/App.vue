@@ -1,5 +1,6 @@
 <template>
   <div>
+    <SmoothScroll />
     <Navbar v-if="!isFullBleedRoute" />
     <router-view />
   </div>
@@ -10,6 +11,7 @@ import { computed } from 'vue'
 import { useHead } from '@unhead/vue'
 import { useRoute } from 'vue-router'
 import Navbar from './components/Navbar.vue'
+import SmoothScroll from './components/SmoothScroll.vue'
 
 const route = useRoute()
 const isFullBleedRoute = computed(() => ['/tools/minecraft-skin-editor', '/experiments/retro-futurism'].includes(route.path))

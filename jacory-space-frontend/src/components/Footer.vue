@@ -1,20 +1,17 @@
 <template>
-  <footer class="page-gutter border-t border-line py-12">
+  <footer class="page-gutter bg-ink py-12 text-card">
     <div class="page-frame">
       <div class="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
         <div>
-          <p class="font-sans text-3xl font-medium tracking-tight text-foreground md:text-4xl">
-            {{ footerBrandLead }}<span class="text-blue">{{ footerBrandAccent }}</span>
-          </p>
-          <p class="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            {{ t('siteFooter.note') }}
+          <p class="font-display text-3xl font-normal leading-[0.84] tracking-[-0.03em] text-card md:text-4xl">
+            {{ footerBrandLead }}<span class="text-card">{{ footerBrandAccent }}</span>
           </p>
         </div>
 
         <dl class="grid grid-cols-2 gap-x-8 gap-y-7 font-mono text-xs md:grid-cols-4 md:gap-x-12">
           <div v-for="item in footerMeta" :key="item.key" class="flex flex-col gap-2">
-            <dt class="tracking-[0.14em] text-muted-foreground">{{ item.key }}</dt>
-            <dd class="flex flex-col gap-1 leading-relaxed text-foreground">
+            <dt class="tracking-[0.14em] text-card/65">{{ item.key }}</dt>
+            <dd class="flex flex-col gap-1 leading-relaxed text-card">
               <component
                 :is="line.to ? RouterLink : line.href ? 'a' : 'span'"
                 v-for="line in item.valueLines"
@@ -23,7 +20,7 @@
                 :href="line.href"
                 :target="line.external ? '_blank' : undefined"
                 :rel="line.external ? 'noopener noreferrer' : undefined"
-                :class="line.to || line.href ? 'transition-colors duration-300 hover:text-blue' : undefined"
+                :class="line.to || line.href ? 'transition-colors duration-300 hover:text-card/70' : undefined"
               >
                 {{ line.label }}
               </component>
@@ -32,9 +29,9 @@
         </dl>
       </div>
 
-      <div class="mt-12 flex items-center justify-between border-t border-line pt-5">
-        <span class="tech">© MMXXVI</span>
-        <span class="tech">31.2°N — 121.5°E</span>
+      <div class="mt-12 flex items-center justify-between border-t border-card/30 pt-5">
+        <span class="tech text-card">© MMXXVI</span>
+        <span class="tech text-card">31.2°N — 121.5°E</span>
       </div>
     </div>
   </footer>
