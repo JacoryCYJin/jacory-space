@@ -147,6 +147,7 @@ onBeforeUnmount(() => {
 
 @media (min-width: 1024px) {
   .footer-reveal__gridline {
+    --footer-grid-gap: 3rem;
     position: absolute;
     inset: 0 auto auto 0;
     display: grid;
@@ -155,7 +156,7 @@ onBeforeUnmount(() => {
     padding-inline: var(--page-gutter);
     pointer-events: none;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: 3rem;
+    column-gap: var(--footer-grid-gap);
   }
 
   .footer-reveal__gridline::before,
@@ -164,6 +165,7 @@ onBeforeUnmount(() => {
     height: 100%;
     content: "";
     background: color-mix(in srgb, var(--card) 24%, transparent);
+    transform: translateX(calc(var(--footer-grid-gap) / 2));
   }
 
   .footer-reveal__gridline::before {
@@ -179,7 +181,7 @@ onBeforeUnmount(() => {
 
 @media (min-width: 1280px) {
   .footer-reveal__gridline {
-    column-gap: 4rem;
+    --footer-grid-gap: 4rem;
   }
 }
 
