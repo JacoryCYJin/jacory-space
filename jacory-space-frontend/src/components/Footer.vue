@@ -48,10 +48,18 @@
           </div>
         </section>
 
-        <aside class="footer-status flex min-h-[8rem] items-start justify-end lg:min-h-0">
-          <p class="font-mono text-sm leading-relaxed text-card">
-            {{ t('siteFooter.meta.statusValue') }}
-          </p>
+        <aside class="footer-status flex min-h-[8rem] flex-col items-start justify-center lg:min-h-0 lg:pl-6 xl:pl-8">
+          <div class="w-full">
+            <h3 class="font-sans text-3xl font-medium leading-none tracking-[-0.06em] text-card sm:text-4xl xl:text-5xl">
+              {{ t('siteFooter.meta.statusValue') }}
+            </h3>
+            <div class="mt-8 font-sans text-lg leading-relaxed text-card">
+              <p>{{ t('siteFooter.meta.statusLineSecondary') }}</p>
+              <div class="mt-8 font-serif text-base leading-loose text-card/70">
+                <p>{{ t('siteFooter.meta.statusReflection') }}</p>
+              </div>
+            </div>
+          </div>
         </aside>
       </div>
 

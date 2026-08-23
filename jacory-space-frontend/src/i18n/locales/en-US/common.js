@@ -26,7 +26,8 @@ export default {
       accent: 'Contact',
       accentValue: 'Email / GitHub',
       statusValue: 'Building in public',
-      description: 'A personal digital space for notes, tools, and ongoing work.'
+      statusLineSecondary: 'Everything that happens works in my favor.',
+      statusReflection: 'I seal into a bottle the words I have not yet finished saying, the roads I have walked again and again, and the things still growing slowly, then give it to the sea. Where it will drift or who will read it, I cannot know; but if you open it and a small echo remains in your heart, that is this bottle’s finest arrival.'
     }
   }
 }
