@@ -16,6 +16,10 @@ import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixCon
 
 const emit = defineEmits(['ready'])
 const props = defineProps({
+  revealProgress: {
+    type: Number,
+    default: 1
+  },
   scatterProgress: {
     type: Number,
     default: 0
@@ -46,14 +50,19 @@ function renderField() {
   renderer?.render(scene, camera)
 }
 
-function applyScatterProgress(progress) {
+function applyFieldProgress([scatterProgress, revealProgress]) {
   if (!material) return
 
-  material.uniforms.scatterProgress.value = Math.min(1, Math.max(0, progress))
+  material.uniforms.revealProgress.value = Math.min(1, Math.max(0, revealProgress))
+  material.uniforms.scatterProgress.value = Math.min(1, Math.max(0, scatterProgress))
   renderField()
 }
 
-watch(() => props.scatterProgress, applyScatterProgress, { immediate: true })
+watch(
+  () => [props.scatterProgress, props.revealProgress],
+  applyFieldProgress,
+  { immediate: true }
+)
 
 function createTextMaskTexture(
   text,
@@ -271,6 +280,7 @@ onMounted(async () => {
         titleMaskTexture: { value: null },
         dotSize: { value: HOME_DOT_MATRIX_CONFIG.dotSize },
         gap: { value: HOME_DOT_MATRIX_CONFIG.gap },
+        revealProgress: { value: props.revealProgress },
         scatterProgress: { value: props.scatterProgress },
         fieldAspect: { value: 1 }
       },
@@ -322,12 +332,18 @@ onMounted(async () => {
       uniform sampler2D titleMaskTexture;
       uniform float dotSize;
       uniform float gap;
+      uniform float revealProgress;
 
       varying vec2 vUv;
       varying vec2 vCellUv;
 
+      float hash(vec2 value) {
+        return fract(sin(dot(value, vec2(127.1, 311.7))) * 43758.5453123);
+      }
+
       void main() {
         vec2 sampleUv = vCellUv;
+        vec2 cellCoordinate = floor(vCellUv * gridResolution);
         vec2 cellUv = vUv - 0.5;
         float resolvedDotSize = min(dotSize, 1.0 - gap);
         bool isDot = max(abs(cellUv.x), abs(cellUv.y)) <= resolvedDotSize * 0.5;
@@ -337,6 +353,10 @@ onMounted(async () => {
         float nameCell = step(0.1, nameMask);
         float leadingLetterCell = step(0.1, leadingLetterMask);
         float titleCell = step(0.1, titleMask);
+        float textReveal = step(hash(cellCoordinate + vec2(53.7, 91.3)), revealProgress);
+        nameCell *= textReveal;
+        leadingLetterCell *= textReveal;
+        titleCell *= textReveal;
         vec3 resolvedDotColor = mix(dotColor, nameColor, nameCell);
         resolvedDotColor = mix(resolvedDotColor, leadingLetterColor, leadingLetterCell);
         resolvedDotColor = mix(resolvedDotColor, titleColor, titleCell);
