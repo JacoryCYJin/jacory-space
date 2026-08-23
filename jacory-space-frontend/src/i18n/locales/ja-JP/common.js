@@ -26,7 +26,8 @@ export default {
       accent: '連絡',
       accentValue: 'Email / GitHub',
       statusValue: '公開しながら構築中',
-      description: '思考と制作を記録する個人のデジタル空間。'
+      statusLineSecondary: 'すべての出来事は、私にとって力になる。',
+      statusReflection: '私は、まだ語り尽くせない言葉、何度も歩いてきた道、そしていまもゆっくり育ち続けるものを、瓶に封じて海へ託す。どこへ漂い、誰に読まれるのか、私にはわからない。けれどあなたがそれを開き、小さな響きが心に残るなら、それがこの瓶にとっていちばん美しい到着になる。'
     }
   }
 }

@@ -85,6 +85,7 @@ export default {
       sans: ["Geist", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
       mono: ["Geist Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       display: ["Anton", "Impact", "sans-serif"],
+      serif: ["Noto Serif SC", "Songti SC", "STSong", "serif"],
     },
     extend: {
       fontSize: {
