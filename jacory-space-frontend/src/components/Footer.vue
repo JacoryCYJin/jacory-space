@@ -48,16 +48,18 @@
           </div>
         </section>
 
-        <aside class="footer-status flex min-h-[8rem] flex-col items-start justify-center lg:min-h-0 lg:pl-6 xl:pl-8">
+        <aside class="footer-status flex min-h-[8rem] flex-col items-start justify-center lg:min-h-0 lg:pl-8 xl:pl-12">
           <div class="w-full">
             <h3 class="font-sans text-3xl font-medium leading-none tracking-[-0.06em] text-card sm:text-4xl xl:text-5xl">
               {{ t('siteFooter.meta.statusValue') }}
             </h3>
-            <div class="mt-8 font-sans text-lg leading-relaxed text-card">
-              <p>{{ t('siteFooter.meta.statusLineSecondary') }}</p>
-              <div class="mt-8 font-sans text-base leading-8 text-card/70">
-                <p>{{ t('siteFooter.meta.statusReflection') }}</p>
-              </div>
+            <div class="footer-status-divider mt-8 border-t pt-5">
+              <p class="font-sans text-lg leading-relaxed text-card">
+                {{ t('siteFooter.meta.statusLineSecondary') }}
+              </p>
+              <p class="mt-9 max-w-[34rem] font-sans text-base leading-8 text-card/70">
+                {{ t('siteFooter.meta.statusReflection') }}
+              </p>
             </div>
           </div>
         </aside>
@@ -109,6 +111,10 @@ const contactLines = computed(() => footerValueLines(t('siteFooter.meta.accentVa
 }
 
 .footer-rule {
+  border-color: color-mix(in srgb, var(--card) 24%, transparent);
+}
+
+.footer-status-divider {
   border-color: color-mix(in srgb, var(--card) 24%, transparent);
 }
 

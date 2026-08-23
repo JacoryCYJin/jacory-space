@@ -82,7 +82,7 @@ export default {
       none: "none",
     },
     fontFamily: {
-      sans: ["Geist", "Inter", "ui-sans-serif", "system-ui", "sans-serif"],
+      sans: ["Geist", "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "ui-sans-serif", "system-ui", "sans-serif"],
       mono: ["Geist Mono", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       display: ["Anton", "Impact", "sans-serif"],
     },
