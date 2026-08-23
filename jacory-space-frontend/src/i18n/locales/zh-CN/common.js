@@ -26,7 +26,7 @@ export default {
       accent: '联系',
       accentValue: 'Email / GitHub',
       statusValue: '公开构建中',
-      statusLineSecondary: '凡事发生，皆有利于我。',
+      statusLineSecondary: '凡事发生皆有利于我。',
       statusReflection: '我把尚未说尽的话、反复走过的路，和那些仍在缓慢生长的东西，封进瓶子，交给海。它会漂向哪里、被谁读见，我无从知晓；若你翻开它，恰有一点回声留在你心里，那便是这只瓶子最好的抵达。'
     }
   }
