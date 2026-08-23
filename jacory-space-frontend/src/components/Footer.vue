@@ -16,8 +16,8 @@
 
         <section class="footer-directory flex min-h-[14rem] items-center lg:min-h-0" :aria-label="t('siteFooter.meta.surface')">
           <div class="grid w-full grid-cols-2 gap-x-8 sm:gap-x-12">
-            <div>
-              <h3 class="font-sans text-2xl font-medium tracking-[-0.04em] text-card">{{ t('siteFooter.meta.surface') }}</h3>
+            <div class="justify-self-center text-left">
+              <h3 class="font-sans text-2xl font-medium tracking-[-0.04em] text-card">[ {{ t('siteFooter.meta.surface') }} ]</h3>
               <nav class="mt-5 flex flex-col gap-3" :aria-label="t('siteFooter.meta.surface')">
                 <RouterLink
                   v-for="line in navigationLines"
@@ -30,8 +30,8 @@
               </nav>
             </div>
 
-            <div>
-              <h3 class="font-sans text-2xl font-medium tracking-[-0.04em] text-card">{{ t('siteFooter.meta.accent') }}</h3>
+            <div class="justify-self-center text-left">
+              <h3 class="font-sans text-2xl font-medium tracking-[-0.04em] text-card">[ {{ t('siteFooter.meta.accent') }} ]</h3>
               <div class="mt-5 flex flex-col gap-3 font-mono text-xl text-card">
                 <a
                   v-for="line in contactLines"
@@ -41,7 +41,7 @@
                   :rel="line.external ? 'noopener noreferrer' : undefined"
                   class="footer-contact-link transition-colors duration-300"
                 >
-                  {{ line.label }} ↗
+                  {{ line.label }}
                 </a>
               </div>
             </div>
