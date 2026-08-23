@@ -55,7 +55,7 @@
             </h3>
             <div class="mt-8 font-sans text-lg leading-relaxed text-card">
               <p>{{ t('siteFooter.meta.statusLineSecondary') }}</p>
-              <div class="mt-8 font-serif text-base leading-loose text-card/70">
+              <div class="mt-8 font-sans text-base leading-8 text-card/70">
                 <p>{{ t('siteFooter.meta.statusReflection') }}</p>
               </div>
             </div>
