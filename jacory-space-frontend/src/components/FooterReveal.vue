@@ -4,10 +4,12 @@
       <slot />
       <div class="footer-reveal__extension" aria-hidden="true" />
     </div>
-    <div ref="panelRef" class="footer-reveal__panel">
-      <div class="footer-reveal__gridline" aria-hidden="true" />
-      <div class="footer-reveal__header" aria-hidden="true" />
-      <Footer ref="footerRef" />
+    <div class="footer-reveal__panel">
+      <div class="footer-reveal__panel-content">
+        <div class="footer-reveal__gridline" aria-hidden="true" />
+        <div class="footer-reveal__header" aria-hidden="true" />
+        <Footer ref="footerRef" />
+      </div>
     </div>
   </div>
 </template>
@@ -17,12 +19,12 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import Footer from './Footer.vue'
 
 const footerRef = ref(null)
-const panelRef = ref(null)
 const contentRef = ref(null)
 const footerBodyHeight = ref(0)
 const footerDividerHeight = ref(0)
 const footerRevealProgress = ref(1)
 const FOOTER_REVEAL_MIN_BRIGHTNESS = 0.22
+const FOOTER_REVEAL_MIN_SCALE = 0.94
 let footerResizeObserver
 let measureFrame
 let revealFrame
@@ -44,6 +46,11 @@ const revealStyle = computed(() => {
   ) * footerRevealProgress.value
   style['--footer-reveal-panel-brightness'] = brightness.toFixed(3)
 
+  const scale = FOOTER_REVEAL_MIN_SCALE + (
+    1 - FOOTER_REVEAL_MIN_SCALE
+  ) * footerRevealProgress.value
+  style['--footer-reveal-panel-scale'] = scale.toFixed(3)
+
   return Object.keys(style).length > 0 ? style : undefined
 })
 
@@ -54,15 +61,11 @@ function footerElement() {
 function measureFooterBody() {
   const footer = footerElement()
   if (!footer) return
-  footerBodyHeight.value = Math.ceil(footer.getBoundingClientRect().height)
+  footerBodyHeight.value = footer.offsetHeight
 
   const footerRule = footer.querySelector('.footer-rule')
-  const panel = panelRef.value
-  if (footerRule && panel) {
-    footerDividerHeight.value = Math.max(
-      0,
-      footerRule.getBoundingClientRect().top - panel.getBoundingClientRect().top,
-    )
+  if (footerRule) {
+    footerDividerHeight.value = footerRule.offsetTop
   }
 
   updateFooterRevealProgress()
@@ -170,6 +173,13 @@ onBeforeUnmount(() => {
   margin: 0;
   background: var(--ink);
   filter: brightness(var(--footer-reveal-panel-brightness));
+}
+
+.footer-reveal__panel-content {
+  position: relative;
+  transform: scale(var(--footer-reveal-panel-scale));
+  transform-origin: 50% 100%;
+  will-change: transform;
 }
 
 .footer-reveal__gridline {
