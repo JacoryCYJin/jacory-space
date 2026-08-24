@@ -135,7 +135,10 @@ const renderVisualProgress = (value) => {
 
 const waitForHomeFont = () => {
   if (!document.fonts?.load) return Promise.resolve()
-  return document.fonts.load('400 1em Anton', 'WHO AM I?Makes Ideas Move')
+  return Promise.all([
+    document.fonts.load('400 1em Anton', 'WHO AM I?Makes Ideas Move'),
+    document.fonts.load('900 1em "Geist Variable"', '0123456789')
+  ])
 }
 
 const waitForIdentityArtwork = () => {

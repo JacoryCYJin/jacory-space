@@ -38,12 +38,13 @@
         <slot
           name="identity"
           :scatter-progress="scatterProgress"
+          :terminal-progress="terminalProgress"
         />
       </div>
 
       <div class="sr-only">
         <p>JACORY</p>
-        <p>A Creator, Self-Proclaimed</p>
+        <p>Identity running. A Creator. I guess. Awaiting input. Model: My Brain High.</p>
       </div>
     </div>
   </section>
@@ -60,6 +61,10 @@
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 
 defineProps({
   identityVisible: {
@@ -71,11 +76,15 @@ defineProps({
 const trackRoot = ref(null)
 const stageRoot = ref(null)
 const scatterProgress = ref(0)
+const terminalProgress = ref(0)
+const TERMINAL_INPUT_END_PROGRESS = 0.3
 const SCATTER_START_PROGRESS = 0.4
+const IDENTITY_SCROLL_DISTANCE = 2.5
 
 let resizeObserver
 let motionQuery
 let measurementFrame = 0
+let terminalMotion
 
 function updateScatterProgress() {
   if (!trackRoot.value || !stageRoot.value || !motionQuery?.matches) {
@@ -88,7 +97,10 @@ function updateScatterProgress() {
 
   const stageTop = window.innerHeight - stageHeight
   const trackTop = trackRoot.value.getBoundingClientRect().top
-  const rawProgress = Math.min(1, Math.max(0, (stageTop - trackTop) / stageHeight))
+  const rawProgress = Math.min(
+    1,
+    Math.max(0, (stageTop - trackTop) / (stageHeight * IDENTITY_SCROLL_DISTANCE))
+  )
   scatterProgress.value = Math.min(
     1,
     Math.max(0, (rawProgress - SCATTER_START_PROGRESS) / (1 - SCATTER_START_PROGRESS))
@@ -115,6 +127,45 @@ onMounted(() => {
   window.addEventListener('resize', scheduleMeasurement)
   motionQuery.addEventListener('change', scheduleMeasurement)
   scheduleMeasurement()
+
+  terminalMotion = gsap.matchMedia()
+  terminalMotion.add('(prefers-reduced-motion: no-preference)', () => {
+    if (!trackRoot.value || !stageRoot.value) return undefined
+
+    const typingState = { value: 0 }
+    const timeline = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        id: 'home-terminal-input',
+        trigger: trackRoot.value,
+        start: () => {
+          const stageHeight = stageRoot.value?.getBoundingClientRect().height ?? 0
+          return `top ${Math.max(0, window.innerHeight - stageHeight)}px`
+        },
+        end: () => {
+          const stageHeight = stageRoot.value?.getBoundingClientRect().height ?? 0
+          return `+=${Math.max(1, stageHeight * IDENTITY_SCROLL_DISTANCE * TERMINAL_INPUT_END_PROGRESS)}`
+        },
+        scrub: true,
+        invalidateOnRefresh: true
+      }
+    })
+
+    timeline.to(typingState, {
+      value: 1,
+      duration: 1,
+      onUpdate: () => {
+        terminalProgress.value = typingState.value
+      }
+    })
+
+    return () => timeline.kill()
+  })
+  terminalMotion.add('(prefers-reduced-motion: reduce)', () => {
+    terminalProgress.value = 1
+  })
+
+  window.requestAnimationFrame(() => ScrollTrigger.refresh())
 })
 
 onBeforeUnmount(() => {
@@ -122,6 +173,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', scheduleMeasurement)
   motionQuery?.removeEventListener('change', scheduleMeasurement)
   resizeObserver?.disconnect()
+  terminalMotion?.revert()
 
   if (measurementFrame) window.cancelAnimationFrame(measurementFrame)
 })
@@ -157,7 +209,7 @@ onBeforeUnmount(() => {
 
 @media (prefers-reduced-motion: no-preference) {
   .home-transition-track {
-    height: calc(var(--identity-stage-height) + var(--identity-stage-height));
+    height: calc(var(--identity-stage-height) * 3.5);
     margin-top: calc(-1 * var(--identity-stage-height));
   }
 
