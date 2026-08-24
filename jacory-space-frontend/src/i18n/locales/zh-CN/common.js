@@ -21,7 +21,7 @@ export default {
     brand: 'Jacory Space',
     meta: {
       system: '系统',
-      systemValue: 'Personal OS / v.01',
+      systemValue: 'Personal OS / v.02',
       surface: '入口',
       accent: '联系',
       accentValue: 'Email / GitHub',

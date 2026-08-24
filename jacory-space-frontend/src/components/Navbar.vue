@@ -9,7 +9,7 @@
         <span class="font-mono text-sm tracking-[0.14em] text-foreground transition-colors group-hover:text-blue">
           Jacory Space
         </span>
-        <span class="tech hidden text-xs sm:inline">Personal OS / v.01</span>
+        <span class="tech hidden text-xs sm:inline">Personal OS / v.02</span>
       </router-link>
 
       <nav

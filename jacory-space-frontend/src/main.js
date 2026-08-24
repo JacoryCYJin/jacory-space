@@ -1,5 +1,7 @@
 import { ViteSSG } from 'vite-ssg'
 import '@fontsource/anton/400.css'
+import '@fontsource-variable/geist/index.css'
+import '@fontsource-variable/geist-mono/index.css'
 import 'lenis/dist/lenis.css'
 import './style.css'
 import App from './App.vue'
