@@ -1,6 +1,6 @@
 <template>
   <div class="footer-reveal" :style="revealStyle">
-    <div class="footer-reveal__content">
+    <div ref="contentRef" class="footer-reveal__content">
       <slot />
       <div class="footer-reveal__extension" aria-hidden="true" />
     </div>
@@ -18,10 +18,15 @@ import Footer from './Footer.vue'
 
 const footerRef = ref(null)
 const panelRef = ref(null)
+const contentRef = ref(null)
 const footerBodyHeight = ref(0)
 const footerDividerHeight = ref(0)
+const footerRevealProgress = ref(1)
+const FOOTER_REVEAL_MIN_BRIGHTNESS = 0.22
 let footerResizeObserver
 let measureFrame
+let revealFrame
+let motionQuery
 
 const revealStyle = computed(() => {
   const style = {}
@@ -33,6 +38,11 @@ const revealStyle = computed(() => {
   if (footerDividerHeight.value > 0) {
     style['--footer-reveal-divider-height'] = `${footerDividerHeight.value}px`
   }
+
+  const brightness = FOOTER_REVEAL_MIN_BRIGHTNESS + (
+    1 - FOOTER_REVEAL_MIN_BRIGHTNESS
+  ) * footerRevealProgress.value
+  style['--footer-reveal-panel-brightness'] = brightness.toFixed(3)
 
   return Object.keys(style).length > 0 ? style : undefined
 })
@@ -54,6 +64,8 @@ function measureFooterBody() {
       footerRule.getBoundingClientRect().top - panel.getBoundingClientRect().top,
     )
   }
+
+  updateFooterRevealProgress()
 }
 
 function scheduleFooterMeasure() {
@@ -61,8 +73,32 @@ function scheduleFooterMeasure() {
   measureFrame = window.requestAnimationFrame(measureFooterBody)
 }
 
+function updateFooterRevealProgress() {
+  if (!contentRef.value || !motionQuery?.matches || footerBodyHeight.value <= 0) {
+    footerRevealProgress.value = 1
+    return
+  }
+
+  const contentBottom = contentRef.value.getBoundingClientRect().bottom
+  const revealedHeight = Math.min(
+    footerBodyHeight.value,
+    Math.max(0, window.innerHeight - contentBottom)
+  )
+  footerRevealProgress.value = revealedHeight / footerBodyHeight.value
+}
+
+function scheduleFooterRevealProgress() {
+  if (revealFrame) return
+
+  revealFrame = window.requestAnimationFrame(() => {
+    revealFrame = 0
+    updateFooterRevealProgress()
+  })
+}
+
 onMounted(async () => {
   await nextTick()
+  motionQuery = window.matchMedia('(prefers-reduced-motion: no-preference)')
   scheduleFooterMeasure()
 
   const footer = footerElement()
@@ -73,11 +109,16 @@ onMounted(async () => {
 
   document.fonts?.ready.then(scheduleFooterMeasure)
   window.addEventListener('resize', scheduleFooterMeasure)
+  window.addEventListener('scroll', scheduleFooterRevealProgress, { passive: true })
+  motionQuery.addEventListener('change', scheduleFooterRevealProgress)
 })
 
 onBeforeUnmount(() => {
   window.cancelAnimationFrame(measureFrame)
+  window.cancelAnimationFrame(revealFrame)
   window.removeEventListener('resize', scheduleFooterMeasure)
+  window.removeEventListener('scroll', scheduleFooterRevealProgress)
+  motionQuery?.removeEventListener('change', scheduleFooterRevealProgress)
   footerResizeObserver?.disconnect()
 })
 </script>
@@ -128,6 +169,7 @@ onBeforeUnmount(() => {
   width: 100%;
   margin: 0;
   background: var(--ink);
+  filter: brightness(var(--footer-reveal-panel-brightness));
 }
 
 .footer-reveal__gridline {
