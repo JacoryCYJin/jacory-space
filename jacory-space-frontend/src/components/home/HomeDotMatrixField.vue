@@ -11,15 +11,10 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as THREE from 'three'
-import '@fontsource/space-grotesk/600.css'
 import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixConfig'
 
 const emit = defineEmits(['ready'])
 const props = defineProps({
-  revealProgress: {
-    type: Number,
-    default: 1
-  },
   scatterProgress: {
     type: Number,
     default: 0
@@ -50,16 +45,15 @@ function renderField() {
   renderer?.render(scene, camera)
 }
 
-function applyFieldProgress([scatterProgress, revealProgress]) {
+function applyFieldProgress(scatterProgress) {
   if (!material) return
 
-  material.uniforms.revealProgress.value = Math.min(1, Math.max(0, revealProgress))
   material.uniforms.scatterProgress.value = Math.min(1, Math.max(0, scatterProgress))
   renderField()
 }
 
 watch(
-  () => [props.scatterProgress, props.revealProgress],
+  () => props.scatterProgress,
   applyFieldProgress,
   { immediate: true }
 )
@@ -72,7 +66,8 @@ function createTextMaskTexture(
   fontFamily = 'Anton',
   fontWeight = 400,
   horizontalRulePositions = [],
-  gridRows = 1
+  gridRows = 1,
+  terminalFrame = null
 ) {
   const canvas = document.createElement('canvas')
   canvas.width = 2048
@@ -83,7 +78,7 @@ function createTextMaskTexture(
 
   context.clearRect(0, 0, canvas.width, canvas.height)
   context.fillStyle = readToken('--card')
-  context.font = `${fontWeight} ${fontSize}px "${fontFamily}"`
+  context.font = `${fontWeight} ${fontSize}px ${fontFamily}`
   context.textAlign = 'center'
   context.textBaseline = 'alphabetic'
   const textMetrics = context.measureText(text)
@@ -99,6 +94,20 @@ function createTextMaskTexture(
     const ruleY = ruleRow * ruleCellHeight + (ruleCellHeight - ruleHeight) / 2
     context.fillRect(canvas.width * 0.03, ruleY, canvas.width * 0.94, ruleHeight)
   })
+
+  if (terminalFrame) {
+    const topRow = Math.min(gridRows - 1, Math.max(0, Math.floor(terminalFrame.top * gridRows)))
+    const bottomRow = Math.min(gridRows - 1, Math.max(0, Math.floor(terminalFrame.bottom * gridRows)))
+    const ruleHeight = ruleCellHeight * 0.8
+    const topY = topRow * ruleCellHeight + (ruleCellHeight - ruleHeight) / 2
+    const bottomY = bottomRow * ruleCellHeight + (ruleCellHeight - ruleHeight) / 2
+    const ruleWidth = (canvas.width / HOME_DOT_MATRIX_CONFIG.columns) * 0.8
+    const leftX = canvas.width * terminalFrame.left
+    const rightX = canvas.width * terminalFrame.right - ruleWidth
+
+    context.fillRect(leftX, topY, ruleWidth, bottomY + ruleHeight - topY)
+    context.fillRect(rightX, topY, ruleWidth, bottomY + ruleHeight - topY)
+  }
 
   context.save()
   context.translate(canvas.width / 2, centerY)
@@ -152,14 +161,15 @@ function createLeadingLetterMaskTexture(text, letter, fontSize, centerY, scaleY 
 
 function createTitleMaskTexture(gridRows) {
   return createTextMaskTexture(
-    'A Creator, Self-Proclaimed',
-    96,
-    1024 * 0.88,
-    2,
-    'Space Grotesk',
-    600,
-    [0.785, 0.97],
-    gridRows
+    '> A CREATOR, SELF-PROCLAIMED.',
+    80,
+    1024 * 0.805,
+    0.72,
+    'ui-monospace',
+    500,
+    [0.64, 0.97],
+    gridRows,
+    { top: 0.64, right: 0.97, bottom: 0.97, left: 0.03 }
   )
 }
 
@@ -246,10 +256,6 @@ onMounted(async () => {
   }
 
   try {
-    await document.fonts.load(
-      '600 96px "Space Grotesk"',
-      'A Creator, Self-Proclaimed'
-    )
     renderer = new THREE.WebGLRenderer({
       canvas: canvasEl.value,
       alpha: true,
@@ -280,7 +286,6 @@ onMounted(async () => {
         titleMaskTexture: { value: null },
         dotSize: { value: HOME_DOT_MATRIX_CONFIG.dotSize },
         gap: { value: HOME_DOT_MATRIX_CONFIG.gap },
-        revealProgress: { value: props.revealProgress },
         scatterProgress: { value: props.scatterProgress },
         fieldAspect: { value: 1 }
       },
@@ -321,7 +326,6 @@ onMounted(async () => {
       }
     `,
       fragmentShader: `
-      uniform vec2 gridResolution;
       uniform vec3 backgroundColor;
       uniform vec3 dotColor;
       uniform vec3 nameColor;
@@ -332,18 +336,12 @@ onMounted(async () => {
       uniform sampler2D titleMaskTexture;
       uniform float dotSize;
       uniform float gap;
-      uniform float revealProgress;
 
       varying vec2 vUv;
       varying vec2 vCellUv;
 
-      float hash(vec2 value) {
-        return fract(sin(dot(value, vec2(127.1, 311.7))) * 43758.5453123);
-      }
-
       void main() {
         vec2 sampleUv = vCellUv;
-        vec2 cellCoordinate = floor(vCellUv * gridResolution);
         vec2 cellUv = vUv - 0.5;
         float resolvedDotSize = min(dotSize, 1.0 - gap);
         bool isDot = max(abs(cellUv.x), abs(cellUv.y)) <= resolvedDotSize * 0.5;
@@ -353,10 +351,6 @@ onMounted(async () => {
         float nameCell = step(0.1, nameMask);
         float leadingLetterCell = step(0.1, leadingLetterMask);
         float titleCell = step(0.1, titleMask);
-        float textReveal = step(hash(cellCoordinate + vec2(53.7, 91.3)), revealProgress);
-        nameCell *= textReveal;
-        leadingLetterCell *= textReveal;
-        titleCell *= textReveal;
         vec3 resolvedDotColor = mix(dotColor, nameColor, nameCell);
         resolvedDotColor = mix(resolvedDotColor, leadingLetterColor, leadingLetterCell);
         resolvedDotColor = mix(resolvedDotColor, titleColor, titleCell);
@@ -365,8 +359,8 @@ onMounted(async () => {
       }
       `
     })
-    nameMaskTexture = createTextMaskTexture('JACORY', 670, 1024 * 0.4, 1.23)
-    leadingLetterMaskTexture = createLeadingLetterMaskTexture('JACORY', 'J', 670, 1024 * 0.4, 1.23)
+    nameMaskTexture = createTextMaskTexture('JACORY', 670, 1024 * 0.32, 1)
+    leadingLetterMaskTexture = createLeadingLetterMaskTexture('JACORY', 'J', 670, 1024 * 0.32, 1)
     material.uniforms.nameMaskTexture.value = nameMaskTexture
     material.uniforms.leadingLetterMaskTexture.value = leadingLetterMaskTexture
     gridMesh = new THREE.Mesh(geometry, material)

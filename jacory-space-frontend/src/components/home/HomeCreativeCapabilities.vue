@@ -37,7 +37,6 @@
       <div class="home-identity-layer">
         <slot
           name="identity"
-          :reveal-progress="revealProgress"
           :scatter-progress="scatterProgress"
         />
       </div>
@@ -72,8 +71,6 @@ defineProps({
 const trackRoot = ref(null)
 const stageRoot = ref(null)
 const scatterProgress = ref(0)
-const revealProgress = ref(1)
-const TEXT_REVEAL_END_PROGRESS = 0.25
 const SCATTER_START_PROGRESS = 0.4
 
 let resizeObserver
@@ -83,7 +80,6 @@ let measurementFrame = 0
 function updateScatterProgress() {
   if (!trackRoot.value || !stageRoot.value || !motionQuery?.matches) {
     scatterProgress.value = 0
-    revealProgress.value = 1
     return
   }
 
@@ -93,7 +89,6 @@ function updateScatterProgress() {
   const stageTop = window.innerHeight - stageHeight
   const trackTop = trackRoot.value.getBoundingClientRect().top
   const rawProgress = Math.min(1, Math.max(0, (stageTop - trackTop) / stageHeight))
-  revealProgress.value = Math.min(1, rawProgress / TEXT_REVEAL_END_PROGRESS)
   scatterProgress.value = Math.min(
     1,
     Math.max(0, (rawProgress - SCATTER_START_PROGRESS) / (1 - SCATTER_START_PROGRESS))

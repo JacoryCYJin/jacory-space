@@ -39,9 +39,8 @@
     </section>
 
     <HomeCreativeCapabilities :identity-visible="transitionReady">
-      <template #identity="{ revealProgress, scatterProgress }">
+      <template #identity="{ scatterProgress }">
         <HomeDotMatrixField
-          :reveal-progress="revealProgress"
           :scatter-progress="scatterProgress"
           @ready="handleDotMatrixReady"
         />
