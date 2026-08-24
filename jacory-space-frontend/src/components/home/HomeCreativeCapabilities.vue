@@ -60,13 +60,13 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
 
-defineProps({
+const props = defineProps({
   identityVisible: {
     type: Boolean,
     default: false
@@ -78,16 +78,19 @@ const stageRoot = ref(null)
 const scatterProgress = ref(0)
 const terminalProgress = ref(0)
 const TERMINAL_INPUT_END_PROGRESS = 0.3
-const SCATTER_START_PROGRESS = 0.4
+const SCATTER_START_PROGRESS = 0.5
 const IDENTITY_SCROLL_DISTANCE = 2.5
 
 let resizeObserver
 let motionQuery
 let measurementFrame = 0
 let terminalMotion
+let terminalTimeline
+let stopIdentityWatch
+let identityScrollStart = null
 
 function updateScatterProgress() {
-  if (!trackRoot.value || !stageRoot.value || !motionQuery?.matches) {
+  if (!stageRoot.value || !motionQuery?.matches || identityScrollStart === null) {
     scatterProgress.value = 0
     return
   }
@@ -95,16 +98,59 @@ function updateScatterProgress() {
   const stageHeight = stageRoot.value.getBoundingClientRect().height
   if (stageHeight <= 0) return
 
-  const stageTop = window.innerHeight - stageHeight
-  const trackTop = trackRoot.value.getBoundingClientRect().top
-  const rawProgress = Math.min(
-    1,
-    Math.max(0, (stageTop - trackTop) / (stageHeight * IDENTITY_SCROLL_DISTANCE))
-  )
+  const rawProgress = Math.min(1, Math.max(
+    0,
+    (window.scrollY - identityScrollStart) / (stageHeight * IDENTITY_SCROLL_DISTANCE)
+  ))
   scatterProgress.value = Math.min(
     1,
     Math.max(0, (rawProgress - SCATTER_START_PROGRESS) / (1 - SCATTER_START_PROGRESS))
   )
+}
+
+function resetIdentityMotion() {
+  terminalTimeline?.kill()
+  terminalTimeline = undefined
+  identityScrollStart = null
+  terminalProgress.value = 0
+  scatterProgress.value = 0
+}
+
+function startIdentityMotion() {
+  if (!stageRoot.value || identityScrollStart !== null) return
+
+  const stageHeight = stageRoot.value.getBoundingClientRect().height
+  if (stageHeight <= 0) return
+
+  identityScrollStart = window.scrollY
+  const typingState = { value: 0 }
+  const inputDistance = Math.max(
+    1,
+    stageHeight * IDENTITY_SCROLL_DISTANCE * TERMINAL_INPUT_END_PROGRESS
+  )
+
+  terminalTimeline = gsap.timeline({
+    defaults: { ease: 'none' },
+    scrollTrigger: {
+      id: 'home-terminal-input',
+      trigger: stageRoot.value,
+      start: identityScrollStart,
+      end: identityScrollStart + inputDistance,
+      scrub: true,
+      invalidateOnRefresh: true
+    }
+  })
+
+  terminalTimeline.to(typingState, {
+    value: 1,
+    duration: 1,
+    onUpdate: () => {
+      terminalProgress.value = typingState.value
+    }
+  })
+
+  scheduleMeasurement()
+  window.requestAnimationFrame(() => ScrollTrigger.refresh())
 }
 
 function scheduleMeasurement() {
@@ -130,38 +176,23 @@ onMounted(() => {
 
   terminalMotion = gsap.matchMedia()
   terminalMotion.add('(prefers-reduced-motion: no-preference)', () => {
-    if (!trackRoot.value || !stageRoot.value) return undefined
+    stopIdentityWatch = watch(
+      () => props.identityVisible,
+      (visible) => {
+        if (visible) startIdentityMotion()
+        else resetIdentityMotion()
+      },
+      { immediate: true }
+    )
 
-    const typingState = { value: 0 }
-    const timeline = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        id: 'home-terminal-input',
-        trigger: trackRoot.value,
-        start: () => {
-          const stageHeight = stageRoot.value?.getBoundingClientRect().height ?? 0
-          return `top ${Math.max(0, window.innerHeight - stageHeight)}px`
-        },
-        end: () => {
-          const stageHeight = stageRoot.value?.getBoundingClientRect().height ?? 0
-          return `+=${Math.max(1, stageHeight * IDENTITY_SCROLL_DISTANCE * TERMINAL_INPUT_END_PROGRESS)}`
-        },
-        scrub: true,
-        invalidateOnRefresh: true
-      }
-    })
-
-    timeline.to(typingState, {
-      value: 1,
-      duration: 1,
-      onUpdate: () => {
-        terminalProgress.value = typingState.value
-      }
-    })
-
-    return () => timeline.kill()
+    return () => {
+      stopIdentityWatch?.()
+      stopIdentityWatch = undefined
+      resetIdentityMotion()
+    }
   })
   terminalMotion.add('(prefers-reduced-motion: reduce)', () => {
+    resetIdentityMotion()
     terminalProgress.value = 1
   })
 
