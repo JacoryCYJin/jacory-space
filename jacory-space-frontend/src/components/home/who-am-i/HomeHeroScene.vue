@@ -20,7 +20,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { baseballAsciiArt } from './homeBallAsciiArt'
 import { batAsciiArt } from './homeBatAsciiArt'
-import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixConfig'
+import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from '../jacory-reveal/homeDotMatrixConfig'
 
 gsap.registerPlugin(ScrollTrigger)
 

@@ -11,7 +11,7 @@
 <script setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import * as THREE from 'three'
-import jacoryLogo from '../../assets/jacory-logo.svg'
+import jacoryLogo from '../../../assets/jacory-logo.svg'
 import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixConfig'
 
 const emit = defineEmits(['ready'])
@@ -19,6 +19,14 @@ const props = defineProps({
   scatterProgress: {
     type: Number,
     default: 0
+  },
+  dissolveProgress: {
+    type: Number,
+    default: 0
+  },
+  residueOnly: {
+    type: Boolean,
+    default: false
   },
   terminalProgress: {
     type: Number,
@@ -98,9 +106,22 @@ function applyFieldProgress(scatterProgress) {
   renderField()
 }
 
+function applyDissolveProgress(dissolveProgress) {
+  if (!material) return
+
+  material.uniforms.dissolveProgress.value = Math.min(1, Math.max(0, dissolveProgress))
+  renderField()
+}
+
 watch(
   () => props.scatterProgress,
   applyFieldProgress,
+  { immediate: true }
+)
+
+watch(
+  () => props.dissolveProgress,
+  applyDissolveProgress,
   { immediate: true }
 )
 
@@ -636,6 +657,8 @@ onMounted(async () => {
         dotSize: { value: HOME_DOT_MATRIX_CONFIG.dotSize },
         gap: { value: HOME_DOT_MATRIX_CONFIG.gap },
         scatterProgress: { value: props.scatterProgress },
+        dissolveProgress: { value: props.dissolveProgress },
+        residueOnly: { value: props.residueOnly ? 1 : 0 },
         statusPulse: { value: 1 },
         cursorPulse: { value: 1 },
         fieldAspect: { value: 1 }
@@ -690,13 +713,35 @@ onMounted(async () => {
       uniform sampler2D logoMaskTexture;
       uniform sampler2D statusMaskTexture;
       uniform sampler2D cursorMaskTexture;
+      uniform vec2 gridResolution;
       uniform float dotSize;
       uniform float gap;
+      uniform float dissolveProgress;
+      uniform float residueOnly;
       uniform float statusPulse;
       uniform float cursorPulse;
 
       varying vec2 vUv;
       varying vec2 vCellUv;
+
+      float cellHash(vec2 value) {
+        return fract(sin(dot(value, vec2(127.1, 311.7))) * 43758.5453123);
+      }
+
+      float valueNoise(vec2 value) {
+        vec2 cell = floor(value);
+        vec2 local = fract(value);
+        vec2 eased = local * local * (3.0 - 2.0 * local);
+        float lowerLeft = cellHash(cell);
+        float lowerRight = cellHash(cell + vec2(1.0, 0.0));
+        float upperLeft = cellHash(cell + vec2(0.0, 1.0));
+        float upperRight = cellHash(cell + vec2(1.0, 1.0));
+        return mix(
+          mix(lowerLeft, lowerRight, eased.x),
+          mix(upperLeft, upperRight, eased.x),
+          eased.y
+        );
+      }
 
       void main() {
         vec2 sampleUv = vCellUv;
@@ -717,14 +762,61 @@ onMounted(async () => {
         float statusCell = step(0.01, statusMask)
           * smoothstep(statusThreshold - 0.05, statusThreshold + 0.05, statusMask);
         float cursorCell = step(0.1, cursorMask) * cursorPulse;
+        float semanticCell = max(
+          nameCell,
+          max(leadingLetterCell, max(titleCell, max(logoCell, max(statusCell, cursorCell))))
+        );
+        vec2 cellCoordinate = floor(sampleUv * gridResolution);
+        float topDistance = 1.0 - vCellUv.y;
+        float topEnvelope = 1.0 - smoothstep(0.015, 0.28, topDistance);
+        float cloudWidth = mix(0.37, 0.20, clamp(topDistance / 0.28, 0.0, 1.0));
+        float horizontalEnvelope = 1.0 - smoothstep(
+          cloudWidth,
+          cloudWidth + 0.045,
+          abs(vCellUv.x - 0.5)
+        );
+        float cloudDensity = clamp(
+          mix(0.94, 0.74, topEnvelope) + (valueNoise(vCellUv * vec2(7.0, 6.0)) - 0.5) * 0.14,
+          0.65,
+          0.98
+        );
+        float residualCell = topEnvelope
+          * horizontalEnvelope
+          * step(cloudDensity, cellHash(cellCoordinate + 19.0));
+        float dissolveSeed = cellHash(cellCoordinate + 43.0);
+        float disappearingAlpha = 1.0 - smoothstep(
+          dissolveSeed * 0.18,
+          0.76 + dissolveSeed * 0.16,
+          dissolveProgress
+        );
+        float dotAlpha = mix(
+          max(disappearingAlpha, residualCell),
+          residualCell,
+          residueOnly
+        );
+        float backgroundAlpha = (1.0 - residueOnly)
+          * (1.0 - smoothstep(0.0, 0.88, dissolveProgress));
         vec3 resolvedDotColor = mix(dotColor, nameColor, nameCell);
         resolvedDotColor = mix(resolvedDotColor, leadingLetterColor, leadingLetterCell);
         resolvedDotColor = mix(resolvedDotColor, titleColor, titleCell);
         resolvedDotColor = mix(resolvedDotColor, logoColor, logoCell);
         resolvedDotColor = mix(resolvedDotColor, statusColor, statusCell);
         resolvedDotColor = mix(resolvedDotColor, titleColor, cursorCell);
+        resolvedDotColor = mix(
+          resolvedDotColor,
+          dotColor,
+          semanticCell * smoothstep(0.0, 0.48, dissolveProgress)
+        );
+        resolvedDotColor = mix(
+          resolvedDotColor,
+          nameColor,
+          residualCell * max(residueOnly, smoothstep(0.0, 0.88, dissolveProgress))
+        );
 
-        gl_FragColor = vec4(isDot ? resolvedDotColor : backgroundColor, 1.0);
+        gl_FragColor = vec4(
+          isDot ? resolvedDotColor : backgroundColor,
+          isDot ? dotAlpha : backgroundAlpha
+        );
       }
       `
     })
