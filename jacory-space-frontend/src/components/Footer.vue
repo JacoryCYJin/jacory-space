@@ -48,18 +48,20 @@
           </div>
         </section>
 
-        <aside class="footer-status flex min-h-[8rem] flex-col items-start justify-center lg:min-h-0 lg:pl-8 xl:pl-12">
-          <div class="w-full">
+        <aside class="footer-status flex min-h-[8rem] flex-col items-start justify-center lg:min-h-0 lg:items-stretch lg:justify-start lg:pl-8 xl:pl-12">
+          <div class="w-full lg:flex lg:h-full lg:flex-col">
             <h3 class="font-sans text-3xl font-medium leading-none tracking-[-0.06em] text-card sm:text-4xl xl:text-5xl">
               {{ t('siteFooter.meta.statusValue') }}
             </h3>
-            <div class="footer-status-divider mt-8 border-t pt-5">
-              <p class="font-sans text-lg leading-relaxed text-card">
-                {{ t('siteFooter.meta.statusLineSecondary') }}
-              </p>
-              <p class="mt-9 max-w-[34rem] font-sans text-base leading-8 text-card/70">
-                {{ t('siteFooter.meta.statusReflection') }}
-              </p>
+            <div class="footer-status-divider mt-8 border-t pt-5 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:pt-0">
+              <div class="lg:my-auto lg:translate-y-6">
+                <p class="font-sans text-lg leading-relaxed text-card">
+                  {{ t('siteFooter.meta.statusLineSecondary') }}
+                </p>
+                <p class="mt-9 max-w-[34rem] font-sans text-base leading-8 text-card/70">
+                  {{ t('siteFooter.meta.statusReflection') }}
+                </p>
+              </div>
             </div>
           </div>
         </aside>
