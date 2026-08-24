@@ -9,36 +9,12 @@
       ref="stageRoot"
       class="home-identity-stage"
     >
-      <section class="home-creative-entry-surface" aria-label="Creative capabilities">
-        <div class="grid h-full w-full grid-rows-[auto_1fr_auto] p-5 md:p-8">
-          <div class="flex justify-between gap-4 font-mono text-xs tracking-[0.1em] text-muted-foreground">
-            <span>02 / CREATIVE CAPABILITIES</span>
-            <span>IDEA → FORM</span>
-          </div>
-
-          <h2
-            class="flex flex-col self-center font-display text-[clamp(4.5rem,13vw,13rem)] font-normal leading-[0.78] tracking-[-0.06em] text-foreground"
-            aria-label="Ideas into form"
-          >
-            <span>IDEAS</span>
-            <span class="self-center">INTO</span>
-            <span class="self-end">FORM</span>
-          </h2>
-
-          <ol class="grid grid-cols-2 border-t border-line-strong font-mono text-xs tracking-[0.08em] text-foreground md:grid-cols-4">
-            <li class="flex gap-3 pt-3 pr-2"><span class="text-blue">01</span><span>IDENTITY SYSTEMS</span></li>
-            <li class="flex gap-3 border-l border-line pt-3 pl-3 pr-2"><span class="text-blue">02</span><span>DIGITAL EXPERIENCES</span></li>
-            <li class="flex gap-3 pt-3 pr-2 md:border-l md:border-line md:pl-3"><span class="text-blue">03</span><span>WORDS &amp; NARRATIVES</span></li>
-            <li class="flex gap-3 border-l border-line pt-3 pl-3"><span class="text-blue">04</span><span>CREATIVE DIRECTION</span></li>
-          </ol>
-        </div>
-      </section>
-
       <div class="home-identity-layer">
-        <slot
-          name="identity"
-          :scatter-progress="scatterProgress"
+        <HomeDotMatrixField
+          :scatter-progress="0"
+          :dissolve-progress="dissolveProgress"
           :terminal-progress="terminalProgress"
+          @ready="emit('ready')"
         />
       </div>
 
@@ -48,21 +24,13 @@
       </div>
     </div>
   </section>
-
-  <section data-home-creative-capabilities class="home-creative-content-flow grid min-h-[calc(100svh-var(--navbar-height))] items-end bg-background p-5 md:p-8">
-    <div class="grid w-full max-w-3xl gap-6 border-t border-line-strong pt-4">
-      <p class="font-mono text-xs tracking-[0.1em] text-muted-foreground">CAPABILITY INDEX / 02</p>
-      <p class="font-display text-[clamp(2rem,4vw,4.5rem)] font-normal leading-[0.95] tracking-[-0.045em] text-foreground">
-        Building the systems, screens, stories and direction that help an idea become tangible.
-      </p>
-    </div>
-  </section>
 </template>
 
 <script setup>
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import HomeDotMatrixField from './HomeDotMatrixField.vue'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -72,13 +40,16 @@ const props = defineProps({
     default: false
   }
 })
+const emit = defineEmits(['ready'])
 
 const trackRoot = ref(null)
 const stageRoot = ref(null)
 const scatterProgress = ref(0)
+const dissolveProgress = ref(0)
 const terminalProgress = ref(0)
 const TERMINAL_INPUT_END_PROGRESS = 0.3
 const SCATTER_START_PROGRESS = 0.5
+const DISSOLVE_START_PROGRESS = 0.5
 const IDENTITY_SCROLL_DISTANCE = 2.5
 
 let resizeObserver
@@ -108,12 +79,32 @@ function updateScatterProgress() {
   )
 }
 
+function updateDissolveProgress() {
+  if (!stageRoot.value || !motionQuery?.matches || identityScrollStart === null) {
+    dissolveProgress.value = 0
+    return
+  }
+
+  const stageHeight = stageRoot.value.getBoundingClientRect().height
+  if (stageHeight <= 0) return
+
+  const rawProgress = Math.min(1, Math.max(
+    0,
+    (window.scrollY - identityScrollStart) / (stageHeight * IDENTITY_SCROLL_DISTANCE)
+  ))
+  dissolveProgress.value = Math.min(
+    1,
+    Math.max(0, (rawProgress - DISSOLVE_START_PROGRESS) / (1 - DISSOLVE_START_PROGRESS))
+  )
+}
+
 function resetIdentityMotion() {
   terminalTimeline?.kill()
   terminalTimeline = undefined
   identityScrollStart = null
   terminalProgress.value = 0
   scatterProgress.value = 0
+  dissolveProgress.value = 0
 }
 
 function startIdentityMotion() {
@@ -159,6 +150,7 @@ function scheduleMeasurement() {
   measurementFrame = window.requestAnimationFrame(() => {
     measurementFrame = 0
     updateScatterProgress()
+    updateDissolveProgress()
   })
 }
 
@@ -222,8 +214,7 @@ onBeforeUnmount(() => {
   overflow: hidden;
 }
 
-.home-identity-layer,
-.home-creative-entry-surface {
+.home-identity-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -231,11 +222,6 @@ onBeforeUnmount(() => {
 
 .home-identity-layer {
   z-index: 1;
-}
-
-.home-creative-entry-surface {
-  display: none;
-  background: var(--background);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -247,10 +233,6 @@ onBeforeUnmount(() => {
   .home-identity-stage {
     position: sticky;
     top: var(--navbar-height);
-  }
-
-  .home-creative-entry-surface {
-    display: block;
   }
 }
 </style>
