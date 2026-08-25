@@ -770,7 +770,6 @@ onMounted(async () => {
         float resolvedDotVisibility = isDot ? dotVisibility : 0.0;
         float blackoutActive = step(0.0001, blackoutProgress);
         float cellBlackoutProgress = clamp(blackoutProgress / 0.82, 0.0, 1.0);
-        float gridClosureProgress = clamp((blackoutProgress - 0.82) / 0.18, 0.0, 1.0);
         vec2 cellCoordinate = floor(sampleUv * gridResolution);
         float topToBottom = 1.0 - vCellUv.y;
         float irregularOffset = (cellHash(cellCoordinate + vec2(29.3, 11.7)) - 0.5) * 0.13;
@@ -781,9 +780,18 @@ onMounted(async () => {
         );
         float blackCell = step(cellBlackoutTime, cellBlackoutProgress);
         blackCell = max(blackCell, step(0.999, cellBlackoutProgress));
+        float cellGlobalArrival = cellBlackoutTime * 0.82;
+        float gapDelay = mix(0.105, 0.04, cellBlackoutTime);
+        float gapOffset = (cellHash(cellCoordinate + vec2(83.2, 19.4)) - 0.5) * 0.012;
+        float gapArrival = cellGlobalArrival + gapDelay + gapOffset;
+        float gapClosureProgress = smoothstep(
+          gapArrival,
+          min(0.985, gapArrival + 0.12),
+          blackoutProgress
+        );
         float cellInterior = step(
           max(abs(cellUv.x), abs(cellUv.y)),
-          mix((1.0 - gap) * 0.5, 0.5, gridClosureProgress)
+          mix((1.0 - gap) * 0.5, 0.5, gapClosureProgress)
         );
         float blackoutCoverage = blackCell * cellInterior * blackoutActive;
         blackoutCoverage = max(blackoutCoverage, step(0.999, blackoutProgress));
