@@ -49,7 +49,6 @@ let logoMaskCanvas
 let logoImage
 let titleMaskRows = 0
 let titleMaskAspect = 0
-let gridRows = 0
 let terminalLayout
 let terminalProgress = 0
 let terminalTypeStep = -1
@@ -545,39 +544,6 @@ function createTitleMaskTexture(gridRows, layout, terminalInput) {
   )
 }
 
-function createGridGeometry(columns, rows) {
-  const baseGeometry = new THREE.PlaneGeometry(1, 1)
-  const nextGeometry = new THREE.InstancedBufferGeometry().copy(baseGeometry)
-  const cellCoordinates = new Float32Array(columns * rows * 2)
-
-  for (let row = 0; row < rows; row += 1) {
-    for (let column = 0; column < columns; column += 1) {
-      const offset = (row * columns + column) * 2
-      cellCoordinates[offset] = column
-      cellCoordinates[offset + 1] = row
-    }
-  }
-
-  nextGeometry.setAttribute(
-    'cellCoordinate',
-    new THREE.InstancedBufferAttribute(cellCoordinates, 2)
-  )
-  nextGeometry.instanceCount = columns * rows
-  baseGeometry.dispose()
-  return nextGeometry
-}
-
-function updateGridGeometry(columns, rows) {
-  if (!gridMesh || gridRows === rows) return
-
-  const nextGeometry = createGridGeometry(columns, rows)
-  const previousGeometry = geometry
-  geometry = nextGeometry
-  gridMesh.geometry = nextGeometry
-  gridRows = rows
-  previousGeometry?.dispose()
-}
-
 function updateLayout() {
   if (!renderer || !fieldRoot.value || !material) return
 
@@ -591,7 +557,6 @@ function updateLayout() {
   terminalLayout = resolveTerminalLayout(fieldAspect)
   material.uniforms.gridResolution.value.set(HOME_DOT_MATRIX_CONFIG.columns, resolvedGridRows)
   material.uniforms.fieldAspect.value = fieldAspect
-  updateGridGeometry(HOME_DOT_MATRIX_CONFIG.columns, resolvedGridRows)
 
   if (titleMaskRows !== resolvedGridRows || Math.abs(titleMaskAspect - fieldAspect) > 0.001) {
     statusMaskTexture?.dispose()
@@ -646,8 +611,7 @@ onMounted(async () => {
 
     scene = new THREE.Scene()
     camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
-    geometry = createGridGeometry(HOME_DOT_MATRIX_CONFIG.columns, 1)
-    gridRows = 1
+    geometry = new THREE.PlaneGeometry(2, 2)
     emptyMaskTexture = createEmptyMaskTexture()
     material = new THREE.ShaderMaterial({
       depthTest: false,
@@ -677,22 +641,11 @@ onMounted(async () => {
         fieldAspect: { value: 1 }
       },
       vertexShader: `
-      attribute vec2 cellCoordinate;
-
-      uniform vec2 gridResolution;
-
       varying vec2 vUv;
-      varying vec2 vCellUv;
 
       void main() {
         vUv = uv;
-        vCellUv = (cellCoordinate + 0.5) / gridResolution;
-
-        vec2 basePosition = vCellUv * 2.0 - 1.0;
-        vec2 cellSize = 2.0 / gridResolution;
-        vec2 localPosition = position.xy * cellSize;
-
-        gl_Position = vec4(basePosition + localPosition, 0.0, 1.0);
+        gl_Position = vec4(position.xy, 0.0, 1.0);
       }
     `,
       fragmentShader: `
@@ -718,15 +671,18 @@ onMounted(async () => {
       uniform float cursorPulse;
 
       varying vec2 vUv;
-      varying vec2 vCellUv;
 
       float cellHash(vec2 value) {
         return fract(sin(dot(value, vec2(127.1, 311.7))) * 43758.5453123);
       }
 
       void main() {
-        vec2 sampleUv = vCellUv;
-        vec2 cellUv = vUv - 0.5;
+        vec2 cellCoordinate = min(
+          floor(vUv * gridResolution),
+          gridResolution - 1.0
+        );
+        vec2 sampleUv = (cellCoordinate + 0.5) / gridResolution;
+        vec2 cellUv = fract(vUv * gridResolution) - 0.5;
         float resolvedDotSize = min(dotSize, 1.0 - gap);
         bool isDot = max(abs(cellUv.x), abs(cellUv.y)) <= resolvedDotSize * 0.5;
         float nameMask = texture2D(nameMaskTexture, sampleUv).a;
@@ -747,7 +703,7 @@ onMounted(async () => {
           nameCell,
           max(leadingLetterCell, max(titleCell, max(logoCell, max(statusCell, cursorCell))))
         );
-        float topDistance = 1.0 - vCellUv.y;
+        float topDistance = 1.0 - sampleUv.y;
         float preservedTop = 1.0 - smoothstep(0.19, 0.34, topDistance);
         float dotVisibility = mix(1.0, preservedTop, dissolveProgress);
         vec3 resolvedDotColor = mix(dotColor, nameColor, nameCell);
@@ -770,8 +726,7 @@ onMounted(async () => {
         float resolvedDotVisibility = isDot ? dotVisibility : 0.0;
         float blackoutActive = step(0.0001, blackoutProgress);
         float cellBlackoutProgress = clamp(blackoutProgress / 0.82, 0.0, 1.0);
-        vec2 cellCoordinate = floor(sampleUv * gridResolution);
-        float topToBottom = 1.0 - vCellUv.y;
+        float topToBottom = 1.0 - sampleUv.y;
         float irregularOffset = (cellHash(cellCoordinate + vec2(29.3, 11.7)) - 0.5) * 0.13;
         float cellBlackoutTime = clamp(
           mix(0.04, 0.96, topToBottom) + irregularOffset,
@@ -848,7 +803,6 @@ onBeforeUnmount(() => {
   disposeFieldResources()
   titleMaskRows = 0
   titleMaskAspect = 0
-  gridRows = 0
   terminalLayout = null
   terminalTypeStep = -1
 })
