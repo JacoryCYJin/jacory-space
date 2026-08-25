@@ -9,15 +9,6 @@
       ref="stageRoot"
       class="home-identity-stage"
     >
-      <div class="home-identity-layer">
-        <HomeDotMatrixField
-          :scatter-progress="0"
-          :dissolve-progress="dissolveProgress"
-          :terminal-progress="terminalProgress"
-          @ready="emit('ready')"
-        />
-      </div>
-
       <div class="sr-only">
         <p>JACORY</p>
         <p>Identity running. A Creator. I guess. Awaiting input. Model: My Brain High.</p>
@@ -30,7 +21,6 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import HomeDotMatrixField from './HomeDotMatrixField.vue'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -40,17 +30,17 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['ready'])
+const emit = defineEmits(['matrix-progress', 'handoff-change'])
 
 const trackRoot = ref(null)
 const stageRoot = ref(null)
-const scatterProgress = ref(0)
 const dissolveProgress = ref(0)
 const terminalProgress = ref(0)
-const TERMINAL_INPUT_END_PROGRESS = 0.3
-const SCATTER_START_PROGRESS = 0.5
+const blackoutProgress = ref(0)
+const TERMINAL_INPUT_END_PROGRESS = 0.375
 const DISSOLVE_START_PROGRESS = 0.5
 const IDENTITY_SCROLL_DISTANCE = 2.5
+const NAVBAR_HEIGHT = 64
 
 let resizeObserver
 let motionQuery
@@ -59,43 +49,60 @@ let terminalMotion
 let terminalTimeline
 let stopIdentityWatch
 let identityScrollStart = null
+let handoffActive = false
 
-function updateScatterProgress() {
-  if (!stageRoot.value || !motionQuery?.matches || identityScrollStart === null) {
-    scatterProgress.value = 0
-    return
-  }
+function clampProgress(value) {
+  return Math.min(1, Math.max(0, value))
+}
 
-  const stageHeight = stageRoot.value.getBoundingClientRect().height
-  if (stageHeight <= 0) return
+function emitMatrixProgress() {
+  emit('matrix-progress', {
+    terminalProgress: terminalProgress.value,
+    dissolveProgress: dissolveProgress.value,
+    blackoutProgress: blackoutProgress.value
+  })
+}
 
-  const rawProgress = Math.min(1, Math.max(
-    0,
-    (window.scrollY - identityScrollStart) / (stageHeight * IDENTITY_SCROLL_DISTANCE)
-  ))
-  scatterProgress.value = Math.min(
-    1,
-    Math.max(0, (rawProgress - SCATTER_START_PROGRESS) / (1 - SCATTER_START_PROGRESS))
-  )
+function setHandoffActive(isActive) {
+  if (handoffActive === isActive) return
+
+  handoffActive = isActive
+  emit('handoff-change', isActive)
 }
 
 function updateDissolveProgress() {
   if (!stageRoot.value || !motionQuery?.matches || identityScrollStart === null) {
     dissolveProgress.value = 0
+    blackoutProgress.value = 0
+    setHandoffActive(false)
+    emitMatrixProgress()
     return
   }
 
   const stageHeight = stageRoot.value.getBoundingClientRect().height
   if (stageHeight <= 0) return
 
-  const rawProgress = Math.min(1, Math.max(
-    0,
+  const stageHasReleased = stageRoot.value.getBoundingClientRect().top < NAVBAR_HEIGHT
+  if (stageHasReleased) {
+    dissolveProgress.value = 1
+    blackoutProgress.value = 1
+    setHandoffActive(true)
+    emitMatrixProgress()
+    return
+  }
+
+  const rawProgress = clampProgress(
     (window.scrollY - identityScrollStart) / (stageHeight * IDENTITY_SCROLL_DISTANCE)
-  ))
-  dissolveProgress.value = Math.min(
-    1,
-    Math.max(0, (rawProgress - DISSOLVE_START_PROGRESS) / (1 - DISSOLVE_START_PROGRESS))
   )
+  dissolveProgress.value = clampProgress(
+    (rawProgress - DISSOLVE_START_PROGRESS) / (1 - DISSOLVE_START_PROGRESS)
+  )
+  blackoutProgress.value = clampProgress(
+    (rawProgress - TERMINAL_INPUT_END_PROGRESS)
+      / (DISSOLVE_START_PROGRESS - TERMINAL_INPUT_END_PROGRESS)
+  )
+  setHandoffActive(false)
+  emitMatrixProgress()
 }
 
 function resetIdentityMotion() {
@@ -103,8 +110,10 @@ function resetIdentityMotion() {
   terminalTimeline = undefined
   identityScrollStart = null
   terminalProgress.value = 0
-  scatterProgress.value = 0
   dissolveProgress.value = 0
+  blackoutProgress.value = 0
+  setHandoffActive(false)
+  emitMatrixProgress()
 }
 
 function startIdentityMotion() {
@@ -137,6 +146,7 @@ function startIdentityMotion() {
     duration: 1,
     onUpdate: () => {
       terminalProgress.value = typingState.value
+      emitMatrixProgress()
     }
   })
 
@@ -149,7 +159,6 @@ function scheduleMeasurement() {
 
   measurementFrame = window.requestAnimationFrame(() => {
     measurementFrame = 0
-    updateScatterProgress()
     updateDissolveProgress()
   })
 }
@@ -186,6 +195,10 @@ onMounted(() => {
   terminalMotion.add('(prefers-reduced-motion: reduce)', () => {
     resetIdentityMotion()
     terminalProgress.value = 1
+    dissolveProgress.value = 1
+    blackoutProgress.value = 1
+    emitMatrixProgress()
+    setHandoffActive(true)
   })
 
   window.requestAnimationFrame(() => ScrollTrigger.refresh())
@@ -212,16 +225,6 @@ onBeforeUnmount(() => {
   position: relative;
   height: var(--identity-stage-height);
   overflow: hidden;
-}
-
-.home-identity-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.home-identity-layer {
-  z-index: 1;
 }
 
 @media (prefers-reduced-motion: no-preference) {

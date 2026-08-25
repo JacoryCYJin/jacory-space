@@ -16,17 +16,13 @@ import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixCon
 
 const emit = defineEmits(['ready'])
 const props = defineProps({
-  scatterProgress: {
+  blackoutProgress: {
     type: Number,
     default: 0
   },
   dissolveProgress: {
     type: Number,
     default: 0
-  },
-  residueOnly: {
-    type: Boolean,
-    default: false
   },
   terminalProgress: {
     type: Number,
@@ -72,8 +68,10 @@ const TERMINAL_FRAME = {
 }
 const TERMINAL_CONTENT_INSET = 0.02
 const TERMINAL_FONT_SIZE = 80
-const TERMINAL_INPUT_LINES = ['A CREATOR', 'I GUESS']
+const TERMINAL_INPUT_LINES = ['A CREATOR', 'I GUESS', 'quit']
 const TERMINAL_INPUT_LENGTH = TERMINAL_INPUT_LINES.reduce((total, line) => total + line.length, 0)
+const TERMINAL_STATUS_BEFORE_QUIT = '23:59'
+const TERMINAL_STATUS_AFTER_QUIT = '00:00'
 
 function readToken(name) {
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim()
@@ -99,13 +97,6 @@ function renderField() {
   renderer?.render(scene, camera)
 }
 
-function applyFieldProgress(scatterProgress) {
-  if (!material) return
-
-  material.uniforms.scatterProgress.value = Math.min(1, Math.max(0, scatterProgress))
-  renderField()
-}
-
 function applyDissolveProgress(dissolveProgress) {
   if (!material) return
 
@@ -113,9 +104,16 @@ function applyDissolveProgress(dissolveProgress) {
   renderField()
 }
 
+function applyBlackoutProgress(blackoutProgress) {
+  if (!material) return
+
+  material.uniforms.blackoutProgress.value = Math.min(1, Math.max(0, blackoutProgress))
+  renderField()
+}
+
 watch(
-  () => props.scatterProgress,
-  applyFieldProgress,
+  () => props.blackoutProgress,
+  applyBlackoutProgress,
   { immediate: true }
 )
 
@@ -170,14 +168,26 @@ function resolveTerminalInput(progress) {
 
   const secondLineCharacters = typedCharacters - firstLineLength
   const secondLine = `> ${TERMINAL_INPUT_LINES[1].slice(0, secondLineCharacters)}`
-  if (typedCharacters < TERMINAL_INPUT_LENGTH) {
+  const secondLineLength = TERMINAL_INPUT_LINES[1].length
+  if (typedCharacters < firstLineLength + secondLineLength) {
     return { activeLine: 1, complete: false, lines: [firstLine, secondLine], typedCharacters }
+  }
+
+  const thirdLineCharacters = typedCharacters - firstLineLength - secondLineLength
+  const thirdLine = `> ${TERMINAL_INPUT_LINES[2].slice(0, thirdLineCharacters)}`
+  if (typedCharacters < TERMINAL_INPUT_LENGTH) {
+    return {
+      activeLine: 2,
+      complete: false,
+      lines: [firstLine, secondLine, thirdLine],
+      typedCharacters
+    }
   }
 
   return {
     activeLine: 2,
     complete: true,
-    lines: [firstLine, secondLine, '> '],
+    lines: [firstLine, secondLine, thirdLine],
     typedCharacters
   }
 }
@@ -255,16 +265,16 @@ function createStatusMaskTexture(gridRows, layout) {
   if (!context) return null
 
   context.font = `500 ${TERMINAL_FONT_SIZE}px ui-monospace`
-  const runningWidth = context.measureText('RUNNING').width
+  const statusWidth = context.measureText(TERMINAL_STATUS_BEFORE_QUIT).width
   const cellWidth = canvas.width / HOME_DOT_MATRIX_CONFIG.columns
   const cellHeight = canvas.height / gridRows
   const statusSize = 7
   const statusRadius = (statusSize - 1) / 2
-  const runningStartX = canvas.width * layout.contentRight - runningWidth
+  const statusStartX = canvas.width * layout.contentRight - statusWidth
   const statusY = canvas.height * layout.headerCenter
   const column = Math.min(
     HOME_DOT_MATRIX_CONFIG.columns - statusSize,
-    Math.max(0, Math.floor(runningStartX / cellWidth) - statusSize - 1)
+    Math.max(0, Math.floor(statusStartX / cellWidth) - statusSize - 1)
   )
   const row = Math.min(
     gridRows - statusSize,
@@ -507,10 +517,14 @@ function createCursorMaskTexture(gridRows, layout, terminalInput) {
 }
 
 function createTitleMaskTexture(gridRows, layout, terminalInput) {
+  const statusText = terminalInput.complete
+    ? TERMINAL_STATUS_AFTER_QUIT
+    : TERMINAL_STATUS_BEFORE_QUIT
+
   return createTextMaskTexture(
     [
       { text: 'IDENTITY', center: 1024 * layout.headerCenter, align: 'left', x: layout.contentLeft },
-      { text: 'RUNNING', center: 1024 * layout.headerCenter, align: 'right', x: layout.contentRight },
+      { text: statusText, center: 1024 * layout.headerCenter, align: 'right', x: layout.contentRight },
       ...terminalInput.lines.map((text, index) => ({
         text,
         center: 1024 * resolveTerminalLineCenter(layout, index),
@@ -656,9 +670,8 @@ onMounted(async () => {
         cursorMaskTexture: { value: emptyMaskTexture },
         dotSize: { value: HOME_DOT_MATRIX_CONFIG.dotSize },
         gap: { value: HOME_DOT_MATRIX_CONFIG.gap },
-        scatterProgress: { value: props.scatterProgress },
+        blackoutProgress: { value: props.blackoutProgress },
         dissolveProgress: { value: props.dissolveProgress },
-        residueOnly: { value: props.residueOnly ? 1 : 0 },
         statusPulse: { value: 1 },
         cursorPulse: { value: 1 },
         fieldAspect: { value: 1 }
@@ -667,36 +680,19 @@ onMounted(async () => {
       attribute vec2 cellCoordinate;
 
       uniform vec2 gridResolution;
-      uniform float scatterProgress;
-      uniform float fieldAspect;
 
       varying vec2 vUv;
       varying vec2 vCellUv;
-
-      float hash(vec2 value) {
-        return fract(sin(dot(value, vec2(127.1, 311.7))) * 43758.5453123);
-      }
 
       void main() {
         vUv = uv;
         vCellUv = (cellCoordinate + 0.5) / gridResolution;
 
         vec2 basePosition = vCellUv * 2.0 - 1.0;
-        vec2 radial = vec2((vCellUv.x - 0.5) * fieldAspect, vCellUv.y - 0.5);
-        float radialLength = length(radial);
-        float fallbackAngle = hash(cellCoordinate) * 6.28318530718;
-        vec2 direction = radialLength > 0.001
-          ? radial / radialLength
-          : vec2(cos(fallbackAngle), sin(fallbackAngle));
-        direction.x /= fieldAspect;
-
-        float easedProgress = scatterProgress * scatterProgress * (3.0 - 2.0 * scatterProgress);
-        float travelDistance = mix(2.35, 2.9, hash(cellCoordinate + 17.0));
-        vec2 scatteredPosition = basePosition + direction * travelDistance * easedProgress;
         vec2 cellSize = 2.0 / gridResolution;
         vec2 localPosition = position.xy * cellSize;
 
-        gl_Position = vec4(scatteredPosition + localPosition, 0.0, 1.0);
+        gl_Position = vec4(basePosition + localPosition, 0.0, 1.0);
       }
     `,
       fragmentShader: `
@@ -716,8 +712,8 @@ onMounted(async () => {
       uniform vec2 gridResolution;
       uniform float dotSize;
       uniform float gap;
+      uniform float blackoutProgress;
       uniform float dissolveProgress;
-      uniform float residueOnly;
       uniform float statusPulse;
       uniform float cursorPulse;
 
@@ -726,21 +722,6 @@ onMounted(async () => {
 
       float cellHash(vec2 value) {
         return fract(sin(dot(value, vec2(127.1, 311.7))) * 43758.5453123);
-      }
-
-      float valueNoise(vec2 value) {
-        vec2 cell = floor(value);
-        vec2 local = fract(value);
-        vec2 eased = local * local * (3.0 - 2.0 * local);
-        float lowerLeft = cellHash(cell);
-        float lowerRight = cellHash(cell + vec2(1.0, 0.0));
-        float upperLeft = cellHash(cell + vec2(0.0, 1.0));
-        float upperRight = cellHash(cell + vec2(1.0, 1.0));
-        return mix(
-          mix(lowerLeft, lowerRight, eased.x),
-          mix(upperLeft, upperRight, eased.x),
-          eased.y
-        );
       }
 
       void main() {
@@ -766,36 +747,9 @@ onMounted(async () => {
           nameCell,
           max(leadingLetterCell, max(titleCell, max(logoCell, max(statusCell, cursorCell))))
         );
-        vec2 cellCoordinate = floor(sampleUv * gridResolution);
         float topDistance = 1.0 - vCellUv.y;
-        float topEnvelope = 1.0 - smoothstep(0.015, 0.28, topDistance);
-        float cloudWidth = mix(0.37, 0.20, clamp(topDistance / 0.28, 0.0, 1.0));
-        float horizontalEnvelope = 1.0 - smoothstep(
-          cloudWidth,
-          cloudWidth + 0.045,
-          abs(vCellUv.x - 0.5)
-        );
-        float cloudDensity = clamp(
-          mix(0.94, 0.74, topEnvelope) + (valueNoise(vCellUv * vec2(7.0, 6.0)) - 0.5) * 0.14,
-          0.65,
-          0.98
-        );
-        float residualCell = topEnvelope
-          * horizontalEnvelope
-          * step(cloudDensity, cellHash(cellCoordinate + 19.0));
-        float dissolveSeed = cellHash(cellCoordinate + 43.0);
-        float disappearingAlpha = 1.0 - smoothstep(
-          dissolveSeed * 0.18,
-          0.76 + dissolveSeed * 0.16,
-          dissolveProgress
-        );
-        float dotAlpha = mix(
-          max(disappearingAlpha, residualCell),
-          residualCell,
-          residueOnly
-        );
-        float backgroundAlpha = (1.0 - residueOnly)
-          * (1.0 - smoothstep(0.0, 0.88, dissolveProgress));
+        float preservedTop = 1.0 - smoothstep(0.19, 0.34, topDistance);
+        float dotVisibility = mix(1.0, preservedTop, dissolveProgress);
         vec3 resolvedDotColor = mix(dotColor, nameColor, nameCell);
         resolvedDotColor = mix(resolvedDotColor, leadingLetterColor, leadingLetterCell);
         resolvedDotColor = mix(resolvedDotColor, titleColor, titleCell);
@@ -805,17 +759,38 @@ onMounted(async () => {
         resolvedDotColor = mix(
           resolvedDotColor,
           dotColor,
-          semanticCell * smoothstep(0.0, 0.48, dissolveProgress)
+          semanticCell * dissolveProgress
         );
         resolvedDotColor = mix(
           resolvedDotColor,
           nameColor,
-          residualCell * max(residueOnly, smoothstep(0.0, 0.88, dissolveProgress))
+          preservedTop * dissolveProgress
         );
 
+        float resolvedDotVisibility = isDot ? dotVisibility : 0.0;
+        float blackoutActive = step(0.0001, blackoutProgress);
+        float cellBlackoutProgress = clamp(blackoutProgress / 0.82, 0.0, 1.0);
+        float gridClosureProgress = clamp((blackoutProgress - 0.82) / 0.18, 0.0, 1.0);
+        vec2 cellCoordinate = floor(sampleUv * gridResolution);
+        float topToBottom = 1.0 - vCellUv.y;
+        float irregularOffset = (cellHash(cellCoordinate + vec2(29.3, 11.7)) - 0.5) * 0.13;
+        float cellBlackoutTime = clamp(
+          mix(0.04, 0.96, topToBottom) + irregularOffset,
+          0.01,
+          0.99
+        );
+        float blackCell = step(cellBlackoutTime, cellBlackoutProgress);
+        blackCell = max(blackCell, step(0.999, cellBlackoutProgress));
+        float cellInterior = step(
+          max(abs(cellUv.x), abs(cellUv.y)),
+          mix((1.0 - gap) * 0.5, 0.5, gridClosureProgress)
+        );
+        float blackoutCoverage = blackCell * cellInterior * blackoutActive;
+        blackoutCoverage = max(blackoutCoverage, step(0.999, blackoutProgress));
+        vec3 fieldColor = mix(backgroundColor, resolvedDotColor, resolvedDotVisibility);
         gl_FragColor = vec4(
-          isDot ? resolvedDotColor : backgroundColor,
-          isDot ? dotAlpha : backgroundAlpha
+          mix(fieldColor, vec3(0.0), blackoutCoverage),
+          1.0
         );
       }
       `
