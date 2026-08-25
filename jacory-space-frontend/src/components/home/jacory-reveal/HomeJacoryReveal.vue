@@ -38,7 +38,7 @@ const dissolveProgress = ref(0)
 const terminalProgress = ref(0)
 const blackoutProgress = ref(0)
 const TERMINAL_INPUT_END_PROGRESS = 0.375
-const DISSOLVE_START_PROGRESS = 0.5
+const BLACKOUT_END_PROGRESS = 1
 const IDENTITY_SCROLL_DISTANCE = 2.5
 const NAVBAR_HEIGHT = 64
 
@@ -94,12 +94,10 @@ function updateDissolveProgress() {
   const rawProgress = clampProgress(
     (window.scrollY - identityScrollStart) / (stageHeight * IDENTITY_SCROLL_DISTANCE)
   )
-  dissolveProgress.value = clampProgress(
-    (rawProgress - DISSOLVE_START_PROGRESS) / (1 - DISSOLVE_START_PROGRESS)
-  )
+  dissolveProgress.value = 0
   blackoutProgress.value = clampProgress(
     (rawProgress - TERMINAL_INPUT_END_PROGRESS)
-      / (DISSOLVE_START_PROGRESS - TERMINAL_INPUT_END_PROGRESS)
+      / (BLACKOUT_END_PROGRESS - TERMINAL_INPUT_END_PROGRESS)
   )
   setHandoffActive(false)
   emitMatrixProgress()
