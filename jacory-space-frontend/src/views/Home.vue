@@ -23,7 +23,7 @@
         data-home-shared-dot-layer
         class="home-shared-dot-layer pointer-events-none"
         :class="[
-          transitionReady ? 'is-visible' : 'is-hidden',
+          transitionReady && !(blackoutComplete && handoffActive) ? 'is-visible' : 'is-hidden',
           handoffActive ? 'is-capabilities' : 'is-jacory'
         ]"
         :style="sharedDotLayerStyle"
@@ -40,7 +40,7 @@
         data-home-blackout-veil
         class="home-blackout-veil pointer-events-none"
         :class="[
-          blackoutComplete ? 'is-visible' : 'is-hidden',
+          blackoutComplete && !handoffActive ? 'is-visible' : 'is-hidden',
           handoffActive ? 'is-capabilities' : 'is-jacory'
         ]"
         :style="blackoutVeilStyle"
