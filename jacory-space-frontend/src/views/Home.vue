@@ -23,13 +23,14 @@
         data-home-shared-dot-layer
         class="home-shared-dot-layer pointer-events-none"
         :class="[
-          transitionReady && !(blackoutComplete && handoffActive) ? 'is-visible' : 'is-hidden',
+          isDotMatrixActive ? 'is-visible' : 'is-hidden',
           handoffActive ? 'is-capabilities' : 'is-jacory'
         ]"
         :style="sharedDotLayerStyle"
         aria-hidden="true"
       >
         <HomeDotMatrixField
+          :active="isDotMatrixActive"
           :blackout-progress="matrixState.blackoutProgress"
           :dissolve-progress="matrixState.dissolveProgress"
           :terminal-progress="matrixState.terminalProgress"
@@ -72,6 +73,9 @@ let geometryObserver
 
 const NAVBAR_HEIGHT = 64
 const blackoutComplete = computed(() => matrixState.value.blackoutProgress >= 0.999)
+const isDotMatrixActive = computed(
+  () => transitionReady.value && !(blackoutComplete.value && handoffActive.value)
+)
 
 const sharedDotLayerStyle = computed(() => {
   if (!handoffActive.value || !capabilityLayerBounds.value) return {}

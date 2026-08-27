@@ -132,12 +132,14 @@ let ballMaskMaterial
 let renderFrame = 0
 let resizeFrame = 0
 let resizeObserver
+let sceneVisibilityObserver
 let motionMedia
 let sceneContext
 let progressTimeline
 let progressState
 let sceneSection
 let sceneActive = false
+let sceneVisible = false
 
 const layout = {
   width: 1,
@@ -908,7 +910,7 @@ function renderMatrixLayer(renderer, matrixOutput) {
 }
 
 function renderScene() {
-  if (!sceneActive || !baseRenderer || !ballRenderer || !scene || !camera) {
+  if (!sceneActive || !sceneVisible || !baseRenderer || !ballRenderer || !scene || !camera) {
     renderFrame = 0
     return
   }
@@ -917,6 +919,17 @@ function renderScene() {
   renderMatrixLayer(ballRenderer, ballMatrixOutput)
 
   renderFrame = window.requestAnimationFrame(renderScene)
+}
+
+function updateRenderLoop() {
+  if (!sceneActive || !sceneVisible) {
+    if (renderFrame) window.cancelAnimationFrame(renderFrame)
+    renderFrame = 0
+    return
+  }
+
+  if (renderFrame) return
+  renderScene()
 }
 
 function activateScene() {
@@ -941,7 +954,7 @@ function activateScene() {
     applySceneProgress(0)
   })
 
-  renderScene()
+  updateRenderLoop()
   document.fonts?.ready?.then(() => {
     window.requestAnimationFrame(() => ScrollTrigger.refresh())
   })
@@ -1061,6 +1074,11 @@ onMounted(async () => {
 
   try {
     sceneSection = sceneRoot.value.parentElement
+    sceneVisibilityObserver = new IntersectionObserver(([entry]) => {
+      sceneVisible = entry.isIntersecting
+      updateRenderLoop()
+    })
+    sceneVisibilityObserver.observe(sceneSection)
     createScene()
     updateLayout()
     await prepareInitialFrame()
@@ -1083,6 +1101,7 @@ onBeforeUnmount(() => {
   motionMedia?.revert()
   sceneContext?.revert()
   resizeObserver?.disconnect()
+  sceneVisibilityObserver?.disconnect()
   window.removeEventListener('resize', scheduleResize)
   if (resizeFrame) window.cancelAnimationFrame(resizeFrame)
   if (renderFrame) window.cancelAnimationFrame(renderFrame)
