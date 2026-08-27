@@ -16,6 +16,10 @@ import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixCon
 
 const emit = defineEmits(['ready'])
 const props = defineProps({
+  active: {
+    type: Boolean,
+    default: true
+  },
   blackoutProgress: {
     type: Number,
     default: 0
@@ -93,6 +97,7 @@ async function waitForDisplayFont() {
 }
 
 function renderField() {
+  if (!props.active) return
   renderer?.render(scene, camera)
 }
 
@@ -320,7 +325,7 @@ function updateStatusMotion() {
   if (statusPulseFrame) window.cancelAnimationFrame(statusPulseFrame)
   statusPulseFrame = 0
 
-  if (statusMotionQuery?.matches && statusVisible) {
+  if (props.active && statusMotionQuery?.matches && statusVisible) {
     statusPulseFrame = window.requestAnimationFrame(renderStatusPulse)
   } else {
     material.uniforms.statusPulse.value = 1
@@ -328,6 +333,14 @@ function updateStatusMotion() {
     renderField()
   }
 }
+
+watch(
+  () => props.active,
+  (isActive) => {
+    updateStatusMotion()
+    if (isActive) renderField()
+  }
+)
 
 function createTextMaskTexture(
   text,
