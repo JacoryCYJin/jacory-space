@@ -19,10 +19,10 @@
           alt=""
           class="home-motion-design-illustration pointer-events-none absolute inset-0 z-10 block h-full w-full select-none md:inset-auto md:bottom-0 md:left-1/2 md:h-auto md:w-4/5 md:-translate-x-1/2"
         >
-        <p class="pointer-events-none absolute left-4 top-4 z-0 font-display text-motion-design-display font-normal leading-none tracking-tighter text-card md:left-10 md:top-6">
+        <p class="home-motion-title-gradient pointer-events-none absolute left-4 top-4 z-0 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent md:left-10 md:top-6">
           MOTION
         </p>
-        <p class="pointer-events-none absolute bottom-0 right-4 z-20 font-display text-motion-design-display font-normal leading-none tracking-tighter text-destructive md:right-10">
+        <p class="home-design-title-gradient pointer-events-none absolute bottom-0 right-4 z-20 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent md:right-10">
           DESIGN
         </p>
       </div>
@@ -67,6 +67,27 @@ onMounted(() => {
   object-fit: cover;
   object-position: center 48%;
   filter: saturate(1.06) contrast(1.04);
+}
+
+.home-motion-title-gradient {
+  background-image: linear-gradient(
+    to bottom,
+    var(--card) 0%,
+    var(--card) 38%,
+    color-mix(in srgb, var(--card) 72%, transparent) 62%,
+    color-mix(in srgb, var(--card) 26%, transparent) 82%,
+    transparent 100%
+  );
+}
+
+.home-design-title-gradient {
+  background-image: linear-gradient(
+    to bottom,
+    var(--home-motion-design-red) 0%,
+    var(--home-motion-design-red) 54%,
+    color-mix(in srgb, var(--home-motion-design-red) 88%, var(--ink)) 78%,
+    color-mix(in srgb, var(--home-motion-design-red) 72%, var(--ink)) 100%
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {
