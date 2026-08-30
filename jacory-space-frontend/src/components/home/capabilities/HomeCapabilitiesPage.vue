@@ -15,18 +15,18 @@
         class="home-capabilities-header"
         aria-hidden="true"
       >
-        <div class="pointer-events-none absolute inset-0 z-10 block h-full w-full select-none md:inset-auto md:bottom-0 md:left-1/2 md:h-auto md:w-4/5 md:-translate-x-1/2">
+        <div class="pointer-events-none absolute inset-0 z-10 block h-full w-full select-none sm:inset-auto sm:bottom-0 sm:left-1/2 sm:h-auto sm:w-4/5 sm:-translate-x-1/2">
           <img
             ref="illustrationRoot"
             :src="redHairedAnime"
             alt=""
-            class="home-motion-design-illustration block h-full w-full md:h-auto"
+            class="home-motion-design-illustration block h-full w-full sm:h-auto"
           >
         </div>
-        <p ref="motionTitleRoot" class="home-motion-title-gradient pointer-events-none absolute left-4 top-4 z-0 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent md:left-10 md:top-6">
+        <p ref="motionTitleRoot" class="home-motion-title-gradient pointer-events-none absolute left-4 top-4 z-0 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent sm:left-10 sm:top-6">
           MOTION
         </p>
-        <p ref="designTitleRoot" class="home-design-title-gradient pointer-events-none absolute bottom-0 right-4 z-20 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent md:right-10">
+        <p ref="designTitleRoot" class="home-design-title-gradient pointer-events-none absolute bottom-0 right-4 z-20 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent sm:right-10">
           DESIGN
         </p>
       </div>
@@ -145,7 +145,6 @@ onMounted(async () => {
         rebuildTimeline()
       })
     }
-
     rebuildTimeline()
     motionDesignResizeObserver = new ResizeObserver(scheduleTimelineRebuild)
     motionDesignResizeObserver.observe(headerRoot.value)
@@ -237,7 +236,7 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 639px) {
   .home-motion-design-illustration {
     object-position: 66% center;
   }
