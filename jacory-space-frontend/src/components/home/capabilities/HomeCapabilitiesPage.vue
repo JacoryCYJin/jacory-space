@@ -5,6 +5,7 @@
     aria-label="Creative capabilities"
   >
     <div
+      ref="trackRoot"
       data-home-capabilities-track
       class="home-capabilities-track"
     >
@@ -14,15 +15,18 @@
         class="home-capabilities-header"
         aria-hidden="true"
       >
-        <img
-          :src="redHairedAnime"
-          alt=""
-          class="home-motion-design-illustration pointer-events-none absolute inset-0 z-10 block h-full w-full select-none md:inset-auto md:bottom-0 md:left-1/2 md:h-auto md:w-4/5 md:-translate-x-1/2"
-        >
-        <p class="home-motion-title-gradient pointer-events-none absolute left-4 top-4 z-0 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent md:left-10 md:top-6">
+        <div class="pointer-events-none absolute inset-0 z-10 block h-full w-full select-none md:inset-auto md:bottom-0 md:left-1/2 md:h-auto md:w-4/5 md:-translate-x-1/2">
+          <img
+            ref="illustrationRoot"
+            :src="redHairedAnime"
+            alt=""
+            class="home-motion-design-illustration block h-full w-full md:h-auto"
+          >
+        </div>
+        <p ref="motionTitleRoot" class="home-motion-title-gradient pointer-events-none absolute left-4 top-4 z-0 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent md:left-10 md:top-6">
           MOTION
         </p>
-        <p class="home-design-title-gradient pointer-events-none absolute bottom-0 right-4 z-20 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent md:right-10">
+        <p ref="designTitleRoot" class="home-design-title-gradient pointer-events-none absolute bottom-0 right-4 z-20 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent md:right-10">
           DESIGN
         </p>
       </div>
@@ -34,14 +38,142 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import redHairedAnime from '../../../assets/home-sleep-desk/red-haired-anime-4k.png'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const emit = defineEmits(['header-ready'])
 const headerRoot = ref(null)
+const trackRoot = ref(null)
+const illustrationRoot = ref(null)
+const motionTitleRoot = ref(null)
+const designTitleRoot = ref(null)
+let motionDesignMedia
+let motionDesignResizeObserver
+let motionDesignResizeFrame = 0
+let motionDesignTimeline
 
-onMounted(() => {
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value))
+}
+
+function resolveTypographyLockup() {
+  if (!headerRoot.value || !motionTitleRoot.value || !designTitleRoot.value) return null
+
+  const header = headerRoot.value
+  const motionTitle = motionTitleRoot.value
+  const designTitle = designTitleRoot.value
+  const availableGap = Math.max(0, header.offsetHeight - motionTitle.offsetHeight - designTitle.offsetHeight)
+  const lockupGap = clamp(
+    Math.min(availableGap * 0.16, Math.min(motionTitle.offsetHeight, designTitle.offsetHeight) * 0.08),
+    0,
+    availableGap
+  )
+  const lockupHeight = motionTitle.offsetHeight + designTitle.offsetHeight + lockupGap
+  const lockupTop = (header.offsetHeight - lockupHeight) / 2
+
+  return {
+    motion: {
+      x: (header.offsetWidth - motionTitle.offsetWidth) / 2 - motionTitle.offsetLeft,
+      y: lockupTop - motionTitle.offsetTop
+    },
+    design: {
+      x: (header.offsetWidth - designTitle.offsetWidth) / 2 - designTitle.offsetLeft,
+      y: lockupTop + motionTitle.offsetHeight + lockupGap - designTitle.offsetTop
+    }
+  }
+}
+
+onMounted(async () => {
   emit('header-ready', headerRoot.value)
+
+  await nextTick()
+  if (!trackRoot.value || !headerRoot.value || !illustrationRoot.value || !motionTitleRoot.value || !designTitleRoot.value) return
+
+  await document.fonts?.ready
+
+  motionDesignMedia = gsap.matchMedia()
+  motionDesignMedia.add('(prefers-reduced-motion: no-preference)', () => {
+    const motionTitle = motionTitleRoot.value
+    const illustration = illustrationRoot.value
+    const designTitle = designTitleRoot.value
+    const rebuildTimeline = () => {
+      const lockup = resolveTypographyLockup()
+      if (!lockup) return
+
+      motionDesignTimeline?.scrollTrigger?.kill()
+      motionDesignTimeline?.kill()
+
+      const lockupHold = { value: 0 }
+      const posterHold = { value: 0 }
+
+      gsap.set([motionTitle, designTitle], { autoAlpha: 0, clipPath: 'none' })
+      gsap.set(motionTitle, lockup.motion)
+      gsap.set(designTitle, lockup.design)
+      gsap.set(illustration, { autoAlpha: 0, y: 14 })
+
+      motionDesignTimeline = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: {
+          id: 'home-motion-design-entrance',
+          trigger: trackRoot.value,
+          start: 'top top+=64',
+          end: () => `+=${Math.max(0, trackRoot.value.offsetHeight - headerRoot.value.offsetHeight)}`,
+          scrub: true,
+          invalidateOnRefresh: true
+        }
+      })
+        .addLabel('lockup', 0.12)
+        .to([motionTitle, designTitle], { autoAlpha: 1, duration: 0.12 }, 'lockup')
+        .to(lockupHold, { value: 1, duration: 0.14 }, 'lockup+=0.12')
+        .addLabel('recompose', 0.38)
+        .to(motionTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
+        .to(designTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
+        .to(illustration, { autoAlpha: 1, y: 0, duration: 0.34 }, 'recompose')
+        .addLabel('poster', 'recompose+=0.34')
+        .to(posterHold, { value: 1, duration: 0.28 }, 'poster')
+
+      window.requestAnimationFrame(() => ScrollTrigger.refresh())
+    }
+    const scheduleTimelineRebuild = () => {
+      window.cancelAnimationFrame(motionDesignResizeFrame)
+      motionDesignResizeFrame = window.requestAnimationFrame(() => {
+        motionDesignResizeFrame = 0
+        rebuildTimeline()
+      })
+    }
+
+    rebuildTimeline()
+    motionDesignResizeObserver = new ResizeObserver(scheduleTimelineRebuild)
+    motionDesignResizeObserver.observe(headerRoot.value)
+
+    return () => {
+      motionDesignResizeObserver?.disconnect()
+      motionDesignResizeObserver = undefined
+      window.cancelAnimationFrame(motionDesignResizeFrame)
+      motionDesignResizeFrame = 0
+      motionDesignTimeline?.scrollTrigger?.kill()
+      motionDesignTimeline?.kill()
+      motionDesignTimeline = undefined
+      gsap.set([motionTitle, illustration, designTitle], { clearProps: 'all' })
+    }
+  })
+
+  motionDesignMedia.add('(prefers-reduced-motion: reduce)', () => {
+    gsap.set(
+      [motionTitleRoot.value, illustrationRoot.value, designTitleRoot.value],
+      { clearProps: 'all' }
+    )
+  })
+})
+
+onBeforeUnmount(() => {
+  motionDesignResizeObserver?.disconnect()
+  window.cancelAnimationFrame(motionDesignResizeFrame)
+  motionDesignMedia?.revert()
 })
 </script>
 
