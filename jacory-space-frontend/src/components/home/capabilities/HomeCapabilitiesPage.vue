@@ -55,6 +55,16 @@ let motionDesignMedia
 let motionDesignResizeObserver
 let motionDesignResizeFrame = 0
 let motionDesignTimeline
+let rebuildMotionDesignTimeline
+let resolveMotionDesignTimelineReady
+let motionDesignTimelineReady = new Promise((resolve) => {
+  resolveMotionDesignTimelineReady = resolve
+})
+
+function markMotionDesignTimelineReady() {
+  resolveMotionDesignTimelineReady?.()
+  resolveMotionDesignTimelineReady = undefined
+}
 
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value))
@@ -87,11 +97,22 @@ function resolveTypographyLockup() {
   }
 }
 
+async function prepareMotionDesignHandoff() {
+  await motionDesignTimelineReady
+  await nextTick()
+  rebuildMotionDesignTimeline?.({ refreshImmediately: true })
+}
+
+defineExpose({ prepareMotionDesignHandoff })
+
 onMounted(async () => {
   emit('header-ready', headerRoot.value)
 
   await nextTick()
-  if (!trackRoot.value || !headerRoot.value || !illustrationRoot.value || !motionTitleRoot.value || !designTitleRoot.value) return
+  if (!trackRoot.value || !headerRoot.value || !illustrationRoot.value || !motionTitleRoot.value || !designTitleRoot.value) {
+    markMotionDesignTimelineReady()
+    return
+  }
 
   await document.fonts?.ready
 
@@ -100,7 +121,7 @@ onMounted(async () => {
     const motionTitle = motionTitleRoot.value
     const illustration = illustrationRoot.value
     const designTitle = designTitleRoot.value
-    const rebuildTimeline = () => {
+    const rebuildTimeline = ({ refreshImmediately = false } = {}) => {
       const lockup = resolveTypographyLockup()
       if (!lockup) return
 
@@ -136,6 +157,12 @@ onMounted(async () => {
         .addLabel('poster', 'recompose+=0.34')
         .to(posterHold, { value: 1, duration: 0.28 }, 'poster')
 
+      if (refreshImmediately) {
+        ScrollTrigger.refresh()
+        motionDesignTimeline.scrollTrigger?.update()
+        return
+      }
+
       window.requestAnimationFrame(() => ScrollTrigger.refresh())
     }
     const scheduleTimelineRebuild = () => {
@@ -145,7 +172,10 @@ onMounted(async () => {
         rebuildTimeline()
       })
     }
+
     rebuildTimeline()
+    rebuildMotionDesignTimeline = rebuildTimeline
+    markMotionDesignTimelineReady()
     motionDesignResizeObserver = new ResizeObserver(scheduleTimelineRebuild)
     motionDesignResizeObserver.observe(headerRoot.value)
 
@@ -154,6 +184,9 @@ onMounted(async () => {
       motionDesignResizeObserver = undefined
       window.cancelAnimationFrame(motionDesignResizeFrame)
       motionDesignResizeFrame = 0
+      if (rebuildMotionDesignTimeline === rebuildTimeline) {
+        rebuildMotionDesignTimeline = undefined
+      }
       motionDesignTimeline?.scrollTrigger?.kill()
       motionDesignTimeline?.kill()
       motionDesignTimeline = undefined
@@ -166,6 +199,7 @@ onMounted(async () => {
       [motionTitleRoot.value, illustrationRoot.value, designTitleRoot.value],
       { clearProps: 'all' }
     )
+    markMotionDesignTimelineReady()
   })
 })
 

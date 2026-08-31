@@ -17,7 +17,10 @@
         @matrix-progress="handleMatrixProgress"
         @handoff-change="handleHandoffChange"
       />
-      <HomeCapabilitiesPage @header-ready="handleCapabilitiesHeaderReady">
+      <HomeCapabilitiesPage
+        ref="capabilitiesPage"
+        @header-ready="handleCapabilitiesHeaderReady"
+      >
         <HomeCapabilityHandoffPage />
       </HomeCapabilitiesPage>
       <div
@@ -68,6 +71,7 @@ const heroSceneReady = ref(false)
 const dotMatrixReady = ref(false)
 const loadingComplete = ref(false)
 const homeRoot = ref(null)
+const capabilitiesPage = ref(null)
 const capabilitiesHeader = ref(null)
 const handoffActive = ref(false)
 const capabilityLayerBounds = ref(null)
@@ -142,6 +146,7 @@ const handleHandoffChange = async (isActive) => {
   if (isActive) {
     await nextTick()
     syncCapabilitiesGeometry()
+    await capabilitiesPage.value.prepareMotionDesignHandoff()
   }
 
   handoffActive.value = isActive
