@@ -13,7 +13,12 @@
     </div>
 
     <h2 class="sr-only">Motion Design</h2>
-    <slot />
+    <div class="home-capability-video-creation-layer">
+      <slot name="video-creation" />
+    </div>
+    <div class="home-capability-web-development-layer">
+      <slot name="web-development" />
+    </div>
   </section>
 </template>
 
@@ -216,6 +221,25 @@ onBeforeUnmount(() => {
 
 .home-capabilities-track {
   height: calc(var(--home-transition-stage-height) * 2.4);
+  position: relative;
+  z-index: 30;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-capability-video-creation-layer,
+  .home-capability-web-development-layer {
+    height: calc(var(--home-transition-stage-height) * 2);
+    margin-top: calc(-1 * var(--home-transition-stage-height));
+    position: relative;
+  }
+
+  .home-capability-video-creation-layer {
+    z-index: 20;
+  }
+
+  .home-capability-web-development-layer {
+    z-index: 10;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

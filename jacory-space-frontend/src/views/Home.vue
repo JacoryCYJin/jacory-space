@@ -21,7 +21,12 @@
         ref="capabilitiesPage"
         @header-ready="handleCapabilitiesHeaderReady"
       >
-        <HomeCapabilityHandoffPage />
+        <template #video-creation>
+          <HomeVideoCreationPage />
+        </template>
+        <template #web-development>
+          <HomeWebDevelopmentPage />
+        </template>
       </HomeCapabilitiesPage>
       <div
         ref="sharedDotLayer"
@@ -63,7 +68,8 @@ import HomeLoadingIdentity from '../components/home/loading/HomeLoadingIdentity.
 import HomeWhoAmI from '../components/home/who-am-i/HomeWhoAmI.vue'
 import HomeJacoryReveal from '../components/home/jacory-reveal/HomeJacoryReveal.vue'
 import HomeCapabilitiesPage from '../components/home/capabilities/HomeCapabilitiesPage.vue'
-import HomeCapabilityHandoffPage from '../components/home/capabilities/HomeCapabilityHandoffPage.vue'
+import HomeVideoCreationPage from '../components/home/capabilities/HomeVideoCreationPage.vue'
+import HomeWebDevelopmentPage from '../components/home/capabilities/HomeWebDevelopmentPage.vue'
 import HomeDotMatrixField from '../components/home/jacory-reveal/HomeDotMatrixField.vue'
 
 const transitionReady = ref(false)
