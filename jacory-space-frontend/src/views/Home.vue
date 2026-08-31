@@ -17,7 +17,9 @@
         @matrix-progress="handleMatrixProgress"
         @handoff-change="handleHandoffChange"
       />
-      <HomeCapabilitiesPage @header-ready="handleCapabilitiesHeaderReady" />
+      <HomeCapabilitiesPage @header-ready="handleCapabilitiesHeaderReady">
+        <HomeCapabilityHandoffPage />
+      </HomeCapabilitiesPage>
       <div
         ref="sharedDotLayer"
         data-home-shared-dot-layer
@@ -58,6 +60,7 @@ import HomeLoadingIdentity from '../components/home/loading/HomeLoadingIdentity.
 import HomeWhoAmI from '../components/home/who-am-i/HomeWhoAmI.vue'
 import HomeJacoryReveal from '../components/home/jacory-reveal/HomeJacoryReveal.vue'
 import HomeCapabilitiesPage from '../components/home/capabilities/HomeCapabilitiesPage.vue'
+import HomeCapabilityHandoffPage from '../components/home/capabilities/HomeCapabilityHandoffPage.vue'
 import HomeDotMatrixField from '../components/home/jacory-reveal/HomeDotMatrixField.vue'
 
 const transitionReady = ref(false)
