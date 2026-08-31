@@ -38,6 +38,7 @@ defineExpose({ getMotionDesignElements })
 
 <style scoped>
 .home-capabilities-header {
+  background: #000;
   height: var(--home-transition-stage-height);
   isolation: isolate;
   position: sticky;
