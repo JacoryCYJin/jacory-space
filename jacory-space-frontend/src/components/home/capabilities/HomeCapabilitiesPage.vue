@@ -9,27 +9,7 @@
       data-home-capabilities-track
       class="home-capabilities-track"
     >
-      <div
-        ref="headerRoot"
-        data-home-capabilities-header
-        class="home-capabilities-header"
-        aria-hidden="true"
-      >
-        <div class="pointer-events-none absolute inset-0 z-10 block h-full w-full select-none sm:inset-auto sm:bottom-0 sm:left-1/2 sm:h-auto sm:w-4/5 sm:-translate-x-1/2">
-          <img
-            ref="illustrationRoot"
-            :src="redHairedAnime"
-            alt=""
-            class="home-motion-design-illustration block h-full w-full sm:h-auto"
-          >
-        </div>
-        <p ref="motionTitleRoot" class="home-motion-title-gradient pointer-events-none absolute left-4 top-4 z-0 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent sm:left-10 sm:top-6">
-          MOTION
-        </p>
-        <p ref="designTitleRoot" class="home-design-title-gradient pointer-events-none absolute bottom-0 right-4 z-20 inline-block bg-clip-text font-display text-motion-design-display font-normal leading-none tracking-tighter text-transparent sm:right-10">
-          DESIGN
-        </p>
-      </div>
+      <HomeMotionDesignPoster ref="posterRoot" />
     </div>
 
     <h2 class="sr-only">Motion Design</h2>
@@ -41,11 +21,12 @@
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import redHairedAnime from '../../../assets/home-sleep-desk/red-haired-anime-4k.png'
+import HomeMotionDesignPoster from './HomeMotionDesignPoster.vue'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const emit = defineEmits(['header-ready'])
+const posterRoot = ref(null)
 const headerRoot = ref(null)
 const trackRoot = ref(null)
 const illustrationRoot = ref(null)
@@ -60,6 +41,23 @@ let resolveMotionDesignTimelineReady
 let motionDesignTimelineReady = new Promise((resolve) => {
   resolveMotionDesignTimelineReady = resolve
 })
+
+function syncPosterElements() {
+  const elements = posterRoot.value?.getMotionDesignElements?.()
+  if (!elements) return false
+
+  headerRoot.value = elements.header
+  illustrationRoot.value = elements.illustration
+  motionTitleRoot.value = elements.motionTitle
+  designTitleRoot.value = elements.designTitle
+
+  return Boolean(
+    headerRoot.value
+    && illustrationRoot.value
+    && motionTitleRoot.value
+    && designTitleRoot.value
+  )
+}
 
 function markMotionDesignTimelineReady() {
   resolveMotionDesignTimelineReady?.()
@@ -106,13 +104,13 @@ async function prepareMotionDesignHandoff() {
 defineExpose({ prepareMotionDesignHandoff })
 
 onMounted(async () => {
-  emit('header-ready', headerRoot.value)
-
   await nextTick()
-  if (!trackRoot.value || !headerRoot.value || !illustrationRoot.value || !motionTitleRoot.value || !designTitleRoot.value) {
+  if (!syncPosterElements() || !trackRoot.value) {
     markMotionDesignTimelineReady()
     return
   }
+
+  emit('header-ready', headerRoot.value)
 
   await document.fonts?.ready
 
@@ -220,41 +218,6 @@ onBeforeUnmount(() => {
   height: calc(var(--home-transition-stage-height) * 2.4);
 }
 
-.home-capabilities-header {
-  height: var(--home-transition-stage-height);
-  isolation: isolate;
-  position: sticky;
-  top: var(--navbar-height);
-  overflow: hidden;
-}
-
-.home-motion-design-illustration {
-  object-fit: cover;
-  object-position: center 48%;
-  filter: saturate(1.06) contrast(1.04);
-}
-
-.home-motion-title-gradient {
-  background-image: linear-gradient(
-    to bottom,
-    var(--card) 0%,
-    var(--card) 38%,
-    color-mix(in srgb, var(--card) 72%, transparent) 62%,
-    color-mix(in srgb, var(--card) 26%, transparent) 82%,
-    transparent 100%
-  );
-}
-
-.home-design-title-gradient {
-  background-image: linear-gradient(
-    to bottom,
-    var(--home-motion-design-red) 0%,
-    var(--home-motion-design-red) 54%,
-    color-mix(in srgb, var(--home-motion-design-red) 88%, var(--ink)) 78%,
-    color-mix(in srgb, var(--home-motion-design-red) 72%, var(--ink)) 100%
-  );
-}
-
 @media (prefers-reduced-motion: reduce) {
   .home-capabilities-page {
     margin-top: 0;
@@ -264,15 +227,5 @@ onBeforeUnmount(() => {
     height: var(--home-transition-stage-height);
   }
 
-  .home-capabilities-header {
-    position: relative;
-    top: auto;
-  }
-}
-
-@media (max-width: 639px) {
-  .home-motion-design-illustration {
-    object-position: 66% center;
-  }
 }
 </style>
