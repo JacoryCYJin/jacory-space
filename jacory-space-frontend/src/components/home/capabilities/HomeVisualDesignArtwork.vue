@@ -4,7 +4,7 @@
       ref="illustrationRoot"
       :src="redHairedAnime"
       alt=""
-      class="home-motion-design-illustration block h-full w-full sm:h-auto"
+      class="home-visual-design-illustration block h-full w-full sm:h-auto"
     >
   </div>
 </template>
@@ -23,14 +23,14 @@ defineExpose({ getIllustrationElement })
 </script>
 
 <style scoped>
-.home-motion-design-illustration {
+.home-visual-design-illustration {
   object-fit: cover;
   object-position: center 48%;
   filter: saturate(1.06) contrast(1.04);
 }
 
 @media (max-width: 639px) {
-  .home-motion-design-illustration {
+  .home-visual-design-illustration {
     object-position: 66% center;
   }
 }

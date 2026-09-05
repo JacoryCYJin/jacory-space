@@ -9,10 +9,10 @@
       data-home-capabilities-track
       class="home-capabilities-track"
     >
-      <HomeMotionDesignPoster ref="posterRoot" />
+      <HomeVisualDesignPoster ref="posterRoot" />
     </div>
 
-    <h2 class="sr-only">Motion Design</h2>
+    <h2 class="sr-only">Visual Design</h2>
     <div class="home-capability-video-creation-layer">
       <slot name="video-creation" />
     </div>
@@ -26,7 +26,7 @@
 import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import HomeMotionDesignPoster from './HomeMotionDesignPoster.vue'
+import HomeVisualDesignPoster from './HomeVisualDesignPoster.vue'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -35,38 +35,38 @@ const posterRoot = ref(null)
 const headerRoot = ref(null)
 const trackRoot = ref(null)
 const illustrationRoot = ref(null)
-const motionTitleRoot = ref(null)
+const visualTitleRoot = ref(null)
 const designTitleRoot = ref(null)
-let motionDesignMedia
-let motionDesignResizeObserver
-let motionDesignResizeFrame = 0
-let motionDesignTimeline
-let rebuildMotionDesignTimeline
-let resolveMotionDesignTimelineReady
-let motionDesignTimelineReady = new Promise((resolve) => {
-  resolveMotionDesignTimelineReady = resolve
+let visualDesignMedia
+let visualDesignResizeObserver
+let visualDesignResizeFrame = 0
+let visualDesignTimeline
+let rebuildVisualDesignTimeline
+let resolveVisualDesignTimelineReady
+let visualDesignTimelineReady = new Promise((resolve) => {
+  resolveVisualDesignTimelineReady = resolve
 })
 
 function syncPosterElements() {
-  const elements = posterRoot.value?.getMotionDesignElements?.()
+  const elements = posterRoot.value?.getVisualDesignElements?.()
   if (!elements) return false
 
   headerRoot.value = elements.header
   illustrationRoot.value = elements.illustration
-  motionTitleRoot.value = elements.motionTitle
+  visualTitleRoot.value = elements.visualTitle
   designTitleRoot.value = elements.designTitle
 
   return Boolean(
     headerRoot.value
     && illustrationRoot.value
-    && motionTitleRoot.value
+    && visualTitleRoot.value
     && designTitleRoot.value
   )
 }
 
-function markMotionDesignTimelineReady() {
-  resolveMotionDesignTimelineReady?.()
-  resolveMotionDesignTimelineReady = undefined
+function markVisualDesignTimelineReady() {
+  resolveVisualDesignTimelineReady?.()
+  resolveVisualDesignTimelineReady = undefined
 }
 
 function clamp(value, min, max) {
@@ -74,44 +74,44 @@ function clamp(value, min, max) {
 }
 
 function resolveTypographyLockup() {
-  if (!headerRoot.value || !motionTitleRoot.value || !designTitleRoot.value) return null
+  if (!headerRoot.value || !visualTitleRoot.value || !designTitleRoot.value) return null
 
   const header = headerRoot.value
-  const motionTitle = motionTitleRoot.value
+  const visualTitle = visualTitleRoot.value
   const designTitle = designTitleRoot.value
-  const availableGap = Math.max(0, header.offsetHeight - motionTitle.offsetHeight - designTitle.offsetHeight)
+  const availableGap = Math.max(0, header.offsetHeight - visualTitle.offsetHeight - designTitle.offsetHeight)
   const lockupGap = clamp(
-    Math.min(availableGap * 0.16, Math.min(motionTitle.offsetHeight, designTitle.offsetHeight) * 0.08),
+    Math.min(availableGap * 0.16, Math.min(visualTitle.offsetHeight, designTitle.offsetHeight) * 0.08),
     0,
     availableGap
   )
-  const lockupHeight = motionTitle.offsetHeight + designTitle.offsetHeight + lockupGap
+  const lockupHeight = visualTitle.offsetHeight + designTitle.offsetHeight + lockupGap
   const lockupTop = (header.offsetHeight - lockupHeight) / 2
 
   return {
-    motion: {
-      x: (header.offsetWidth - motionTitle.offsetWidth) / 2 - motionTitle.offsetLeft,
-      y: lockupTop - motionTitle.offsetTop
+    visual: {
+      x: (header.offsetWidth - visualTitle.offsetWidth) / 2 - visualTitle.offsetLeft,
+      y: lockupTop - visualTitle.offsetTop
     },
     design: {
       x: (header.offsetWidth - designTitle.offsetWidth) / 2 - designTitle.offsetLeft,
-      y: lockupTop + motionTitle.offsetHeight + lockupGap - designTitle.offsetTop
+      y: lockupTop + visualTitle.offsetHeight + lockupGap - designTitle.offsetTop
     }
   }
 }
 
-async function prepareMotionDesignHandoff() {
-  await motionDesignTimelineReady
+async function prepareVisualDesignHandoff() {
+  await visualDesignTimelineReady
   await nextTick()
-  rebuildMotionDesignTimeline?.({ refreshImmediately: true })
+  rebuildVisualDesignTimeline?.({ refreshImmediately: true })
 }
 
-defineExpose({ prepareMotionDesignHandoff })
+defineExpose({ prepareVisualDesignHandoff })
 
 onMounted(async () => {
   await nextTick()
   if (!syncPosterElements() || !trackRoot.value) {
-    markMotionDesignTimelineReady()
+    markVisualDesignTimelineReady()
     return
   }
 
@@ -119,30 +119,30 @@ onMounted(async () => {
 
   await document.fonts?.ready
 
-  motionDesignMedia = gsap.matchMedia()
-  motionDesignMedia.add('(prefers-reduced-motion: no-preference)', () => {
-    const motionTitle = motionTitleRoot.value
+  visualDesignMedia = gsap.matchMedia()
+  visualDesignMedia.add('(prefers-reduced-motion: no-preference)', () => {
+    const visualTitle = visualTitleRoot.value
     const illustration = illustrationRoot.value
     const designTitle = designTitleRoot.value
     const rebuildTimeline = ({ refreshImmediately = false } = {}) => {
       const lockup = resolveTypographyLockup()
       if (!lockup) return
 
-      motionDesignTimeline?.scrollTrigger?.kill()
-      motionDesignTimeline?.kill()
+      visualDesignTimeline?.scrollTrigger?.kill()
+      visualDesignTimeline?.kill()
 
       const lockupHold = { value: 0 }
       const posterHold = { value: 0 }
 
-      gsap.set([motionTitle, designTitle], { autoAlpha: 0, clipPath: 'none' })
-      gsap.set(motionTitle, lockup.motion)
+      gsap.set([visualTitle, designTitle], { autoAlpha: 0, clipPath: 'none' })
+      gsap.set(visualTitle, lockup.visual)
       gsap.set(designTitle, lockup.design)
       gsap.set(illustration, { autoAlpha: 0, y: 14 })
 
-      motionDesignTimeline = gsap.timeline({
+      visualDesignTimeline = gsap.timeline({
         defaults: { ease: 'none' },
         scrollTrigger: {
-          id: 'home-motion-design-entrance',
+          id: 'home-visual-design-entrance',
           trigger: trackRoot.value,
           start: 'top top+=64',
           end: () => `+=${Math.max(0, trackRoot.value.offsetHeight - headerRoot.value.offsetHeight)}`,
@@ -151,10 +151,10 @@ onMounted(async () => {
         }
       })
         .addLabel('lockup', 0.12)
-        .to([motionTitle, designTitle], { autoAlpha: 1, duration: 0.12 }, 'lockup')
+        .to([visualTitle, designTitle], { autoAlpha: 1, duration: 0.12 }, 'lockup')
         .to(lockupHold, { value: 1, duration: 0.14 }, 'lockup+=0.12')
         .addLabel('recompose', 0.38)
-        .to(motionTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
+        .to(visualTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
         .to(designTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
         .to(illustration, { autoAlpha: 1, y: 0, duration: 0.34 }, 'recompose')
         .addLabel('poster', 'recompose+=0.34')
@@ -162,54 +162,54 @@ onMounted(async () => {
 
       if (refreshImmediately) {
         ScrollTrigger.refresh()
-        motionDesignTimeline.scrollTrigger?.update()
+        visualDesignTimeline.scrollTrigger?.update()
         return
       }
 
       window.requestAnimationFrame(() => ScrollTrigger.refresh())
     }
     const scheduleTimelineRebuild = () => {
-      window.cancelAnimationFrame(motionDesignResizeFrame)
-      motionDesignResizeFrame = window.requestAnimationFrame(() => {
-        motionDesignResizeFrame = 0
+      window.cancelAnimationFrame(visualDesignResizeFrame)
+      visualDesignResizeFrame = window.requestAnimationFrame(() => {
+        visualDesignResizeFrame = 0
         rebuildTimeline()
       })
     }
 
     rebuildTimeline()
-    rebuildMotionDesignTimeline = rebuildTimeline
-    markMotionDesignTimelineReady()
-    motionDesignResizeObserver = new ResizeObserver(scheduleTimelineRebuild)
-    motionDesignResizeObserver.observe(headerRoot.value)
+    rebuildVisualDesignTimeline = rebuildTimeline
+    markVisualDesignTimelineReady()
+    visualDesignResizeObserver = new ResizeObserver(scheduleTimelineRebuild)
+    visualDesignResizeObserver.observe(headerRoot.value)
 
     return () => {
-      motionDesignResizeObserver?.disconnect()
-      motionDesignResizeObserver = undefined
-      window.cancelAnimationFrame(motionDesignResizeFrame)
-      motionDesignResizeFrame = 0
-      if (rebuildMotionDesignTimeline === rebuildTimeline) {
-        rebuildMotionDesignTimeline = undefined
+      visualDesignResizeObserver?.disconnect()
+      visualDesignResizeObserver = undefined
+      window.cancelAnimationFrame(visualDesignResizeFrame)
+      visualDesignResizeFrame = 0
+      if (rebuildVisualDesignTimeline === rebuildTimeline) {
+        rebuildVisualDesignTimeline = undefined
       }
-      motionDesignTimeline?.scrollTrigger?.kill()
-      motionDesignTimeline?.kill()
-      motionDesignTimeline = undefined
-      gsap.set([motionTitle, illustration, designTitle], { clearProps: 'all' })
+      visualDesignTimeline?.scrollTrigger?.kill()
+      visualDesignTimeline?.kill()
+      visualDesignTimeline = undefined
+      gsap.set([visualTitle, illustration, designTitle], { clearProps: 'all' })
     }
   })
 
-  motionDesignMedia.add('(prefers-reduced-motion: reduce)', () => {
+  visualDesignMedia.add('(prefers-reduced-motion: reduce)', () => {
     gsap.set(
-      [motionTitleRoot.value, illustrationRoot.value, designTitleRoot.value],
+      [visualTitleRoot.value, illustrationRoot.value, designTitleRoot.value],
       { clearProps: 'all' }
     )
-    markMotionDesignTimelineReady()
+    markVisualDesignTimelineReady()
   })
 })
 
 onBeforeUnmount(() => {
-  motionDesignResizeObserver?.disconnect()
-  window.cancelAnimationFrame(motionDesignResizeFrame)
-  motionDesignMedia?.revert()
+  visualDesignResizeObserver?.disconnect()
+  window.cancelAnimationFrame(visualDesignResizeFrame)
+  visualDesignMedia?.revert()
 })
 </script>
 

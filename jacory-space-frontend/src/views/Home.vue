@@ -152,7 +152,7 @@ const handleHandoffChange = async (isActive) => {
   if (isActive) {
     await nextTick()
     syncCapabilitiesGeometry()
-    await capabilitiesPage.value.prepareMotionDesignHandoff()
+    await capabilitiesPage.value.prepareVisualDesignHandoff()
   }
 
   handoffActive.value = isActive

@@ -89,7 +89,7 @@ export default {
     extend: {
       fontSize: {
         "footer-brand": "clamp(3.5rem, 10.75vw, 25rem)",
-        "motion-design-display": "clamp(7rem, 26vw, 32rem)",
+        "capability-display": "clamp(7rem, 26vw, 32rem)",
       },
       transitionTimingFunction: {
         premium: "var(--ease-premium)",
