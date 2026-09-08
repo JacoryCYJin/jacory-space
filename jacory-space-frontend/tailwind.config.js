@@ -90,6 +90,7 @@ export default {
       fontSize: {
         "footer-brand": "clamp(3.5rem, 10.75vw, 25rem)",
         "capability-display": "clamp(7rem, 26vw, 32rem)",
+        "video-title": "11.5cqw",
       },
       transitionTimingFunction: {
         premium: "var(--ease-premium)",
