@@ -133,6 +133,16 @@ onMounted(async () => {
 
       const lockupHold = { value: 0 }
       const posterHold = { value: 0 }
+      const holdScreens = Number.parseFloat(
+        getComputedStyle(trackRoot.value).getPropertyValue('--home-capability-hold-screens')
+      ) || 0
+      const scrollDistance = trackRoot.value.offsetHeight - headerRoot.value.offsetHeight
+      const holdDistance = headerRoot.value.offsetHeight * holdScreens
+      // The entrance ends at timeline time 0.72. Reserve the final 0.6 screens
+      // for the completed poster without stretching that entrance into the hold.
+      const posterHoldDuration = holdDistance > 0
+        ? 0.72 * holdDistance / Math.max(1, scrollDistance - holdDistance)
+        : 0.28
 
       gsap.set([visualTitle, designTitle], { autoAlpha: 0, clipPath: 'none' })
       gsap.set(visualTitle, lockup.visual)
@@ -158,7 +168,7 @@ onMounted(async () => {
         .to(designTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
         .to(illustration, { autoAlpha: 1, y: 0, duration: 0.34 }, 'recompose')
         .addLabel('poster', 'recompose+=0.34')
-        .to(posterHold, { value: 1, duration: 0.28 }, 'poster')
+        .to(posterHold, { value: 1, duration: posterHoldDuration }, 'poster')
 
       if (refreshImmediately) {
         ScrollTrigger.refresh()
@@ -215,6 +225,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .home-capabilities-page {
+  --home-capability-hold-screens: 0;
   margin-top: calc(-1 * var(--home-transition-stage-height));
   background: #000;
 }
@@ -239,6 +250,19 @@ onBeforeUnmount(() => {
 
   .home-capability-web-development-layer {
     z-index: 10;
+  }
+}
+
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  .home-capabilities-page {
+    --home-capability-hold-screens: 0.6;
+  }
+
+  .home-capabilities-track,
+  .home-capability-video-creation-layer,
+  .home-capability-web-development-layer {
+    /* One screen for the handoff, one for the page, then a fully visible hold. */
+    height: calc(var(--home-transition-stage-height) * (2 + var(--home-capability-hold-screens)));
   }
 }
 
