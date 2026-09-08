@@ -14,12 +14,12 @@
         aria-hidden="true"
       >
         <img
-          :src="collage"
+          :src="frame.src || collage"
           :style="frame.crop"
           class="absolute max-w-none select-none"
           alt=""
-          width="1774"
-          height="887"
+          :width="frame.width || 1774"
+          :height="frame.height || 887"
           loading="lazy"
           decoding="async"
           draggable="false"
@@ -34,6 +34,7 @@
 
 <script setup>
 import collage from '../../../assets/home-capabilities/video-soft-collage.png'
+import face from '../../../assets/home-capabilities/video-face.png'
 
 // Sample the original windows' interiors without their existing borders.
 function crop(x, y, width, height) {
@@ -48,8 +49,11 @@ function crop(x, y, width, height) {
 const frames = [
   {
     name: 'landscape',
+    src: face,
+    width: 1448,
+    height: 1086,
     layout: 'left-[14%] top-[27%] z-0 aspect-[4/3] w-[64%] sm:left-[21.5%] sm:top-[23%] sm:w-[38%]',
-    crop: crop(160, 473, 552, 414)
+    crop: { width: '100%', height: '100%', left: 0, top: 0, objectFit: 'cover' }
   },
   {
     name: 'portrait',
