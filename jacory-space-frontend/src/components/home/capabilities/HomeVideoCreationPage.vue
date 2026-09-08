@@ -5,25 +5,27 @@
     aria-label="Video creation"
   >
     <div class="home-video-composition relative aspect-[4/5] w-full sm:aspect-[9/5]">
-      <div
-        v-for="frame in frames"
-        :key="frame.name"
-        :data-video-frame="frame.name"
-        :class="frame.layout"
-        class="pointer-events-none absolute overflow-hidden border border-white"
-        aria-hidden="true"
-      >
-        <img
-          :src="frame.src || collage"
-          :style="frame.crop"
-          class="absolute max-w-none select-none"
-          alt=""
-          :width="frame.width || 1774"
-          :height="frame.height || 887"
-          loading="lazy"
-          decoding="async"
-          draggable="false"
+      <div class="absolute inset-0 -translate-y-[2%]">
+        <div
+          v-for="frame in frames"
+          :key="frame.name"
+          :data-video-frame="frame.name"
+          :class="frame.layout"
+          class="pointer-events-none absolute overflow-hidden border border-white"
+          aria-hidden="true"
         >
+          <img
+            :src="frame.src || collage"
+            :style="frame.crop"
+            class="absolute max-w-none select-none"
+            alt=""
+            :width="frame.width || 1774"
+            :height="frame.height || 887"
+            loading="lazy"
+            decoding="async"
+            draggable="false"
+          >
+        </div>
       </div>
       <h2 class="pointer-events-none absolute inset-x-[5%] bottom-[10%] m-0 whitespace-nowrap text-center font-display text-video-title font-normal leading-none tracking-tight text-foreground sm:bottom-[4%]">
         <span class="inline-block scale-x-[1.45]">VIDEO CREATION</span>
