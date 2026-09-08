@@ -80,7 +80,7 @@
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
 import identityArtworkSource from '../../../assets/home-loading/home-loading-identity.svg?raw'
-import jacoryOSculptureUrl from '../../../assets/home-loading/jacory-o-sculpture.png'
+import jacoryOAvatarUrl from '../../../assets/home-loading/jacory-o-avatar.png'
 import HomeLoadingCrtEffect from './HomeLoadingCrtEffect.vue'
 
 const emit = defineEmits(['complete'])
@@ -96,7 +96,7 @@ const props = defineProps({
 })
 const loaderRoot = ref(null)
 const counter = ref('000')
-const identityArtwork = identityArtworkSource.replace('__JACORY_O_SCULPTURE_URL__', jacoryOSculptureUrl)
+const identityArtwork = identityArtworkSource.replace('__JACORY_O_SCULPTURE_URL__', jacoryOAvatarUrl)
 
 const INTRO_DURATION = 3.9
 const PREPARE_PROGRESS = 99
@@ -144,7 +144,7 @@ const waitForHomeFont = () => {
 const waitForIdentityArtwork = () => {
   const image = new Image()
   image.decoding = 'async'
-  image.src = jacoryOSculptureUrl
+  image.src = jacoryOAvatarUrl
   return image.decode().catch(() => undefined)
 }
 
