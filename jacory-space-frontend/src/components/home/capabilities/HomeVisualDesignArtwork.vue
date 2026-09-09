@@ -1,5 +1,5 @@
 <template>
-  <div class="pointer-events-none absolute inset-0 z-10 block h-full w-full select-none sm:inset-auto sm:bottom-0 sm:left-1/2 sm:h-auto sm:w-4/5 sm:-translate-x-1/2">
+  <div class="pointer-events-none absolute inset-0 z-10 block h-full w-full select-none sm:inset-auto sm:bottom-0 sm:left-1/2 sm:h-auto sm:w-[90%] sm:-translate-x-1/2">
     <img
       ref="illustrationRoot"
       :src="redHairedAnime"
@@ -11,7 +11,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import redHairedAnime from '../../../assets/home-sleep-desk/red-haired-anime-4k.png'
+import redHairedAnime from '../../../assets/home-visual-design/red-haired-anime-brushwork.png'
 
 const illustrationRoot = ref(null)
 
