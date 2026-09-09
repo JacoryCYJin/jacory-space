@@ -35,6 +35,13 @@ export default {
       "line-strong": "var(--line-strong)",
       blue: "var(--blue)",
       "blue-soft": "var(--blue-soft)",
+      "photo-video": {
+        background: "var(--home-photo-video-background)",
+        lower: "var(--home-photo-video-lower)",
+        title: "var(--home-photo-video-title)",
+        copy: "var(--home-photo-video-copy)",
+        muted: "var(--home-photo-video-muted)",
+      },
       gray: {
         50: "var(--card)",
         100: "var(--muted)",
@@ -90,7 +97,10 @@ export default {
       fontSize: {
         "footer-brand": "clamp(3.5rem, 10.75vw, 25rem)",
         "capability-display": "clamp(7rem, 26vw, 32rem)",
-        "video-title": "11.5cqw",
+        "photo-video-display": "18cqw",
+        "photo-video-caption": ["clamp(0.75rem, 4.5cqw, 1rem)", { lineHeight: "1.3" }],
+        "photo-video-interest": ["11cqw", { lineHeight: "1.22" }],
+        "web-development-display": "21.54cqw",
       },
       transitionTimingFunction: {
         premium: "var(--ease-premium)",

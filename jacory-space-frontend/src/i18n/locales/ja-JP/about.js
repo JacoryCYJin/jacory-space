@@ -16,7 +16,7 @@ export default {
       roleLabel: '自己定義',
       role: 'デザイナー · 開発者 · 書き手 · クリエイター',
       baseLabel: '実践領域',
-      base: 'ソフトウェア開発 · Web体験設計 · Agentシステム · 動画制作',
+      base: 'ソフトウェア開発 · Web体験設計 · Agentシステム · PHOTO & VIDEO',
       focusLabel: 'システム',
       focus: '個人サイト · 動画 · ナレッジベース · ワークフロー',
       statusLabel: '状態',

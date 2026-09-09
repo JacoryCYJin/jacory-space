@@ -4,9 +4,10 @@
     class="home-web-development-page relative isolate overflow-hidden"
     aria-label="Web development"
   >
-    <p class="pointer-events-none absolute left-4 top-4 font-display text-capability-display font-normal leading-none tracking-tighter text-foreground sm:left-10 sm:top-6">
-      WEB DEVELOPMENT
-    </p>
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 font-display text-web-development-display font-normal leading-none tracking-tighter text-foreground">
+      <p class="m-0 ml-4 sm:ml-10">WEB</p>
+      <p class="m-0">DEVELOPMENT</p>
+    </div>
   </section>
 </template>
 
@@ -14,6 +15,7 @@
 .home-web-development-page {
   height: var(--home-transition-stage-height);
   background: var(--home-capability-web-development-sage);
+  container-type: inline-size;
 }
 
 @media (prefers-reduced-motion: no-preference) {
