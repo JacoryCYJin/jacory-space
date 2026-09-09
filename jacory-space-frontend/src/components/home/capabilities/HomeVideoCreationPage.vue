@@ -28,7 +28,7 @@
         </div>
       </div>
       <h2 class="pointer-events-none absolute inset-x-[5%] bottom-[10%] m-0 whitespace-nowrap text-center font-display text-video-title font-normal leading-none tracking-tight text-foreground sm:bottom-[4%]">
-        <span class="inline-block scale-x-[1.45]">VIDEO CREATION</span>
+        <span class="inline-block origin-top scale-x-[1.45] scale-y-[1.35]">VIDEO CREATION</span>
       </h2>
     </div>
   </section>
