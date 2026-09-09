@@ -17,7 +17,11 @@
   --accent-foreground: #151a20;
   --destructive: #e7000b;
   --home-visual-design-red: #f43a21;
-  --home-video-creation-background: #e5e5e7;
+  --home-photo-video-background: #234f9b;
+  --home-photo-video-lower: #e9e3d7;
+  --home-photo-video-title: #f5edd9;
+  --home-photo-video-copy: #263749;
+  --home-photo-video-muted: #526171;
   --home-capability-web-development-sage: #d1ddd3;
   --ink: #1d2127;
   --muted: #edf0f3;

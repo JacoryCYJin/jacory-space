@@ -13,8 +13,8 @@
     </div>
 
     <h2 class="sr-only">Visual Design</h2>
-    <div class="home-capability-video-creation-layer">
-      <slot name="video-creation" />
+    <div class="home-capability-photo-video-layer">
+      <slot name="photo-video" />
     </div>
     <div class="home-capability-web-development-layer">
       <slot name="web-development" />
@@ -237,14 +237,14 @@ onBeforeUnmount(() => {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .home-capability-video-creation-layer,
+  .home-capability-photo-video-layer,
   .home-capability-web-development-layer {
     height: calc(var(--home-transition-stage-height) * 2);
     margin-top: calc(-1 * var(--home-transition-stage-height));
     position: relative;
   }
 
-  .home-capability-video-creation-layer {
+  .home-capability-photo-video-layer {
     z-index: 20;
   }
 
@@ -259,7 +259,7 @@ onBeforeUnmount(() => {
   }
 
   .home-capabilities-track,
-  .home-capability-video-creation-layer,
+  .home-capability-photo-video-layer,
   .home-capability-web-development-layer {
     /* One screen for the handoff, one for the page, then a fully visible hold. */
     height: calc(var(--home-transition-stage-height) * (2 + var(--home-capability-hold-screens)));

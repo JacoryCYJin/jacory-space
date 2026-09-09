@@ -21,8 +21,8 @@
         ref="capabilitiesPage"
         @header-ready="handleCapabilitiesHeaderReady"
       >
-        <template #video-creation>
-          <HomeVideoCreationPage />
+        <template #photo-video>
+          <HomePhotoVideoPage />
         </template>
         <template #web-development>
           <HomeWebDevelopmentPage />
@@ -68,7 +68,7 @@ import HomeLoadingIdentity from '../components/home/loading/HomeLoadingIdentity.
 import HomeWhoAmI from '../components/home/who-am-i/HomeWhoAmI.vue'
 import HomeJacoryReveal from '../components/home/jacory-reveal/HomeJacoryReveal.vue'
 import HomeCapabilitiesPage from '../components/home/capabilities/HomeCapabilitiesPage.vue'
-import HomeVideoCreationPage from '../components/home/capabilities/HomeVideoCreationPage.vue'
+import HomePhotoVideoPage from '../components/home/capabilities/HomePhotoVideoPage.vue'
 import HomeWebDevelopmentPage from '../components/home/capabilities/HomeWebDevelopmentPage.vue'
 import HomeDotMatrixField from '../components/home/jacory-reveal/HomeDotMatrixField.vue'
 

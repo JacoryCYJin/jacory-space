@@ -30,7 +30,7 @@ small mono labels, sparse blue accents, and an editorial archive rhythm.
 
 ## 03 / Direction
 
-`WEB EXPERIENCE DESIGN` . `SOFTWARE DEVELOPMENT` . `AGENT SYSTEMS` . `VIDEO CREATION` . `KNOWLEDGE ARCHIVES`
+`WEB EXPERIENCE DESIGN` . `SOFTWARE DEVELOPMENT` . `AGENT SYSTEMS` . `PHOTO & VIDEO` . `KNOWLEDGE ARCHIVES`
 
 ## 04 / Status
 

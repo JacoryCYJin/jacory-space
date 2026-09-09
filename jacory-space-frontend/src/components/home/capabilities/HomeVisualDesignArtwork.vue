@@ -1,8 +1,8 @@
 <template>
-  <div class="pointer-events-none absolute inset-0 z-10 block h-full w-full select-none sm:inset-auto sm:bottom-0 sm:left-1/2 sm:h-auto sm:w-[90%] sm:-translate-x-1/2">
+  <div class="pointer-events-none absolute inset-0 z-10 block h-full w-full select-none sm:inset-auto sm:bottom-0 sm:left-1/2 sm:h-auto sm:w-[83%] sm:-translate-x-1/2">
     <img
       ref="illustrationRoot"
-      :src="redHairedAnime"
+      :src="redHairedAnimeCharacter"
       alt=""
       class="home-visual-design-illustration block h-full w-full sm:h-auto"
     >
@@ -11,7 +11,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import redHairedAnime from '../../../assets/home-visual-design/red-haired-anime-brushwork.png'
+import redHairedAnimeCharacter from '../../../assets/home-visual-design/red-haired-anime-character.png'
 
 const illustrationRoot = ref(null)
 

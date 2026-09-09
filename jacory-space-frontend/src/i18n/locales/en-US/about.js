@@ -16,7 +16,7 @@ export default {
       roleLabel: 'Identity',
       role: 'Designer · Developer · Writer · Creator',
       baseLabel: 'Focus',
-      base: 'Software Development · Web Experience · Agent Systems · Video Creation',
+      base: 'Software Development · Web Experience · Agent Systems · PHOTO & VIDEO',
       focusLabel: 'System',
       focus: 'Personal Site · Videos · Knowledge Base · Workflows',
       statusLabel: 'Status',
