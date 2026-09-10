@@ -98,8 +98,9 @@ export default {
         "footer-brand": "clamp(3.5rem, 10.75vw, 25rem)",
         "capability-display": "clamp(7rem, 26vw, 32rem)",
         "photo-video-display": "18cqw",
-        "photo-video-caption": ["clamp(0.75rem, 4.5cqw, 1rem)", { lineHeight: "1.3" }],
-        "photo-video-interest": ["11cqw", { lineHeight: "1.22" }],
+        "photo-video-part": "var(--photo-video-part-size, min(60cqw, 37.5cqh))",
+        "photo-video-caption": ["min(clamp(0.75rem, 4cqw, 0.875rem), 2.5cqh)", { lineHeight: "1.3" }],
+        "photo-video-interest": ["min(13cqw, 4cqh)", { lineHeight: "1.22" }],
         "web-development-display": "21.54cqw",
       },
       transitionTimingFunction: {
