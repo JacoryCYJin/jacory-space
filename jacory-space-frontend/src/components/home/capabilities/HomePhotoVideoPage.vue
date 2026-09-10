@@ -74,12 +74,21 @@
 
 <script setup>
 import { onMounted, onBeforeUnmount, nextTick, ref } from 'vue'
-import collage from '../../../assets/home-photo-video/photo-video-soft-collage.png'
 import dinosaur from '../../../assets/home-photo-video/photo-video-dinosaur.png'
-import dog from '../../../assets/home-photo-video/photo-video-dog.png'
+import dog from '../../../assets/home-photo-video/dog-avatar-human-v3.png'
 import cat from '../../../assets/home-photo-video/photo-video-cat.png'
+import dinosaurDetail from '../../../assets/home-photo-video/dinosaur-detail-v2.png'
+import dinosaurPortrait from '../../../assets/home-photo-video/dinosaur-portrait-v2.png'
+import dogDetail from '../../../assets/home-photo-video/dog-detail-flap-v3.png'
+import dogPortrait from '../../../assets/home-photo-video/dog-portrait-human-v3.png'
+import catDetail from '../../../assets/home-photo-video/cat-detail-v2.png'
+import catPortrait from '../../../assets/home-photo-video/cat-portrait-human-v3.png'
 
-const portraits = [dinosaur, dog, cat]
+const characterSets = [
+  { landscape: dinosaur, portrait: dinosaurPortrait, square: dinosaurDetail },
+  { landscape: dog, portrait: dogPortrait, square: dogDetail },
+  { landscape: cat, portrait: catPortrait, square: catDetail }
+]
 const photoVideoPage = ref(null)
 const partFrame = ref(null)
 const partLabel = ref(null)
@@ -178,15 +187,7 @@ const interestGroups = [
   }
 ]
 
-// Sample the original windows' interiors without their existing borders.
-function crop(x, y, width, height) {
-  return {
-    width: `${1774 / width * 100}%`,
-    height: `${887 / height * 100}%`,
-    left: `${-x / width * 100}%`,
-    top: `${-y / height * 100}%`
-  }
-}
+const fullImage = { width: '100%', height: '100%', left: 0, top: 0, objectFit: 'contain' }
 
 const frames = ref([
   {
@@ -195,19 +196,23 @@ const frames = ref([
     width: 1448,
     height: 1086,
     layout: 'left-[18%] top-[27%] z-0 aspect-[4/3] w-[64%] sm:left-[27%] sm:top-[25%] sm:w-[46%]',
-    crop: { width: '100%', height: '100%', left: 0, top: 0, objectFit: 'contain' }
+    crop: fullImage
   },
   {
     name: 'portrait',
-    src: collage,
+    src: null,
+    width: 941,
+    height: 1672,
     layout: 'left-[72%] top-[42%] z-10 aspect-[9/16] w-[23%] sm:left-[68%] sm:top-[35.2%] sm:w-[18.4%]',
-    crop: crop(1030, 95, 318.375, 566)
+    crop: fullImage
   },
   {
     name: 'square',
-    src: collage,
+    src: null,
+    width: 1254,
+    height: 1254,
     layout: 'left-[5%] top-[51%] z-20 aspect-square w-[26%] sm:left-[17%] sm:top-[57%] sm:w-[18%]',
-    crop: crop(38, 222, 175, 175)
+    crop: fullImage
   }
 ])
 
@@ -217,8 +222,9 @@ onMounted(() => {
   labelObserver.observe(partFrame.value)
   labelObserver.observe(artworkStage.value)
   document.fonts.ready.then(fitPartLabel)
-  // Pick once per visit, after hydration, so static and client markup agree.
-  frames.value[0].src = portraits[Math.floor(Math.random() * portraits.length)]
+  // Pick one complete set per visit, after hydration, so all three images match.
+  const character = characterSets[Math.floor(Math.random() * characterSets.length)]
+  frames.value = frames.value.map(frame => ({ ...frame, src: character[frame.name] }))
 })
 </script>
 
