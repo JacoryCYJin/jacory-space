@@ -1,17 +1,17 @@
 <template>
-  <div class="pointer-events-none absolute inset-0 z-10 block h-full w-full select-none sm:inset-auto sm:bottom-0 sm:left-1/2 sm:h-auto sm:w-[83%] sm:-translate-x-1/2">
+  <div class="pointer-events-none absolute bottom-0 left-[47%] z-10 block h-[99%] w-max -translate-x-1/2 select-none">
     <img
       ref="illustrationRoot"
       :src="redHairedAnimeCharacter"
       alt=""
-      class="home-visual-design-illustration block h-full w-full sm:h-auto"
+      class="block h-full w-auto max-w-none"
     >
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import redHairedAnimeCharacter from '../../../assets/home-visual-design/red-haired-anime-character.png'
+import redHairedAnimeCharacter from '../../../assets/home-visual-design/red-haired-original-style-transparent-4k.png'
 
 const illustrationRoot = ref(null)
 
@@ -21,17 +21,3 @@ function getIllustrationElement() {
 
 defineExpose({ getIllustrationElement })
 </script>
-
-<style scoped>
-.home-visual-design-illustration {
-  object-fit: cover;
-  object-position: center 48%;
-  filter: saturate(1.06) contrast(1.04);
-}
-
-@media (max-width: 639px) {
-  .home-visual-design-illustration {
-    object-position: 66% center;
-  }
-}
-</style>
