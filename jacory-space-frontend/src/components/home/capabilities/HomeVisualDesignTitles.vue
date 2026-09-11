@@ -47,9 +47,18 @@
       </svg>
     </svg>
   </p>
-  <p ref="designTitleRoot" class="pointer-events-none absolute bottom-0 right-4 z-20 inline-block font-display text-capability-display font-normal leading-none tracking-tighter text-[var(--home-visual-design-lime)] sm:right-10">
+  <!-- The artwork sits between the matching solid and outline glyphs. -->
+  <p
+    v-for="layer in ['fill', 'outline']"
+    :key="layer"
+    :ref="element => setDesignTitleRef(element, layer)"
+    :data-design-title-layer="layer"
+    :aria-hidden="layer === 'fill' ? true : undefined"
+    :class="layer === 'fill' ? 'z-[5]' : 'z-20'"
+    class="pointer-events-none absolute bottom-0 right-4 inline-block font-display text-capability-display font-normal leading-none tracking-tighter text-[var(--home-visual-design-lime)] sm:right-10"
+  >
     <span aria-hidden="true" class="invisible block whitespace-nowrap">DESIGNI</span>
-    <span class="sr-only">DESIGN — PART I</span>
+    <span v-if="layer === 'outline'" class="sr-only">DESIGN — PART I</span>
     <svg
       v-if="letterMetrics"
       aria-hidden="true"
@@ -58,14 +67,28 @@
       :viewBox="`0 0 ${letterMetrics.width} ${letterMetrics.height}`"
       preserveAspectRatio="none"
     >
+      <defs v-if="layer === 'outline'">
+        <!-- Scale the stroke with the lettering, then clip it to the glyph interior. -->
+        <clipPath id="home-design-desi-interior" clipPathUnits="userSpaceOnUse">
+          <text :x="letterMetrics.desi.left" :y="letterMetrics.desi.ascent" font-size="100" letter-spacing="-5">DESI</text>
+        </clipPath>
+        <clipPath id="home-design-gn-interior" clipPathUnits="userSpaceOnUse">
+          <text :x="letterMetrics.gn.left" :y="letterMetrics.gn.ascent" font-size="100" letter-spacing="-5">GN</text>
+        </clipPath>
+      </defs>
       <text
         :x="letterMetrics.desi.left"
         :y="letterMetrics.desi.ascent"
         font-size="100"
         letter-spacing="-5"
-        fill="var(--home-visual-design-lime)"
+        :fill="layer === 'fill' ? 'var(--home-visual-design-lime)' : 'none'"
+        :stroke="layer === 'outline' ? 'var(--home-visual-design-lime)' : 'none'"
+        :clip-path="layer === 'outline' ? 'url(#home-design-desi-interior)' : undefined"
+        stroke-width="2.4"
+        stroke-opacity="var(--design-outline-opacity, 1)"
       >DESI</text>
       <svg
+        v-if="layer === 'outline'"
         :x="letterMetrics.split"
         y="0"
         :width="letterMetrics.gn.width"
@@ -85,9 +108,20 @@
         preserveAspectRatio="none"
         overflow="visible"
       >
-        <text :x="letterMetrics.gn.left" :y="letterMetrics.gn.ascent" font-size="100" letter-spacing="-5" fill="var(--home-visual-design-lime)">GN</text>
+        <text
+          :x="letterMetrics.gn.left"
+          :y="letterMetrics.gn.ascent"
+          font-size="100"
+          letter-spacing="-5"
+          :fill="layer === 'fill' ? 'var(--home-visual-design-lime)' : 'none'"
+          :stroke="layer === 'outline' ? 'var(--home-visual-design-lime)' : 'none'"
+          :clip-path="layer === 'outline' ? 'url(#home-design-gn-interior)' : undefined"
+          stroke-width="2.4"
+          stroke-opacity="var(--design-outline-opacity, 1)"
+        >GN</text>
       </svg>
       <svg
+        v-if="layer === 'outline'"
         :x="letterMetrics.width - letterMetrics.numeral.width"
         y="0"
         :width="letterMetrics.numeral.width"
@@ -107,6 +141,7 @@ import { onMounted, ref } from 'vue'
 
 const visualTitleRoot = ref(null)
 const designTitleRoot = ref(null)
+const designFillTitleRoot = ref(null)
 const letterMetrics = ref(null)
 const visualMetrics = ref(null)
 
@@ -160,10 +195,16 @@ onMounted(async () => {
   }
 })
 
+function setDesignTitleRef(element, layer) {
+  if (layer === 'fill') designFillTitleRoot.value = element
+  else designTitleRoot.value = element
+}
+
 function getTitleElements() {
   return {
     visualTitle: visualTitleRoot.value,
-    designTitle: designTitleRoot.value
+    designTitle: designTitleRoot.value,
+    designFillTitle: designFillTitleRoot.value
   }
 }
 

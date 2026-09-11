@@ -23,13 +23,14 @@ function getVisualDesignElements() {
   const illustration = artworkRoot.value?.getIllustrationElement?.()
   const titles = titlesRoot.value?.getTitleElements?.()
 
-  if (!headerRoot.value || !illustration || !titles?.visualTitle || !titles.designTitle) return null
+  if (!headerRoot.value || !illustration || !titles?.visualTitle || !titles.designTitle || !titles.designFillTitle) return null
 
   return {
     header: headerRoot.value,
     illustration,
     visualTitle: titles.visualTitle,
-    designTitle: titles.designTitle
+    designTitle: titles.designTitle,
+    designFillTitle: titles.designFillTitle
   }
 }
 
