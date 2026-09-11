@@ -35,6 +35,11 @@ export default {
       "line-strong": "var(--line-strong)",
       blue: "var(--blue)",
       "blue-soft": "var(--blue-soft)",
+      development: {
+        background: "var(--home-development-background)",
+        title: "var(--home-development-title)",
+        chapter: "var(--home-development-chapter)",
+      },
       "photo-video": {
         background: "var(--home-photo-video-background)",
         lower: "var(--home-photo-video-lower)",
@@ -101,6 +106,7 @@ export default {
         "photo-video-part": "var(--photo-video-part-size, min(60cqw, 37.5cqh))",
         "photo-video-caption": ["min(clamp(0.75rem, 4cqw, 0.875rem), 2.5cqh)", { lineHeight: "1.3" }],
         "photo-video-interest": ["min(13cqw, 4cqh)", { lineHeight: "1.22" }],
+        "development-part": "3.375rem",
         "web-development-display": "21.54cqw",
       },
       transitionTimingFunction: {
