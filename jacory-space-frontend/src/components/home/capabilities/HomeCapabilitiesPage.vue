@@ -145,7 +145,7 @@ onMounted(async () => {
         : 0.28
 
       gsap.set([visualTitle, designTitle], { autoAlpha: 0, clipPath: 'none' })
-      gsap.set(visualTitle, lockup.visual)
+      gsap.set(visualTitle, { ...lockup.visual, '--visual-fade': 0 })
       gsap.set(designTitle, lockup.design)
       gsap.set(illustration, { autoAlpha: 0, y: 14 })
 
@@ -165,6 +165,11 @@ onMounted(async () => {
         .to(lockupHold, { value: 1, duration: 0.14 }, 'lockup+=0.12')
         .addLabel('recompose', 0.38)
         .to(visualTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
+        .fromTo(visualTitle,
+          { '--visual-fade': 0 },
+          { '--visual-fade': 1, duration: 0.34 },
+          'recompose'
+        )
         .to(designTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
         .to(illustration, { autoAlpha: 1, y: 0, duration: 0.34 }, 'recompose')
         .addLabel('poster', 'recompose+=0.34')
