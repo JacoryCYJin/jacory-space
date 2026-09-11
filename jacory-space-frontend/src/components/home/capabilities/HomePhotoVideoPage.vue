@@ -78,11 +78,11 @@ import dinosaur from '../../../assets/home-photo-video/photo-video-dinosaur.png'
 import dog from '../../../assets/home-photo-video/dog-avatar-human-v3.png'
 import cat from '../../../assets/home-photo-video/photo-video-cat.png'
 import dinosaurDetail from '../../../assets/home-photo-video/dinosaur-detail-v2.png'
-import dinosaurPortrait from '../../../assets/home-photo-video/dinosaur-portrait-v2.png'
+import dinosaurPortrait from '../../../assets/home-photo-video/dinosaur-pose-no-tail-v4.png'
 import dogDetail from '../../../assets/home-photo-video/dog-detail-flap-v3.png'
-import dogPortrait from '../../../assets/home-photo-video/dog-portrait-human-v3.png'
+import dogPortrait from '../../../assets/home-photo-video/dog-pose-human-v4.png'
 import catDetail from '../../../assets/home-photo-video/cat-detail-v2.png'
-import catPortrait from '../../../assets/home-photo-video/cat-portrait-human-v3.png'
+import catPortrait from '../../../assets/home-photo-video/cat-pose-human-v4.png'
 
 const characterSets = [
   { landscape: dinosaur, portrait: dinosaurPortrait, square: dinosaurDetail },
