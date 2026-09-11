@@ -1,6 +1,51 @@
 <template>
   <p ref="visualTitleRoot" class="home-visual-title-gradient pointer-events-none absolute left-4 top-4 z-0 inline-block bg-clip-text font-display text-capability-display font-normal leading-none tracking-tighter text-transparent sm:left-10 sm:top-6">
-    VISUAL
+    <span aria-hidden="true" class="invisible block whitespace-nowrap">DESIGNI</span>
+    <span class="sr-only">VISUAL &amp; MOTION</span>
+    <svg
+      v-if="visualMetrics"
+      aria-hidden="true"
+      class="absolute inset-0 block h-full w-full overflow-visible tracking-normal"
+      :viewBox="`0 0 ${visualMetrics.width} 100`"
+      preserveAspectRatio="none"
+    >
+      <defs>
+        <linearGradient id="home-visual-motion-gradient" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--card)" />
+          <stop offset="38%" stop-color="var(--card)" />
+          <stop offset="62%" stop-color="var(--card)" :style="{ stopOpacity: 'calc(1 - var(--visual-fade) * 0.28)' }" />
+          <stop offset="82%" stop-color="var(--card)" :style="{ stopOpacity: 'calc(1 - var(--visual-fade) * 0.74)' }" />
+          <stop offset="100%" stop-color="var(--card)" :style="{ stopOpacity: 'calc(1 - var(--visual-fade))' }" />
+        </linearGradient>
+        <mask id="home-visual-motion-glyphs" maskUnits="userSpaceOnUse" x="0" y="0" :width="visualMetrics.width" height="100">
+          <svg
+            v-for="(word, index) in visualMetrics.rows"
+            :key="word.text"
+            x="0"
+            :y="visualMetrics.top + index * (visualMetrics.rowHeight + visualMetrics.gap)"
+            :width="visualMetrics.leftWidth"
+            :height="visualMetrics.rowHeight"
+            :viewBox="`0 0 ${word.width} ${word.height}`"
+            preserveAspectRatio="none"
+            overflow="visible"
+          >
+            <text :x="word.left" :y="word.ascent" font-size="100" letter-spacing="-5" fill="white">{{ word.text }}</text>
+          </svg>
+        </mask>
+      </defs>
+      <rect :width="visualMetrics.width" height="100" fill="url(#home-visual-motion-gradient)" mask="url(#home-visual-motion-glyphs)" />
+      <svg
+        :x="visualMetrics.ampX"
+        :y="visualMetrics.top"
+        :width="visualMetrics.width - visualMetrics.ampX"
+        :height="visualMetrics.height"
+        :viewBox="`0 0 ${visualMetrics.amp.width} ${visualMetrics.amp.height}`"
+        preserveAspectRatio="none"
+        overflow="visible"
+      >
+        <text :x="visualMetrics.amp.left" :y="visualMetrics.amp.ascent" font-size="100" fill="var(--home-visual-design-lime)">&amp;</text>
+      </svg>
+    </svg>
   </p>
   <p ref="designTitleRoot" class="pointer-events-none absolute bottom-0 right-4 z-20 inline-block font-display text-capability-display font-normal leading-none tracking-tighter text-[var(--home-visual-design-lime)] sm:right-10">
     <span aria-hidden="true" class="invisible block whitespace-nowrap">DESIGNI</span>
@@ -63,6 +108,7 @@ import { onMounted, ref } from 'vue'
 const visualTitleRoot = ref(null)
 const designTitleRoot = ref(null)
 const letterMetrics = ref(null)
+const visualMetrics = ref(null)
 
 onMounted(async () => {
   await document.fonts.ready
@@ -81,14 +127,30 @@ onMounted(async () => {
       metrics
     }
   }
+  // Both blocks use the DESIGNI line box and identical visible ink bounds.
   const whole = measure('DESIGNI', '-5px')
+  const baseline = (100 - whole.metrics.fontBoundingBoxAscent - whole.metrics.fontBoundingBoxDescent) / 2
+    + whole.metrics.fontBoundingBoxAscent
+  const visual = measure('VISUAL', '-5px')
+  const motion = measure('MOTION', '-5px')
+  const amp = measure('&')
+  const gap = whole.height * 0.035
+  visualMetrics.value = {
+    width: whole.width,
+    height: whole.height,
+    top: baseline - whole.ascent,
+    leftWidth: whole.width * 0.74,
+    ampX: whole.width * 0.76,
+    rowHeight: (whole.height - gap) / 2,
+    gap,
+    rows: [{ ...visual, text: 'VISUAL' }, { ...motion, text: 'MOTION' }],
+    amp
+  }
   const design = measure('DESIGN', '-5px')
   const desi = measure('DESI', '-5px')
   const gn = measure('GN', '-5px')
   const part = measure('PART')
   const numeral = measure('I')
-  const baseline = (100 - whole.metrics.fontBoundingBoxAscent - whole.metrics.fontBoundingBoxDescent) / 2
-    + whole.metrics.fontBoundingBoxAscent
   letterMetrics.value = {
     width: whole.width,
     height: whole.height,
