@@ -13,21 +13,12 @@
       :viewBox="`0 0 ${letterMetrics.width} ${letterMetrics.height}`"
       preserveAspectRatio="none"
     >
-      <defs>
-        <linearGradient id="home-design-face-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="var(--home-visual-design-lime)" />
-          <stop offset="62%" stop-color="var(--home-visual-design-lime)" />
-          <stop offset="78%" stop-color="color-mix(in srgb, var(--home-visual-design-lime) 90%, var(--home-visual-design-depth))" />
-          <stop offset="100%" stop-color="var(--home-visual-design-depth)" />
-        </linearGradient>
-      </defs>
       <text
-        class="home-design-title-depth"
         :x="letterMetrics.desi.left"
         :y="letterMetrics.desi.ascent"
         font-size="100"
         letter-spacing="-5"
-        fill="url(#home-design-face-gradient)"
+        fill="var(--home-visual-design-lime)"
       >DESI</text>
       <svg
         :x="letterMetrics.split"
@@ -49,7 +40,7 @@
         preserveAspectRatio="none"
         overflow="visible"
       >
-        <text class="home-design-title-depth" :x="letterMetrics.gn.left" :y="letterMetrics.gn.ascent" font-size="100" letter-spacing="-5" fill="url(#home-design-face-gradient)">GN</text>
+        <text :x="letterMetrics.gn.left" :y="letterMetrics.gn.ascent" font-size="100" letter-spacing="-5" fill="var(--home-visual-design-lime)">GN</text>
       </svg>
       <svg
         :x="letterMetrics.width - letterMetrics.numeral.width"
@@ -119,19 +110,21 @@ defineExpose({ getTitleElements })
 
 <style scoped>
 .home-visual-title-gradient {
+  --visual-fade: 0;
   background-image: linear-gradient(
     to bottom,
     var(--card) 0%,
     var(--card) 38%,
-    color-mix(in srgb, var(--card) 72%, transparent) 62%,
-    color-mix(in srgb, var(--card) 26%, transparent) 82%,
-    transparent 100%
+    color-mix(in srgb, var(--card) calc(100% - var(--visual-fade) * 28%), transparent) 62%,
+    color-mix(in srgb, var(--card) calc(100% - var(--visual-fade) * 74%), transparent) 82%,
+    color-mix(in srgb, var(--card) calc(100% - var(--visual-fade) * 100%), transparent) 100%
   );
 }
 
-.home-design-title-depth {
-  filter:
-    drop-shadow(0 1.5px 0 var(--home-visual-design-edge))
-    drop-shadow(0 3px 3px var(--home-visual-design-shadow));
+@media (prefers-reduced-motion: reduce) {
+  .home-visual-title-gradient {
+    --visual-fade: 1;
+  }
 }
+
 </style>
