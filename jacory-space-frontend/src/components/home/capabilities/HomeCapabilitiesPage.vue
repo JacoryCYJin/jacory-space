@@ -37,6 +37,7 @@ const trackRoot = ref(null)
 const illustrationRoot = ref(null)
 const visualTitleRoot = ref(null)
 const designTitleRoot = ref(null)
+const designFillTitleRoot = ref(null)
 let visualDesignMedia
 let visualDesignResizeObserver
 let visualDesignResizeFrame = 0
@@ -55,12 +56,14 @@ function syncPosterElements() {
   illustrationRoot.value = elements.illustration
   visualTitleRoot.value = elements.visualTitle
   designTitleRoot.value = elements.designTitle
+  designFillTitleRoot.value = elements.designFillTitle
 
   return Boolean(
     headerRoot.value
     && illustrationRoot.value
     && visualTitleRoot.value
     && designTitleRoot.value
+    && designFillTitleRoot.value
   )
 }
 
@@ -123,7 +126,7 @@ onMounted(async () => {
   visualDesignMedia.add('(prefers-reduced-motion: no-preference)', () => {
     const visualTitle = visualTitleRoot.value
     const illustration = illustrationRoot.value
-    const designTitle = designTitleRoot.value
+    const designTitles = [designTitleRoot.value, designFillTitleRoot.value]
     const rebuildTimeline = ({ refreshImmediately = false } = {}) => {
       const lockup = resolveTypographyLockup()
       if (!lockup) return
@@ -144,9 +147,10 @@ onMounted(async () => {
         ? 0.72 * holdDistance / Math.max(1, scrollDistance - holdDistance)
         : 0.28
 
-      gsap.set([visualTitle, designTitle], { autoAlpha: 0, clipPath: 'none' })
+      gsap.set([visualTitle, ...designTitles], { autoAlpha: 0, clipPath: 'none' })
       gsap.set(visualTitle, { ...lockup.visual, '--visual-fade': 0 })
-      gsap.set(designTitle, lockup.design)
+      gsap.set(designTitles, lockup.design)
+      gsap.set(designTitleRoot.value, { '--design-outline-opacity': 0 })
       gsap.set(illustration, { autoAlpha: 0, y: 14 })
 
       visualDesignTimeline = gsap.timeline({
@@ -161,16 +165,19 @@ onMounted(async () => {
         }
       })
         .addLabel('lockup', 0.12)
-        .to([visualTitle, designTitle], { autoAlpha: 1, duration: 0.12 }, 'lockup')
+        .to([visualTitle, ...designTitles], { autoAlpha: 1, duration: 0.12 }, 'lockup')
         .to(lockupHold, { value: 1, duration: 0.14 }, 'lockup+=0.12')
         .addLabel('recompose', 0.38)
+        // The solid glyph is fully opaque here, so enabling its matching inner
+        // edge is invisible. Keep that edge as the artwork reveals the interior.
+        .set(designTitleRoot.value, { '--design-outline-opacity': 1 }, 'recompose')
         .to(visualTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
         .fromTo(visualTitle,
           { '--visual-fade': 0 },
           { '--visual-fade': 1, duration: 0.34 },
           'recompose'
         )
-        .to(designTitle, { x: 0, y: 0, duration: 0.34 }, 'recompose')
+        .to(designTitles, { x: 0, y: 0, duration: 0.34 }, 'recompose')
         .to(illustration, { autoAlpha: 1, y: 0, duration: 0.34 }, 'recompose')
         .addLabel('poster', 'recompose+=0.34')
         .to(posterHold, { value: 1, duration: posterHoldDuration }, 'poster')
@@ -208,13 +215,13 @@ onMounted(async () => {
       visualDesignTimeline?.scrollTrigger?.kill()
       visualDesignTimeline?.kill()
       visualDesignTimeline = undefined
-      gsap.set([visualTitle, illustration, designTitle], { clearProps: 'all' })
+      gsap.set([visualTitle, illustration, ...designTitles], { clearProps: 'all' })
     }
   })
 
   visualDesignMedia.add('(prefers-reduced-motion: reduce)', () => {
     gsap.set(
-      [visualTitleRoot.value, illustrationRoot.value, designTitleRoot.value],
+      [visualTitleRoot.value, illustrationRoot.value, designTitleRoot.value, designFillTitleRoot.value],
       { clearProps: 'all' }
     )
     markVisualDesignTimelineReady()
