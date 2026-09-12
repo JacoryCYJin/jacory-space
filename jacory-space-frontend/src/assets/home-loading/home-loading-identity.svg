@@ -25,7 +25,7 @@
       <rect class="identity-m-reveal-mask" x="805" width="190" height="700" />
     </clipPath>
     <clipPath id="home-loading-name-reveal" clipPathUnits="userSpaceOnUse">
-      <rect class="identity-name-reveal-mask" x="480" width="840" height="700" />
+      <rect class="identity-name-reveal-mask" x="452.855" width="894.29" height="700" />
     </clipPath>
 
     <path id="home-loading-glyph-i" d="M40 0V205L191 237V1218L40 1250V1456H692V1250L541 1218V237L692 205V0Z" />
@@ -43,20 +43,20 @@
     <g id="home-loading-m-source" transform="translate(807.415 457) scale(0.969460227)">
       <use href="#home-loading-glyph-m" />
     </g>
-    <g id="home-loading-name-source" transform="translate(491.494 457) scale(0.969460227)">
+    <g id="home-loading-name-source" transform="translate(464.349 457) scale(0.969460227)">
       <use href="#home-loading-glyph-j" />
       <use href="#home-loading-glyph-a" x="119.375" />
       <use href="#home-loading-glyph-c" x="243.625" />
       <image
         href="__JACORY_O_SCULPTURE_URL__"
-        x="372.125"
-        y="-222"
-        width="224"
-        height="224"
+        x="352.125"
+        y="-270"
+        width="320"
+        height="320"
         preserveAspectRatio="xMidYMid meet"
       />
-      <use href="#home-loading-glyph-r" x="598.375" />
-      <use href="#home-loading-glyph-y" x="725.125" />
+      <use href="#home-loading-glyph-r" x="654.375" />
+      <use href="#home-loading-glyph-y" x="781.125" />
     </g>
   </defs>
 
