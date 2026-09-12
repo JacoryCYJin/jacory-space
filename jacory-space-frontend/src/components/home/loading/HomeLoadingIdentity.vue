@@ -246,13 +246,13 @@ onMounted(() => {
     })
   })
 
-  gsap.set([iFull, mFull, name], { autoAlpha: 1 })
   gsap.set([iHalves, mHalves], { autoAlpha: 0 })
   gsap.set([iLeft, iRight, mLeft, mRight], { x: 0 })
   gsap.set([iRevealMask, mRevealMask, nameRevealMask], {
     scaleX: 0,
     svgOrigin: '900 350'
   })
+  gsap.set([iFull, mFull, name], { autoAlpha: 1 })
 
   introTimeline = gsap.timeline({
     paused: true,
