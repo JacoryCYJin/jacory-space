@@ -14,7 +14,8 @@ import * as THREE from 'three'
 import jacoryLogo from '../../../assets/jacory-logo.svg'
 import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from './homeDotMatrixConfig'
 
-const emit = defineEmits(['ready'])
+const emit = defineEmits(['ready', 'error'])
+let disposed = false
 const props = defineProps({
   active: {
     type: Boolean,
@@ -93,7 +94,7 @@ function createEmptyMaskTexture() {
 async function waitForDisplayFont() {
   if (!document.fonts?.load) return
 
-  await document.fonts.load('400 670px Anton', 'JACORY').catch(() => undefined)
+  await document.fonts.load('400 670px Anton', 'JACORY')
 }
 
 function renderField() {
@@ -600,14 +601,17 @@ async function prepareInitialFrame() {
     // The first render below remains the fallback for WebGL contexts without parallel compilation.
   }
 
-  renderField()
+  // Prepare the hidden canvas once even while the scroll-driven field is inactive.
+  if (disposed) return
+  renderer.render(scene, camera)
   await new Promise((resolve) => window.requestAnimationFrame(resolve))
 }
 
 onMounted(async () => {
   await nextTick()
+  if (disposed) return
   if (!canvasEl.value || !fieldRoot.value) {
-    emit('ready')
+    emit('error', new Error('Dot-matrix elements are unavailable'))
     return
   }
 
@@ -772,11 +776,13 @@ onMounted(async () => {
       `
     })
     await waitForDisplayFont()
+    if (disposed) return
     nameMaskTexture = createTextMaskTexture('JACORY', 670, 1024 * 0.32, 1)
     leadingLetterMaskTexture = createLeadingLetterMaskTexture('JACORY', 'J', 670, 1024 * 0.32, 1)
     material.uniforms.nameMaskTexture.value = nameMaskTexture
     material.uniforms.leadingLetterMaskTexture.value = leadingLetterMaskTexture
-    logoImage = await loadLogoImage().catch(() => null)
+    logoImage = await loadLogoImage()
+    if (disposed) return
     if (logoImage) {
       logoMaskTexture = createLogoMaskTexture()
       material.uniforms.logoMaskTexture.value = logoMaskTexture
@@ -786,6 +792,7 @@ onMounted(async () => {
 
     updateLayout()
     await prepareInitialFrame()
+    if (disposed) return
     statusMotionQuery = window.matchMedia('(prefers-reduced-motion: no-preference)')
     statusMotionQuery.addEventListener('change', updateStatusMotion)
     statusVisibilityObserver = new IntersectionObserver(([entry]) => {
@@ -795,10 +802,10 @@ onMounted(async () => {
     statusVisibilityObserver.observe(fieldRoot.value)
     updateStatusMotion()
   } catch (error) {
+    if (disposed) return
     console.error('[HomeDotMatrixField] Failed to initialize the dot-matrix field.', error)
     disposeFieldResources()
-    // A failed optional WebGL field must not block the page loader indefinitely.
-    emit('ready')
+    emit('error', error)
     return
   }
 
@@ -808,6 +815,7 @@ onMounted(async () => {
 })
 
 onBeforeUnmount(() => {
+  disposed = true
   resizeObserver?.disconnect()
   statusVisibilityObserver?.disconnect()
   statusMotionQuery?.removeEventListener('change', updateStatusMotion)

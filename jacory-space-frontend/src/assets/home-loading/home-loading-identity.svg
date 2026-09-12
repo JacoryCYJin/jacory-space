@@ -61,9 +61,10 @@
   </defs>
 
   <g fill="currentColor">
-    <use class="identity-i-full" href="#home-loading-i-source" clip-path="url(#home-loading-i-reveal)" />
+    <!-- Keep prerendered artwork hidden until GSAP initializes its reveal masks. -->
+    <use class="identity-i-full" style="opacity: 0; visibility: hidden" href="#home-loading-i-source" clip-path="url(#home-loading-i-reveal)" />
 
-    <g class="identity-i-halves">
+    <g class="identity-i-halves" style="opacity: 0; visibility: hidden">
       <g class="identity-i-left">
         <use href="#home-loading-i-source" clip-path="url(#home-loading-identity-left)" />
       </g>
@@ -72,9 +73,9 @@
       </g>
     </g>
 
-    <use class="identity-m-full" href="#home-loading-m-source" clip-path="url(#home-loading-m-reveal)" />
+    <use class="identity-m-full" style="opacity: 0; visibility: hidden" href="#home-loading-m-source" clip-path="url(#home-loading-m-reveal)" />
 
-    <g class="identity-m-halves">
+    <g class="identity-m-halves" style="opacity: 0; visibility: hidden">
       <g class="identity-m-left">
         <use href="#home-loading-m-source" clip-path="url(#home-loading-identity-left)" />
       </g>
@@ -83,6 +84,6 @@
       </g>
     </g>
 
-    <use class="identity-name" href="#home-loading-name-source" clip-path="url(#home-loading-name-reveal)" />
+    <use class="identity-name" style="opacity: 0; visibility: hidden" href="#home-loading-name-source" clip-path="url(#home-loading-name-reveal)" />
   </g>
 </svg>

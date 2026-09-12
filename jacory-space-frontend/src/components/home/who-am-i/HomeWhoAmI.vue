@@ -8,6 +8,7 @@
     <HomeHeroScene
       :active="active"
       @ready="emit('ready')"
+      @error="emit('error', $event)"
       @takeover-change="emit('takeover-change', $event)"
     />
 
@@ -43,7 +44,7 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['ready', 'takeover-change'])
+const emit = defineEmits(['ready', 'error', 'takeover-change'])
 const heroRoot = ref(null)
 let heroContext
 let heroTimeline

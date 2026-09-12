@@ -2,14 +2,16 @@
   <FooterReveal style="--footer-reveal-extension-background: var(--home-development-background)">
     <main ref="homeRoot" class="grain relative w-full bg-background [--navbar-height:4rem] [--home-transition-stage-height:calc(100svh-4rem)]">
       <HomeLoadingIdentity
-        :hero-ready="heroSceneReady"
-        :dot-matrix-ready="dotMatrixReady"
+        :home-ready="homePrepared"
+        :progress="readiness.progress.value"
+        :failed="readiness.failed.value || preparationFailed"
         @complete="handleLoadingComplete"
       />
 
       <HomeWhoAmI
         :active="loadingComplete"
         @ready="handleHeroSceneReady"
+        @error="heroTask.reject"
         @takeover-change="handleTakeoverChange"
       />
       <HomeJacoryReveal
@@ -45,6 +47,7 @@
           :dissolve-progress="matrixState.dissolveProgress"
           :terminal-progress="matrixState.terminalProgress"
           @ready="handleDotMatrixReady"
+          @error="dotMatrixTask.reject"
         />
       </div>
       <div
@@ -62,7 +65,9 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { decodeHomeImage, loadHomeFonts, useHomeReadiness } from '../composables/useHomeReadiness'
 import FooterReveal from '../components/FooterReveal.vue'
 import HomeLoadingIdentity from '../components/home/loading/HomeLoadingIdentity.vue'
 import HomeWhoAmI from '../components/home/who-am-i/HomeWhoAmI.vue'
@@ -73,8 +78,11 @@ import HomeWebDevelopmentPage from '../components/home/capabilities/HomeWebDevel
 import HomeDotMatrixField from '../components/home/jacory-reveal/HomeDotMatrixField.vue'
 
 const transitionReady = ref(false)
-const heroSceneReady = ref(false)
-const dotMatrixReady = ref(false)
+const readiness = useHomeReadiness()
+const heroTask = readiness.register('hero-scene')
+const dotMatrixTask = readiness.register('dot-matrix-scene')
+const homePrepared = ref(false)
+const preparationFailed = ref(false)
 const loadingComplete = ref(false)
 const homeRoot = ref(null)
 const capabilitiesPage = ref(null)
@@ -83,6 +91,7 @@ const handoffActive = ref(false)
 const capabilityLayerBounds = ref(null)
 const matrixState = ref({ terminalProgress: 0, dissolveProgress: 0, blackoutProgress: 0 })
 let geometryObserver
+let disposed = false
 
 const NAVBAR_HEIGHT = 64
 const blackoutComplete = computed(() => matrixState.value.blackoutProgress >= 0.999)
@@ -159,20 +168,47 @@ const handleHandoffChange = async (isActive) => {
 }
 
 const handleHeroSceneReady = () => {
-  heroSceneReady.value = true
+  heroTask.resolve()
   if (import.meta.env.DEV) performance.mark('home-loader:hero-ready')
 }
 
 const handleDotMatrixReady = () => {
-  dotMatrixReady.value = true
+  dotMatrixTask.resolve()
   if (import.meta.env.DEV) performance.mark('home-loader:dot-matrix-ready')
 }
 
-onMounted(() => {
+watch(readiness.ready, async (ready) => {
+  if (!ready || disposed) return
+  try {
+    await nextTick()
+    await capabilitiesPage.value.prepareVisualDesignHandoff()
+    if (disposed) return
+    ScrollTrigger.refresh()
+    syncCapabilitiesGeometry()
+    homePrepared.value = true
+  } catch (error) {
+    if (disposed) return
+    preparationFailed.value = true
+    console.error('[HomeReadiness] Final homepage layout failed', error)
+  }
+})
+
+onMounted(async () => {
   transitionReady.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  // Child mount hooks select this visit's photos. Wait for those images to enter
+  // the DOM before sealing the inventory, including the shared navbar/footer.
+  await nextTick()
+  if (disposed) return
+  const appRoot = homeRoot.value.closest('#app')
+  void readiness.register('homepage-fonts').run(() => loadHomeFonts(appRoot))
+  appRoot.querySelectorAll('img').forEach((image, index) => {
+    void readiness.register(`homepage-image-${index}`).run(() => decodeHomeImage(image))
+  })
+  readiness.seal()
 })
 
 onBeforeUnmount(() => {
+  disposed = true
   geometryObserver?.disconnect()
 })
 </script>

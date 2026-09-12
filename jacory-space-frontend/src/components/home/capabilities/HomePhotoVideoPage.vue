@@ -61,7 +61,7 @@
               alt=""
               :width="frame.width || 1774"
               :height="frame.height || 887"
-              loading="lazy"
+              loading="eager"
               decoding="async"
               draggable="false"
             >
@@ -74,6 +74,7 @@
 
 <script setup>
 import { onMounted, onBeforeUnmount, nextTick, ref } from 'vue'
+import { decodeHomeImage, useHomeLoadingTask } from '../../../composables/useHomeReadiness'
 import dinosaur from '../../../assets/home-photo-video/photo-video-dinosaur.png'
 import dog from '../../../assets/home-photo-video/dog-avatar-human-v3.png'
 import cat from '../../../assets/home-photo-video/photo-video-cat.png'
@@ -90,6 +91,8 @@ const characterSets = [
   { landscape: cat, portrait: catPortrait, square: catDetail }
 ]
 const photoVideoPage = ref(null)
+const layoutTask = useHomeLoadingTask('photo-video-layout')
+let disposed = false
 const partFrame = ref(null)
 const partLabel = ref(null)
 const partSize = ref('')
@@ -173,7 +176,10 @@ function balanceInterestCopy() {
   copyOffset.value += (lowerGap - upperGap) / 2
 }
 
-onBeforeUnmount(() => labelObserver?.disconnect())
+onBeforeUnmount(() => {
+  disposed = true
+  labelObserver?.disconnect()
+})
 const interestGroups = [
   {
     id: 'photo-video-subjects',
@@ -216,16 +222,24 @@ const frames = ref([
   }
 ])
 
-onMounted(() => {
+onMounted(() => layoutTask.run(async () => {
   labelObserver = new ResizeObserver(fitPartLabel)
   labelObserver.observe(photoVideoPage.value)
   labelObserver.observe(partFrame.value)
   labelObserver.observe(artworkStage.value)
-  document.fonts.ready.then(fitPartLabel)
   // Pick one complete set per visit, after hydration, so all three images match.
   const character = characterSets[Math.floor(Math.random() * characterSets.length)]
   frames.value = frames.value.map(frame => ({ ...frame, src: character[frame.name] }))
-})
+  await nextTick()
+  if (disposed) return
+  await Promise.all([
+    document.fonts.ready,
+    ...[...photoVideoPage.value.querySelectorAll('img')].map(decodeHomeImage)
+  ])
+  if (disposed) return
+  await fitPartLabel()
+  await nextTick()
+}))
 </script>
 
 <style scoped>

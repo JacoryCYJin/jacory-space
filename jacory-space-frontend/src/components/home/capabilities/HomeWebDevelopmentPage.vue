@@ -49,6 +49,7 @@
 
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { decodeHomeImage, useHomeLoadingTask } from '../../../composables/useHomeReadiness'
 import redBadge from '../../../assets/home-development/red-001.png'
 import catBadge from '../../../assets/home-development/cat-002.png'
 import dogBadge from '../../../assets/home-development/dog-003.png'
@@ -57,6 +58,7 @@ import dinosaurBadge from '../../../assets/home-development/dinosaur-004.png'
 const stageRoot = ref(null)
 const compositionRoot = ref(null)
 const compositionOffset = ref({ x: 0, y: 0 })
+const layoutTask = useHomeLoadingTask('development-layout')
 let compositionReady = false
 let compositionFrame
 const stageSize = ref({ width: 0, height: 0 })
@@ -156,7 +158,9 @@ function scheduleCompositionCenter() {
   compositionFrame = requestAnimationFrame(centerComposition)
 }
 
-onMounted(async () => {
+onMounted(() => layoutTask.run(async () => {
+  const bounds = stageRoot.value.getBoundingClientRect()
+  stageSize.value = { width: bounds.width, height: bounds.height }
   resizeObserver = new ResizeObserver(([entry]) => {
     stageSize.value = { width: entry.contentRect.width, height: entry.contentRect.height }
     nextTick(scheduleCompositionCenter)
@@ -184,11 +188,13 @@ onMounted(async () => {
   }))
   await nextTick()
   if (disposed || !compositionRoot.value) return
-  await Promise.all([...compositionRoot.value.querySelectorAll('img')].map(image => image.decode().catch(() => {})))
+  await Promise.all([...compositionRoot.value.querySelectorAll('img')].map(decodeHomeImage))
   if (disposed) return
   compositionReady = true
-  scheduleCompositionCenter()
-})
+  cancelAnimationFrame(compositionFrame)
+  centerComposition()
+  await nextTick()
+}))
 
 onBeforeUnmount(() => {
   disposed = true
