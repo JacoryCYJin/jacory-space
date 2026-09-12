@@ -24,7 +24,8 @@ import { HOME_DOT_MATRIX_CONFIG, resolveDotMatrixRows } from '../jacory-reveal/h
 
 gsap.registerPlugin(ScrollTrigger)
 
-const emit = defineEmits(['takeover-change', 'ready'])
+const emit = defineEmits(['takeover-change', 'ready', 'error'])
+let disposed = false
 const props = defineProps({
   active: {
     type: Boolean,
@@ -1067,8 +1068,9 @@ function disposeScene() {
 
 onMounted(async () => {
   await nextTick()
+  if (disposed) return
   if (!sceneRoot.value || !baseCanvasEl.value || !ballCanvasEl.value) {
-    emit('ready')
+    emit('error', new Error('Hero scene elements are unavailable'))
     return
   }
 
@@ -1082,12 +1084,13 @@ onMounted(async () => {
     createScene()
     updateLayout()
     await prepareInitialFrame()
-  } catch {
-    // Do not leave the loading identity waiting forever when WebGL is unavailable.
-    emit('ready')
+  } catch (error) {
+    if (disposed) return
+    emit('error', error)
     return
   }
 
+  if (disposed) return
   emit('ready')
   if (props.active) activateScene()
 })
@@ -1097,6 +1100,7 @@ watch(() => props.active, (isActive) => {
 })
 
 onBeforeUnmount(() => {
+  disposed = true
   sceneActive = false
   motionMedia?.revert()
   sceneContext?.revert()

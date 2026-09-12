@@ -4,6 +4,8 @@
       ref="illustrationRoot"
       :src="redHairedAnimeCharacter"
       alt=""
+      loading="eager"
+      decoding="async"
       class="block h-full w-auto max-w-none"
     >
   </div>

@@ -137,7 +137,10 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { nextTick, onMounted, ref } from 'vue'
+import { useHomeLoadingTask } from '../../../composables/useHomeReadiness'
+
+const typographyTask = useHomeLoadingTask('visual-design-typography')
 
 const visualTitleRoot = ref(null)
 const designTitleRoot = ref(null)
@@ -145,7 +148,7 @@ const designFillTitleRoot = ref(null)
 const letterMetrics = ref(null)
 const visualMetrics = ref(null)
 
-onMounted(async () => {
+onMounted(() => typographyTask.run(async () => {
   await document.fonts.ready
   if (!designTitleRoot.value) return
   // Measure ink bounds, not line boxes, so both rows meet the DESI cap edges.
@@ -193,7 +196,8 @@ onMounted(async () => {
     split: design.width - gn.width,
     desi, gn, part, numeral
   }
-})
+  await nextTick()
+}))
 
 function setDesignTitleRef(element, layer) {
   if (layer === 'fill') designFillTitleRoot.value = element

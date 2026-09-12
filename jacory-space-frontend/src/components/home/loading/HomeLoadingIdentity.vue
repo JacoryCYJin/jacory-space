@@ -79,21 +79,18 @@
 <script setup>
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { gsap } from 'gsap'
+import { decodeHomeImage, useHomeLoadingTask } from '../../../composables/useHomeReadiness'
 import identityArtworkSource from '../../../assets/home-loading/home-loading-identity.svg?raw'
 import jacoryOAvatarUrl from '../../../assets/home-loading/jacory-o-avatar.png'
 import HomeLoadingCrtEffect from './HomeLoadingCrtEffect.vue'
 
 const emit = defineEmits(['complete'])
 const props = defineProps({
-  heroReady: {
-    type: Boolean,
-    default: false
-  },
-  dotMatrixReady: {
-    type: Boolean,
-    default: false
-  }
+  homeReady: Boolean,
+  progress: { type: Number, default: 0 },
+  failed: Boolean
 })
+const artworkTask = useHomeLoadingTask('loading-avatar')
 const loaderRoot = ref(null)
 const counter = ref('000')
 const identityArtwork = identityArtworkSource.replace('__JACORY_O_SCULPTURE_URL__', jacoryOAvatarUrl)
@@ -101,25 +98,16 @@ const identityArtwork = identityArtworkSource.replace('__JACORY_O_SCULPTURE_URL_
 const INTRO_DURATION = 3.9
 const PREPARE_PROGRESS = 99
 const EXIT_DURATION = 0.36
-const MAX_LOADING_WAIT_MS = 12000
-const READINESS_TASKS = ['font', 'identityArtwork', 'hero', 'dotMatrix']
 
 let introTimeline
 let exitTween
 let progressFrame = 0
-let progressStart = 0
-let loadingDeadlineTimer = 0
+let previousProgressTime = 0
+let displayedProgress = 0
 let isUnmounted = false
 let completed = false
-let minimumDurationComplete = false
-let homeReady = false
-
-const readiness = {
-  font: false,
-  identityArtwork: false,
-  hero: false,
-  dotMatrix: false
-}
+let visualProgressComplete = false
+let reducedMotion = false
 const updateCounter = (value) => {
   counter.value = String(Math.round(value)).padStart(3, '0')
 }
@@ -130,39 +118,25 @@ const markPerformance = (name) => {
   }
 }
 
-const renderVisualProgress = (value) => {
-  updateCounter(value)
-  introTimeline?.progress(value / 100)
-}
-
-const waitForHomeFont = () => {
-  if (!document.fonts?.load) return Promise.resolve()
-  return Promise.all([
-    document.fonts.load('400 1em Anton', 'WHO AM I?Makes Ideas Move'),
-    document.fonts.load('900 1em "Geist Variable"', '0123456789')
-  ])
-}
-
 const waitForIdentityArtwork = () => {
   const image = new Image()
   image.decoding = 'async'
   image.src = jacoryOAvatarUrl
-  return image.decode().catch(() => undefined)
+  return decodeHomeImage(image)
 }
 
 const completeLoading = () => {
   if (isUnmounted || completed) return
 
   completed = true
-  window.clearTimeout(loadingDeadlineTimer)
-  loadingDeadlineTimer = 0
   if (progressFrame) window.cancelAnimationFrame(progressFrame)
   progressFrame = 0
-  renderVisualProgress(100)
+  updateCounter(100)
+  introTimeline?.progress(1)
   markPerformance('complete')
   exitTween = gsap.to(loaderRoot.value, {
     autoAlpha: 0,
-    duration: EXIT_DURATION,
+    duration: reducedMotion ? 0 : EXIT_DURATION,
     ease: 'power3.inOut',
     pointerEvents: 'none',
     onComplete: () => emit('complete')
@@ -170,55 +144,36 @@ const completeLoading = () => {
 }
 
 const tryCompleteLoading = () => {
-  if (isUnmounted || completed || !minimumDurationComplete || !homeReady) return
+  if (isUnmounted || completed || !visualProgressComplete || !props.homeReady || props.failed) return
   completeLoading()
 }
 
 const advanceProgress = (timestamp) => {
   if (isUnmounted || completed) return
 
-  const elapsed = Math.max(0, (timestamp - progressStart) / 1000)
-  const progress = Math.min(PREPARE_PROGRESS, (elapsed / INTRO_DURATION) * PREPARE_PROGRESS)
-  renderVisualProgress(progress)
+  // Limit each step too, so returning from a suspended tab cannot skip the intro.
+  const elapsed = Math.min(0.1, Math.max(0, (timestamp - previousProgressTime) / 1000))
+  previousProgressTime = timestamp
+  const target = Math.min(PREPARE_PROGRESS, Math.max(0, props.progress))
+  displayedProgress = Math.min(target, displayedProgress + elapsed * PREPARE_PROGRESS / INTRO_DURATION)
+  updateCounter(Math.floor(displayedProgress))
+  introTimeline?.progress(displayedProgress / PREPARE_PROGRESS)
+  visualProgressComplete = displayedProgress >= PREPARE_PROGRESS
+  tryCompleteLoading()
 
-  if (elapsed >= INTRO_DURATION) {
-    minimumDurationComplete = true
-    tryCompleteLoading()
-    return
-  }
-
-  progressFrame = window.requestAnimationFrame(advanceProgress)
+  if (!completed) progressFrame = window.requestAnimationFrame(advanceProgress)
 }
 
-const markReady = (task) => {
-  if (isUnmounted || readiness[task]) return
-  readiness[task] = true
-  markPerformance(`${task}-ready`)
-
-  if (READINESS_TASKS.every((name) => readiness[name])) {
-    homeReady = true
-    tryCompleteLoading()
-  }
-}
-
-watch(() => props.heroReady, (isReady) => {
-  if (isReady) markReady('hero')
+watch(() => props.progress, (progress) => {
+  if (reducedMotion && !completed) updateCounter(Math.min(PREPARE_PROGRESS, Math.floor(progress)))
 }, { immediate: true })
-
-watch(() => props.dotMatrixReady, (isReady) => {
-  if (isReady) markReady('dotMatrix')
-}, { immediate: true })
+watch(() => [props.homeReady, props.failed], tryCompleteLoading)
 
 onMounted(() => {
   const root = loaderRoot.value
   if (!root) return
 
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    updateCounter(100)
-    gsap.set(root, { display: 'none' })
-    emit('complete')
-    return
-  }
+  reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   const iFull = root.querySelector('.identity-i-full')
   const iHalves = root.querySelector('.identity-i-halves')
@@ -304,27 +259,21 @@ onMounted(() => {
   })
 
   introTimeline.progress(0)
-  renderVisualProgress(0)
-  progressStart = performance.now()
-  loadingDeadlineTimer = window.setTimeout(() => {
-    if (isUnmounted || completed) return
-    const pendingTasks = READINESS_TASKS.filter((task) => !readiness[task])
-    console.warn('[HomeLoadingIdentity] Loading deadline reached; continuing with pending tasks:', pendingTasks)
-    completeLoading()
-  }, MAX_LOADING_WAIT_MS)
+  previousProgressTime = performance.now()
   markPerformance('start')
-  progressFrame = window.requestAnimationFrame(advanceProgress)
-
-  void waitForHomeFont().then(
-    () => markReady('font'),
-    () => markReady('font')
-  )
-  void waitForIdentityArtwork().then(() => markReady('identityArtwork'))
+  if (reducedMotion) {
+    introTimeline.progress(1)
+    updateCounter(Math.min(PREPARE_PROGRESS, Math.floor(props.progress)))
+    visualProgressComplete = true
+    tryCompleteLoading()
+  } else {
+    progressFrame = window.requestAnimationFrame(advanceProgress)
+  }
+  void artworkTask.run(waitForIdentityArtwork)
 })
 
 onBeforeUnmount(() => {
   isUnmounted = true
-  window.clearTimeout(loadingDeadlineTimer)
   if (progressFrame) window.cancelAnimationFrame(progressFrame)
   introTimeline?.kill()
   exitTween?.kill()

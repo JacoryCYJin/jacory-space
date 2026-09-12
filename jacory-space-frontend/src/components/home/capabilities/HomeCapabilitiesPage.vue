@@ -27,10 +27,13 @@ import { nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import HomeVisualDesignPoster from './HomeVisualDesignPoster.vue'
+import { decodeHomeImage, useHomeLoadingTask } from '../../../composables/useHomeReadiness'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const emit = defineEmits(['header-ready'])
+const layoutTask = useHomeLoadingTask('visual-design-layout')
+let disposed = false
 const posterRoot = ref(null)
 const headerRoot = ref(null)
 const trackRoot = ref(null)
@@ -111,16 +114,18 @@ async function prepareVisualDesignHandoff() {
 
 defineExpose({ prepareVisualDesignHandoff })
 
-onMounted(async () => {
+onMounted(() => layoutTask.run(async () => {
   await nextTick()
+  if (disposed) return
   if (!syncPosterElements() || !trackRoot.value) {
-    markVisualDesignTimelineReady()
-    return
+    throw new Error('Visual design elements are unavailable')
   }
 
   emit('header-ready', headerRoot.value)
 
-  await document.fonts?.ready
+  await Promise.all([document.fonts.ready, decodeHomeImage(illustrationRoot.value)])
+  if (disposed) return
+  await nextTick()
 
   visualDesignMedia = gsap.matchMedia()
   visualDesignMedia.add('(prefers-reduced-motion: no-preference)', () => {
@@ -226,9 +231,10 @@ onMounted(async () => {
     )
     markVisualDesignTimelineReady()
   })
-})
+}))
 
 onBeforeUnmount(() => {
+  disposed = true
   visualDesignResizeObserver?.disconnect()
   window.cancelAnimationFrame(visualDesignResizeFrame)
   visualDesignMedia?.revert()
