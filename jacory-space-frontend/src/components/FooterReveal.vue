@@ -146,7 +146,7 @@ onBeforeUnmount(() => {
   height: calc(var(--footer-reveal-overlap-height) + 1px);
   margin-top: -1px;
   overflow: hidden;
-  background: var(--background);
+  background: var(--footer-reveal-extension-background, var(--background));
   clip-path: polygon(
     0 -1px,
     100% -1px,
