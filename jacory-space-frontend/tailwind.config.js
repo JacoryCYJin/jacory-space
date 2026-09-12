@@ -106,7 +106,9 @@ export default {
         "photo-video-part": "var(--photo-video-part-size, min(60cqw, 37.5cqh))",
         "photo-video-caption": ["min(clamp(0.75rem, 4cqw, 0.875rem), 2.5cqh)", { lineHeight: "1.3" }],
         "photo-video-interest": ["min(13cqw, 4cqh)", { lineHeight: "1.22" }],
-        "development-part": "3.375rem",
+        "development-slogan": "2.5rem",
+        "development-part": "5rem",
+        "development-part-mobile": "2.75rem",
         "web-development-display": "21.54cqw",
       },
       transitionTimingFunction: {

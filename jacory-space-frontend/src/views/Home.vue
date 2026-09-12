@@ -1,5 +1,5 @@
 <template>
-  <FooterReveal>
+  <FooterReveal style="--footer-reveal-extension-background: var(--home-development-background)">
     <main ref="homeRoot" class="grain relative w-full bg-background [--navbar-height:4rem] [--home-transition-stage-height:calc(100svh-4rem)]">
       <HomeLoadingIdentity
         :hero-ready="heroSceneReady"
