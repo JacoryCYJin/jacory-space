@@ -101,12 +101,14 @@ const identityArtwork = identityArtworkSource.replace('__JACORY_O_SCULPTURE_URL_
 const INTRO_DURATION = 3.9
 const PREPARE_PROGRESS = 99
 const EXIT_DURATION = 0.36
+const MAX_LOADING_WAIT_MS = 12000
 const READINESS_TASKS = ['font', 'identityArtwork', 'hero', 'dotMatrix']
 
 let introTimeline
 let exitTween
 let progressFrame = 0
 let progressStart = 0
+let loadingDeadlineTimer = 0
 let isUnmounted = false
 let completed = false
 let minimumDurationComplete = false
@@ -152,6 +154,8 @@ const completeLoading = () => {
   if (isUnmounted || completed) return
 
   completed = true
+  window.clearTimeout(loadingDeadlineTimer)
+  loadingDeadlineTimer = 0
   if (progressFrame) window.cancelAnimationFrame(progressFrame)
   progressFrame = 0
   renderVisualProgress(100)
@@ -302,6 +306,12 @@ onMounted(() => {
   introTimeline.progress(0)
   renderVisualProgress(0)
   progressStart = performance.now()
+  loadingDeadlineTimer = window.setTimeout(() => {
+    if (isUnmounted || completed) return
+    const pendingTasks = READINESS_TASKS.filter((task) => !readiness[task])
+    console.warn('[HomeLoadingIdentity] Loading deadline reached; continuing with pending tasks:', pendingTasks)
+    completeLoading()
+  }, MAX_LOADING_WAIT_MS)
   markPerformance('start')
   progressFrame = window.requestAnimationFrame(advanceProgress)
 
@@ -314,6 +324,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   isUnmounted = true
+  window.clearTimeout(loadingDeadlineTimer)
   if (progressFrame) window.cancelAnimationFrame(progressFrame)
   introTimeline?.kill()
   exitTween?.kill()
