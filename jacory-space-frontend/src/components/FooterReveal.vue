@@ -191,6 +191,27 @@ onBeforeUnmount(() => {
   background: var(--ink);
 }
 
+@media (max-width: 767.98px) {
+  .footer-reveal {
+    padding-bottom: 0;
+    background: var(--ink);
+  }
+
+  .footer-reveal__panel {
+    position: relative;
+    filter: none;
+  }
+
+  .footer-reveal__panel-content {
+    transform: none;
+    will-change: auto;
+  }
+
+  .footer-reveal__header {
+    display: none;
+  }
+}
+
 @media (min-width: 768px) {
   .footer-reveal {
     --footer-reveal-body-height: 20rem;

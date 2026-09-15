@@ -2,7 +2,7 @@
   <header class="fixed inset-x-0 top-0 z-50">
     <div
       class="relative flex h-16 items-center justify-between px-5 transition-colors duration-500 md:px-8"
-      :class="scrolled ? 'border-b border-line bg-background backdrop-blur-md' : 'border-b border-transparent'"
+      :class="scrolled ? 'border-b border-line bg-background backdrop-blur-md' : 'border-b border-transparent bg-background md:bg-transparent'"
     >
       <router-link to="/" class="group flex items-center gap-3" @click="mobileMenuOpen = false">
         <img :src="jacoryLogo" alt="" class="h-6 w-6 shrink-0 object-contain" />
