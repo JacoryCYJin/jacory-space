@@ -271,6 +271,13 @@ onBeforeUnmount(() => {
   }
 }
 
+@media (max-width: 767.98px) and (prefers-reduced-motion: no-preference) {
+  .home-capability-photo-video-layer {
+    /* Preserve a 0.6-screen hold after the preceding poster has cleared. */
+    height: calc(var(--home-transition-stage-height) * 2.6);
+  }
+}
+
 @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
   .home-capabilities-page {
     --home-capability-hold-screens: 0.6;
