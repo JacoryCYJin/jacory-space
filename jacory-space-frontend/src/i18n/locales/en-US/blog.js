@@ -40,7 +40,7 @@ export default {
       life: 'Life Notes'
     },
     fieldNotes: {
-      journalLabel: '02 — Notes',
+      journalLabel: '03 — Notes',
       archiveOpen: '{count} entries / archive open',
       titleLead: 'Field',
       titleAccent: ' Notes',

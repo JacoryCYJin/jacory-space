@@ -4,7 +4,7 @@
       <div class="page-frame">
         <header class="about-sheet-header flex items-end justify-between">
           <div>
-            <p class="font-mono text-xs tracking-[0.16em] text-blue">03 — IDENTITY.SHEET</p>
+            <p class="font-mono text-xs tracking-[0.16em] text-blue">04 — IDENTITY.SHEET</p>
             <p class="tech mt-2">{{ t('about.sheet.subtitle') }}</p>
           </div>
         </header>
