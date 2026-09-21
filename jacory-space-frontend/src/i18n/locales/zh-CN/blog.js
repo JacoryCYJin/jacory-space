@@ -40,7 +40,7 @@ export default {
       life: '生活观察'
     },
     fieldNotes: {
-      journalLabel: '02 — 手记',
+      journalLabel: '03 — 手记',
       archiveOpen: '{count} 篇 / 归档已开放',
       titleLead: '观察',
       titleAccent: '手记',

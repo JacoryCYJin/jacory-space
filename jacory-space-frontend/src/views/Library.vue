@@ -5,7 +5,7 @@
       <div class="page-frame">
         <header class="grid gap-12 border-b border-line pb-10 md:pb-14 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,34rem)] lg:items-end lg:gap-16">
           <div data-library-enter>
-            <p class="tech mb-5 text-xs text-blue">03 — {{ t('library.kicker') }}</p>
+            <p class="tech mb-5 text-xs text-blue">02 — {{ t('library.kicker') }}</p>
             <h1 class="max-w-3xl font-sans text-5xl font-medium leading-[0.95] tracking-tight text-foreground md:text-7xl">
               {{ t('library.titleLead') }}<span class="italic text-blue">{{ t('library.titleAccent') }}</span>
             </h1>

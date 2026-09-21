@@ -40,7 +40,7 @@ export default {
       life: '日々の観察'
     },
     fieldNotes: {
-      journalLabel: '02 — ノート',
+      journalLabel: '03 — ノート',
       archiveOpen: '{count}件 / アーカイブ公開中',
       titleLead: '観察',
       titleAccent: 'ノート',
