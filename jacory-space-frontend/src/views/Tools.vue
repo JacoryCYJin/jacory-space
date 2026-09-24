@@ -101,6 +101,11 @@ let toolsContext = null
 
 const projects = computed(() => [
   {
+    id: '007', no: '007', title: t('reading.title'), layer: 'TOOLS', category: 'tool', status: 'wip',
+    pos: [6.0, 1.8], description: t('reading.toolDescription'),
+    stack: ['Reading', 'Markdown'], version: 'v0.1.0', updated: '2026.09.24', href: '/tools/reading'
+  },
+  {
     id: '001', no: '001', title: t('tools.projects.mediaParser.title'), layer: 'TOOLS', category: 'tool', status: 'live',
     pos: [-7.0, -1.6], description: '本地桌面媒体工作台，整合视频解析、播客解析、下载、转写和结构化笔记。',
     stack: ['Electron', 'Python', 'Whisper'], version: 'desktop', updated: '2026.07.11', href: '/tools/media-parser'

@@ -10,6 +10,7 @@ import LibraryDetail from '../views/LibraryDetail.vue'
 import RetroFuturismSignalStudy from '../views/RetroFuturismSignalStudy.vue'
 
 export const routes = [
+  { path: '/tools/reading', name: 'Reading', component: () => import('../views/Reading.vue') },
   {
     path: '/',
     name: 'Home',

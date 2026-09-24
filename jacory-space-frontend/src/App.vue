@@ -32,6 +32,11 @@ const pageMeta = computed(() => {
         description: 'Jacory 的个人数字空间：工具、创作、Field Notes 与持续演进的个人工作系统。',
       },
     },
+    Reading: {
+      title: 'Reading Notes — Jacory Space',
+      description: '按书籍收藏与重读摘抄，留下阅读时的思考。',
+      path: '/tools/reading',
+    },
     Tools: {
       title: 'Tools — Jacory Space',
       description: 'Jacory Space 的自建工具、界面实验与项目入口。',

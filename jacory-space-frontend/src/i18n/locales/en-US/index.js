@@ -1,3 +1,4 @@
+import reading from './reading'
 import common from './common'
 import home from './home'
 import tools from './tools'
@@ -9,6 +10,7 @@ import retroFuturism from './retro-futurism'
 import library from './library'
 
 export default {
+  ...reading,
   ...common,
   ...home,
   ...tools,
