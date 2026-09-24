@@ -94,6 +94,7 @@ export default {
       none: "none",
     },
     fontFamily: {
+      reading: ["Songti SC", "STSong", "SimSun", "Noto Serif CJK SC", "serif"],
       sans: ["Geist Variable", "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "ui-sans-serif", "system-ui", "sans-serif"],
       mono: ["Geist Mono Variable", "ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
       display: ["Anton", "Impact", "sans-serif"],
