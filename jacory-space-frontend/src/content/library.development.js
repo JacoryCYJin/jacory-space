@@ -1,4 +1,5 @@
 import podcastContentSummary from './library/prompts/podcast-content-summary.md?raw'
+import podcastReadingSummary from './library/prompts/podcast-reading-summary.md?raw'
 import podcastToBlog from './library/prompts/podcast-to-blog.md?raw'
 import blogMarkdownPolish from './library/prompts/blog-markdown-polish.md?raw'
 import minecraftSkinPreview from './library/prompts/minecraft-skin-preview.md?raw'
@@ -104,6 +105,18 @@ export const libraryEntries = [
       { level: 1, title: 'gsap-timeline' },
       { level: 1, title: 'gsap-utils' },
     ],
+  },
+  {
+    id: 'podcast-reading-summary',
+    type: 'prompt',
+    no: '007',
+    titleKey: 'library.entries.podcastReadingSummary.title',
+    descriptionKey: 'library.entries.podcastReadingSummary.description',
+    detailKey: 'podcastReadingSummary',
+    content: podcastReadingSummary,
+    tags: ['podcast', 'summary'],
+    version: 'v1.1.0',
+    updated: '2026.10.06',
   },
 ]
 

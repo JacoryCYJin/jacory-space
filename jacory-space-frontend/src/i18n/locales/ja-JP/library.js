@@ -1,10 +1,16 @@
 const developmentLibraryEntries = import.meta.env.DEV ? {
+  podcastReadingSummary: { title: 'ポッドキャスト内容要約 · 読書版', description: "長いポッドキャストを原意に忠実な要約、核心となる問いと回答、実際の活用に整理し、理解する・説明する・活用するの三段階を支援します。" },
   podcastContentSummary: { title: 'ポッドキャスト内容要約', description: '話し言葉の字幕を、読みやすい内容要約と次の企画候補に整理します。' },
   podcastToBlog: { title: 'ポッドキャストからブログ下書き', description: 'ポッドキャスト字幕から一本の軸を取り出し、匿名化した中国語ブログ下書きにします。' },
   blogMarkdownPolish: { title: 'ブログ Markdown の推敲', description: '既存の下書きを Jacory Space 形式に沿った正式なブログ Markdown に整えます。' },
 } : {}
 
 const developmentLibraryDetails = import.meta.env.DEV ? {
+  podcastReadingSummary: {
+    about: "まず概要とテーマ別の本文で番組を十分に理解し、次に核心となる問いと回答を抽出し、最後に現実の場面で繰り返し使える判断の枠組み、原則、方法を厳選します。",
+    usage: "文字起こしを貼り付けるか、添付資料、または title・source・transcript フィールドを持つ JSON を渡します。十分な要約、核心となる問いと回答、実際の活用を、この順で中国語で生成します。",
+    notes: "実際に読めた資料だけを使い、意見の相違、適用条件、不確実性、資料の欠落と対象範囲を明示します。後の段階のために第一段階を短縮せず、番組にない方法や助言を活用に追加しません。",
+  },
   podcastContentSummary: { about: 'ポッドキャスト字幕から、読みやすい要約、主要な考え、話の流れ、次の企画を抽出します。', usage: '構造化した字幕を貼り付けるか、title・source・transcript フィールドを持つ JSON をアップロードします。', notes: '字幕に基づいて整理し、不足箇所は補わずに不確実性として示します。' },
   podcastToBlog: { about: 'ポッドキャスト素材を、個人的な視点の境界を保った、独立して読める中国語ブログ記事に再構成します。', usage: '字幕を入力します。モデルが最も強い軸を選び、利用可能な Markdown ブログ下書きを出力します。', notes: '識別できる出典と私的な詳細を取り除き、元の話者の経験を著者の経験には書き換えません。' },
   blogMarkdownPolish: { about: '著者の中心的な考えを変えずに、下書きの文章リズム、frontmatter、ファイル名、サイトの Markdown 形式を整えます。', usage: '中国語ブログの下書きを一つまたは複数貼り付けます。仮のファイル名や未完成の frontmatter を含めても構いません。', notes: 'まったく別の記事に書き換えるのではなく、編集と整理を行う Prompt です。' },
