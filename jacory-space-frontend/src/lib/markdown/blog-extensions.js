@@ -188,11 +188,11 @@ export function finalizeFigures(blocks) {
   }
 }
 
-export function buildToc(blocks) {
+export function buildToc(blocks, { maxLevel = 3 } = {}) {
   const toc = []
   for (const block of blocks) {
     if (block.type !== 'heading') continue
-    if (block.level < 2 || block.level > 3) continue
+    if (block.level < 2 || block.level > maxLevel) continue
     toc.push({
       id: block.id,
       level: block.level,

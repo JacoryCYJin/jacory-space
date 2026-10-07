@@ -115,8 +115,8 @@ export const libraryEntries = [
     detailKey: 'podcastReadingSummary',
     content: podcastReadingSummary,
     tags: ['podcast', 'summary'],
-    version: 'v1.1.0',
-    updated: '2026.10.06',
+    version: 'v1.2.0',
+    updated: '2026.10.07',
   },
 ]
 

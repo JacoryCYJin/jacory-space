@@ -273,6 +273,7 @@ export async function getPostBySlug(slug) {
   const { blocks, toc } = parseDocument(raw, {
     linkPreviews,
     postMentions: buildPostMentions(),
+    normalizeBlogHeadings: true,
   })
   const position = metasAscending.findIndex((meta) => meta.slug === slug)
   const post = {
