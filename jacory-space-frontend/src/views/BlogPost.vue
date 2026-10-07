@@ -15,17 +15,20 @@
           <div class="grid min-w-0 grid-cols-1 gap-x-0 lg:grid-cols-[minmax(220px,250px)_minmax(0,60rem)] lg:justify-center lg:gap-x-12 xl:grid-cols-[minmax(220px,260px)_minmax(0,60rem)] xl:gap-x-16">
             <aside
               data-post-enter
-              class="hidden min-w-0 lg:order-1 lg:block"
+              class="hidden min-w-0 lg:-mt-3 lg:order-1 lg:block"
             >
               <nav
                 v-if="displayToc.length"
-                class="lg:sticky lg:top-28"
+                class="lg:sticky lg:top-[6.25rem] lg:flex lg:max-h-[calc(100dvh-8.5rem)] lg:flex-col"
                 :aria-label="t('blog.post.onThisNote')"
               >
-                <p class="font-sans text-base font-semibold leading-none text-foreground">
+                <p class="shrink-0 font-sans text-sm font-semibold leading-none text-foreground">
                   目录
                 </p>
-                <ol class="mt-7 space-y-5">
+                <ol
+                  data-lenis-prevent
+                  class="mt-5 min-h-0 space-y-3 overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                >
                   <li
                     v-for="item in displayToc"
                     :key="item.id"
@@ -33,17 +36,18 @@
                   >
                     <a
                       :href="`#${item.id}`"
+                      @click="activeId = item.id"
                       class="group grid min-w-0 grid-cols-[2rem_minmax(0,1fr)] items-start gap-3 text-left transition-colors"
                       :class="activeId === item.id ? 'text-blue' : 'text-foreground'"
                     >
                       <span
-                        class="relative mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full font-mono text-xs font-medium leading-none transition-colors"
+                        class="relative mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full font-mono text-xs font-medium leading-none transition-colors"
                         :class="activeId === item.id ? 'bg-blue text-card' : 'bg-muted text-haze group-hover:text-blue'"
                       >
                         {{ item.number }}
                       </span>
                       <span
-                        class="min-w-0 break-words pt-0.5 text-sm font-medium leading-relaxed transition-colors"
+                        class="min-w-0 break-words pt-0.5 text-xs font-medium leading-normal transition-colors"
                         :class="activeId === item.id ? 'text-blue' : 'text-muted-foreground group-hover:text-foreground'"
                       >
                         {{ item.text }}
@@ -177,7 +181,7 @@ const post = ref(null)
 const activeId = ref('')
 const isLoading = ref(true)
 const loadError = ref('')
-let headingObserver
+let stopHeadingTracking
 let postMotionMedia
 let loadToken = 0
 
@@ -264,9 +268,9 @@ const displayToc = computed(() =>
   })),
 )
 
-function teardownObserver() {
-  headingObserver?.disconnect()
-  headingObserver = undefined
+function teardownHeadingTracking() {
+  stopHeadingTracking?.()
+  stopHeadingTracking = undefined
 }
 
 function teardownPostMotion() {
@@ -313,35 +317,52 @@ function setupPostMotion() {
   )
 }
 
-function setupObserver() {
-  teardownObserver()
-  if (!post.value?.toc.length || typeof IntersectionObserver === 'undefined') return
+function setupHeadingTracking() {
+  teardownHeadingTracking()
+  if (!post.value?.toc.length || typeof window === 'undefined') return
 
   const targets = post.value.toc
     .map((item) => document.getElementById(item.id))
     .filter(Boolean)
   if (!targets.length) return
 
-  activeId.value = post.value.toc[0].id
+  let frame = 0
+  let activationTop = 0
 
-  headingObserver = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
-      if (visible.length) {
-        activeId.value = visible[0].target.id
-      }
-    },
-    { rootMargin: '-20% 0px -70% 0px', threshold: 0 },
-  )
+  const updateActiveHeading = () => {
+    frame = 0
+    let current = targets[0]
+    // Match the anchor landing position, allowing for subpixel scroll rounding.
+    for (const target of targets) {
+      if (target.getBoundingClientRect().top > activationTop + 1) break
+      current = target
+    }
+    activeId.value = current.id
+  }
 
-  targets.forEach((target) => headingObserver.observe(target))
+  const scheduleUpdate = () => {
+    if (!frame) frame = window.requestAnimationFrame(updateActiveHeading)
+  }
+
+  const updateActivationTop = () => {
+    activationTop = Number.parseFloat(window.getComputedStyle(targets[0]).scrollMarginTop) || 0
+    scheduleUpdate()
+  }
+
+  window.addEventListener('scroll', scheduleUpdate, { passive: true })
+  window.addEventListener('resize', updateActivationTop)
+  updateActivationTop()
+
+  stopHeadingTracking = () => {
+    window.removeEventListener('scroll', scheduleUpdate)
+    window.removeEventListener('resize', updateActivationTop)
+    window.cancelAnimationFrame(frame)
+  }
 }
 
 async function loadPost(slug) {
   const token = (loadToken += 1)
-  teardownObserver()
+  teardownHeadingTracking()
   teardownPostMotion()
   post.value = null
   activeId.value = ''
@@ -364,7 +385,7 @@ async function loadPost(slug) {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0 })
     }
-    setupObserver()
+    setupHeadingTracking()
     setupPostMotion()
   })
 }
@@ -380,7 +401,7 @@ if (import.meta.env.SSR) {
 }
 
 onBeforeUnmount(() => {
-  teardownObserver()
+  teardownHeadingTracking()
   teardownPostMotion()
 })
 </script>
