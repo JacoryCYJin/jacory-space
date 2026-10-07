@@ -1,5 +1,5 @@
 const developmentLibraryEntries = import.meta.env.DEV ? {
-  podcastReadingSummary: { title: 'Podcast Content Summary · Reading Edition', description: "Turn long podcasts into faithful full summaries, core questions and answers, and practical applications to understand, explain, and use the material." },
+  podcastReadingSummary: { title: 'Podcast Study Notes', description: "Turn podcast material into faithful study notes for understanding and review, then extract core questions and answers that reconstruct the central knowledge thread, along with frameworks and methods worth reusing in real situations." },
   podcastContentSummary: { title: 'Podcast Content Summary', description: 'Turn spoken podcast transcripts into a clear reader-facing summary and follow-up topics.' },
   podcastToBlog: { title: 'Podcast to Blog Draft', description: 'Extract one central thread from a podcast transcript and turn it into a de-identified Chinese blog draft.' },
   blogMarkdownPolish: { title: 'Blog Markdown Polish', description: 'Turn an existing draft into finished blog Markdown that follows the Jacory Space format.' },
@@ -7,9 +7,9 @@ const developmentLibraryEntries = import.meta.env.DEV ? {
 
 const developmentLibraryDetails = import.meta.env.DEV ? {
   podcastReadingSummary: {
-    about: "First understand the episode through an overview and full thematic summary, then extract core questions and answers, and finally select frameworks, principles, or methods worth reusing in real situations.",
-    usage: "Paste a transcript, provide an attachment, or upload JSON with title, source, and transcript fields. Generate a full summary, core questions and answers, and practical applications in that order, all in Chinese.",
-    notes: "Uses only material actually read, preserves disagreements, qualifications, and uncertainty, and states missing material and coverage. Later stages must not shorten the first stage; applications must not add methods or advice absent from the episode.",
+    about: "Organize complete knowledge notes around concepts, causes, or questions, preserving necessary explanations and representative supporting material. Then extract core questions and answers and select practical applications worth reusing in real situations.",
+    usage: "Paste a transcript, provide an attachment, or upload JSON with title, source, and transcript fields. Generate notes, questions and answers, and practical applications in Chinese, in that order, inside one Markdown code block starting with # 笔记.",
+    notes: "Uses only material actually read, preserves disagreements, qualifications, and uncertainty, and distinguishes sources when needed. Later stages must not shorten the complete notes or add methods or advice absent from the episode. Use only 笔记, 问答, and 实践 as level-one headings; no level-one section may contain just one level-two group.",
   },
   podcastContentSummary: { about: 'Extract a readable summary, key ideas, narrative flow, and follow-up topics from a podcast transcript.', usage: 'Paste a structured transcript directly, or upload JSON with title, source, and transcript fields.', notes: 'The summary stays grounded in the transcript and names uncertainty rather than filling gaps.' },
   podcastToBlog: { about: 'Reorganize podcast material into an independently readable Chinese blog post that keeps a personal, bounded point of view.', usage: 'Provide the transcript. The model chooses the strongest thread, then returns a usable Markdown blog draft.', notes: 'The rules remove identifiable sources and private details; they never turn the original speaker’s experiences into the author’s.' },

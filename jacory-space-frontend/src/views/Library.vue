@@ -169,7 +169,7 @@ const filteredEntries = computed(() => {
     const matchesTags = selectedTags.value.every((tag) => entry.tags.includes(tag))
     const searchable = (t(entry.titleKey) + ' ' + t(entry.descriptionKey) + ' ' + entry.tags.map(tagLabel).join(' ')).toLowerCase()
     return matchesType && matchesTags && (!normalizedQuery || searchable.includes(normalizedQuery))
-  })
+  }).sort((a, b) => b.updated.localeCompare(a.updated))
 })
 
 const latestUpdate = computed(() => libraryEntries.map((entry) => entry.updated).sort().at(-1))

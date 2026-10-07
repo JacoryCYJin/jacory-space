@@ -1,5 +1,6 @@
 <script>
 import { h, nextTick } from 'vue'
+import { ChevronDown } from 'lucide-vue-next'
 import { MarkerHighlighter } from 'markerhighlight'
 
 const LINK_CLASS =
@@ -492,7 +493,7 @@ function renderBlock(block, context = {}) {
           {
             id: block.id,
             class:
-              'mb-5 mt-20 scroll-mt-28 break-words font-sans text-2xl font-semibold leading-tight tracking-tight text-foreground first:mt-0 md:text-3xl',
+              'mb-5 scroll-mt-28 break-words font-sans text-2xl font-semibold leading-tight tracking-tight text-foreground first:mt-0 md:text-3xl ' + (context.compact ? 'mt-12' : 'mt-20'),
           },
           [
             h('span', { class: 'mr-4 font-mono text-2xl font-semibold leading-none text-blue md:text-3xl' }, sectionNumber),
@@ -507,15 +508,16 @@ function renderBlock(block, context = {}) {
         {
           id: block.id,
           class:
-            'mb-4 mt-12 scroll-mt-28 break-words font-sans text-xl font-semibold leading-snug tracking-tight text-foreground',
+            'mb-4 mt-12 scroll-mt-28 break-words font-sans font-semibold leading-snug tracking-tight text-foreground ' +
+            (block.sourceLevel && block.level >= 4 ? (block.level === 4 ? 'text-lg' : 'text-base') : 'text-xl'),
         },
-        renderInline(normalizeHeadingInlines(block.inlines)),
+        renderInline(block.sourceLevel ? block.inlines : normalizeHeadingInlines(block.inlines)),
       )
     }
     case 'paragraph':
       return h(
         'p',
-        { class: 'my-6 min-w-0 break-words text-base leading-8 text-foreground md:text-lg md:leading-9' },
+        { class: 'min-w-0 break-words text-base text-foreground md:text-lg ' + (context.compact ? 'my-4 leading-[1.625] md:leading-7' : 'my-6 leading-8 md:leading-9') },
         renderInline(block.inlines),
       )
     case 'blockquote':
@@ -552,13 +554,17 @@ function renderBlock(block, context = {}) {
 export default {
   name: 'MarkdownArticle',
   props: {
+    compact: { type: Boolean, default: false },
+    collapsibleSection: { type: String, default: '' },
     blocks: {
       type: Array,
       required: true,
     },
   },
+  emits: ['layout-change'],
   data() {
     return {
+      expandedQuestions: [],
       markerHighlighter: null,
       markerCorrectionTimers: [],
     }
@@ -572,7 +578,27 @@ export default {
   beforeUnmount() {
     this.teardownMarkerHighlights()
   },
+  watch: {
+    blocks() {
+      this.expandedQuestions = []
+    },
+  },
   methods: {
+    expandHeading(id) {
+      const heading = this.blocks.find((block) => block.id === id && block.type === 'heading')
+      if (!heading || heading.level !== 3 || !this.collapsibleSection) return
+      const index = this.blocks.indexOf(heading)
+      const parent = this.blocks.slice(0, index).findLast((block) => block.type === 'heading' && block.level === 2)
+      if (parent?.text !== this.collapsibleSection || this.expandedQuestions.includes(id)) return
+      this.expandedQuestions = [...this.expandedQuestions, id]
+      nextTick(() => this.$emit('layout-change'))
+    },
+    toggleQuestion(id) {
+      this.expandedQuestions = this.expandedQuestions.includes(id)
+        ? this.expandedQuestions.filter((item) => item !== id)
+        : [...this.expandedQuestions, id]
+      nextTick(() => this.$emit('layout-change'))
+    },
     teardownMarkerHighlights() {
       const root = this.$el
       this.markerCorrectionTimers.forEach((timer) => window.clearTimeout(timer))
@@ -672,15 +698,46 @@ export default {
 
     const children = []
     let headingIndex = 0
+    let inCollapsibleSection = false
     if (rightFigure) {
       children.push(renderFigure(rightFigure, { floated: true }))
     }
-    for (const block of blocks) {
+    for (let index = 0; index < blocks.length; index += 1) {
+      const block = blocks[index]
       if (block === rightFigure) continue
       if (block.type === 'heading' && block.level === 2) {
         headingIndex += 1
+        inCollapsibleSection = Boolean(this.collapsibleSection) && block.text === this.collapsibleSection
       }
-      children.push(renderBlock(block, { headingIndex }))
+      if (inCollapsibleSection && block.type === 'heading' && block.level === 3) {
+        const answers = []
+        while (index + 1 < blocks.length) {
+          const next = blocks[index + 1]
+          if (next.type === 'heading' && next.level <= 3) break
+          answers.push(renderBlock(next, { headingIndex, compact: this.compact }))
+          index += 1
+        }
+        const expanded = this.expandedQuestions.includes(block.id)
+        children.push(h('section', { key: block.id, class: 'border-b border-line' }, [
+          h('h3', { id: block.id, class: 'm-0 scroll-mt-28 font-sans text-xl font-semibold leading-snug tracking-tight text-foreground' }, [
+            h('button', {
+              id: `${block.id}-toggle`, type: 'button',
+              'aria-expanded': expanded, 'aria-controls': `${block.id}-answer`,
+              class: 'flex w-full items-start justify-between gap-5 text-left transition-colors hover:text-blue focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue ' + (this.compact ? 'py-4' : 'py-6'),
+              onClick: () => this.toggleQuestion(block.id),
+            }, [
+              h('span', renderInline(block.inlines)),
+              h(ChevronDown, { 'aria-hidden': true, class: 'mt-1 h-5 w-5 shrink-0 text-blue transition-transform motion-reduce:transition-none' + (expanded ? ' rotate-180' : '') }),
+            ]),
+          ]),
+          h('div', {
+            id: `${block.id}-answer`, hidden: !expanded,
+            'aria-labelledby': `${block.id}-toggle`, class: 'pb-4' + (this.compact ? ' [&>p:first-child]:mt-2' : ''),
+          }, answers),
+        ]))
+        continue
+      }
+      children.push(renderBlock(block, { headingIndex, compact: this.compact }))
     }
     // Ensure following sections clear the floated figure cleanly.
     children.push(h('div', { class: 'clear-both' }))

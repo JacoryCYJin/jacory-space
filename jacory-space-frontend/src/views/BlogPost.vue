@@ -26,17 +26,22 @@
                   目录
                 </p>
                 <ol
+                  ref="tocList"
                   data-lenis-prevent
+                  @wheel.passive="pauseTocFollowing"
+                  @pointerdown="pauseTocFollowing"
+                  @keydown="pauseTocFollowing"
                   class="mt-5 min-h-0 space-y-3 overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                   <li
                     v-for="item in displayToc"
                     :key="item.id"
-                    :class="item.level === 3 ? 'pl-5' : ''"
+                    :class="item.level === 4 ? 'pl-10' : item.level === 3 ? 'pl-5' : ''"
                   >
                     <a
                       :href="`#${item.id}`"
-                      @click="activeId = item.id"
+                      @click="selectTocItem(item.id)"
+                      :aria-current="activeId === item.id ? 'location' : undefined"
                       class="group grid min-w-0 grid-cols-[2rem_minmax(0,1fr)] items-start gap-3 text-left transition-colors"
                       :class="activeId === item.id ? 'text-blue' : 'text-foreground'"
                     >
@@ -59,20 +64,20 @@
             </aside>
 
             <article class="min-w-0 lg:order-2">
-              <header class="max-w-[60rem] border-b border-line pb-10 md:pb-12">
+              <header class="max-w-[54rem] border-b border-line pb-10 md:pb-12">
                 <div data-post-enter class="font-mono text-xs font-medium leading-[1.2] tracking-[0.16em] text-blue">
                   {{ breadcrumbLabel }}
                 </div>
                 <h1
                   data-post-enter
-                  class="mt-10 max-w-[60rem] break-words text-balance font-sans text-4xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl"
+                  class="mt-10 break-words text-balance font-sans text-4xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl"
                 >
                   {{ frontmatter.title }}
                 </h1>
                 <p
                   v-if="frontmatter.description"
                   data-post-enter
-                  class="mt-7 max-w-[46rem] break-words text-pretty text-base leading-8 text-muted-foreground md:text-lg"
+                  class="mt-7 break-words text-pretty text-base leading-8 text-muted-foreground md:text-lg"
                 >
                   {{ frontmatter.description }}
                 </p>
@@ -94,7 +99,7 @@
               </header>
 
               <div data-post-enter class="mt-12 max-w-[54rem]">
-                <MarkdownArticle :blocks="post.blocks" />
+                <MarkdownArticle ref="article" compact :blocks="post.blocks" :collapsible-section="frontmatter.collapsibleSection || ''" @layout-change="refreshArticleLayout" />
               </div>
 
               <nav
@@ -177,13 +182,20 @@ import FooterReveal from '../components/FooterReveal.vue'
 const route = useRoute()
 const { t } = useI18n()
 const pageRoot = ref(null)
+const tocList = ref(null)
+const article = ref(null)
 const post = ref(null)
 const activeId = ref('')
 const isLoading = ref(true)
 const loadError = ref('')
 let stopHeadingTracking
+let refreshActiveHeading
 let postMotionMedia
 let loadToken = 0
+let tocFollowFrame = 0
+let anchorSettleTimer
+let pendingAnchorId = ''
+let tocFollowingPaused = false
 
 const frontmatter = computed(() => post.value?.frontmatter ?? {})
 const publishedDate = computed(() => {
@@ -260,17 +272,87 @@ const articleMetaItems = computed(() => {
   ].filter((item) => item.label)
 })
 
-const displayToc = computed(() =>
-  (post.value?.toc || []).map((item, index) => ({
-    ...item,
-    number: tocNumber(index),
-    text: cleanHeadingText(item.text),
-  })),
-)
+const displayToc = computed(() => {
+  const grouped = post.value?.blocks.some((block) => block.sourceLevel === 1)
+  const counters = [0, 0, 0]
+  return (post.value?.toc || []).map((item, index) => {
+    const depth = item.level - 2
+    counters[depth] += 1
+    counters.fill(0, depth + 1)
+    return {
+      ...item,
+      number: grouped ? tocNumber(counters[depth] - 1) : tocNumber(index),
+      text: cleanHeadingText(item.text),
+    }
+  })
+})
+
+function pauseTocFollowing() {
+  tocFollowingPaused = true
+  window.cancelAnimationFrame(tocFollowFrame)
+  // Stop an in-flight follow animation so manual browsing takes precedence.
+  tocList.value?.scrollTo({ top: tocList.value.scrollTop, behavior: 'instant' })
+}
+
+function followActiveTocItem() {
+  tocFollowFrame = 0
+  const list = tocList.value
+  if (tocFollowingPaused || !list || !window.matchMedia('(min-width: 1024px)').matches) return
+  const link = [...list.querySelectorAll('a')].find((item) => item.hash === `#${activeId.value}`)
+  if (!link || list.scrollHeight <= list.clientHeight) return
+  const containerRect = list.getBoundingClientRect()
+  const linkRect = link.getBoundingClientRect()
+  const center = (linkRect.top + linkRect.bottom) / 2 - containerRect.top
+  if (center >= list.clientHeight * 0.2 && center <= list.clientHeight * 0.45 &&
+      linkRect.top >= containerRect.top && linkRect.bottom <= containerRect.bottom) return
+  const top = Math.max(0, Math.min(
+    list.scrollHeight - list.clientHeight,
+    list.scrollTop + center - list.clientHeight * 0.3,
+  ))
+  if (Math.abs(top - list.scrollTop) < 1) return
+  list.scrollTo({
+    top,
+    behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth',
+  })
+}
+
+function scheduleTocFollowing() {
+  if (typeof window === 'undefined') return
+  if (!tocFollowFrame) tocFollowFrame = window.requestAnimationFrame(followActiveTocItem)
+}
+
+function selectTocItem(id) {
+  article.value?.expandHeading(id)
+  tocFollowingPaused = false
+  pendingAnchorId = id
+  activeId.value = id
+  scheduleTocFollowing()
+  settleAnchorSelection()
+}
+
+function refreshArticleLayout() {
+  refreshActiveHeading?.()
+  scheduleTocFollowing()
+}
+
+watch(() => route.hash, (hash) => {
+  article.value?.expandHeading(hash.slice(1))
+})
+
+function settleAnchorSelection() {
+  window.clearTimeout(anchorSettleTimer)
+  anchorSettleTimer = window.setTimeout(() => {
+    pendingAnchorId = ''
+    refreshActiveHeading?.()
+  }, 180)
+}
+
+watch(activeId, scheduleTocFollowing, { flush: 'post' })
 
 function teardownHeadingTracking() {
   stopHeadingTracking?.()
   stopHeadingTracking = undefined
+  refreshActiveHeading = undefined
 }
 
 function teardownPostMotion() {
@@ -328,9 +410,11 @@ function setupHeadingTracking() {
 
   let frame = 0
   let activationTop = 0
+  let previousScrollY = window.scrollY
 
   const updateActiveHeading = () => {
     frame = 0
+    if (pendingAnchorId) return
     let current = targets[0]
     // Match the anchor landing position, allowing for subpixel scroll rounding.
     for (const target of targets) {
@@ -338,23 +422,40 @@ function setupHeadingTracking() {
       current = target
     }
     activeId.value = current.id
+    // Position the directory again even when scrolling within the same section.
+    scheduleTocFollowing()
   }
 
   const scheduleUpdate = () => {
+    if (pendingAnchorId) settleAnchorSelection()
     if (!frame) frame = window.requestAnimationFrame(updateActiveHeading)
+  }
+
+  const onDocumentScroll = () => {
+    const scrollY = window.scrollY
+    if (scrollY === previousScrollY) return
+    previousScrollY = scrollY
+    if (tocFollowingPaused) {
+      tocFollowingPaused = false
+      window.clearTimeout(anchorSettleTimer)
+      pendingAnchorId = ''
+    }
+    scheduleUpdate()
   }
 
   const updateActivationTop = () => {
     activationTop = Number.parseFloat(window.getComputedStyle(targets[0]).scrollMarginTop) || 0
     scheduleUpdate()
+    scheduleTocFollowing()
   }
 
-  window.addEventListener('scroll', scheduleUpdate, { passive: true })
+  refreshActiveHeading = scheduleUpdate
+  window.addEventListener('scroll', onDocumentScroll, { passive: true })
   window.addEventListener('resize', updateActivationTop)
   updateActivationTop()
 
   stopHeadingTracking = () => {
-    window.removeEventListener('scroll', scheduleUpdate)
+    window.removeEventListener('scroll', onDocumentScroll)
     window.removeEventListener('resize', updateActivationTop)
     window.cancelAnimationFrame(frame)
   }
@@ -364,6 +465,13 @@ async function loadPost(slug) {
   const token = (loadToken += 1)
   teardownHeadingTracking()
   teardownPostMotion()
+  if (typeof window !== 'undefined') {
+    window.clearTimeout(anchorSettleTimer)
+    window.cancelAnimationFrame(tocFollowFrame)
+  }
+  tocFollowFrame = 0
+  pendingAnchorId = ''
+  tocFollowingPaused = false
   post.value = null
   activeId.value = ''
   isLoading.value = true
@@ -381,9 +489,15 @@ async function loadPost(slug) {
     isLoading.value = false
   }
 
-  nextTick(() => {
+  nextTick(async () => {
+    if (token !== loadToken) return
+    const anchorId = route.hash.slice(1)
+    article.value?.expandHeading(anchorId)
+    await nextTick()
     if (typeof window !== 'undefined') {
-      window.scrollTo({ top: 0 })
+      const anchor = anchorId && document.getElementById(anchorId)
+      if (anchor) anchor.scrollIntoView({ behavior: 'instant', block: 'start' })
+      else window.scrollTo({ top: 0 })
     }
     setupHeadingTracking()
     setupPostMotion()
@@ -403,5 +517,7 @@ if (import.meta.env.SSR) {
 onBeforeUnmount(() => {
   teardownHeadingTracking()
   teardownPostMotion()
+  window.clearTimeout(anchorSettleTimer)
+  window.cancelAnimationFrame(tocFollowFrame)
 })
 </script>

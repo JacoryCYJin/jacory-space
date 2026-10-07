@@ -1,5 +1,5 @@
 const developmentLibraryEntries = import.meta.env.DEV ? {
-  podcastReadingSummary: { title: '播客内容总结 · 阅读版', description: "将长播客整理为忠实原意的完整总结、核心问题与回答及实际应用，依次实现看懂、说得出、用得上。" },
+  podcastReadingSummary: { title: '播客学习笔记', description: "将播客材料整理为忠实原意、便于理解和复习的学习笔记，再提炼帮助重建知识主线的核心问答，以及可在现实场景中反复调用的判断框架与方法。" },
   podcastContentSummary: { title: '播客内容总结', description: '把口语化播客字幕整理成清晰、可阅读的内容总结与后续选题。' },
   podcastToBlog: { title: '播客转博客初稿', description: '从播客字幕中提炼一条主线，写成去标识化的中文博客初稿。' },
   blogMarkdownPolish: { title: '博客 Markdown 润色', description: '将已有草稿整理为符合 Jacory Space 格式的正式博客 Markdown。' },
@@ -7,9 +7,9 @@ const developmentLibraryEntries = import.meta.env.DEV ? {
 
 const developmentLibraryDetails = import.meta.env.DEV ? {
   podcastReadingSummary: {
-    about: "先通过内容概览与核心内容完整理解节目，再提炼核心问题与回答，最后筛选值得在现实场景中反复调用的判断框架、原则或方法。",
-    usage: "粘贴播客转录文本、提供附件，或上传含 title、source、transcript 字段的 JSON，依次生成完整总结、核心问题与回答和实际应用，结果使用中文。",
-    notes: "只依据实际读取的材料，保留分歧、限定条件和不确定性，说明材料缺失与覆盖范围；后续阶段不得压缩第一阶段，应用不得加入节目之外的方法或建议。",
+    about: "以知识本身为中心，按概念、因果或问题关系组织完整笔记，保留必要解释与代表性材料；完成后再提炼核心问答，最后筛选值得在现实场景中反复调用的实践内容。",
+    usage: "粘贴播客转录文本、提供附件，或上传含 title、source、transcript 字段的 JSON。依次生成中文笔记、问答和实践，整体放在一个 Markdown 代码块中，从 # 笔记 开始。",
+    notes: "只依据实际读取的材料，保留分歧、限定条件和不确定性，必要时区分来源；后续阶段不得压缩完整笔记，不加入节目之外的方法或建议。一级标题仅使用笔记、问答、实践，各一级标题下不得只有一个二级分组。",
   },
   podcastContentSummary: {
     about: '从播客转录中提炼可阅读的内容总结、核心观点、内容脉络与后续选题。',
