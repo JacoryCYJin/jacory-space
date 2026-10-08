@@ -25,7 +25,7 @@
       </div>
     </section>
 
-    <section class="page-gutter pb-20 pt-12 max-lg:pb-10 md:pb-28 md:pt-16">
+    <section class="page-gutter pb-6 pt-6 md:pb-10 md:pt-8">
       <div class="page-frame">
         <div v-if="isLoading || loadError" class="reveal blog-reveal border-y border-line py-10">
           <p class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
@@ -36,7 +36,7 @@
         <div v-else-if="lead" class="reveal blog-reveal">
           <RouterLink
             :to="`/blog/${lead.slug}`"
-            class="group relative grid min-w-0 overflow-hidden border-y border-line py-12 transition-colors duration-300 hover:border-line-strong max-lg:py-10 lg:grid-cols-[minmax(9rem,12rem)_1px_minmax(0,1fr)] lg:gap-x-10 lg:py-16 xl:gap-x-12"
+            class="group relative grid min-w-0 overflow-hidden border-y border-line py-6 transition-colors duration-300 hover:border-line-strong lg:grid-cols-[minmax(9rem,10rem)_1px_minmax(0,1fr)] lg:gap-x-8 lg:py-8"
           >
             <div class="relative z-10 flex min-w-0 flex-col pb-10 max-lg:pb-5 lg:pb-0 lg:pr-8">
               <span class="inline-flex items-center gap-3 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-blue">

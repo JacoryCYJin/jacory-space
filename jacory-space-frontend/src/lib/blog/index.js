@@ -6,6 +6,7 @@
 import { getBlogCategory, listBlogCategorySlugs } from '../../content/blog-categories'
 import { getBlogTopic, listBlogTopicSlugs } from '../../content/blog-topics'
 import { parseDocument } from '../markdown/index.js'
+import { parseTagDefinitions } from './tags.js'
 
 const postModules = import.meta.glob('../../content/blog/*.md', {
   query: '?raw',
@@ -37,21 +38,6 @@ function blogError(message) {
 
 function stripQuotes(value) {
   return String(value).trim().replace(/^["'](.*)["']$/, '$1')
-}
-
-function parseTags(value) {
-  if (value === undefined || value === null || value === '') return []
-  const text = Array.isArray(value) ? value : stripQuotes(String(value).trim())
-
-  const rawTags = Array.isArray(text)
-    ? text
-    : text.startsWith('[') && text.endsWith(']')
-      ? text.slice(1, -1).split(',')
-      : text.split(',')
-
-  return rawTags
-    .map((tag) => stripQuotes(tag).trim())
-    .filter(Boolean)
 }
 
 function parseFrontmatter(raw, fileName) {
@@ -93,15 +79,9 @@ function parseFrontmatter(raw, fileName) {
     frontmatter[key] = stripQuotes(value)
   }
 
-  if (frontmatter.tags !== undefined) {
-    const tags = parseTags(frontmatter.tags)
-    if (!Array.isArray(tags)) {
-      blogError(`${fileName} invalid tags frontmatter: expected an array`)
-    }
-    frontmatter.tags = tags
-  } else {
-    frontmatter.tags = []
-  }
+  const tags = parseTagDefinitions(frontmatter.tags)
+  frontmatter.tags = tags.map((tag) => tag.name)
+  frontmatter.tagColors = Object.fromEntries(tags.filter((tag) => tag.color).map((tag) => [tag.name, tag.color]))
 
   return frontmatter
 }
@@ -181,6 +161,7 @@ function toMeta(slug, frontmatter) {
     topicSortOrder: topic?.sortOrder || 0,
     readTime: frontmatter.readTime || '',
     tags: frontmatter.tags,
+    tagColors: frontmatter.tagColors,
   }
 }
 
@@ -251,7 +232,7 @@ async function getLinkPreviewsBySlug(slug) {
 
 export async function getAllPostMeta() {
   const metas = await ensureMetaIndex()
-  return metas.map((meta) => ({ ...meta, tags: [...meta.tags] }))
+  return metas.map((meta) => ({ ...meta, tags: [...meta.tags], tagColors: { ...meta.tagColors } }))
 }
 
 export async function getPostBySlug(slug) {
