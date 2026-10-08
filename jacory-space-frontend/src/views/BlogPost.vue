@@ -70,7 +70,7 @@
                 </div>
                 <h1
                   data-post-enter
-                  class="mt-10 break-words text-balance font-sans text-4xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl"
+                  class="mt-10 break-words text-wrap font-sans text-4xl font-semibold leading-[1.1] tracking-tight text-foreground md:text-5xl lg:text-6xl"
                 >
                   {{ frontmatter.title }}
                 </h1>
