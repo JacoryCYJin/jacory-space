@@ -334,12 +334,12 @@ function renderTable(block) {
   ])
 }
 
-function renderList(block, { nested = false } = {}) {
+function renderList(block, { nested = false, compact = false } = {}) {
   const tag = block.ordered ? 'ol' : 'ul'
   return h(
     tag,
     {
-      class: `${nested ? 'mt-2 space-y-1 pl-5' : 'my-7 space-y-2.5 pl-5'} min-w-0 text-base leading-8 text-foreground md:text-lg ${
+      class: `${nested ? 'mt-2 space-y-1 pl-5' : compact ? 'my-5 space-y-1.5 pl-5' : 'my-7 space-y-2.5 pl-5'} min-w-0 text-base text-foreground md:text-lg ${compact ? 'leading-[1.625] md:leading-7' : 'leading-8'} ${
         block.ordered ? 'list-decimal' : block.items.some((item) => item.task !== null) ? 'list-none' : 'list-disc'
       } marker:text-blue-soft`,
     },
@@ -356,7 +356,7 @@ function renderList(block, { nested = false } = {}) {
             : null,
           h('span', renderInline(item.inlines)),
         ]),
-        ...(item.children || []).map((child) => renderList(child, { nested: true })),
+        ...(item.children || []).map((child) => renderList(child, { nested: true, compact })),
       ]),
     ),
   )
@@ -513,6 +513,8 @@ function renderBlock(block, context = {}) {
               ? 'mb-4 mt-10 text-xl md:text-2xl'
               : context.compact && block.level === 4
                 ? 'mb-3 mt-8 text-lg md:text-xl [&+p]:mt-3'
+                : context.compact && block.level >= 5
+                  ? 'mb-2 mt-6 text-base md:text-lg [&+p]:mt-2'
                 : 'mb-4 mt-12 ' + (block.sourceLevel && block.level >= 4 ? (block.level === 4 ? 'text-lg' : 'text-base') : 'text-xl')),
         },
         renderInline(block.sourceLevel ? block.inlines : normalizeHeadingInlines(block.inlines)),
@@ -525,10 +527,10 @@ function renderBlock(block, context = {}) {
         renderInline(block.inlines),
       )
     case 'blockquote':
-      return h('blockquote', { class: 'article-quote my-10 min-w-0 border-l border-line-strong pl-5' }, [
+      return h('blockquote', { class: 'article-quote min-w-0 border-l-[1.5px] border-line-strong pl-5 ' + (context.compact ? 'my-5' : 'my-10') }, [
         h(
           'p',
-          { class: 'text-base italic leading-8 text-foreground md:text-lg' },
+          { class: 'text-base italic text-foreground md:text-lg ' + (context.compact ? 'leading-[1.625] md:leading-7' : 'leading-8') },
           renderInline(block.inlines),
         ),
         block.attribution
@@ -536,7 +538,7 @@ function renderBlock(block, context = {}) {
           : null,
       ])
     case 'list': {
-      return renderList(block)
+      return renderList(block, { compact: context.compact })
     }
     case 'callout':
       return renderCallout(block)
@@ -547,7 +549,7 @@ function renderBlock(block, context = {}) {
     case 'table':
       return renderTable(block)
     case 'hr':
-      return h('hr', { class: 'my-14 border-0 border-t border-line' })
+      return h('hr', { class: 'border-0 border-t border-line ' + (context.compact ? 'my-8 [&+h2]:mt-0 [&+h3]:mt-0 [&+h4]:mt-0 [&+h5]:mt-0 [&+h6]:mt-0' : 'my-14') })
     case 'figure':
       return renderFigure(block)
     default:
@@ -870,8 +872,8 @@ export default {
 .article-quote::before {
   position: absolute;
   top: 0;
-  left: -1px;
-  width: 1px;
+  left: -1.5px;
+  width: 1.5px;
   height: 100%;
   content: "";
   background: var(--blue);
