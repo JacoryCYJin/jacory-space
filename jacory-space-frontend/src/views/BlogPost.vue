@@ -83,18 +83,28 @@
                 </p>
 
                 <div
-                  v-if="articleMetaItems.length"
+                  v-if="articleMetaItems.length || post.meta.tags.length"
                   data-post-enter
                   class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-haze"
                 >
-                  <span
-                    v-for="item in articleMetaItems"
-                    :key="item.key"
-                    class="inline-flex min-w-0 items-center gap-2 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.12em]"
+                  <div v-if="articleMetaItems.length" class="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-3">
+                    <span
+                      v-for="item in articleMetaItems"
+                      :key="item.key"
+                      class="inline-flex min-w-0 items-center gap-2 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.12em]"
+                    >
+                      <span class="h-1 w-1 rounded-full bg-line-strong" aria-hidden="true"></span>
+                      <span class="break-words">{{ item.label }}</span>
+                    </span>
+                  </div>
+                  <ul
+                    v-if="post.meta.tags.length"
+                    class="flex min-w-0 flex-wrap gap-x-5 gap-y-2 font-mono text-xs leading-6 text-muted-foreground"
                   >
-                    <span class="h-1 w-1 rounded-full bg-line-strong" aria-hidden="true"></span>
-                    <span class="break-words">{{ item.label }}</span>
-                  </span>
+                    <li v-for="tag in post.meta.tags" :key="tag" :style="post.meta.tagColors?.[tag] ? { color: post.meta.tagColors[tag] } : undefined" class="min-w-0 break-words">
+                      # {{ tag }}
+                    </li>
+                  </ul>
                 </div>
               </header>
 
