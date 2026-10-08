@@ -508,8 +508,12 @@ function renderBlock(block, context = {}) {
         {
           id: block.id,
           class:
-            'mb-4 mt-12 scroll-mt-28 break-words font-sans font-semibold leading-snug tracking-tight text-foreground ' +
-            (block.sourceLevel && block.level >= 4 ? (block.level === 4 ? 'text-lg' : 'text-base') : 'text-xl'),
+            'scroll-mt-28 break-words font-sans font-semibold leading-snug tracking-tight text-foreground ' +
+            (context.compact && block.level === 3
+              ? 'mb-4 mt-10 text-xl md:text-2xl'
+              : context.compact && block.level === 4
+                ? 'mb-3 mt-8 text-lg md:text-xl [&+p]:mt-3'
+                : 'mb-4 mt-12 ' + (block.sourceLevel && block.level >= 4 ? (block.level === 4 ? 'text-lg' : 'text-base') : 'text-xl')),
         },
         renderInline(block.sourceLevel ? block.inlines : normalizeHeadingInlines(block.inlines)),
       )
