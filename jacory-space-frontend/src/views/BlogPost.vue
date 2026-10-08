@@ -203,8 +203,6 @@ let refreshActiveHeading
 let postMotionMedia
 let loadToken = 0
 let tocFollowFrame = 0
-let anchorSettleTimer
-let pendingAnchorId = ''
 let tocFollowingPaused = false
 
 const frontmatter = computed(() => post.value?.frontmatter ?? {})
@@ -300,6 +298,7 @@ const displayToc = computed(() => {
 function pauseTocFollowing() {
   tocFollowingPaused = true
   window.cancelAnimationFrame(tocFollowFrame)
+  tocFollowFrame = 0
   // Stop an in-flight follow animation so manual browsing takes precedence.
   tocList.value?.scrollTo({ top: tocList.value.scrollTop, behavior: 'instant' })
 }
@@ -334,10 +333,9 @@ function scheduleTocFollowing() {
 function selectTocItem(id) {
   article.value?.expandHeading(id)
   tocFollowingPaused = false
-  pendingAnchorId = id
   activeId.value = id
   scheduleTocFollowing()
-  settleAnchorSelection()
+  nextTick(refreshArticleLayout)
 }
 
 function refreshArticleLayout() {
@@ -347,15 +345,8 @@ function refreshArticleLayout() {
 
 watch(() => route.hash, (hash) => {
   article.value?.expandHeading(hash.slice(1))
+  nextTick(refreshArticleLayout)
 })
-
-function settleAnchorSelection() {
-  window.clearTimeout(anchorSettleTimer)
-  anchorSettleTimer = window.setTimeout(() => {
-    pendingAnchorId = ''
-    refreshActiveHeading?.()
-  }, 180)
-}
 
 watch(activeId, scheduleTocFollowing, { flush: 'post' })
 
@@ -390,11 +381,15 @@ function setupPostMotion() {
           y: 0,
           clearProps: 'transform,opacity,visibility',
         })
+        refreshArticleLayout()
         return
       }
 
       gsap
-        .timeline({ defaults: { duration: 0.78, ease: 'power3.out' } })
+        .timeline({
+          defaults: { duration: 0.78, ease: 'power3.out' },
+          onComplete: refreshArticleLayout,
+        })
         .fromTo(
           enterTargets,
           { autoAlpha: 0, y: 14 },
@@ -424,7 +419,6 @@ function setupHeadingTracking() {
 
   const updateActiveHeading = () => {
     frame = 0
-    if (pendingAnchorId) return
     let current = targets[0]
     // Match the anchor landing position, allowing for subpixel scroll rounding.
     for (const target of targets) {
@@ -437,7 +431,6 @@ function setupHeadingTracking() {
   }
 
   const scheduleUpdate = () => {
-    if (pendingAnchorId) settleAnchorSelection()
     if (!frame) frame = window.requestAnimationFrame(updateActiveHeading)
   }
 
@@ -447,8 +440,6 @@ function setupHeadingTracking() {
     previousScrollY = scrollY
     if (tocFollowingPaused) {
       tocFollowingPaused = false
-      window.clearTimeout(anchorSettleTimer)
-      pendingAnchorId = ''
     }
     scheduleUpdate()
   }
@@ -461,11 +452,13 @@ function setupHeadingTracking() {
 
   refreshActiveHeading = scheduleUpdate
   window.addEventListener('scroll', onDocumentScroll, { passive: true })
+  window.addEventListener('scrollend', scheduleUpdate)
   window.addEventListener('resize', updateActivationTop)
   updateActivationTop()
 
   stopHeadingTracking = () => {
     window.removeEventListener('scroll', onDocumentScroll)
+    window.removeEventListener('scrollend', scheduleUpdate)
     window.removeEventListener('resize', updateActivationTop)
     window.cancelAnimationFrame(frame)
   }
@@ -476,11 +469,9 @@ async function loadPost(slug) {
   teardownHeadingTracking()
   teardownPostMotion()
   if (typeof window !== 'undefined') {
-    window.clearTimeout(anchorSettleTimer)
     window.cancelAnimationFrame(tocFollowFrame)
   }
   tocFollowFrame = 0
-  pendingAnchorId = ''
   tocFollowingPaused = false
   post.value = null
   activeId.value = ''
@@ -527,7 +518,6 @@ if (import.meta.env.SSR) {
 onBeforeUnmount(() => {
   teardownHeadingTracking()
   teardownPostMotion()
-  window.clearTimeout(anchorSettleTimer)
   window.cancelAnimationFrame(tocFollowFrame)
 })
 </script>
