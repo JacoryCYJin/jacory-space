@@ -3,7 +3,7 @@
     <main ref="pageRoot" class="grain min-h-screen bg-background">
     <section class="page-gutter pt-20 md:pt-24">
       <div class="page-frame">
-        <header class="grid gap-12 border-b border-line pb-10 md:pb-14 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,34rem)] lg:items-end lg:gap-16">
+        <header class="grid gap-12 pb-4 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,34rem)] lg:items-end lg:gap-16">
           <div data-library-enter>
             <p class="tech mb-5 text-xs text-blue">02 — {{ t('library.kicker') }}</p>
             <h1 class="max-w-3xl font-sans text-5xl font-medium leading-[0.95] tracking-tight text-foreground md:text-7xl">
@@ -27,7 +27,7 @@
       </div>
     </section>
 
-    <section class="page-gutter pb-20 pt-12 md:pb-28 md:pt-16">
+    <section class="page-gutter pb-20 pt-4 md:pb-28">
       <div class="page-frame grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[18rem_minmax(0,1fr)] xl:gap-20">
         <aside class="border-b border-line pb-10 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
           <div>
@@ -47,8 +47,8 @@
             </nav>
           </div>
 
-          <div class="mt-12 border-t border-line pt-8">
-            <div class="mb-5 flex items-center justify-between gap-4">
+          <div class="mt-6">
+            <div class="mb-3 flex items-center justify-between gap-4">
               <p class="tech text-xs">{{ t('library.tagsLabel') }}</p>
               <button v-if="selectedTags.length > 0" type="button" class="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-blue" @click="selectedTags = []">
                 {{ t('library.clearTags') }}
@@ -89,13 +89,13 @@
             <span class="font-mono text-xs text-haze">{{ String(filteredEntries.length).padStart(2, '0') }} / {{ String(libraryEntries.length).padStart(2, '0') }}</span>
           </div>
 
-          <div v-if="filteredEntries.length" :class="viewMode === 'list' ? 'divide-y divide-line' : 'grid gap-x-12 gap-y-16 lg:grid-cols-2'">
+          <div v-if="filteredEntries.length" :class="viewMode === 'list' ? 'divide-y divide-line' : 'grid gap-x-12 gap-y-8 lg:grid-cols-2'">
             <article
               v-for="(entry, index) in filteredEntries"
               :key="entry.id"
               class="group"
               :class="[
-                viewMode === 'list' ? 'grid gap-6 py-8 first:pt-8 md:grid-cols-[6rem_minmax(0,1fr)_10rem] md:gap-8 md:py-10' : 'flex min-h-64 flex-col gap-7 border-t border-line pt-4',
+                viewMode === 'list' ? 'grid gap-6 py-8 first:pt-8 md:grid-cols-[6rem_minmax(0,1fr)_10rem] md:gap-8 md:py-10' : 'flex min-h-64 flex-col gap-5 border-t border-line pt-4',
                 viewMode === 'grid' && index === 0 ? 'border-t-0' : '',
                 viewMode === 'grid' && index === 1 ? 'lg:border-t-0' : '',
               ]"
@@ -114,7 +114,7 @@
                   <span v-for="tag in entry.tags" :key="tag"># {{ tagLabel(tag) }}</span>
                 </div>
               </div>
-              <div class="flex items-end justify-between gap-5" :class="viewMode === 'list' ? 'md:flex-col md:items-end md:justify-between md:text-right' : 'mt-auto pt-8'">
+              <div class="flex items-end justify-between gap-5" :class="viewMode === 'list' ? 'md:flex-col md:items-end md:justify-between md:text-right' : 'mt-auto'">
                 <div class="font-mono text-xs leading-6 text-muted-foreground"><p>{{ entryVersion(entry) }}</p><p>{{ entry.type === 'skill' && entry.sourceType === 'external' ? t('library.catalogedAtLabel') : t('library.updatedLabel') }} {{ entry.updated }}</p></div>
                 <div class="flex items-center gap-4">
                   <button v-if="canCopyEntry(entry)" type="button" class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-foreground transition-colors hover:text-blue" @click="copyEntry(entry)">
