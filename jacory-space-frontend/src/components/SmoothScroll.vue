@@ -3,11 +3,13 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeUnmount, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import Lenis from 'lenis'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
+const route = useRoute()
 let lenis
 let motionQuery
 
@@ -56,6 +58,25 @@ function handleMotionPreference() {
 
   startLenis()
 }
+
+watch(
+  () => route.path,
+  (path, previousPath, onCleanup) => {
+    if (path !== '/blog' || typeof window === 'undefined') return
+
+    // Reset after the new page renders and native history restoration settles.
+    const frame = window.requestAnimationFrame(() => {
+      if (lenis) {
+        lenis.resize()
+        lenis.scrollTo(0, { immediate: true, force: true })
+      } else {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' })
+      }
+    })
+    onCleanup(() => window.cancelAnimationFrame(frame))
+  },
+  { flush: 'post' },
+)
 
 onMounted(() => {
   motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
