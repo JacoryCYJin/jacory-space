@@ -1,7 +1,7 @@
 <template>
-  <main ref="pageRoot" class="grain min-h-screen bg-background pt-16">
-    <section class="page-gutter pb-8 md:pb-10">
-      <div class="page-frame">
+  <main ref="pageRoot" class="about-page grain min-h-screen bg-background pt-16">
+    <section class="about-sheet page-gutter pb-8 md:pb-10">
+      <div class="about-sheet-frame page-frame">
         <header class="about-sheet-header flex items-end justify-between">
           <div>
             <p class="font-mono text-xs tracking-[0.16em] text-blue">04 — IDENTITY.SHEET</p>
@@ -9,8 +9,8 @@
           </div>
         </header>
 
-        <div class="relative mt-8 lg:mt-10">
-          <div class="relative grid grid-cols-12 gap-y-12 lg:grid-cols-[repeat(13,minmax(0,1fr))] lg:min-h-[38rem] lg:overflow-visible">
+        <div class="about-hero relative mt-8 lg:mt-10">
+          <div class="about-hero-grid relative grid grid-cols-12 gap-y-12 lg:grid-cols-[repeat(13,minmax(0,1fr))] lg:min-h-[38rem] lg:overflow-visible">
             <figure
               class="about-identity-illustration relative col-span-12 flex min-h-[22rem] items-center justify-center overflow-hidden border-b border-line pb-8 lg:pointer-events-none lg:absolute lg:left-[clamp(-9rem,-7vw,-5rem)] lg:z-0 lg:overflow-visible lg:border-b-0 lg:pb-0 xl:left-[clamp(-7rem,-5vw,-3rem)] 2xl:left-[clamp(-3rem,-1.5vw,1rem)]"
             >
@@ -82,7 +82,7 @@
                 <figcaption class="font-mono text-xs tracking-[0.14em] text-blue">
                   // AVATAR.DRAFT
                 </figcaption>
-                <div class="mt-4 flex min-h-[13.5rem] items-center justify-center pt-4">
+                <div class="about-avatar-media mt-4 flex min-h-[13.5rem] items-center justify-center pt-4">
                   <img
                     :src="avatarIllustration"
                     alt=""
@@ -394,3 +394,87 @@ onBeforeUnmount(() => {
   motionMedia?.revert()
 })
 </script>
+
+<style scoped>
+/* Keep the full identity sheet in one desktop viewport; short windows retain flow. */
+@media (min-width: 1024px) and (min-height: 720px) {
+  .about-page {
+    height: 100dvh;
+    min-height: 0;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto auto;
+  }
+
+  .about-sheet {
+    min-height: 0;
+    padding-bottom: 1rem;
+  }
+
+  .about-sheet-frame {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .about-sheet-header {
+    flex-shrink: 0;
+  }
+
+  .about-hero {
+    flex: 1;
+    min-height: 0;
+    margin-top: 1.5rem;
+  }
+
+  .about-hero-grid {
+    height: 100%;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  .about-identity-illustration,
+  .about-identity-media {
+    height: 100%;
+    min-height: 0;
+  }
+
+  .about-identity-image {
+    height: 100%;
+    max-height: 100%;
+    width: auto;
+  }
+
+  .about-side-panel {
+    top: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .about-side-panel > section,
+  .about-avatar-draft > figcaption {
+    flex-shrink: 0;
+  }
+
+  .about-avatar-draft {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+  }
+
+  .about-avatar-media {
+    flex: 1;
+    min-height: 0;
+    margin-top: 0.5rem;
+    padding-top: 0;
+  }
+
+  .about-avatar-media img {
+    height: 100%;
+    max-height: 20rem;
+    width: 100%;
+  }
+}
+</style>
