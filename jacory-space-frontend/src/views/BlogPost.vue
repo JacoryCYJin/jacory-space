@@ -108,7 +108,7 @@
                 </div>
               </header>
 
-              <div data-post-enter class="mt-12 max-w-[54rem]">
+              <div data-post-enter class="mt-12 max-w-[54rem] font-reading">
                 <MarkdownArticle ref="article" compact :blocks="post.blocks" :collapsible-section="frontmatter.collapsibleSection || ''" @layout-change="refreshArticleLayout" />
               </div>
 
