@@ -3,7 +3,7 @@
     <main ref="pageRoot" class="grain min-h-screen bg-background">
     <section class="page-gutter pt-20 md:pt-24">
       <div class="page-frame">
-        <div class="reveal blog-reveal flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-line pb-4">
+        <div class="reveal blog-reveal flex flex-wrap items-center justify-between gap-x-6 gap-y-2 pb-4">
           <span class="min-w-0 break-words font-mono text-xs tracking-[0.16em] text-blue">{{ t('blog.fieldNotes.journalLabel') }}</span>
           <span class="inline-flex min-w-0 items-center gap-3 break-words text-right font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
             <span class="h-2 w-2 shrink-0 rounded-full bg-blue" aria-hidden="true"></span>
@@ -11,13 +11,13 @@
           </span>
         </div>
 
-        <div class="reveal blog-reveal" style="transition-delay: 80ms">
+        <div class="reveal blog-reveal mt-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-12" style="transition-delay: 80ms">
           <h1
-            class="mt-10 max-w-4xl break-words text-balance font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-7xl"
+            class="min-w-0 max-w-4xl break-words text-balance font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-7xl"
           >
             {{ t('blog.fieldNotes.titleLead') }}<span class="italic text-blue">{{ t('blog.fieldNotes.titleAccent') }}</span>
           </h1>
-          <div class="mt-6 max-w-2xl space-y-2 text-sm leading-relaxed text-muted-foreground">
+          <div class="min-w-0 max-w-2xl space-y-2 text-sm leading-relaxed text-muted-foreground lg:max-w-md">
             <p class="font-mono text-xs uppercase tracking-[0.12em] text-blue">{{ t('blog.fieldNotes.subtitleLead') }}</p>
             <p class="text-pretty">{{ t('blog.fieldNotes.subtitleBody') }}</p>
           </div>
