@@ -8,7 +8,7 @@
         class="pointer-events-none absolute left-[15%] top-[-10%] z-0 hidden h-[150%] w-auto max-w-none -translate-x-1/2 select-none opacity-[0.14] mix-blend-multiply lg:block"
       >
 
-      <div class="relative z-10 grid w-full grid-cols-[minmax(0,1fr)] border-line px-6 md:px-9 lg:grid-cols-[360px_minmax(0,1fr)] lg:px-4 xl:grid-cols-[372px_minmax(0,1fr)] xl:px-8 2xl:grid-cols-[380px_minmax(0,1fr)] 2xl:px-20">
+      <div class="relative z-10 grid w-full grid-cols-[minmax(0,1fr)] border-line px-6 md:px-9 lg:grid-cols-[328px_minmax(0,1fr)] lg:px-4 xl:grid-cols-[332px_minmax(0,1fr)] xl:px-8 2xl:grid-cols-[340px_minmax(0,1fr)] 2xl:px-20">
         <aside class="self-start border-b-0 px-0 pb-0 pt-2 lg:sticky lg:top-[var(--navbar-height)] lg:flex lg:h-[calc(100svh-var(--navbar-height))] lg:flex-col lg:border-b-0 lg:border-r lg:px-[2.35rem] lg:pb-6 lg:pt-4 xl:px-10 2xl:px-12">
           <section data-tools-enter class="sidebar-hero-section">
             <div class="grid gap-5 lg:gap-4 xl:gap-6">
