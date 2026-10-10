@@ -16,9 +16,9 @@ export default {
       roleLabel: '身份',
       role: '设计者 · 开发者 · 写作者 · 创作者',
       baseLabel: '实践方向',
-      base: '软件开发 · Web 体验设计 · Agent 系统 · PHOTO & VIDEO',
+      base: '软件开发 · Web 体验设计 · AI 应用 · 影像创作',
       focusLabel: '系统',
-      focus: '个人网站 · 视频 · 知识库 · 工作流',
+      focus: '个人网站 · 知识库 · 工作流',
       statusLabel: '状态',
       status: '公开构建中'
     },
