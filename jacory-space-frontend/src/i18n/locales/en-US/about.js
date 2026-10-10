@@ -16,9 +16,9 @@ export default {
       roleLabel: 'Identity',
       role: 'Designer · Developer · Writer · Creator',
       baseLabel: 'Focus',
-      base: 'Software Development · Web Experience · Agent Systems · PHOTO & VIDEO',
+      base: 'Software Development · Web Experience Design · AI Applications · Photography & Video Creation',
       focusLabel: 'System',
-      focus: 'Personal Site · Videos · Knowledge Base · Workflows',
+      focus: 'Personal Site · Knowledge Base · Workflows',
       statusLabel: 'Status',
       status: 'Building in public'
     },
