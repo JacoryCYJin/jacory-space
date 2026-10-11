@@ -38,8 +38,8 @@ export const libraryEntries = [
     detailKey: 'blogMarkdownPolish',
     content: blogMarkdownPolish,
     tags: ['writing', 'markdown'],
-    version: 'v1.0.0',
-    updated: '2026.08.03',
+    version: 'v1.1.0',
+    updated: '2026.10.11',
   },
   {
     id: 'minecraft-skin-preview',

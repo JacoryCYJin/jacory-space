@@ -233,25 +233,7 @@ const clarity = true
 ![figure:inline 图片描述](/images/blog/example.svg "图片标题")
 ```
 
-## 提示块
-
-Note：
-
-```md
-:::note
-这是 note 内容。
-:::
-```
-
-Warning：
-
-```md
-:::warning
-这是 warning 内容。
-:::
-```
-
-Highlight：
+## 高亮块
 
 ```md
 :::highlight

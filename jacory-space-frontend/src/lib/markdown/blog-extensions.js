@@ -1,4 +1,4 @@
-export const CALLOUT_START_RE = /^:::(note|warning|highlight|link)\s*$/i
+export const CALLOUT_START_RE = /^:::(highlight|link)\s*$/i
 export const CALLOUT_END_RE = /^:::\s*$/
 export const FIGURE_MARKER_RE = /^figure:(right|wide|inline)\s+/
 

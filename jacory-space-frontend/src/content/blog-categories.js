@@ -23,6 +23,12 @@ export const blogCategories = [
     labelKey: 'blog.entryCategories.THINKING',
     sortOrder: 40,
   },
+  {
+    slug: 'notes',
+    key: 'NOTES',
+    labelKey: 'blog.entryCategories.NOTES',
+    sortOrder: 50,
+  },
 ]
 
 const categoriesBySlug = new Map(blogCategories.map((category) => [category.slug, category]))

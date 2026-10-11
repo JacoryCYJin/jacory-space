@@ -66,6 +66,7 @@ export default {
       notFoundTitle: 'この記事は存在しません'
     },
     entryCategories: {
+      NOTES: 'ノート',
       WEEKLY: '週刊',
       RESEARCH: 'リサーチ',
       THINKING: '思考',

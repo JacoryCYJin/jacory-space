@@ -179,8 +179,19 @@ export function parseBlocks(body) {
     if (callout) {
       const variant = callout[1].toLowerCase()
       const buffer = []
+      let depth = 1
+      let inCodeFence = false
       i++
-      while (i < lines.length && !CALLOUT_END_RE.test(lines[i].trim())) {
+      while (i < lines.length) {
+        const current = lines[i].trim()
+        if (/^```/.test(current)) inCodeFence = !inCodeFence
+        if (!inCodeFence) {
+          if (CALLOUT_START_RE.test(current)) depth++
+          else if (CALLOUT_END_RE.test(current)) {
+            depth--
+            if (depth === 0) break
+          }
+        }
         buffer.push(lines[i])
         i++
       }
