@@ -66,6 +66,7 @@ export default {
       notFoundTitle: '这篇笔记不存在'
     },
     entryCategories: {
+      NOTES: '笔记',
       WEEKLY: '周刊',
       RESEARCH: '调研',
       THINKING: '思考',

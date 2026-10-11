@@ -9,6 +9,7 @@ const INLINE_CODE_CLASS =
   'break-words rounded-sm border border-line bg-card px-1.5 py-0.5 font-mono text-sm text-foreground'
 const META_LABEL_CLASS =
   'font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em]'
+const CALLOUT_CONTENT_CLASS = 'min-w-0 space-y-3 [&>*]:my-0'
 const HEADING_NUMBER_RE = /^\s*\d{1,2}\s*(?:[.．、|｜/])\s*/
 const COLOR_CLASSES = {
   default: 'text-[var(--blog-color-default)]',
@@ -362,28 +363,11 @@ function renderList(block, { nested = false, compact = false } = {}) {
   )
 }
 
-function renderCallout(block) {
-  if (block.variant === 'highlight') {
-    return renderHighlight(block)
-  }
-
-  const isWarning = block.variant === 'warning'
-  const labelClass = isWarning ? 'text-foreground' : 'text-blue'
-  const borderClass = isWarning ? 'border-line-strong' : 'border-line'
-  return h(
-    'aside',
-    { class: `article-callout my-8 min-w-0 border-y py-5 ${borderClass}` },
-    [
-      h('p', { class: `${META_LABEL_CLASS} mb-3 ${labelClass}` }, isWarning ? 'WARNING' : 'NOTE'),
-      h('div', { class: 'space-y-1' }, block.blocks.map(renderBlock)),
-    ],
-  )
-}
-
 function renderHighlight(block) {
-  return h('aside', { class: 'article-callout article-callout-highlight my-8 min-w-0 border border-blue/30 bg-blue/5 px-5 py-5' }, [
-    h('p', { class: `${META_LABEL_CLASS} mb-3 text-blue` }, 'HIGHLIGHT'),
-    h('div', { class: 'space-y-1' }, block.blocks.map(renderBlock)),
+  return h('aside', { class: 'article-callout article-callout-highlight my-8 min-w-0 border border-blue/30 bg-blue/5 p-4' }, [
+    h('div', { class: CALLOUT_CONTENT_CLASS }, block.blocks.map((child) =>
+      child.type === 'linkPreview' ? renderLinkPreview(child, { embedded: true }) : renderBlock(child),
+    )),
   ])
 }
 
@@ -395,7 +379,7 @@ function linkHost(url) {
   }
 }
 
-function renderLinkPreview(block) {
+function renderLinkPreview(block, { embedded = false } = {}) {
   if (!block.url) return null
   const title = block.title || block.url
   const host = linkHost(block.url)
@@ -411,12 +395,13 @@ function renderLinkPreview(block) {
       target: '_blank',
       rel: 'noopener noreferrer',
       class:
-        'group relative my-8 grid w-full min-w-0 max-w-full overflow-hidden rounded-md border border-line bg-card transition-colors hover:border-line-strong md:grid-cols-[minmax(0,1fr)_minmax(180px,34%)]',
+        'group relative grid w-full min-w-0 max-w-full overflow-hidden transition-colors md:grid-cols-[minmax(0,1fr)_minmax(180px,34%)] ' +
+        (embedded ? 'bg-transparent' : 'my-8 rounded-md border border-line bg-card hover:border-line-strong'),
     },
     [
       h(
         'span',
-        { class: 'min-w-0 p-5 md:p-6' },
+        { class: embedded ? 'min-w-0 py-3 md:pr-6' : 'min-w-0 p-5 md:p-6' },
         [
           h(
             'span',
@@ -541,7 +526,7 @@ function renderBlock(block, context = {}) {
       return renderList(block, { compact: context.compact })
     }
     case 'callout':
-      return renderCallout(block)
+      return renderHighlight(block)
     case 'linkPreview':
       return renderLinkPreview(block)
     case 'code':
@@ -748,7 +733,7 @@ export default {
 .article-body {
   --article-marker-default: rgba(249, 213, 68, 0.82);
   --article-marker-gray: rgba(170, 176, 184, 0.55);
-  --article-marker-blue: rgba(38, 147, 255, 0.62);
+  --article-marker-blue: var(--blue);
   --article-marker-green: rgba(45, 198, 128, 0.58);
   --article-marker-yellow: rgba(249, 213, 68, 0.82);
   --article-marker-orange: rgba(255, 159, 64, 0.62);
@@ -825,6 +810,7 @@ export default {
 
 .article-marker-blue {
   background-color: var(--article-marker-blue);
+  color: var(--primary-foreground);
 }
 
 .article-marker-green {
@@ -874,15 +860,10 @@ export default {
 
 .article-callout {
   position: relative;
-  background:
-    linear-gradient(
-      to right,
-      color-mix(in srgb, var(--blue) 7%, transparent),
-      transparent 42%
-    );
 }
 
 .article-callout-highlight {
+  background: color-mix(in srgb, var(--blue) 5%, var(--background));
   box-shadow: inset 1px 0 0 var(--blue);
 }
 

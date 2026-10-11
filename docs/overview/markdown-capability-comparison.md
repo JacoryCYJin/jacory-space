@@ -50,7 +50,7 @@
 | 代码块 | 支持 | 支持 | 支持 | Jacory Space 支持 fenced code |
 | 图片 | 支持 | 支持 | 支持 | Jacory Space 支持普通图、右浮动、宽图 |
 | 图片 caption | 支持 | 部分 | 支持 | Jacory Space 用图片 title / alt 生成 caption |
-| Callout / 提示块 | 支持 | 支持 | 支持 | Jacory Space 当前支持 note / warning |
+| Callout / 提示块 | 支持 | 支持 | 支持 | Jacory Space 仅保留 `:::highlight` 高亮块 |
 | 目录 / TOC | 支持 | 支持 | 支持 | Jacory Space 从标题自动生成 toc |
 | 自定义锚点 | 部分 | 部分 | 支持 | Notion / 飞书偏块链接；Jacory Space 支持 `{#id}` |
 | Frontmatter 元数据 | 不适用 | 不适用 | 支持 | Jacory Space 用于标题、分类、排序等 |

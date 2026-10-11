@@ -66,6 +66,7 @@ export default {
       notFoundTitle: 'This entry does not exist'
     },
     entryCategories: {
+      NOTES: 'Notes',
       WEEKLY: 'WEEKLY',
       RESEARCH: 'RESEARCH',
       THINKING: 'THINKING',
