@@ -331,7 +331,6 @@ function scheduleTocFollowing() {
 }
 
 function selectTocItem(id) {
-  article.value?.expandHeading(id)
   tocFollowingPaused = false
   activeId.value = id
   scheduleTocFollowing()
@@ -343,8 +342,7 @@ function refreshArticleLayout() {
   scheduleTocFollowing()
 }
 
-watch(() => route.hash, (hash) => {
-  article.value?.expandHeading(hash.slice(1))
+watch(() => route.hash, () => {
   nextTick(refreshArticleLayout)
 })
 
@@ -493,7 +491,6 @@ async function loadPost(slug) {
   nextTick(async () => {
     if (token !== loadToken) return
     const anchorId = route.hash.slice(1)
-    article.value?.expandHeading(anchorId)
     await nextTick()
     if (typeof window !== 'undefined') {
       const anchor = anchorId && document.getElementById(anchorId)

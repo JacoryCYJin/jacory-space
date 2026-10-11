@@ -7,7 +7,7 @@ const developmentLibraryEntries = import.meta.env.DEV ? {
 
 const developmentLibraryDetails = import.meta.env.DEV ? {
   podcastReadingSummary: {
-    about: "Organize complete knowledge notes around concepts, causes, or questions, preserving necessary explanations and representative supporting material. Then extract core questions and answers and select practical applications worth reusing in real situations.",
+    about: "Organize independently understandable notes around the episode’s central knowledge thread, using concepts, causes, or questions. Preserve necessary explanations and representative supporting material while combining repeated explanations and secondary discussions. Then extract core questions and answers and select practical applications worth reusing in real situations.",
     usage: "Paste a transcript, provide an attachment, or upload JSON with title, source, and transcript fields. Generate notes, questions and answers, and practical applications in Chinese, in that order, inside one Markdown code block starting with # 笔记.",
     notes: "Uses only material actually read, preserves disagreements, qualifications, and uncertainty, and distinguishes sources when needed. Later stages must not shorten the complete notes or add methods or advice absent from the episode. Use only 笔记, 问答, and 实践 as level-one headings; no level-one section may contain just one level-two group.",
   },
