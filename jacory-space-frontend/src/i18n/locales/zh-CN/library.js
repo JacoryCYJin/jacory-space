@@ -7,7 +7,7 @@ const developmentLibraryEntries = import.meta.env.DEV ? {
 
 const developmentLibraryDetails = import.meta.env.DEV ? {
   podcastReadingSummary: {
-    about: "以知识本身为中心，按概念、因果或问题关系组织完整笔记，保留必要解释与代表性材料；完成后再提炼核心问答，最后筛选值得在现实场景中反复调用的实践内容。",
+    about: "围绕节目的主要知识主线，按概念、因果或问题关系组织可独立理解的笔记，保留必要解释与代表性材料，合并重复解释和支线内容；完成后再提炼核心问答，最后筛选值得在现实场景中反复调用的实践内容。",
     usage: "粘贴播客转录文本、提供附件，或上传含 title、source、transcript 字段的 JSON。依次生成中文笔记、问答和实践，整体放在一个 Markdown 代码块中，从 # 笔记 开始。",
     notes: "只依据实际读取的材料，保留分歧、限定条件和不确定性，必要时区分来源；后续阶段不得压缩完整笔记，不加入节目之外的方法或建议。一级标题仅使用笔记、问答、实践，各一级标题下不得只有一个二级分组。",
   },

@@ -590,15 +590,6 @@ export default {
     },
   },
   methods: {
-    expandHeading(id) {
-      const heading = this.blocks.find((block) => block.id === id && block.type === 'heading')
-      if (!heading || heading.level !== 3 || !this.collapsibleSection) return
-      const index = this.blocks.indexOf(heading)
-      const parent = this.blocks.slice(0, index).findLast((block) => block.type === 'heading' && block.level === 2)
-      if (parent?.text !== this.collapsibleSection || this.expandedQuestions.includes(id)) return
-      this.expandedQuestions = [...this.expandedQuestions, id]
-      nextTick(() => this.$emit('layout-change'))
-    },
     toggleQuestion(id) {
       this.expandedQuestions = this.expandedQuestions.includes(id)
         ? this.expandedQuestions.filter((item) => item !== id)
