@@ -29,7 +29,7 @@
           >
             {{ link.index }}
           </span>
-          <span class="relative font-mono text-sm tracking-[0.1em] uppercase">
+          <span class="relative font-mono text-sm tracking-[0.1em] uppercase" :class="isLatinLocale ? 'font-medium' : ''">
             <span
               class="transition-colors duration-300"
               :class="isActive(link.to) ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'"
@@ -106,7 +106,7 @@
             </span>
             <span
               class="font-mono text-base tracking-[0.08em] uppercase"
-              :class="isActive(link.to) ? 'text-foreground' : 'text-muted-foreground'"
+              :class="[isActive(link.to) ? 'text-foreground' : 'text-muted-foreground', isLatinLocale ? 'font-medium' : '']"
             >
               {{ link.label }}
             </span>

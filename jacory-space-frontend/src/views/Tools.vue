@@ -25,7 +25,7 @@
             </div>
           </section>
 
-          <section data-tools-enter class="sidebar-index-section hidden lg:block" :aria-label="t('tools.interfaceIndex.categoriesAria')">
+          <section data-tools-enter class="sidebar-index-section hidden lg:block" :class="isEnglishLocale ? 'sidebar-index-section-english' : ''" :aria-label="t('tools.interfaceIndex.categoriesAria')">
             <nav class="space-y-1 pb-[var(--sidebar-border-gap)] pt-2 lg:space-y-0 lg:pt-1 xl:space-y-1 xl:pt-2">
               <button
                 v-for="panel in categoryPanels"
@@ -44,7 +44,7 @@
                   <span class="font-mono text-sm font-semibold uppercase tracking-[0.2em]">{{ panel.label }}</span>
                   <span class="justify-self-end font-mono text-sm tabular-nums tracking-[0.12em]">{{ panel.count }}</span>
                 </span>
-                <span class="mt-[var(--sidebar-copy-gap)] hidden max-w-[18rem] pl-8 font-mono text-xs leading-relaxed tracking-[0.08em] text-muted-foreground lg:block">
+                <span class="mt-[var(--sidebar-copy-gap)] hidden max-w-[18rem] pl-8 text-xs text-muted-foreground lg:block" :class="isEnglishLocale ? 'font-sans leading-normal tracking-normal' : 'font-mono leading-relaxed tracking-[0.08em]'">
                   {{ panel.description }}
                 </span>
               </button>
@@ -92,7 +92,8 @@ import heroFigure from '../assets/tools/hero-figure.png'
 
 gsap.registerPlugin(CustomEase)
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const isEnglishLocale = computed(() => locale.value.startsWith('en'))
 const pageRoot = ref(null)
 const spatialIndex = ref(null)
 const activeFilter = ref('all')
@@ -243,6 +244,14 @@ onBeforeUnmount(() => {
 @media (min-width: 1280px) {
   .sidebar-index-section {
     --sidebar-border-gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sidebar-index-section-english {
+    --sidebar-copy-gap: 0.5rem;
+
+    @apply py-3;
   }
 }
 

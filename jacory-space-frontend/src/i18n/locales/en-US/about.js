@@ -11,7 +11,7 @@ export default {
       line2Emphasis: 'vast',
       line2Suffix: '.'
     },
-    statement: 'This is my personal digital space.\nA place to document work, refine tools, and organize notes—\nan open system for continuous thinking and building.\nLong-term iteration. Constant evolution.',
+    statement: 'This is my personal digital space.\nA place to document work, refine tools, and organize notes\nan open system for continuous thinking and building.\nLong-term iteration. Constant evolution.',
     identity: {
       roleLabel: 'Identity',
       role: 'Designer · Developer · Writer · Creator',
