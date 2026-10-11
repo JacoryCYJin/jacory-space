@@ -28,8 +28,8 @@
               class="about-intro relative z-10 col-span-12 flex flex-col justify-center lg:col-span-5 lg:col-start-5 lg:pl-[clamp(2rem,4vw,4.75rem)]"
             >
               <h1
-                class="text-balance font-sans font-medium text-foreground"
-                :class="sloganTitleClass"
+                class="text-balance font-sans text-foreground"
+                :class="[sloganTitleClass, isEnglishLocale ? 'font-normal' : 'font-medium']"
               >
                 <span class="block overflow-hidden">
                   <span class="about-slogan-line block">{{ t('about.slogan.line1') }}</span>
@@ -41,7 +41,7 @@
 
               <p
                 class="about-statement max-w-[31rem] whitespace-pre-line text-pretty text-sm leading-[1.75] text-muted-foreground md:text-[0.9375rem]"
-                :class="statementClass"
+                :class="[statementClass, isEnglishLocale ? 'lg:pr-8 xl:pr-10' : '']"
               >
                 {{ t('about.statement') }}
               </p>
@@ -66,7 +66,10 @@
                     class="about-identity-row grid grid-cols-[5.5rem_1fr] gap-4 border-b border-line py-3.5 last:border-b-0"
                   >
                     <dt class="tech text-[0.625rem]">{{ item.label }}</dt>
-                    <dd class="inline-flex items-center gap-2 font-mono text-xs leading-relaxed text-foreground">
+                    <dd
+                      class="inline-flex items-center gap-2 text-xs leading-relaxed text-foreground"
+                      :class="isEnglishLocale ? 'font-sans font-normal' : 'font-mono'"
+                    >
                       <span>{{ item.value }}</span>
                       <span
                         v-if="item.hasProgressDot"
@@ -113,7 +116,7 @@
               <span class="font-mono text-[0.625rem] tracking-[0.14em] text-blue">
                 {{ String(index + 1).padStart(2, '0') }}
               </span>
-              <p class="mt-3 text-sm font-medium tracking-tight text-foreground">{{ principle.label }}</p>
+              <p class="mt-3 font-sans text-sm tracking-tight text-foreground" :class="isEnglishLocale ? 'font-normal' : 'font-medium'">{{ principle.label }}</p>
             </li>
           </ol>
         </div>
@@ -132,7 +135,8 @@
             :href="link.href"
             :target="link.external ? '_blank' : undefined"
             :rel="link.external ? 'noopener noreferrer' : undefined"
-            class="group flex items-baseline gap-3 font-mono text-xs"
+            class="group flex items-baseline gap-3 text-xs"
+            :class="isEnglishLocale ? 'font-sans' : 'font-mono'"
           >
             <span class="text-foreground transition-colors duration-300 group-hover:text-blue">
               {{ link.label }}
@@ -167,6 +171,7 @@ let motionMedia
 
 const isChineseLocale = computed(() => locale.value.startsWith('zh'))
 const isJapaneseLocale = computed(() => locale.value.startsWith('ja'))
+const isEnglishLocale = computed(() => locale.value.startsWith('en'))
 const isCjkLocale = computed(() => isChineseLocale.value || isJapaneseLocale.value)
 
 const sloganTitleClass = computed(() => (
@@ -178,7 +183,7 @@ const sloganTitleClass = computed(() => (
 ))
 
 const sloganEmphasisClass = computed(() => (
-  isCjkLocale.value ? 'font-medium text-blue not-italic' : 'font-medium text-blue italic'
+  isCjkLocale.value ? 'font-medium text-blue not-italic' : 'font-normal text-blue not-italic'
 ))
 
 const statementClass = computed(() => (

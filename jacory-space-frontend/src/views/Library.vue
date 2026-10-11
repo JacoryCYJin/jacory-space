@@ -27,7 +27,7 @@
       </div>
     </section>
 
-    <section class="page-gutter pb-20 pt-4 md:pb-28">
+    <section class="page-gutter pb-6 pt-4 md:pb-8">
       <div class="page-frame grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[18rem_minmax(0,1fr)] xl:gap-20">
         <aside class="border-b border-line pb-10 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
           <div>
