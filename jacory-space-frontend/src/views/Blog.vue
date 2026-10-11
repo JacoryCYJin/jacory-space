@@ -179,14 +179,14 @@
           >
             <RouterLink
               :to="`/blog/${entry.slug}`"
-              class="group relative -mx-[var(--page-gutter)] grid min-w-0 grid-cols-[minmax(3.75rem,auto)_minmax(0,1fr)] gap-x-3 gap-y-3 px-[var(--page-gutter)] py-6 transition-colors duration-300 hover:bg-card max-md:gap-y-4 max-md:py-5 md:grid-cols-12 md:items-center md:gap-2"
+              class="blog-archive-row group relative isolate -mx-[var(--page-gutter)] grid min-w-0 grid-cols-[minmax(3.75rem,auto)_minmax(0,1fr)] gap-x-3 gap-y-3 px-[var(--page-gutter)] py-6 max-md:gap-y-4 max-md:py-5 md:grid-cols-12 md:items-center md:gap-2"
               :class="{ 'after:pointer-events-none after:absolute after:inset-x-[var(--page-gutter)] after:bottom-0 after:border-b after:border-line after:content-[\'\'] pb-[calc(1.5rem+1px)] max-md:pb-[calc(1.25rem+1px)]': index < entries.length - 1 }"
             >
               <span class="font-mono text-xs text-blue max-md:order-1 max-md:self-center md:col-span-2">
                 {{ entry.no }}
               </span>
               <span
-                class="min-w-0 break-words text-balance text-base font-medium tracking-tight text-foreground transition-all duration-300 group-hover:text-blue max-md:order-3 max-md:col-span-2 sm:group-hover:translate-x-1 md:col-span-6 md:text-lg"
+                class="min-w-0 break-words text-balance text-base font-medium tracking-tight text-foreground transition-all duration-300 group-hover:text-blue group-focus-visible:text-blue max-md:order-3 max-md:col-span-2 sm:group-hover:translate-x-1 sm:group-focus-visible:translate-x-1 md:col-span-6 md:text-lg"
               >
                 {{ entry.title }}
               </span>
@@ -207,7 +207,7 @@
                 {{ entry.date }}
               </span>
               <span
-                class="text-right font-mono text-sm text-muted-foreground transition-all duration-300 group-hover:text-blue max-md:order-5 max-md:col-span-1 max-md:justify-self-end max-md:self-center sm:group-hover:translate-x-1 md:col-span-1"
+                class="text-right font-mono text-sm text-muted-foreground transition-all duration-300 group-hover:text-blue group-focus-visible:text-blue max-md:order-5 max-md:col-span-1 max-md:justify-self-end max-md:self-center sm:group-hover:translate-x-1 sm:group-focus-visible:translate-x-1 md:col-span-1"
               >
                 ↗
               </span>
@@ -332,7 +332,7 @@ onMounted(async () => {
   }
 })
 
-watch([activeCategoryFilter, activeYearFilter], async () => {
+watch([activeCategoryFilter, activeTopicFilter, activeYearFilter], async () => {
   await nextTick()
   setupRevealObserver()
 })
