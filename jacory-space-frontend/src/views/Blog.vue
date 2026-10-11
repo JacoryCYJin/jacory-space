@@ -111,7 +111,7 @@
       </div>
     </section>
 
-    <section class="page-gutter pb-14 md:pb-16">
+    <section class="page-gutter pb-4 md:pb-6">
       <div class="page-frame">
         <div class="reveal blog-reveal mb-4 flex flex-col gap-4 max-lg:mb-3 max-lg:gap-3 md:flex-row md:items-center md:justify-between">
           <span class="min-w-0 break-words font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-muted-foreground">
@@ -179,8 +179,8 @@
           >
             <RouterLink
               :to="`/blog/${entry.slug}`"
-              class="group grid min-w-0 grid-cols-[minmax(3.75rem,auto)_minmax(0,1fr)] gap-x-3 gap-y-3 py-6 transition-colors duration-300 hover:bg-card max-md:gap-y-4 max-md:py-5 md:grid-cols-12 md:items-center md:gap-2"
-              :class="{ 'border-b border-line': index < entries.length - 1 }"
+              class="group relative -mx-[var(--page-gutter)] grid min-w-0 grid-cols-[minmax(3.75rem,auto)_minmax(0,1fr)] gap-x-3 gap-y-3 px-[var(--page-gutter)] py-6 transition-colors duration-300 hover:bg-card max-md:gap-y-4 max-md:py-5 md:grid-cols-12 md:items-center md:gap-2"
+              :class="{ 'after:pointer-events-none after:absolute after:inset-x-[var(--page-gutter)] after:bottom-0 after:border-b after:border-line after:content-[\'\'] pb-[calc(1.5rem+1px)] max-md:pb-[calc(1.25rem+1px)]': index < entries.length - 1 }"
             >
               <span class="font-mono text-xs text-blue max-md:order-1 max-md:self-center md:col-span-2">
                 {{ entry.no }}

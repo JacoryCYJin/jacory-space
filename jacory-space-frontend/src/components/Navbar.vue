@@ -6,7 +6,7 @@
     >
       <router-link to="/" class="group flex items-center gap-3" @click="mobileMenuOpen = false">
         <img :src="jacoryLogo" alt="" class="h-6 w-6 shrink-0 object-contain" />
-        <span class="font-mono text-sm tracking-[0.14em] text-foreground transition-colors group-hover:text-blue">
+        <span class="font-mono text-sm font-medium tracking-[0.14em] text-foreground transition-colors group-hover:text-blue">
           Jacory Space
         </span>
         <span class="tech hidden text-xs sm:inline">Personal OS / v.02</span>
@@ -29,7 +29,7 @@
           >
             {{ link.index }}
           </span>
-          <span class="relative font-mono text-sm tracking-[0.1em] uppercase" :class="isLatinLocale ? 'font-medium' : ''">
+          <span class="relative font-mono text-sm font-medium tracking-[0.1em] uppercase">
             <span
               class="transition-colors duration-300"
               :class="isActive(link.to) ? 'text-foreground' : 'text-muted-foreground group-hover:text-foreground'"
@@ -105,8 +105,8 @@
               {{ link.index }}
             </span>
             <span
-              class="font-mono text-base tracking-[0.08em] uppercase"
-              :class="[isActive(link.to) ? 'text-foreground' : 'text-muted-foreground', isLatinLocale ? 'font-medium' : '']"
+              class="font-mono text-base font-medium tracking-[0.08em] uppercase"
+              :class="isActive(link.to) ? 'text-foreground' : 'text-muted-foreground'"
             >
               {{ link.label }}
             </span>

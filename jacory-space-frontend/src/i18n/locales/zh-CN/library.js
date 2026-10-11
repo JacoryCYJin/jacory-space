@@ -42,7 +42,7 @@ export default {
     searchPlaceholder: '搜索标题或标签',
     updatedLabel: '最后更新',
     filters: { all: '全部', prompts: 'Prompts', skills: 'Skills' },
-    tags: { podcast: '播客', summary: '总结', writing: '写作', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '图像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: '动画' },
+    tags: { relationships: "亲密关系", communication: "沟通", emotionalSupport: "情绪支持", podcast: '播客', summary: '总结', writing: '写作', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '图像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: '动画' },
     clearTags: '清除',
     copy: '复制',
     copied: '已复制',
@@ -79,12 +79,14 @@ export default {
     switchToList: '切换为单列索引',
     notFound: '资产不存在',
     entries: {
+      goutoujunshi: { title: "狗头军师", description: "先梳理情绪，再分析关系与聊天材料，给出回复、推进、修复或退出的具体建议。" },
       ...developmentLibraryEntries,
       minecraftSkinPreview: { title: 'Minecraft 角色双视角预览', description: '为后续皮肤转换生成标准 Minecraft Java 角色的双视角预览图。' },
       threejsFundamentals: { title: 'Three.js', description: '面向 Three.js 场景、相机、渲染器与对象层级的基础能力收录。' },
       gsapCore: { title: 'GSAP', description: '面向 GSAP 核心补间、缓动、交错与响应式动画的官方能力收录。' }
     },
     details: {
+      goutoujunshi: { about: "适用于心动、暧昧、邀约、关系确认、投入失衡、冲突、分手与复合等情境；可根据聊天截图、粘贴文本或已导出的记录，梳理双方互动并讨论下一步。", usage: "先梳理情绪、建立关系背景，再区分事实、推测与未知，给出首选建议、可发送回复、行动方案、观察窗口与停止条件。按需加载关系知识与沟通指南；经同意可保存有限的本地档案，也可配合 ChatLab 分析用户已提供的数据。安装后可输入：请使用狗头军师帮我梳理情绪、分析当前关系，并给出下一步建议。", notes: "不负责直接读取、解密或导出聊天软件数据库；ChatLab 为可选配套。长期记忆须先获明确同意，可查看、暂停、撤销或删除。MBTI 和主观评分不等于诊断或确定结论；不保证关系结果，不替代心理治疗、医疗或法律专业服务。" },
       ...developmentLibraryDetails,
       minecraftSkinPreview: {
         about: '为 Minecraft Java 皮肤制作流程建立长期图像生成对话，产出双联角色预览，而不是 UV 皮肤图。',

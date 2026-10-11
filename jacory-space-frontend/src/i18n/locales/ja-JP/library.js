@@ -22,15 +22,17 @@ export default {
     description: '再利用できるプロンプト、Agent Skill、仕事の方法をまとめた個人の資産庫です。見つけ、理解し、持ち帰れます。',
     indexLabel: 'アセット索引', browseLabel: 'カテゴリから探す', tagsLabel: 'タグ一覧', filterAria: 'アセットを絞り込む', searchLabel: 'アセットを検索', searchPlaceholder: 'タイトルまたはタグを検索', updatedLabel: '最終更新',
     filters: { all: 'すべて', prompts: 'PROMPTS', skills: 'SKILLS' }, copy: 'コピー', copied: 'コピー済み', expandContent: 'すべて表示', collapseContent: '折りたたむ', copySuccess: 'クリップボードにコピーしました', copyError: 'コピーに失敗しました。手動で選択してください。', empty: '一致するアセットはありません', backToLibrary: 'ライブラリに戻る', versionLabel: 'バージョン', commitLabel: 'COMMIT', licenseLabel: 'ライセンス', catalogedAtLabel: '収録日', assetsLabel: 'アセット', promptsLabel: 'PROMPTS', skillsLabel: 'SKILLS', aboutLabel: '用途', contentLabel: 'PROMPT CONTENT', skillContentLabel: 'SKILL CONTENT', externalSkillLabel: 'EXTERNAL SKILL', usageLabel: '使い方', notesLabel: 'メモ', useCasesLabel: '利用シーン', precautionsLabel: '注意事項', coreContentLabel: '主要内容', capabilityBoundaryLabel: '対象範囲', contentOutlineLabel: '内容目次', sourceAndDeploymentLabel: 'ソースと導入', sourceRepositoryLabel: 'ソースリポジトリ', deploymentCommandLabel: '導入コマンド', copyInstallCommand: '導入コマンドをコピー', installCommandCopied: '導入コマンドをコピーしました', switchToGrid: '2列表示に切り替え', switchToList: 'リスト表示に切り替え', notFound: 'アセットが見つかりません',
-    tags: { podcast: 'ポッドキャスト', summary: '要約', writing: '執筆', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '画像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: 'アニメーション' },
+    tags: { relationships: "親密な関係", communication: "コミュニケーション", emotionalSupport: "感情のサポート", podcast: 'ポッドキャスト', summary: '要約', writing: '執筆', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '画像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: 'アニメーション' },
     clearTags: 'クリア',
     entries: {
+      goutoujunshi: { title: "狗頭軍師", description: "感情を整理し、関係やチャットの内容を分析して、返信・関係の進展・修復・退出の具体的な選択肢を提案します。" },
       ...developmentLibraryEntries,
       minecraftSkinPreview: { title: 'Minecraft キャラクター両視点プレビュー', description: '後続のスキン変換工程向けに、標準 Minecraft Java キャラクターの両視点プレビューを生成します。' },
       threejsFundamentals: { title: 'Three.js', description: 'Three.js のシーン、カメラ、レンダラー、オブジェクト階層のための外部 Skill を収録します。' },
       gsapCore: { title: 'GSAP', description: 'GSAP のコア Tween、イージング、Stagger、レスポンシブアニメーションの公式 Skill を収録します。' }
     },
     details: {
+      goutoujunshi: { about: "好意、曖昧な関係、誘い、交際の確認、投入の偏り、対立、別れ、復縁などに使います。スクリーンショット、貼り付けた文章、エクスポート済みの会話記録からやり取りを整理し、次の行動を検討します。", usage: "感情と関係の背景を整理し、事実・推測・不明点を分けてから、推奨案、送信できる返信、行動、観察期間、停止条件を提案します。必要な関係知識や会話ガイドだけを参照します。同意があれば限定的なローカル記録を保存でき、ChatLab を使って提供済みのデータを分析することもできます。導入後は、感情の整理、現在の関係の分析、次の行動の提案を依頼してください。", notes: "チャットアプリのデータベースを直接読み取り、復号、エクスポートする機能はありません。ChatLab は任意です。記憶の保存には明示的な同意が必要で、確認・一時停止・撤回・削除ができます。MBTI や主観評価は診断や確定的な判断ではありません。関係の結果を保証せず、心理療法・医療・法律の専門サービスに代わるものではありません。" },
       ...developmentLibraryDetails,
       minecraftSkinPreview: { about: 'Minecraft Java スキン制作フロー用の長期的な画像生成対話を設定します。UV スキン図ではなく、両視点のキャラクタープレビューを生成します。', usage: '新しい画像生成チャットを開始し、固定の両視点参照画像をアップロードしてから、長期ルールを貼り付けます。続けてテキスト要望またはキャラクター参照画像を送ります。', notes: '画像 1 は構図、視点、比率だけを決めます。キャラクターデザインは要望または後から送る参照画像で決まります。' },
       threejsFundamentals: { about: 'Three.js プロジェクトを新規作成または確認するときに、シーン、カメラ、レンダラー、オブジェクト階層、座標変換、リソース解放などの基礎課題に使います。', usage: 'シーン、カメラ、レンダラーの設定、Object3D / Group / Mesh の階層、座標変換と主要な数学ユーティリティに加え、アニメーションループ、サイズ対応、リソース解放、読み込み、パフォーマンス処理を扱います。', notes: 'Three.js の基礎実装を主に扱います。マテリアル、照明、ローダー、ポストプロセスなどの専門領域は、ソースリポジトリ内の対応する Skill を参照してください。' },

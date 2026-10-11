@@ -118,6 +118,32 @@ export const libraryEntries = [
     version: 'v1.3.0',
     updated: '2026.10.10',
   },
+  {
+    id: 'goutoujunshi',
+    type: 'skill',
+    sourceType: 'external',
+    no: '008',
+    titleKey: 'library.entries.goutoujunshi.title',
+    descriptionKey: 'library.entries.goutoujunshi.description',
+    detailKey: 'goutoujunshi',
+    tags: ['relationships', 'communication', 'emotionalSupport'],
+    version: 'v1.0.0',
+    updated: '2026.10.11',
+    sourceUrl: 'https://github.com/shengjidaguai-china/goutoujunshi',
+    sourceRef: { commit: '6db7354a4002dc7c448a9c87ffdad8132570c9d3' },
+    license: 'MIT',
+    installCommand: '请将公开仓库 https://github.com/shengjidaguai-china/goutoujunshi 下载并安装为本地 Skill。',
+    outline: [
+      { level: 1, title: '核心原则' },
+      { level: 1, title: '首次使用与紧急例外' },
+      { level: 1, title: '输入证据边界' },
+      { level: 1, title: '长期记忆' },
+      { level: 1, title: '每次分析' },
+      { level: 1, title: '按需加载' },
+      { level: 1, title: '经典社交体系的使用边界' },
+      { level: 1, title: '安全边界' },
+    ],
+  },
 ]
 
 export function getLibraryEntry(id) {
