@@ -50,14 +50,6 @@
               </button>
             </nav>
 
-            <div class="border-t border-line pt-[var(--sidebar-border-gap)]">
-              <div class="sidebar-index-item flex items-baseline justify-between lg:block">
-                <p class="font-mono text-sm uppercase leading-none tracking-[0.16em] text-muted-foreground">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</p>
-                <p class="mt-0 font-mono text-sm uppercase leading-none tracking-[0.16em] text-foreground lg:mt-[var(--sidebar-update-gap)]">
-                  {{ lastUpdate }}
-                </p>
-              </div>
-            </div>
           </section>
         </aside>
 
