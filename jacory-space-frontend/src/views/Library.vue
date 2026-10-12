@@ -6,11 +6,11 @@
         <header class="grid gap-3 pb-2 md:gap-12 md:pb-4 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,34rem)] lg:items-stretch lg:gap-16">
           <div data-library-enter>
             <p class="tech mb-5 text-xs text-blue">02 — {{ t('library.kicker') }}</p>
-            <div class="flex items-start justify-between gap-4 md:block">
-            <h1 class="min-w-0 max-w-3xl font-sans text-4xl font-medium leading-[0.95] tracking-tight text-foreground min-[380px]:text-5xl md:text-7xl">
+            <div class="relative pr-28 md:pr-0">
+            <h1 class="min-w-0 max-w-3xl font-sans text-4xl font-medium leading-none tracking-tight text-foreground min-[380px]:text-5xl md:text-7xl md:leading-[0.95]">
               {{ t('library.titleLead') }}<span class="italic text-blue">{{ t('library.titleAccent') }}</span>
             </h1>
-            <dl class="grid w-24 shrink-0 gap-2 font-mono text-xs md:hidden">
+            <dl class="absolute inset-y-0 right-0 flex w-24 flex-col justify-between font-mono text-xs leading-none md:hidden">
               <div class="flex items-baseline justify-between gap-2"><dt class="text-muted-foreground">{{ t('library.assetsLabel') }}</dt><dd class="text-foreground">{{ libraryEntries.length }}</dd></div>
               <div class="flex items-baseline justify-between gap-2"><dt class="text-muted-foreground">{{ t('library.promptsLabel') }}</dt><dd class="text-foreground">{{ promptCount }}</dd></div>
               <div class="flex items-baseline justify-between gap-2"><dt class="text-muted-foreground">{{ t('library.skillsLabel') }}</dt><dd class="text-foreground">{{ skillCount }}</dd></div>
