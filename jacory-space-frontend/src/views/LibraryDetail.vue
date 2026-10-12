@@ -161,8 +161,8 @@ const isExternalSkill = computed(() => entry.value?.type === 'skill' && entry.va
 const externalVersion = computed(() => entry.value?.sourceRef?.version || entry.value?.sourceRef?.tag)
 const externalCommit = computed(() => entry.value?.sourceRef?.commit?.slice(0, 7))
 const entryTypeLabel = computed(() => {
-  if (isExternalSkill.value) return t('library.externalSkillLabel')
-  return entry.value?.type === 'skill' ? 'SKILL' : 'PROMPT'
+  if (isExternalSkill.value) return t('interface.library.external')
+  return entry.value?.type === 'skill' ? t('interface.library.skill') : t('interface.library.prompt')
 })
 const isViewportBound = computed(() => entry.value?.type === 'prompt' && !promptContentExpanded.value)
 const isDesktopViewportBound = computed(() => isViewportBound.value && isDesktop.value)

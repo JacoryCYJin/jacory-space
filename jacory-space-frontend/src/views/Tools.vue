@@ -108,27 +108,27 @@ const projects = computed(() => [
   },
   {
     id: '001', no: '001', title: t('tools.projects.mediaParser.title'), layer: 'TOOLS', category: 'tool', status: 'live',
-    pos: [-7.0, -1.6], description: '本地桌面媒体工作台，整合视频解析、播客解析、下载、转写和结构化笔记。',
+    pos: [-7.0, -1.6], description: t('interface.tools.descriptions.media'),
     stack: ['Electron', 'Python', 'Whisper'], version: 'desktop', updated: '2026.07.11', href: '/tools/media-parser'
   },
   {
     id: '002', no: '002', title: 'Jacory Space', layer: 'WORKS', category: 'work', status: 'live',
-    pos: [-6.8, 0.8], description: '个人数字空间与操作系统，整合工具、博客与实验。',
+    pos: [-6.8, 0.8], description: t('interface.tools.descriptions.site'),
     stack: ['Vue', 'GSAP', 'Design System'], version: 'v1.5.0', updated: '2026.06.15', href: '/'
   },
   {
     id: '003', no: '003', title: t('tools.projects.personalBlog.title'), layer: 'WORKS', category: 'work', status: 'live',
-    pos: [2.4, 1.6], description: '沉淀开发笔记、项目复盘与日常观察，并持续完善个人写作与发布系统。',
+    pos: [2.4, 1.6], description: t('interface.tools.descriptions.blog'),
     stack: ['Writing', 'Markdown', 'Publishing'], version: 'v0.1.0', updated: '2026.07.16', href: '/blog'
   },
   {
     id: '004', no: '004', title: t('tools.projects.workflowSystem.title'), layer: 'EXPERIMENTS', category: 'experiment', status: 'wip',
-    pos: [6.2, 1.4], description: '沉淀可复用的任务步骤、自动化与验证节点，把重复工作组织成稳定的工作流。',
+    pos: [6.2, 1.4], description: t('interface.tools.descriptions.workflow'),
     stack: ['Prompt', 'Skill', 'Methods'], version: 'v0.1.0', updated: '2026.08.03', href: '/library'
   },
   {
     id: '005', no: '005', title: t('tools.projects.minecraftSkinStudio.title'), layer: 'TOOLS', category: 'tool', status: 'live',
-    pos: [1.4, -1.45], description: '在浏览器中绘制、预览并导出可直接用于 Minecraft 的 64 × 64 皮肤。',
+    pos: [1.4, -1.45], description: t('interface.tools.descriptions.minecraft'),
     stack: ['Vue', 'skinview3d', 'WebGL'], version: 'v0.1.0', updated: '2026.07.23', href: '/tools/minecraft-skin-editor'
   },
   {

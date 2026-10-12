@@ -16,7 +16,8 @@
     <div
       v-if="isOpen"
       id="language-menu"
-      class="absolute bottom-full right-0 z-50 mb-2 w-max border border-line bg-background py-1 text-muted-foreground md:bottom-auto md:top-full md:mb-0 md:mt-2"
+      class="absolute right-0 z-50 w-max border border-line bg-background py-1 text-muted-foreground"
+      :class="placement === 'down' ? 'top-full mt-2' : 'bottom-full mb-2 md:bottom-auto md:top-full md:mb-0 md:mt-2'"
       role="menu"
       :aria-label="t('language.label')"
     >
@@ -46,6 +47,8 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Globe2 } from 'lucide-vue-next'
 import { persistLocale, supportedLocales } from '../i18n'
+
+defineProps({ placement: { type: String, default: 'responsive' } })
 
 const { locale, t } = useI18n()
 const isOpen = ref(false)

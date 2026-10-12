@@ -1,5 +1,6 @@
 <template>
-  <main class="signal-study relative isolate min-h-screen overflow-hidden bg-[#030405] text-[#edf0e8]">
+  <main :class="{ 'signal-latin': locale.startsWith('en') }" class="signal-study relative isolate min-h-screen overflow-hidden bg-[#030405] text-[#edf0e8]">
+    <div class="fixed right-5 top-5 z-50"><LanguageSwitcher placement="down" /></div>
     <div class="signal-stage relative min-h-screen" aria-labelledby="signal-caption">
       <div class="signal-letterbox signal-letterbox-top" aria-hidden="true" />
       <div class="signal-letterbox signal-letterbox-bottom" aria-hidden="true" />
@@ -39,41 +40,38 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import CrtChromaLayer from '../components/experiments/retro-futurism/CrtChromaLayer.vue'
 import CrtLumaLayer from '../components/experiments/retro-futurism/CrtLumaLayer.vue'
 import CrtMediumLayer from '../components/experiments/retro-futurism/CrtMediumLayer.vue'
 import CrtPhosphorDiffusionLayer from '../components/experiments/retro-futurism/CrtPhosphorDiffusionLayer.vue'
 
 const { t, locale } = useI18n()
-const testParagraphs = [
-  [
-    '当电子信号穿过沉默的屏幕与褪色的光',
-    '老旧接口仍在保存尚未抵达的回应',
-    '未来只是被重新命名的现在',
-  ],
-  [
-    '在短暂失焦的光里',
-    '某种联系尚未中断・・・・',
-  ],
-]
-
-let characterIndex = 0
-let lineIndex = 0
-const textLayout = testParagraphs.map((paragraph) => paragraph.map((line) => {
-  const characters = Array.from(line).map((value) => ({ value, index: characterIndex++ }))
-
-  return {
-    characters,
-    startIndex: characters[0].index,
-    sequenceIndex: lineIndex++,
-  }
-}))
-const lines = textLayout.flat()
-const characters = lines.flatMap((line) => line.characters)
-const lineIndexByStart = new Map(lines.map((line) => [line.startIndex, line.sequenceIndex]))
-const testText = testParagraphs.map((paragraph) => paragraph.join('\n')).join('\n\n')
+const testParagraphs = computed(() => [
+  [0, 1, 2].map(index => t('interface.signal.lines.' + index)),
+  [3, 4].map(index => t('interface.signal.lines.' + index)),
+])
+const textLayout = computed(() => {
+  let characterIndex = 0
+  let lineIndex = 0
+  return testParagraphs.value.map(paragraph => paragraph.map(line => {
+    const characters = Array.from(line).map(value => ({ value, index: characterIndex++ }))
+    const latin = locale.value.startsWith('en')
+    let offset = 0
+    const groups = latin ? (line.match(/\S+\s*|\s+/g) || []).map(word => {
+      const group = characters.slice(offset, offset + Array.from(word).length)
+      offset += group.length
+      return group
+    }) : [characters]
+    return { characters, groups, latin, startIndex: characters[0].index, sequenceIndex: lineIndex++ }
+  }))
+})
+const lines = computed(() => textLayout.value.flat())
+const characters = computed(() => lines.value.flatMap(line => line.characters))
+const lineIndexByStart = computed(() => new Map(lines.value.map(line => [line.startIndex, line.sequenceIndex])))
+const testText = computed(() => testParagraphs.value.map(paragraph => paragraph.join('\n')).join('\n\n'))
 const revealedCount = ref(0)
 const activeLineIndex = ref(0)
 const revealTimer = ref(null)
@@ -119,8 +117,8 @@ const beginReveal = () => {
   activeLineIndex.value = 0
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    revealedCount.value = characters.length
-    activeLineIndex.value = lines.length - 1
+    revealedCount.value = characters.value.length
+    activeLineIndex.value = lines.value.length - 1
     return
   }
 
@@ -128,15 +126,15 @@ const beginReveal = () => {
   const lineBoundaryPause = 720
   let nextIndex = 0
   const revealNext = (delay) => {
-    if (nextIndex >= characters.length) return
+    if (nextIndex >= characters.value.length) return
 
     revealTimer.value = window.setTimeout(() => {
       revealedCount.value = nextIndex + 1
       nextIndex += 1
 
-      if (nextIndex >= characters.length) return
+      if (nextIndex >= characters.value.length) return
 
-      const nextLineIndex = lineIndexByStart.get(nextIndex)
+      const nextLineIndex = lineIndexByStart.value.get(nextIndex)
       if (nextLineIndex !== undefined) {
         revealTimer.value = window.setTimeout(() => {
           activeLineIndex.value = nextLineIndex
@@ -152,11 +150,36 @@ const beginReveal = () => {
   revealNext(900)
 }
 
-onMounted(beginReveal)
+let mounted = false
+onMounted(() => { mounted = true; beginReveal() })
+watch(locale, () => { if (mounted) beginReveal() })
 onBeforeUnmount(clearRevealTimer)
 </script>
 
 <style scoped>
+.signal-latin :deep(.signal-luma-glyphs),
+.signal-latin :deep(.signal-medium-glyphs),
+.signal-latin :deep(.signal-phosphor-diffusion-glyphs) {
+  width: min(52.5rem, calc(100% - 2.5rem));
+}
+
+.signal-latin :deep(.signal-word) {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.signal-latin :deep(.signal-luma-cell),
+.signal-latin :deep(.signal-medium-cell),
+.signal-latin :deep(.signal-phosphor-cell) {
+  width: 0.65em;
+  margin-left: 0;
+}
+
+.signal-latin :deep(.is-space) {
+  width: 0.4em;
+}
+
+
 @font-face {
   font-family: "GNU Unifont CRT SC";
   src: url("../assets/fonts/GNUUnifont16-CrtSC.otf") format("opentype");

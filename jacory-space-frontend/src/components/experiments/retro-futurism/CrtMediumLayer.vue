@@ -71,21 +71,23 @@
     <div v-for="(paragraph, paragraphIndex) in textLayout" :key="paragraphIndex" class="signal-paragraph">
       <div v-for="(line, lineIndex) in paragraph" :key="lineIndex" class="signal-line">
         <template v-if="isLineStarted(line)">
-          <span
-            v-for="character in line.characters"
-            :key="character.index"
-            class="signal-medium-cell"
-            :class="{ 'is-chinese-cell': isChineseCharacter(character.value) }"
-          >
+          <span v-for="(group, groupIndex) in line.groups" :key="groupIndex" :class="line.latin ? 'signal-word' : 'contents'">
             <span
-              v-if="character.index < revealedCount"
-              class="signal-medium-char"
-              :class="{ 'is-chinese': isChineseCharacter(character.value) }"
-            >{{ character.value }}</span>
-            <span v-else-if="character.index === revealedCount" class="signal-medium-placeholder is-active">
-              <span class="signal-medium-caret" />
+              v-for="character in group"
+              :key="character.index"
+              class="signal-medium-cell"
+              :class="{ 'is-chinese-cell': isChineseCharacter(character.value), 'is-space': line.latin && character.value === ' ' }"
+            >
+              <span
+                v-if="character.index < revealedCount"
+                class="signal-medium-char"
+                :class="{ 'is-chinese': isChineseCharacter(character.value) }"
+              >{{ character.value }}</span>
+              <span v-else-if="character.index === revealedCount" class="signal-medium-placeholder is-active">
+                <span class="signal-medium-caret" />
+              </span>
+              <span v-else class="signal-medium-placeholder" />
             </span>
-            <span v-else class="signal-medium-placeholder" />
           </span>
         </template>
       </div>

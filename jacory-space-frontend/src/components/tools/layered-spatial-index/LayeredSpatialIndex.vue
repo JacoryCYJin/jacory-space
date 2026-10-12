@@ -1,7 +1,7 @@
 <template>
   <section
     class="relative hidden h-full min-h-[560px] md:block lg:min-h-0"
-    aria-label="Layered spatial project index"
+    :aria-label="t('interface.tools.aria')"
   >
     <canvas
       ref="canvasEl"
@@ -44,7 +44,7 @@
             :ref="(el) => setLayerMotionEl(layer.id, el)"
             class="flex flex-col items-start gap-[0.2rem]"
           >
-            <span class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-blue">{{ layer.id }}</span>
+            <span class="font-mono text-xs font-bold uppercase tracking-[0.2em] text-blue">{{ t('interface.tools.layers.' + layer.id) }}</span>
             <span class="font-mono text-xs tracking-[0.16em] text-muted-foreground">{{ layer.count }}</span>
           </span>
         </div>
@@ -98,16 +98,16 @@
     </div>
 
     <div class="spatial-meta spatial-meta-bottom">
-      <span>GRID 16 × 08</span>
-      <span>SLAB Δ 0.08</span>
-      <span>DRAFT OPACITY 0.80</span>
+      <span>{{ t('interface.tools.grid') }}</span>
+      <span>{{ t('interface.tools.slab') }}</span>
+      <span>{{ t('interface.tools.opacity') }}</span>
     </div>
 
     <div class="pointer-events-none absolute bottom-4 left-[1.1rem] flex flex-col gap-[0.32rem] font-mono text-xs uppercase tracking-[0.16em] text-muted-foreground">
-      <span>X — INDEX SPAN</span>
-      <span>Y — LAYER RAIL</span>
-      <span>Z — DEPTH</span>
-      <span>+ — ENTRY POINT</span>
+      <span>{{ t('interface.tools.x') }}</span>
+      <span>{{ t('interface.tools.y') }}</span>
+      <span>{{ t('interface.tools.z') }}</span>
+      <span>{{ t('interface.tools.entry') }}</span>
     </div>
 
     <div class="pointer-events-none absolute bottom-4 right-[1.2rem] text-line-strong" aria-hidden="true">
@@ -155,6 +155,7 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import { computed } from 'vue'
 import coolPaletteWatermark from '../../../assets/tools/cool-palete-watermark.png'
 import exampleWatermark from '../../../assets/tools/example-watermark.png'
@@ -162,6 +163,8 @@ import videoParserWatermark from '../../../assets/tools/video-parser-watermark.p
 import LayeredSpatialMobileIndex from './LayeredSpatialMobileIndex.vue'
 import ToolCard from '../ToolCard.vue'
 import { useLayeredSpatialIndex } from './useLayeredSpatialIndex'
+
+const { t } = useI18n()
 
 const props = defineProps({
   projects: { type: Array, required: true },
@@ -200,7 +203,7 @@ const {
 const statusNames = { live: 'LIVE', wip: 'WIP', beta: 'BETA', archived: 'ARCHIVED' }
 
 function statusLabel(status) {
-  return statusNames[status] ?? status.toUpperCase()
+  return statusNames[status] ? t('interface.tools.status.' + status) : status.toUpperCase()
 }
 
 const hoverCardTool = computed(() => {
@@ -210,7 +213,7 @@ const hoverCardTool = computed(() => {
     no: project.no,
     name: project.title,
     desc: project.description,
-    tag: project.category,
+    tag: t('interface.tools.categories.' + project.category),
     status: statusLabel(project.status),
     ver: project.version,
     href: project.href

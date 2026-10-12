@@ -4,7 +4,7 @@
       <div class="about-sheet-frame page-frame">
         <header class="about-sheet-header flex items-end justify-between">
           <div>
-            <p class="font-mono text-xs tracking-[0.16em] text-blue">04 — IDENTITY.SHEET</p>
+            <p class="font-mono text-xs tracking-[0.16em] text-blue">{{ t('interface.about.sheet') }}</p>
             <p class="tech mt-2">{{ t('about.sheet.subtitle') }}</p>
           </div>
         </header>
@@ -54,7 +54,7 @@
               <section aria-labelledby="identity-heading" class="relative">
                 <div class="about-identity-heading flex items-center justify-between">
                   <h2 id="identity-heading" class="font-mono text-xs tracking-[0.14em] text-blue">
-                    // IDENTITY
+                    {{ t('interface.about.identity') }}
                   </h2>
                   <span aria-hidden="true" class="font-mono text-lg font-light text-muted-foreground">＋</span>
                 </div>
@@ -83,7 +83,7 @@
 
               <figure class="about-avatar-draft relative mt-9">
                 <figcaption class="font-mono text-xs tracking-[0.14em] text-blue">
-                  // AVATAR.DRAFT
+                  {{ t('interface.about.avatar') }}
                 </figcaption>
                 <div class="about-avatar-media mt-4 flex min-h-[13.5rem] items-center justify-center pt-4">
                   <img
@@ -102,7 +102,7 @@
     <section class="about-axioms page-gutter">
       <div class="page-frame grid py-5 lg:grid-cols-[17rem_1fr] lg:py-0">
         <div class="about-axioms-label flex items-center py-5 lg:pr-8">
-          <h2 class="font-mono text-xs tracking-[0.14em] text-blue">// PERSONAL AXIOMS</h2>
+          <h2 class="font-mono text-xs tracking-[0.14em] text-blue">{{ t('interface.about.axioms') }}</h2>
         </div>
 
         <div class="relative">
@@ -125,7 +125,7 @@
 
     <footer class="about-contact page-gutter py-7">
       <div class="page-frame flex flex-col gap-6 md:flex-row md:items-center">
-        <p class="about-contact-item font-mono text-xs tracking-[0.14em] text-blue">/ CONTACT</p>
+        <p class="about-contact-item font-mono text-xs tracking-[0.14em] text-blue">{{ t('interface.about.contact') }}</p>
 
         <nav :aria-label="t('about.contact.ariaLabel')" class="about-contact-item flex flex-wrap items-center gap-x-8 gap-y-3">
           <component
@@ -207,7 +207,7 @@ const principles = computed(() => [
 
 const contactLinks = computed(() => [
   {
-    label: 'Email',
+    label: t('interface.about.email'),
     value: 'chengyue.jin@outlook.com',
     href: 'mailto:chengyue.jin@outlook.com',
   },

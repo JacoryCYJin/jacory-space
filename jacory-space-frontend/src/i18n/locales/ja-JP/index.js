@@ -1,3 +1,4 @@
+import interfaceMessages from './interface'
 import reading from './reading'
 import common from './common'
 import home from './home'
@@ -10,6 +11,7 @@ import retroFuturism from './retro-futurism'
 import library from './library'
 
 export default {
+  ...interfaceMessages,
   ...reading,
   ...common,
   ...home,
