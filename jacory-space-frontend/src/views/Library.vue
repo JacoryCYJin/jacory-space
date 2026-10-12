@@ -30,7 +30,7 @@
     <section class="page-gutter pb-6 pt-4 md:pb-8">
       <div class="page-frame grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[18rem_minmax(0,1fr)] xl:gap-20">
         <aside class="border-b border-line pb-10 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
-          <div>
+          <div data-library-enter>
             <p class="tech mb-5 text-xs">{{ t('library.browseLabel') }}</p>
             <nav :aria-label="t('library.filterAria')" class="grid gap-1">
               <button
@@ -47,7 +47,7 @@
             </nav>
           </div>
 
-          <div class="mt-6">
+          <div data-library-enter class="mt-6">
             <div class="mb-3 flex items-center justify-between gap-4">
               <p class="tech text-xs">{{ t('library.tagsLabel') }}</p>
               <button v-if="selectedTags.length > 0" type="button" class="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-blue" @click="selectedTags = []">
@@ -70,7 +70,7 @@
         </aside>
 
         <section class="min-w-0 pt-10 lg:pt-0">
-          <div class="flex items-center gap-3 border-b border-line pb-5 text-muted-foreground">
+          <div data-library-enter class="flex items-center gap-3 border-b border-line pb-5 text-muted-foreground">
             <Search :size="16" stroke-width="1.5" aria-hidden="true" />
             <label class="min-w-0 flex-1">
               <span class="sr-only">{{ t('library.searchLabel') }}</span>
@@ -93,6 +93,7 @@
             <article
               v-for="(entry, index) in filteredEntries"
               :key="entry.id"
+              data-library-entry
               class="group"
               :class="[
                 viewMode === 'list' ? 'grid gap-6 py-8 first:pt-8 md:grid-cols-[6rem_minmax(0,1fr)_10rem] md:gap-8 md:py-10' : 'flex min-h-64 flex-col gap-5 border-t border-line pt-4',
@@ -137,7 +138,9 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
+import { gsap } from 'gsap'
+import { CustomEase } from 'gsap/CustomEase'
 import { useI18n } from 'vue-i18n'
 import { ArrowUpRight, Copy, Folder, List, Search } from 'lucide-vue-next'
 import FooterReveal from '../components/FooterReveal.vue'
@@ -152,6 +155,12 @@ const query = ref('')
 const viewMode = ref('grid')
 const toast = reactive({ visible: false, message: '', type: 'success' })
 let toastTimer
+let motionMedia
+let revealObserver
+let entryTargets = []
+let entriesInteracted = false
+
+gsap.registerPlugin(CustomEase)
 
 const promptCount = computed(() => libraryEntries.filter((entry) => entry.type === 'prompt').length)
 const skillCount = computed(() => libraryEntries.filter((entry) => entry.type === 'skill').length)
@@ -215,18 +224,67 @@ async function copyEntry(entry) {
   }
 }
 
+// A result change ends pending entry reveals so reused and new rows stay visible.
+watch([filteredEntries, viewMode], () => {
+  entriesInteracted = true
+  const targets = [...entryTargets, ...(pageRoot.value?.querySelectorAll('[data-library-entry]') || [])]
+  targets.forEach((item) => revealObserver?.unobserve(item))
+  gsap.killTweensOf(targets)
+  gsap.set(targets, { clearProps: 'opacity,visibility,transform' })
+}, { flush: 'post' })
+
 onMounted(() => {
-  const items = pageRoot.value?.querySelectorAll('[data-library-enter]') || []
-  items.forEach((item, index) => {
-    item.style.opacity = '0'
-    item.style.transform = 'translateY(14px)'
-    window.setTimeout(() => {
-      item.style.transition = 'opacity 700ms var(--ease-premium), transform 700ms var(--ease-premium)'
-      item.style.opacity = '1'
-      item.style.transform = 'translateY(0)'
-    }, 80 + index * 80)
-  })
+  const root = pageRoot.value
+  if (!root) return
+
+  const ease = CustomEase.create('library-enter', '0.16,1,0.3,1')
+  motionMedia = gsap.matchMedia()
+  motionMedia.add('(prefers-reduced-motion: no-preference)', (context) => {
+    const sections = [...root.querySelectorAll('[data-library-enter]')]
+    entryTargets = entriesInteracted ? [] : [...root.querySelectorAll('[data-library-entry]')]
+    const targets = [...sections, ...entryTargets]
+    const pending = new Set(targets)
+    const inViewport = (item) => {
+      const rect = item.getBoundingClientRect()
+      return rect.top < window.innerHeight && rect.bottom > 0
+    }
+
+    context.add('reveal', (items, initial = false) => {
+      items.forEach((item, index) => {
+        if (!pending.delete(item)) return
+        revealObserver?.unobserve(item)
+        gsap.to(item, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.7,
+          ease,
+          delay: initial ? (sections.includes(item) ? 0.08 + sections.indexOf(item) * 0.05 : 0.3 + index * 0.04) : index * 0.04,
+          clearProps: 'opacity,visibility,transform',
+        })
+      })
+    })
+
+    gsap.set(targets, { autoAlpha: 0, y: 14 })
+    context.reveal(targets.filter(inViewport), true)
+
+    if ('IntersectionObserver' in window) {
+      revealObserver = new IntersectionObserver((items) => {
+        context.reveal(items.filter((item) => item.isIntersecting).map((item) => item.target))
+      }, { threshold: 0.08 })
+      pending.forEach((item) => revealObserver.observe(item))
+    } else {
+      context.reveal([...pending])
+    }
+
+    return () => {
+      revealObserver?.disconnect()
+      revealObserver = null
+    }
+  }, root)
 })
 
-onBeforeUnmount(() => clearTimeout(toastTimer))
+onBeforeUnmount(() => {
+  clearTimeout(toastTimer)
+  motionMedia?.revert()
+})
 </script>
