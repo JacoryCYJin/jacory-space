@@ -11,12 +11,12 @@
       :class="isViewportBound ? 'lg:h-full lg:pt-6 2xl:pt-8' : ''"
     >
       <div class="page-frame pb-20 md:pb-28 lg:pb-0" :class="isViewportBound ? 'lg:flex lg:h-full lg:min-h-0 lg:flex-col' : ''">
-        <header class="border-b border-line pb-10 md:pb-14 lg:pb-10 2xl:pb-14 lg:shrink-0">
-          <router-link to="/library" class="tech inline-flex items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-blue">
+        <header class="border-b border-line pb-6 md:pb-14 lg:pb-10 2xl:pb-14 lg:shrink-0">
+          <router-link to="/library" class="tech hidden items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-blue md:inline-flex">
             <ChevronLeft :size="14" stroke-width="1.5" aria-hidden="true" />
             {{ t('library.backToLibrary') }}
           </router-link>
-          <div class="mt-12 grid gap-10 lg:mt-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-end lg:gap-16 2xl:mt-12">
+          <div class="grid gap-6 md:mt-12 md:gap-10 lg:mt-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-end lg:gap-16 2xl:mt-12">
             <div data-detail-enter class="min-w-0">
               <p class="tech mb-5 text-xs text-blue">{{ entry.no }} · {{ entryTypeLabel }}</p>
               <h1 class="max-w-4xl font-sans text-5xl font-medium leading-[0.95] tracking-tight text-foreground md:text-7xl">{{ t(entry.titleKey) }}</h1>
@@ -26,29 +26,29 @@
               <template v-if="isExternalSkill">
                 <div v-if="externalVersion">
                   <dt class="text-haze">{{ t('library.versionLabel') }}</dt>
-                  <dd class="mt-3 text-foreground">{{ externalVersion }}</dd>
+                  <dd class="mt-2 text-foreground md:mt-3">{{ externalVersion }}</dd>
                 </div>
                 <div v-if="externalCommit">
                   <dt class="text-haze">{{ t('library.commitLabel') }}</dt>
-                  <dd class="mt-3 text-foreground">{{ externalCommit }}</dd>
+                  <dd class="mt-2 text-foreground md:mt-3">{{ externalCommit }}</dd>
                 </div>
                 <div v-if="entry.license">
                   <dt class="text-haze">{{ t('library.licenseLabel') }}</dt>
-                  <dd class="mt-3 text-foreground">{{ entry.license }}</dd>
+                  <dd class="mt-2 text-foreground md:mt-3">{{ entry.license }}</dd>
                 </div>
                 <div>
                   <dt class="text-haze">{{ t('library.catalogedAtLabel') }}</dt>
-                  <dd class="mt-3 text-foreground">{{ entry.updated }}</dd>
+                  <dd class="mt-2 text-foreground md:mt-3">{{ entry.updated }}</dd>
                 </div>
               </template>
               <template v-else>
                 <div>
                   <dt class="text-haze">{{ t('library.versionLabel') }}</dt>
-                  <dd class="mt-3 text-foreground">{{ entry.version }}</dd>
+                  <dd class="mt-2 text-foreground md:mt-3">{{ entry.version }}</dd>
                 </div>
                 <div>
                   <dt class="text-haze">{{ t('library.updatedLabel') }}</dt>
-                  <dd class="mt-3 text-foreground">{{ entry.updated }}</dd>
+                  <dd class="mt-2 text-foreground md:mt-3">{{ entry.updated }}</dd>
                 </div>
               </template>
             </dl>
@@ -57,34 +57,34 @@
 
         <div
           ref="detailGrid"
-          class="grid gap-12 pt-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-16 lg:pt-8 lg:pb-9 2xl:pt-12 2xl:pb-14"
+          class="grid gap-5 pt-5 md:gap-12 md:pt-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-16 lg:pt-8 lg:pb-9 2xl:pt-12 2xl:pb-14"
           :class="isViewportBound ? 'lg:min-h-0 lg:flex-1' : ''"
         >
           <aside
             data-lenis-prevent
-            class="border-b border-line pb-8 lg:min-h-0 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8"
+            class="border-b border-line pb-5 md:pb-8 lg:min-h-0 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8"
             :class="isAsideOverflowing ? 'lg:overflow-y-auto lg:overscroll-contain' : ''"
             :style="detailAsideStyle"
           >
-            <div ref="detailAsideContent" class="flex flex-col gap-8">
-              <section data-detail-enter class="border-b border-line pb-8">
-              <p class="tech mb-6 text-xs text-blue">01 — {{ isExternalSkill ? t('library.useCasesLabel') : t('library.aboutLabel') }}</p>
+            <div ref="detailAsideContent" class="flex flex-col gap-5 md:gap-8">
+              <section data-detail-enter class="border-b border-line pb-5 md:pb-8">
+              <p class="tech mb-3 text-xs text-blue md:mb-6">01 — {{ isExternalSkill ? t('library.useCasesLabel') : t('library.aboutLabel') }}</p>
               <p class="text-sm leading-7 text-foreground">{{ t('library.details.' + entry.detailKey + '.about') }}</p>
             </section>
 
-            <section data-detail-enter class="border-b border-line pb-8">
+            <section data-detail-enter class="border-b border-line pb-5 md:pb-8">
               <template v-if="isExternalSkill">
-                <p class="tech mb-6 text-xs text-blue">02 — {{ t('library.coreContentLabel') }}</p>
+                <p class="tech mb-3 text-xs text-blue md:mb-6">02 — {{ t('library.coreContentLabel') }}</p>
                 <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.usage') }}</p>
               </template>
               <template v-else>
-                <p class="tech mb-6 text-xs text-blue">02 — {{ t('library.usageLabel') }}</p>
+                <p class="tech mb-3 text-xs text-blue md:mb-6">02 — {{ t('library.usageLabel') }}</p>
                 <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.usage') }}</p>
               </template>
             </section>
 
             <section data-detail-enter>
-              <p class="tech mb-6 text-xs text-blue">03 — {{ isExternalSkill ? t('library.capabilityBoundaryLabel') : t('library.notesLabel') }}</p>
+              <p class="tech mb-3 text-xs text-blue md:mb-6">03 — {{ isExternalSkill ? t('library.capabilityBoundaryLabel') : t('library.notesLabel') }}</p>
               <p class="text-sm leading-7 text-muted-foreground">{{ t('library.details.' + entry.detailKey + '.notes') }}</p>
             </section>
             </div>
