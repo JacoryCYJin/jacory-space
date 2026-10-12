@@ -16,7 +16,7 @@
                 <p class="font-mono text-xs tracking-[0.18em] text-blue">{{ t('tools.interfaceIndex.kicker') }}</p>
                 <h1 class="font-sans text-5xl font-medium leading-[0.98] tracking-tight text-foreground md:text-[4.15rem] lg:text-[3.55rem] xl:text-[4.15rem]">
                   {{ t('tools.interfaceIndex.titleLead') }}
-                  <span class="block italic text-blue">{{ t('tools.interfaceIndex.titleAccent') }}</span>
+                  <span class="inline italic text-blue lg:block">{{ t('tools.interfaceIndex.titleAccent') }}</span>
                 </h1>
               </div>
               <div class="grid max-w-[25rem] text-[15px] leading-[1.72] text-muted-foreground">
@@ -61,12 +61,6 @@
               :active-filter="activeFilter"
               @select="handleSelect"
             />
-          </div>
-          <div class="mt-8 border-t border-line pt-4 pb-2 lg:hidden">
-            <div class="flex items-baseline justify-between font-mono text-xs uppercase tracking-[0.16em]">
-              <span class="text-muted-foreground">{{ t('tools.interfaceIndex.lastUpdateLabel') }}</span>
-              <span class="text-foreground">{{ lastUpdate }}</span>
-            </div>
           </div>
         </section>
       </div>
@@ -165,7 +159,6 @@ const categoryPanels = computed(() => [
   }
 ])
 
-const lastUpdate = computed(() => projects.value.map((project) => project.updated).sort().at(-1))
 
 function setFilter(id) {
   activeFilter.value = id
@@ -216,7 +209,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .sidebar-hero-section {
-  @apply border-b border-line py-6 lg:shrink-0 lg:pb-5 lg:pt-0 xl:pb-7 xl:pt-0;
+  @apply border-line py-6 lg:shrink-0 lg:border-b lg:pb-5 lg:pt-0 xl:pb-7 xl:pt-0;
 }
 
 .sidebar-index-section {

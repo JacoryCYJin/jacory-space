@@ -57,7 +57,7 @@
     <div class="relative z-10 flex items-center justify-between gap-4">
       <span class="font-mono text-[11px] tracking-[0.08em] text-blue">{{ tool.no }}</span>
       <span class="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-        <span class="h-1.5 w-1.5 rounded-full bg-blue" aria-hidden="true" />
+        <span class="h-1.5 w-1.5 rounded-full" :class="statusDotClass" aria-hidden="true" />
         {{ tool.status }}
       </span>
     </div>
@@ -85,6 +85,10 @@ defineProps({
   statusClass: {
     type: String,
     required: true
+  },
+  statusDotClass: {
+    type: String,
+    default: 'bg-blue'
   },
   watermarkSrc: {
     type: String,

@@ -3,42 +3,73 @@
     <main ref="pageRoot" class="grain min-h-screen bg-background">
     <section class="page-gutter pt-20 md:pt-24">
       <div class="page-frame">
-        <header class="grid gap-12 pb-4 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,34rem)] lg:items-end lg:gap-16">
+        <header class="grid gap-3 pb-2 md:gap-12 md:pb-4 lg:grid-cols-[minmax(0,1fr)_minmax(24rem,34rem)] lg:items-stretch lg:gap-16">
           <div data-library-enter>
             <p class="tech mb-5 text-xs text-blue">02 — {{ t('library.kicker') }}</p>
-            <h1 class="max-w-3xl font-sans text-5xl font-medium leading-[0.95] tracking-tight text-foreground md:text-7xl">
+            <div class="flex items-start justify-between gap-4 md:block">
+            <h1 class="min-w-0 max-w-3xl font-sans text-4xl font-medium leading-[0.95] tracking-tight text-foreground min-[380px]:text-5xl md:text-7xl">
               {{ t('library.titleLead') }}<span class="italic text-blue">{{ t('library.titleAccent') }}</span>
             </h1>
-            <p class="mt-6 max-w-md text-sm leading-7 text-muted-foreground">{{ t('library.description') }}</p>
+            <dl class="grid w-24 shrink-0 gap-2 font-mono text-xs md:hidden">
+              <div class="flex items-baseline justify-between gap-2"><dt class="text-muted-foreground">{{ t('library.assetsLabel') }}</dt><dd class="text-foreground">{{ libraryEntries.length }}</dd></div>
+              <div class="flex items-baseline justify-between gap-2"><dt class="text-muted-foreground">{{ t('library.promptsLabel') }}</dt><dd class="text-foreground">{{ promptCount }}</dd></div>
+              <div class="flex items-baseline justify-between gap-2"><dt class="text-muted-foreground">{{ t('library.skillsLabel') }}</dt><dd class="text-foreground">{{ skillCount }}</dd></div>
+            </dl>
+            </div>
+            <p class="mt-6 text-sm leading-7 text-muted-foreground">{{ t('library.description') }}</p>
           </div>
 
-          <div data-library-enter class="lg:justify-self-end lg:w-full">
-            <div class="grid grid-cols-3 divide-x divide-line border-b border-line pb-6">
-              <div class="pr-5"><p class="tech text-xs text-muted-foreground">{{ t('library.assetsLabel') }}</p><p class="mt-4 font-mono text-3xl text-foreground">{{ libraryEntries.length }}</p></div>
-              <div class="px-5"><p class="tech text-xs text-muted-foreground">{{ t('library.promptsLabel') }}</p><p class="mt-4 font-mono text-3xl text-foreground">{{ promptCount }}</p></div>
-              <div class="pl-5"><p class="tech text-xs text-muted-foreground">{{ t('library.skillsLabel') }}</p><p class="mt-4 font-mono text-3xl text-foreground">{{ skillCount }}</p></div>
-            </div>
-            <div class="mt-6 flex items-center justify-between">
-              <span class="tech text-xs text-muted-foreground">{{ t('library.updatedLabel') }}</span>
-              <span class="font-mono text-sm text-blue">{{ latestUpdate }}</span>
+          <div data-library-enter class="hidden md:block lg:flex lg:items-center lg:justify-self-end lg:w-full lg:max-w-md">
+            <div class="grid w-full grid-cols-3 divide-x divide-line lg:py-2">
+              <div class="flex items-baseline justify-between gap-2 pr-3 md:block md:pr-5 lg:flex lg:flex-col lg:items-start lg:gap-3"><p class="tech text-xs text-muted-foreground max-md:tracking-normal">{{ t('library.assetsLabel') }}</p><p class="font-mono text-xl text-foreground md:mt-4 md:text-3xl lg:mt-0 lg:text-5xl lg:leading-none">{{ libraryEntries.length }}</p></div>
+              <div class="flex items-baseline justify-between gap-2 px-3 md:block md:px-5 lg:flex lg:flex-col lg:items-start lg:gap-3"><p class="tech text-xs text-muted-foreground max-md:tracking-normal">{{ t('library.promptsLabel') }}</p><p class="font-mono text-xl text-foreground md:mt-4 md:text-3xl lg:mt-0 lg:text-5xl lg:leading-none">{{ promptCount }}</p></div>
+              <div class="flex items-baseline justify-between gap-2 pl-3 md:block md:pl-5 lg:flex lg:flex-col lg:items-start lg:gap-3"><p class="tech text-xs text-muted-foreground max-md:tracking-normal">{{ t('library.skillsLabel') }}</p><p class="font-mono text-xl text-foreground md:mt-4 md:text-3xl lg:mt-0 lg:text-5xl lg:leading-none">{{ skillCount }}</p></div>
             </div>
           </div>
         </header>
       </div>
     </section>
 
-    <section class="page-gutter pb-6 pt-4 md:pb-8">
+    <section class="page-gutter pb-6 pt-2 md:pb-8 md:pt-4">
       <div class="page-frame grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[18rem_minmax(0,1fr)] xl:gap-20">
-        <aside class="border-b border-line pb-10 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
-          <div data-library-enter>
-            <p class="tech mb-5 text-xs">{{ t('library.browseLabel') }}</p>
-            <nav :aria-label="t('library.filterAria')" class="grid gap-1">
+        <aside class="border-line pb-0 md:border-b md:pb-10 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8">
+          <div data-library-enter class="flex items-start justify-between gap-4 md:hidden">
+            <div class="flex min-h-11 min-w-0 flex-1 items-center gap-2 border-b border-line text-muted-foreground">
+              <Search :size="16" stroke-width="1.5" class="shrink-0" aria-hidden="true" />
+              <label class="min-w-0 flex-1">
+                <span class="sr-only">{{ t('library.searchLabel') }}</span>
+                <input v-model="query" type="search" :placeholder="t('library.searchPlaceholder')" class="w-full bg-transparent font-mono text-sm tracking-[0.06em] text-foreground outline-none placeholder:text-haze">
+              </label>
+              <span class="shrink-0 font-mono text-xs text-haze">{{ String(filteredEntries.length).padStart(2, '0') }} / {{ String(libraryEntries.length).padStart(2, '0') }}</span>
+            </div>
+            <button
+              type="button"
+              class="inline-flex min-h-11 min-w-0 max-w-[45%] items-center justify-end gap-2 font-mono text-xs text-muted-foreground"
+              :aria-expanded="filtersExpanded"
+              aria-controls="library-filters"
+              @click="filtersExpanded = !filtersExpanded"
+            >
+              <span class="inline-flex items-center gap-2">
+                {{ t(filtersExpanded ? 'library.collapseFilters' : 'library.expandFilters') }}
+                <ChevronDown :size="14" stroke-width="1.5" :class="filtersExpanded ? 'rotate-180' : ''" aria-hidden="true" />
+              </span>
+              <span class="inline-flex min-w-0 flex-wrap items-center justify-end gap-1 text-blue">
+                {{ filters.find((filter) => filter.id === activeType)?.label }}
+                <span v-if="selectedTags.length">· {{ t('library.selectedTagsCount', { count: selectedTags.length }) }}</span>
+              </span>
+            </button>
+          </div>
+          <div id="library-filters" class="mt-5 md:mt-0 md:block" :class="filtersExpanded ? 'block pb-3 md:pb-0' : 'hidden'">
+          <div data-library-enter class="flex items-center justify-between gap-3 md:block">
+            <p class="tech max-w-16 shrink-0 text-xs max-md:tracking-normal md:mb-5 md:max-w-none">{{ t('library.browseLabel') }}</p>
+            <nav :aria-label="t('library.filterAria')" class="flex min-w-0 items-center gap-2 md:grid md:grid-cols-1 md:gap-1">
               <button
                 v-for="filter in filters"
                 :key="filter.id"
                 type="button"
-                class="flex items-center justify-between py-4 text-left font-mono text-sm uppercase tracking-[0.12em] transition-colors duration-300 hover:text-blue"
-                :class="[activeType === filter.id ? 'text-blue' : 'text-muted-foreground', filter.id === 'skill' ? '' : 'border-b border-line']"
+                class="flex min-h-11 shrink-0 items-center justify-between gap-1 whitespace-nowrap border-b text-left font-mono text-xs uppercase tracking-normal transition-colors duration-300 hover:text-blue md:gap-2 md:py-4 md:text-sm md:tracking-[0.12em]"
+                :class="[activeType === filter.id ? 'border-blue text-blue md:border-line' : 'border-line text-muted-foreground', filter.id === 'skill' ? 'md:border-b-0' : '']"
+                :aria-pressed="activeType === filter.id"
                 @click="activeType = filter.id"
               >
                 <span>{{ filter.label }}</span>
@@ -47,8 +78,8 @@
             </nav>
           </div>
 
-          <div data-library-enter class="mt-6">
-            <div class="mb-3 flex items-center justify-between gap-4">
+          <div data-library-enter class="mt-3 md:mt-6">
+            <div class="flex min-h-11 items-center justify-between gap-4 md:mb-3 md:min-h-0">
               <p class="tech text-xs">{{ t('library.tagsLabel') }}</p>
               <button v-if="selectedTags.length > 0" type="button" class="font-mono text-xs uppercase tracking-[0.1em] text-muted-foreground transition-colors hover:text-blue" @click="selectedTags = []">
                 {{ t('library.clearTags') }}
@@ -67,10 +98,11 @@
               </button>
             </div>
           </div>
+          </div>
         </aside>
 
-        <section class="min-w-0 pt-10 lg:pt-0">
-          <div data-library-enter class="flex items-center gap-3 border-b border-line pb-5 text-muted-foreground">
+        <section class="min-w-0 pt-1 md:pt-10 lg:pt-0">
+          <div data-library-enter class="hidden items-center gap-3 border-b border-line pb-5 text-muted-foreground md:flex">
             <Search :size="16" stroke-width="1.5" aria-hidden="true" />
             <label class="min-w-0 flex-1">
               <span class="sr-only">{{ t('library.searchLabel') }}</span>
@@ -89,36 +121,32 @@
             <span class="font-mono text-xs text-haze">{{ String(filteredEntries.length).padStart(2, '0') }} / {{ String(libraryEntries.length).padStart(2, '0') }}</span>
           </div>
 
-          <div v-if="filteredEntries.length" :class="viewMode === 'list' ? 'divide-y divide-line' : 'grid gap-x-12 gap-y-8 lg:grid-cols-2'">
+          <div v-if="filteredEntries.length" :class="viewMode === 'list' ? 'divide-y divide-line' : 'grid gap-x-12 gap-y-5 md:gap-y-0 lg:grid-cols-2'">
             <article
               v-for="(entry, index) in filteredEntries"
               :key="entry.id"
               data-library-entry
               class="group"
               :class="[
-                viewMode === 'list' ? 'grid gap-6 py-8 first:pt-8 md:grid-cols-[6rem_minmax(0,1fr)_10rem] md:gap-8 md:py-10' : 'flex min-h-64 flex-col gap-5 border-t border-line pt-4',
+                viewMode === 'list' ? 'py-5 first:pt-5 md:py-6 md:first:pt-6' : 'border-t border-line pt-4 md:flex md:flex-col md:py-6',
                 viewMode === 'grid' && index === 0 ? 'border-t-0' : '',
                 viewMode === 'grid' && index === 1 ? 'lg:border-t-0' : '',
               ]"
             >
-              <div :class="viewMode === 'list' ? 'flex items-start justify-between md:block' : 'flex items-start justify-between'">
-                <span class="font-mono text-2xl text-blue">{{ entry.no }}</span>
-                <span class="tech text-xs text-blue" :class="viewMode === 'list' ? 'md:mt-8 md:block' : ''">{{ entryTypeLabel(entry) }}</span>
-              </div>
-              <div class="min-w-0">
-                <router-link :to="'/library/' + entry.id" class="inline-flex items-center gap-3 font-sans text-2xl font-medium tracking-tight text-foreground transition-colors duration-300 group-hover:text-blue" :class="viewMode === 'list' ? 'md:text-3xl' : ''">
-                  {{ t(entry.titleKey) }}
-                  <ArrowUpRight :size="18" stroke-width="1.5" class="opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden="true" />
+              <div class="min-w-0" :class="viewMode === 'grid' ? 'md:flex md:flex-1 md:flex-col' : ''">
+                <div class="flex items-start justify-between gap-3 md:gap-4">
+                <router-link :to="'/library/' + entry.id" class="inline-flex max-w-full items-baseline gap-2 font-sans text-lg font-medium tracking-tight text-foreground transition-colors duration-300 group-hover:text-blue md:items-center md:gap-3 md:text-2xl" :class="viewMode === 'list' ? 'md:text-3xl' : ''">
+                  <span class="min-w-0">{{ t(entry.titleKey) }}</span>
+                  <ArrowUpRight :size="18" stroke-width="1.5" class="hidden shrink-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:block" aria-hidden="true" />
                 </router-link>
-                <p class="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{{ t(entry.descriptionKey) }}</p>
-                <div class="mt-5 flex flex-wrap gap-x-4 gap-y-2 font-mono text-xs uppercase tracking-[0.1em] text-haze">
+                <p class="tech max-w-[35%] shrink-0 pt-1 text-right text-xs text-blue">{{ entryTypeLabel(entry) }}</p>
+                </div>
+                <p class="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground md:mt-3 md:leading-7">{{ t(entry.descriptionKey) }}</p>
+                <div class="mt-3 flex items-start justify-between gap-4" :class="viewMode === 'grid' ? 'md:mt-auto md:pt-5' : 'md:mt-5'">
+                <div class="flex min-w-0 flex-1 flex-wrap gap-x-4 gap-y-2 font-mono text-xs uppercase tracking-[0.1em] text-haze">
                   <span v-for="tag in entry.tags" :key="tag"># {{ tagLabel(tag) }}</span>
                 </div>
-              </div>
-              <div class="flex items-end justify-between gap-5" :class="viewMode === 'list' ? 'md:flex-col md:items-end md:justify-between md:text-right' : 'mt-auto'">
-                <div class="font-mono text-xs leading-6 text-muted-foreground"><p>{{ entryVersion(entry) }}</p><p>{{ entry.type === 'skill' && entry.sourceType === 'external' ? t('library.catalogedAtLabel') : t('library.updatedLabel') }} {{ entry.updated }}</p></div>
-                <div class="flex items-center gap-4">
-                  <button v-if="canCopyEntry(entry)" type="button" class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-foreground transition-colors hover:text-blue" @click="copyEntry(entry)">
+                  <button v-if="canCopyEntry(entry)" type="button" class="inline-flex shrink-0 items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-foreground transition-colors hover:text-blue" @click="copyEntry(entry)">
                     <Copy :size="14" stroke-width="1.5" aria-hidden="true" />
                     {{ t('library.copy') }}
                   </button>
@@ -142,7 +170,7 @@ import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { gsap } from 'gsap'
 import { CustomEase } from 'gsap/CustomEase'
 import { useI18n } from 'vue-i18n'
-import { ArrowUpRight, Copy, Folder, List, Search } from 'lucide-vue-next'
+import { ArrowUpRight, ChevronDown, Copy, Folder, List, Search } from 'lucide-vue-next'
 import FooterReveal from '../components/FooterReveal.vue'
 import StatusToast from '../components/StatusToast.vue'
 import { libraryEntries } from '@library-index'
@@ -151,6 +179,7 @@ const { t } = useI18n()
 const pageRoot = ref(null)
 const activeType = ref('all')
 const selectedTags = ref([])
+const filtersExpanded = ref(false)
 const query = ref('')
 const viewMode = ref('grid')
 const toast = reactive({ visible: false, message: '', type: 'success' })
@@ -181,8 +210,6 @@ const filteredEntries = computed(() => {
   }).sort((a, b) => b.updated.localeCompare(a.updated))
 })
 
-const latestUpdate = computed(() => libraryEntries.map((entry) => entry.updated).sort().at(-1))
-
 function tagLabel(tag) {
   return t('library.tags.' + tag)
 }
@@ -190,11 +217,6 @@ function tagLabel(tag) {
 function entryTypeLabel(entry) {
   if (entry.type === 'skill' && entry.sourceType === 'external') return t('interface.library.external')
   return entry.type === 'skill' ? t('interface.library.skill') : t('interface.library.prompt')
-}
-
-function entryVersion(entry) {
-  if (entry.type === 'skill' && entry.sourceType === 'external') return entry.sourceRef?.version || entry.sourceRef?.tag || entry.sourceRef?.commit?.slice(0, 7) || '—'
-  return entry.version
 }
 
 function canCopyEntry(entry) {

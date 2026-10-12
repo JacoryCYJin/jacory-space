@@ -40,6 +40,7 @@
   --home-dot-matrix-accent: #D9822B;
   --blue: #0e66c8;
   --blue-soft: #6f9ad6;
+  --status-live: #0e8a70;
   --blog-color-default: var(--foreground);
   --blog-color-gray: #636a72;
   --blog-color-blue: var(--blue);

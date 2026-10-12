@@ -20,10 +20,15 @@ export default {
   library: {
     kicker: 'PROMPT & SKILL LIBRARY', titleLead: 'Plan', titleAccent: 'TO',
     description: 'A curated shelf of reusable prompts, Agent skills, and working methods. Find one, understand it, and take it with you.',
-    indexLabel: 'ASSET INDEX', browseLabel: 'BROWSE BY CATEGORY', tagsLabel: 'TAGS CLOUD', filterAria: 'Filter assets', searchLabel: 'Search assets', searchPlaceholder: 'Search title or tag', updatedLabel: 'LAST UPDATE',
+    indexLabel: 'ASSET INDEX', browseLabel: 'TYPE FILTER', tagsLabel: 'TAG FILTER', filterAria: 'Filter assets', searchLabel: 'Search assets', searchPlaceholder: 'Search title or tag', updatedLabel: 'LAST UPDATE',
     filters: { all: 'ALL', prompts: 'PROMPTS', skills: 'SKILLS' }, copy: 'COPY', copied: 'COPIED', expandContent: 'EXPAND ALL', collapseContent: 'COLLAPSE', copySuccess: 'Copied to clipboard', copyError: 'Copy failed. Select the content manually.', empty: 'NO MATCHING ASSETS', backToLibrary: 'BACK TO LIBRARY', versionLabel: 'VERSION', commitLabel: 'COMMIT', licenseLabel: 'LICENSE', catalogedAtLabel: 'CATALOGED', assetsLabel: 'ASSETS', promptsLabel: 'PROMPTS', skillsLabel: 'SKILLS', aboutLabel: 'PURPOSE', contentLabel: 'PROMPT CONTENT', skillContentLabel: 'SKILL CONTENT', externalSkillLabel: 'EXTERNAL SKILL', usageLabel: 'USAGE', notesLabel: 'NOTES', useCasesLabel: 'USE CASES', precautionsLabel: 'PRECAUTIONS', coreContentLabel: 'CORE CONTENT', capabilityBoundaryLabel: 'CAPABILITY BOUNDARY', contentOutlineLabel: 'CONTENT OUTLINE', sourceAndDeploymentLabel: 'SOURCE & DEPLOYMENT', sourceRepositoryLabel: 'SOURCE REPOSITORY', deploymentCommandLabel: 'DEPLOYMENT COMMAND', copyInstallCommand: 'COPY DEPLOYMENT COMMAND', installCommandCopied: 'Deployment command copied to clipboard', switchToGrid: 'Switch to two-column view', switchToList: 'Switch to list view', notFound: 'ASSET NOT FOUND',
     tags: { relationships: "Relationships", communication: "Communication", emotionalSupport: "Emotional Support", podcast: 'Podcast', summary: 'Summary', writing: 'Writing', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: 'Image Generation', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: 'Animation' },
     clearTags: 'CLEAR',
+    expandFilters: 'FILTER',
+    expandSearch: 'SEARCH',
+    collapseSearch: 'CLOSE SEARCH',
+    collapseFilters: 'CLOSE FILTERS',
+    selectedTagsCount: '{count} tags',
     entries: {
       goutoujunshi: { title: "Goutoujunshi", description: "Work through emotions, analyze relationships and chat material, and get concrete suggestions for replying, moving forward, repairing conflict, or leaving." },
       ...developmentLibraryEntries,

@@ -49,7 +49,8 @@ function statusLabel(status) {
 }
 
 function statusDotClass(status) {
-  if (status === 'live') return 'bg-blue'
+  if (status === 'live') return 'bg-status-live'
+  if (status === 'wip') return 'bg-blue'
   if (status === 'archived') return 'bg-transparent ring-1 ring-muted-foreground'
   return 'bg-muted-foreground'
 }
