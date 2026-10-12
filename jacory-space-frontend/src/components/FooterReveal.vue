@@ -1,5 +1,5 @@
 <template>
-  <div class="footer-reveal" :style="revealStyle">
+  <div class="footer-reveal" :class="{ 'footer-reveal--mobile-motion': mobileRevealEnabled }" :style="revealStyle">
     <div ref="contentRef" class="footer-reveal__content">
       <slot />
       <div class="footer-reveal__extension" aria-hidden="true" />
@@ -23,6 +23,7 @@ const contentRef = ref(null)
 const footerBodyHeight = ref(0)
 const footerDividerHeight = ref(0)
 const footerRevealProgress = ref(1)
+const mobileRevealEnabled = ref(false)
 const FOOTER_REVEAL_MIN_BRIGHTNESS = 0.22
 const FOOTER_REVEAL_MIN_SCALE = 0.94
 let footerResizeObserver
@@ -62,6 +63,10 @@ function measureFooterBody() {
   const footer = footerElement()
   if (!footer) return
   footerBodyHeight.value = footer.offsetHeight
+  // A fixed footer must fit beneath the mobile navigation to stay fully readable.
+  const overlapHeight = parseFloat(getComputedStyle(contentRef.value.parentElement).getPropertyValue('--footer-reveal-overlap-height')) || 20
+  mobileRevealEnabled.value = window.innerWidth < 768 && motionQuery?.matches &&
+    footerBodyHeight.value + overlapHeight <= window.innerHeight - 64
 
   const footerRule = footer.querySelector('.footer-rule')
   if (footerRule) {
@@ -77,7 +82,8 @@ function scheduleFooterMeasure() {
 }
 
 function updateFooterRevealProgress() {
-  if (!contentRef.value || !motionQuery?.matches || footerBodyHeight.value <= 0) {
+  if (!contentRef.value || !motionQuery?.matches || footerBodyHeight.value <= 0 ||
+    (window.innerWidth < 768 && !mobileRevealEnabled.value)) {
     footerRevealProgress.value = 1
     return
   }
@@ -113,7 +119,7 @@ onMounted(async () => {
   document.fonts?.ready.then(scheduleFooterMeasure)
   window.addEventListener('resize', scheduleFooterMeasure)
   window.addEventListener('scroll', scheduleFooterRevealProgress, { passive: true })
-  motionQuery.addEventListener('change', scheduleFooterRevealProgress)
+  motionQuery.addEventListener('change', scheduleFooterMeasure)
 })
 
 onBeforeUnmount(() => {
@@ -121,7 +127,7 @@ onBeforeUnmount(() => {
   window.cancelAnimationFrame(revealFrame)
   window.removeEventListener('resize', scheduleFooterMeasure)
   window.removeEventListener('scroll', scheduleFooterRevealProgress)
-  motionQuery?.removeEventListener('change', scheduleFooterRevealProgress)
+  motionQuery?.removeEventListener('change', scheduleFooterMeasure)
   footerResizeObserver?.disconnect()
 })
 </script>
@@ -209,6 +215,20 @@ onBeforeUnmount(() => {
 
   .footer-reveal__header {
     display: none;
+  }
+
+  .footer-reveal--mobile-motion {
+    padding-bottom: var(--footer-reveal-body-height);
+  }
+
+  .footer-reveal--mobile-motion .footer-reveal__panel {
+    position: fixed;
+    filter: brightness(var(--footer-reveal-panel-brightness));
+  }
+
+  .footer-reveal--mobile-motion .footer-reveal__panel-content {
+    transform: scale(var(--footer-reveal-panel-scale));
+    will-change: transform;
   }
 }
 

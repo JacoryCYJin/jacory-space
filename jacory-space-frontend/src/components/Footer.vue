@@ -1,9 +1,9 @@
 <template>
   <footer class="footer-shell page-gutter bg-ink text-card">
-    <div class="page-frame flex min-h-[38rem] flex-col py-8 max-md:min-h-0 max-md:py-6 md:py-10 lg:min-h-[28rem] lg:py-8">
-      <div class="footer-stage grid flex-1 gap-10 max-md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] max-md:gap-x-4 max-md:gap-y-6 lg:grid-cols-3 lg:gap-12 xl:gap-16">
+    <div class="page-frame flex min-h-[38rem] flex-col py-8 max-md:min-h-0 max-md:py-5 md:py-10 lg:min-h-[28rem] lg:py-8">
+      <div class="footer-stage grid flex-1 gap-10 max-md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] max-md:gap-x-4 max-md:gap-y-5 lg:grid-cols-3 lg:gap-12 xl:gap-16">
         <section class="footer-brand-zone flex min-h-[18rem] items-center justify-center max-md:min-h-0 max-md:justify-start max-md:items-start max-md:min-w-0 lg:min-h-0">
-          <div ref="brandContainerRef" :style="brandFitStyle" class="flex w-fit max-w-full flex-col items-start text-left max-md:w-full">
+          <div ref="brandContainerRef" :style="brandFitStyle" class="flex w-fit max-w-full flex-col items-start text-left max-md:w-full max-md:max-w-44">
             <h2 ref="wordmarkRef" class="footer-wordmark max-md:w-max max-md:shrink-0 text-2xl/[0.84] min-[360px]:text-4xl/[0.84] flex items-center gap-[0.18em] font-display font-normal leading-[0.84] tracking-[-0.03em]" :aria-label="t('siteFooter.brand')">
               <img :src="jacoryLogoWhite" alt="" class="h-[1.68em] w-auto shrink-0" />
               <span class="flex flex-col items-center">
@@ -11,7 +11,7 @@
                 <span class="whitespace-nowrap">Space</span>
               </span>
             </h2>
-            <h3 class="mt-4 font-sans text-base font-medium leading-snug tracking-[-0.06em] text-card md:hidden">
+            <h3 class="mt-3 font-sans text-sm font-medium leading-snug tracking-[-0.06em] text-card md:hidden">
               {{ t('siteFooter.meta.statusValue') }}
             </h3>
           </div>
@@ -20,13 +20,13 @@
         <section class="footer-directory flex min-h-[14rem] items-center max-md:min-h-0 max-md:items-start lg:min-h-0" :aria-label="t('siteFooter.meta.surface')">
           <div class="grid w-full grid-cols-2 gap-x-8 max-md:gap-x-2 max-md:[overflow-wrap:anywhere] md:gap-x-12">
             <div class="justify-self-center text-left max-md:justify-self-start max-md:min-w-0">
-              <h3 class="font-sans text-2xl max-md:text-sm font-medium tracking-[-0.04em] text-card">[ {{ t('siteFooter.meta.surface') }} ]</h3>
+              <h3 class="font-sans text-2xl max-md:text-xs font-medium tracking-[-0.04em] text-card"><span class="hidden md:inline">[ </span>{{ t('siteFooter.meta.surface') }}<span class="hidden md:inline"> ]</span></h3>
               <nav class="mt-5 flex flex-col gap-3 max-md:mt-3 max-md:gap-2" :aria-label="t('siteFooter.meta.surface')">
                 <RouterLink
                   v-for="line in navigationLines"
                   :key="line.label"
                   :to="line.to"
-                  class="footer-nav-link font-sans text-xl max-md:text-sm tracking-[-0.04em] transition-colors duration-300"
+                  class="footer-nav-link font-sans text-xl max-md:text-xs tracking-[-0.04em] transition-colors duration-300"
                 >
                   {{ line.label }}
                 </RouterLink>
@@ -34,8 +34,8 @@
             </div>
 
             <div class="justify-self-center text-left max-md:justify-self-start max-md:min-w-0">
-              <h3 class="font-sans text-2xl max-md:text-sm font-medium tracking-[-0.04em] text-card">[ {{ t('siteFooter.meta.accent') }} ]</h3>
-              <div class="mt-5 flex flex-col gap-3 max-md:mt-3 max-md:gap-2 font-mono text-xl max-md:text-sm text-card">
+              <h3 class="font-sans text-2xl max-md:text-xs font-medium tracking-[-0.04em] text-card"><span class="hidden md:inline">[ </span>{{ t('siteFooter.meta.accent') }}<span class="hidden md:inline"> ]</span></h3>
+              <div class="mt-5 flex flex-col gap-3 max-md:mt-3 max-md:gap-2 font-mono text-xl max-md:text-xs text-card">
                 <a
                   v-for="line in contactLines"
                   :key="line.label"
@@ -56,12 +56,12 @@
             <h3 class="font-sans text-3xl max-md:hidden font-medium leading-none tracking-[-0.06em] text-card sm:text-4xl xl:text-5xl">
               {{ t('siteFooter.meta.statusValue') }}
             </h3>
-            <div class="footer-status-divider mt-8 border-t pt-5 max-md:mt-0 max-md:pt-4 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:pt-0">
+            <div class="footer-status-divider mt-8 border-t pt-5 max-md:mt-0 max-md:pt-3 lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:pt-0">
               <div class="lg:my-auto lg:translate-y-6">
-                <p class="font-sans text-lg leading-relaxed text-card">
+                <p class="font-sans text-lg max-md:text-base leading-relaxed text-card">
                   {{ t('siteFooter.meta.statusLineSecondary') }}
                 </p>
-                <p class="mt-9 max-w-[34rem] font-sans text-base leading-8 max-md:mt-4 max-md:leading-6 text-card/70">
+                <p class="mt-9 max-w-[34rem] font-sans text-base leading-8 max-md:mt-3 max-md:text-sm max-md:leading-relaxed text-card/70">
                   {{ t('siteFooter.meta.statusReflection') }}
                 </p>
               </div>
@@ -70,7 +70,7 @@
         </aside>
       </div>
 
-      <div class="footer-rule mt-10 max-md:mt-6 flex items-end justify-between gap-4 border-t pt-5 lg:mt-12">
+      <div class="footer-rule mt-10 max-md:mt-5 flex items-end justify-between gap-4 border-t pt-5 max-md:pt-4 lg:mt-12">
         <span class="tech text-card opacity-60">© MMXXVI</span>
         <span class="tech text-card opacity-60">31.2°N — 121.5°E</span>
       </div>
