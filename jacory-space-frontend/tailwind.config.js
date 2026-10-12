@@ -35,6 +35,7 @@ export default {
       "line-strong": "var(--line-strong)",
       blue: "var(--blue)",
       "blue-soft": "var(--blue-soft)",
+      "status-live": "var(--status-live)",
       development: {
         background: "var(--home-development-background)",
         title: "var(--home-development-title)",

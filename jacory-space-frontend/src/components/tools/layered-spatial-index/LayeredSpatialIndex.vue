@@ -91,6 +91,7 @@
           v-if="hoveredProject"
           :tool="hoverCardTool"
           :status-class="hoverStatusClass"
+          :status-dot-class="hoverStatusDotClass"
           :watermark-src="hoverWatermarkSrc"
           variant="hover"
         />
@@ -230,6 +231,13 @@ const hoverStatusClass = computed(() => {
   if (hoveredProject.value?.status === 'live') return 'text-blue'
   if (hoveredProject.value?.status === 'archived') return 'text-haze'
   return 'text-muted-foreground'
+})
+
+const hoverStatusDotClass = computed(() => {
+  if (hoveredProject.value?.status === 'live') return 'bg-status-live'
+  if (hoveredProject.value?.status === 'wip') return 'bg-blue'
+  if (hoveredProject.value?.status === 'archived') return 'bg-transparent ring-1 ring-muted-foreground'
+  return 'bg-muted-foreground'
 })
 
 defineExpose({ playEntrance: playSpatialEntrance })
