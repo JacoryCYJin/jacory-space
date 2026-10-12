@@ -1,16 +1,19 @@
 <template>
   <div ref="mount" class="relative h-full min-h-[26rem] w-full overflow-hidden bg-background">
-    <canvas ref="canvas" class="block h-full w-full touch-none" aria-label="Minecraft 3D skin preview" />
+    <canvas ref="canvas" class="block h-full w-full touch-none" :aria-label="t('interface.minecraft.preview')" />
   </div>
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
 import { BufferGeometry, Color, DoubleSide, Float32BufferAttribute, Group, LineBasicMaterial, LineSegments, Mesh, MeshBasicMaterial, PlaneGeometry, Raycaster, ShaderMaterial, Shape, ShapeGeometry, Vector2, Vector3 } from 'skinview3d/node_modules/three/build/three.module.js'
 import { Line2 } from 'skinview3d/node_modules/three/examples/jsm/lines/Line2.js'
 import { LineGeometry } from 'skinview3d/node_modules/three/examples/jsm/lines/LineGeometry.js'
 import { LineMaterial } from 'skinview3d/node_modules/three/examples/jsm/lines/LineMaterial.js'
 import { CrouchAnimation, FlyingAnimation, HitAnimation, IdleAnimation, RunningAnimation, SkinViewer, SwimAnimation, WalkingAnimation, WaveAnimation } from 'skinview3d'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
+const { t } = useI18n()
 
 const emit = defineEmits(['error', 'paint-start', 'paint-pixel', 'paint-end'])
 

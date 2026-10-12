@@ -24,6 +24,7 @@
     />
 
     <div class="pointer-events-none absolute inset-0 z-10">
+      <div class="pointer-events-auto absolute right-5 top-5 z-50"><LanguageSwitcher placement="down" /></div>
       <RouterLink to="/" class="pointer-events-auto absolute left-5 top-5 flex items-center gap-3 text-foreground" aria-label="Jacory Space"><img :src="jacoryLogo" alt="Jacory Space" class="h-8 w-8 object-contain" /><span class="hidden font-mono text-xs tracking-[0.16em] text-muted-foreground sm:inline">JACORY SPACE</span></RouterLink>
 
       <div class="pointer-events-auto">
@@ -45,7 +46,7 @@
       <SkinFileActions class="pointer-events-auto" :motion-locked="isMotionPlaybackActive" @new="isNewSkinDialogOpen = true" @import="handleImport" @export="project.actions.exportSkin" />
       <NewSkinDialog v-if="isNewSkinDialogOpen" class="pointer-events-auto" @cancel="isNewSkinDialogOpen = false" @confirm="startNewSkin" />
 
-      <div v-if="project.state.previewError" class="pointer-events-auto absolute inset-0 flex items-center justify-center bg-background/95 px-6 text-center"><div class="max-w-md border border-line bg-card p-6"><p class="tech text-destructive">WEBGL / ERROR</p><p class="mt-3 text-sm text-muted-foreground">{{ t('minecraftSkin.webglError') }}</p><p class="mt-2 font-mono text-xs text-haze">{{ project.state.previewError }}</p></div></div>
+      <div v-if="project.state.previewError" class="pointer-events-auto absolute inset-0 flex items-center justify-center bg-background/95 px-6 text-center"><div class="max-w-md border border-line bg-card p-6"><p class="tech text-destructive">{{ t('interface.minecraft.errorHeading') }}</p><p class="mt-3 text-sm text-muted-foreground">{{ project.state.previewError === 'Unable to load the default Steve skin.' ? t('interface.minecraft.defaultError') : t('minecraftSkin.webglError') }}</p><p class="mt-2 font-mono text-xs text-haze">{{ project.state.previewError }}</p></div></div>
     </div>
   </main>
 </template>
@@ -53,6 +54,7 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, toRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import jacoryLogo from '../assets/jacory-logo.svg'
 import StatusToast from '../components/StatusToast.vue'
 import AiPartGenerationPanel from '../components/tools/minecraft-skin-editor/AiPartGenerationPanel.vue'

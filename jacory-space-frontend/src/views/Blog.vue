@@ -29,8 +29,9 @@
       <div class="page-frame">
         <div v-if="isLoading || loadError" class="reveal blog-reveal border-y border-line py-10">
           <p class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
-            {{ loadError || t('blog.fieldNotes.archiveOpen', { count: 0 }) }}
+            {{ loadError ? t('interface.blog.loadError') : t('blog.fieldNotes.archiveOpen', { count: 0 }) }}
           </p>
+          <p v-if="loadError" class="mt-3 break-words font-mono text-xs text-muted-foreground">{{ loadError }}</p>
         </div>
 
         <div v-else-if="lead" class="reveal blog-reveal">
@@ -47,7 +48,7 @@
               <div class="mt-10 grid min-w-0 grid-cols-1 gap-8 max-lg:mt-5 max-lg:grid-cols-3 max-lg:gap-x-3 max-lg:gap-y-0 lg:mt-14 lg:grid-cols-1">
                 <div class="min-w-0">
                   <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
-                    分类
+                    {{ t('interface.blog.category') }}
                   </span>
                   <span class="mt-2 block break-words font-mono text-sm leading-relaxed tracking-[0.12em] text-foreground max-lg:mt-1">
                     {{ lead.cat }}
@@ -62,7 +63,7 @@
 
                 <div class="min-w-0">
                   <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
-                    日期
+                    {{ t('interface.blog.date') }}
                   </span>
                   <span class="mt-2 block break-words font-mono text-sm leading-relaxed tracking-[0.12em] text-foreground max-lg:mt-1 max-lg:whitespace-nowrap">
                     {{ lead.date }}
@@ -71,7 +72,7 @@
 
                 <div class="min-w-0">
                   <span class="block font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
-                    阅读时间
+                    {{ t('interface.blog.readTime') }}
                   </span>
                   <span class="mt-2 block break-words font-mono text-sm uppercase leading-relaxed tracking-[0.12em] text-foreground max-lg:mt-1 max-lg:whitespace-nowrap">
                     {{ lead.read }}
@@ -84,7 +85,7 @@
 
             <div class="relative z-10 min-w-0 pt-10 max-lg:pt-5 lg:pt-0">
               <div class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.24em] text-haze">
-                Latest / 最新记录
+                {{ t('interface.blog.latest') }}
               </div>
               <h2
                 class="mt-10 max-w-5xl break-words text-balance font-sans text-3xl font-medium leading-[1.08] tracking-tight text-foreground transition-all duration-500 ease-out group-hover:text-blue max-lg:mt-5 sm:group-hover:translate-x-1 md:text-4xl lg:text-5xl"
@@ -222,6 +223,7 @@
 </template>
 
 <script setup>
+import { formatReadTime } from '../lib/reading-time'
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
@@ -260,7 +262,7 @@ const toEntry = (post) => ({
   topicId: post.topic,
   category: post.category,
   date: post.date,
-  read: post.readTime
+  read: formatReadTime(post.readTime, t)
 })
 
 function yearFromDate(date) {

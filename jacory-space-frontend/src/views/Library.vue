@@ -179,8 +179,8 @@ function tagLabel(tag) {
 }
 
 function entryTypeLabel(entry) {
-  if (entry.type === 'skill' && entry.sourceType === 'external') return t('library.externalSkillLabel')
-  return entry.type === 'skill' ? 'SKILL' : 'PROMPT'
+  if (entry.type === 'skill' && entry.sourceType === 'external') return t('interface.library.external')
+  return entry.type === 'skill' ? t('interface.library.skill') : t('interface.library.prompt')
 }
 
 function entryVersion(entry) {

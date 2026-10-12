@@ -4,8 +4,9 @@
     <section v-if="isLoading || loadError" class="page-gutter pt-40">
       <div class="page-frame">
         <span class="font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] text-haze">
-          {{ loadError || t('blog.post.fieldNote') }}
+          {{ loadError ? t('interface.blog.loadError') : t('blog.post.fieldNote') }}
         </span>
+        <p v-if="loadError" class="mt-3 break-words font-mono text-xs text-muted-foreground">{{ loadError }}</p>
       </div>
     </section>
 
@@ -23,7 +24,7 @@
                 :aria-label="t('blog.post.onThisNote')"
               >
                 <p class="shrink-0 font-sans text-sm font-semibold leading-none text-foreground">
-                  目录
+                  {{ t('interface.blog.toc') }}
                 </p>
                 <ol
                   ref="tocList"
@@ -180,6 +181,7 @@
 </template>
 
 <script setup>
+import { formatReadTime } from '../lib/reading-time'
 import { computed, nextTick, onBeforeUnmount, onServerPrefetch, ref, watch } from 'vue'
 import { useHead } from '@unhead/vue'
 import { useI18n } from 'vue-i18n'
@@ -275,7 +277,7 @@ const articleMetaItems = computed(() => {
   const labels = [categoryLabel(meta), topicLabel(meta)].filter(Boolean).join(' · ')
   return [
     { key: 'date', label: fm.date },
-    { key: 'readTime', label: fm.readTime },
+    { key: 'readTime', label: formatReadTime(fm.readTime, t) },
     { key: 'category', label: labels },
   ].filter((item) => item.label)
 })

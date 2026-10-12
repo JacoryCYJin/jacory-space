@@ -1,4 +1,5 @@
 import { computed, reactive } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const DEFAULT_MONADICAL_SERVICE_URL = import.meta.env.VITE_MC_STUDIO_SERVICE_URL || 'http://127.0.0.1:8011'
 const DEFAULT_BLOCK_SERVICE_URL = import.meta.env.VITE_MC_BLOCK_SERVICE_URL || 'http://127.0.0.1:8012'
@@ -15,7 +16,7 @@ function isSupportedPreviewFile(file) {
 function loadCandidateCanvas(url, signal) {
   return fetch(url, { signal })
     .then(async (response) => {
-      if (!response.ok) throw new Error(`下载生成皮肤失败（HTTP ${response.status}）。`)
+      if (!response.ok) throw Object.assign(new Error('interface.ai.errors.download'), { params: { status: response.status } })
       return response.blob()
     })
     .then((blob) => new Promise((resolve, reject) => {
@@ -33,13 +34,14 @@ function loadCandidateCanvas(url, signal) {
       }
       image.onerror = () => {
         URL.revokeObjectURL(objectUrl)
-        reject(new Error('生成的皮肤 PNG 无法读取。'))
+        reject(new Error('interface.ai.errors.png'))
       }
       image.src = objectUrl
     }))
 }
 
 export function useAiPartGeneration(project, { applyCandidate, canRevertCandidate, revertCandidate }) {
+  const { t, te } = useI18n()
   const state = reactive({
     provider: 'monadical',
     prompt: '',
@@ -47,12 +49,16 @@ export function useAiPartGeneration(project, { applyCandidate, canRevertCandidat
     isGenerating: false,
     generationStatus: '',
     generationError: '',
+    generationDetail: '',
+    generationErrorParams: {},
     requestDiagnostic: null,
     proposalCanvas: null,
     proposalResult: null,
     proposalApplied: false,
     appliedHistoryEntry: null
   })
+  const generationErrorText = computed(() => state.generationError ? t(state.generationError, state.generationErrorParams) : '')
+  const generationStatusText = computed(() => state.generationStatus ? t(state.generationStatus) : '')
   let requestController = null
   const canRevertProposal = computed(() => state.proposalApplied && state.appliedHistoryEntry && canRevertCandidate(state.appliedHistoryEntry))
 
@@ -64,6 +70,8 @@ export function useAiPartGeneration(project, { applyCandidate, canRevertCandidat
     if (!['monadical', 'block'].includes(provider)) return
     state.provider = provider
     state.generationError = ''
+    state.generationDetail = ''
+    state.generationErrorParams = {}
     state.generationStatus = ''
     state.requestDiagnostic = null
   }
@@ -73,12 +81,12 @@ export function useAiPartGeneration(project, { applyCandidate, canRevertCandidat
     if (!file) return
     if (!isSupportedPreviewFile(file)) {
       state.previewFile = null
-      state.generationError = '请上传 PNG、JPG 或 WebP 格式的角色双视角预览图。'
+      state.generationError = 'interface.ai.errors.fileType'
       return
     }
     if (file.size > MAX_PREVIEW_SIZE) {
       state.previewFile = null
-      state.generationError = '角色双视角预览图不能超过 20MB。'
+      state.generationError = 'interface.ai.errors.fileSize'
       return
     }
     state.previewFile = file
@@ -107,17 +115,17 @@ export function useAiPartGeneration(project, { applyCandidate, canRevertCandidat
     state.requestDiagnostic = null
     const isBlockProvider = state.provider === 'block'
     if (!isBlockProvider && !state.prompt.trim()) {
-      state.generationError = '请先填写角色描述。'
+      state.generationError = 'interface.ai.errors.prompt'
       return
     }
     if (isBlockProvider && !state.previewFile) {
-      state.generationError = '请先上传角色双视角预览图。'
+      state.generationError = 'interface.ai.errors.preview'
       return
     }
     if (state.proposalResult) clearProposal()
 
     state.isGenerating = true
-    state.generationStatus = isBlockProvider ? '正在上传角色双视角预览图…' : '正在连接本地 Minecraft 服务…'
+    state.generationStatus = isBlockProvider ? 'interface.ai.status.upload' : 'interface.ai.status.connect'
     requestController = new AbortController()
     const serviceUrl = normalizeServiceUrl(
       isBlockProvider ? import.meta.env.VITE_MC_BLOCK_SERVICE_URL : import.meta.env.VITE_MC_STUDIO_SERVICE_URL,
@@ -147,20 +155,24 @@ export function useAiPartGeneration(project, { applyCandidate, canRevertCandidat
       const payload = await response.json().catch(() => null)
       if (!response.ok) {
         const detail = payload?.detail || `HTTP ${response.status}`
-        throw new Error(typeof detail === 'string' ? detail : '本地生成服务请求失败。')
+        throw Object.assign(new Error('interface.ai.errors.service'), { detail: typeof detail === 'string' ? detail : JSON.stringify(detail) })
       }
       if (payload?.model !== model || typeof payload?.skin_png_path !== 'string') {
-        throw new Error('本地生成服务返回了无效的皮肤候选。')
+        throw new Error('interface.ai.errors.candidate')
       }
       state.requestDiagnostic = { status: response.status, provider: state.provider, model, id: payload.id, seed: payload.seed ?? null }
-      state.generationStatus = '正在加载完整皮肤预览…'
+      state.generationStatus = 'interface.ai.status.load'
       const candidateUrl = new URL(payload.skin_png_path, `${serviceUrl}/`).toString()
       const canvas = await loadCandidateCanvas(candidateUrl, requestController.signal)
       previewCandidate(canvas, { ...payload, candidateUrl })
       applyProposal()
     } catch (error) {
-      if (error?.name === 'AbortError') state.generationError = '已停止生成。'
-      else state.generationError = error instanceof Error ? error.message : '本地皮肤生成失败。'
+      if (error?.name === 'AbortError') state.generationError = 'interface.ai.errors.cancelled'
+      else {
+        state.generationError = error instanceof Error && te(error.message) ? error.message : 'interface.ai.errors.failed'
+        state.generationErrorParams = error?.params || {}
+        state.generationDetail = error?.detail || (error instanceof Error && !te(error.message) ? error.message : '')
+      }
     } finally {
       state.isGenerating = false
       state.generationStatus = ''
@@ -194,6 +206,8 @@ export function useAiPartGeneration(project, { applyCandidate, canRevertCandidat
   return {
     state,
     canRevertProposal,
+    generationErrorText,
+    generationStatusText,
     actions: {
       applyProposal,
       cancel,

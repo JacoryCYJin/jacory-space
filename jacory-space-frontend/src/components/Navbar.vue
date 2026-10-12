@@ -13,7 +13,7 @@
       </router-link>
 
       <nav
-        aria-label="Primary"
+        :aria-label="route.name === 'Home' ? 'Primary' : t('interface.nav.primary')"
         class="absolute left-1/2 hidden -translate-x-1/2 items-center gap-10 md:flex"
       >
         <router-link
@@ -88,7 +88,7 @@
       class="overflow-hidden border-b border-line bg-background backdrop-blur-md transition-[max-height,opacity] duration-500 ease-out md:hidden"
       :class="mobileMenuOpen ? 'max-h-[32rem] opacity-100' : 'max-h-0 opacity-0'"
     >
-      <nav aria-label="Mobile" class="flex flex-col px-5 py-2 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+      <nav :aria-label="route.name === 'Home' ? 'Mobile' : t('interface.nav.mobile')" class="flex flex-col px-5 py-2 pb-[calc(1rem+env(safe-area-inset-bottom))]">
         <router-link
           v-for="link in navLinks"
           :key="link.to"
@@ -117,7 +117,7 @@
           />
         </router-link>
         <div class="flex items-center justify-between py-4">
-          <span class="tech text-xs">Locale</span>
+          <span class="tech text-xs">{{ route.name === 'Home' ? 'Locale' : t('interface.nav.locale') }}</span>
           <LanguageSwitcher />
         </div>
       </nav>

@@ -2,7 +2,7 @@
   <section data-tools-enter class="mt-0 space-y-9 md:hidden">
     <div v-for="layer in layerMeta" :key="'m-' + layer.id">
       <div class="flex items-baseline justify-between">
-        <span class="tech text-foreground">{{ layer.id }}</span>
+        <span class="tech text-foreground">{{ t('interface.tools.layers.' + layer.id) }}</span>
         <span class="tech">{{ layer.count }}</span>
       </div>
       <ul class="mt-3 divide-y divide-line border-t border-line">
@@ -31,6 +31,9 @@
 </template>
 
 <script setup>
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const props = defineProps({
   projects: { type: Array, required: true },
   activeFilter: { type: String, default: 'all' },
@@ -42,7 +45,7 @@ const emit = defineEmits(['select'])
 const statusNames = { live: 'LIVE', wip: 'WIP', beta: 'BETA', archived: 'ARCHIVED' }
 
 function statusLabel(status) {
-  return statusNames[status] ?? status.toUpperCase()
+  return statusNames[status] ? t('interface.tools.status.' + status) : status.toUpperCase()
 }
 
 function statusDotClass(status) {

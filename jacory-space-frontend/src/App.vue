@@ -9,11 +9,13 @@
 <script setup>
 import { computed } from 'vue'
 import { useHead } from '@unhead/vue'
+import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import Navbar from './components/Navbar.vue'
 import SmoothScroll from './components/SmoothScroll.vue'
 
 const route = useRoute()
+const { t } = useI18n()
 const isFullBleedRoute = computed(() => ['/tools/minecraft-skin-editor', '/experiments/retro-futurism'].includes(route.path))
 
 const siteUrl = 'https://jacoryspace.top'
@@ -85,7 +87,9 @@ const pageMeta = computed(() => {
     },
   }
 
-  return pages[route.name] || pages.Home
+  const page = pages[route.name] || pages.Home
+  if (!pages[route.name] || route.name === 'Home') return page
+  return { ...page, title: t(`interface.pages.${route.name}.title`), description: t(`interface.pages.${route.name}.description`) }
 })
 
 useHead(() => {

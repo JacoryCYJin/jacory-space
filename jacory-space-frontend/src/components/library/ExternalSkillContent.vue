@@ -1,5 +1,5 @@
 <template>
-  <section class="border border-line bg-card">
+  <section class="min-w-0 w-full border border-line bg-card">
     <div class="flex items-center justify-between gap-4 border-b border-line px-5 py-3 md:px-7">
       <p class="tech text-xs text-blue">04 — {{ t('library.sourceAndDeploymentLabel') }}</p>
     </div>
@@ -17,15 +17,15 @@
         </div>
       </dl>
 
-      <div v-if="entry.installCommand" class="mt-8">
+      <div v-if="installCommand" class="mt-8">
         <div class="mb-3 flex items-center justify-between gap-4">
           <p class="tech text-xs text-blue">{{ t('library.deploymentCommandLabel') }}</p>
-          <button type="button" class="inline-flex shrink-0 items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-foreground transition-colors hover:text-blue" @click="$emit('copy-install-command', entry.installCommand)">
+          <button type="button" class="inline-flex shrink-0 items-center gap-2 font-mono text-xs uppercase tracking-[0.12em] text-foreground transition-colors hover:text-blue" @click="$emit('copy-install-command', installCommand)">
             <Copy :size="14" stroke-width="1.5" aria-hidden="true" />
             {{ t('library.copyInstallCommand') }}
           </button>
         </div>
-        <pre class="overflow-x-auto border border-line bg-background px-4 py-4 font-mono text-sm leading-7 text-foreground"><code>{{ entry.installCommand }}</code></pre>
+        <pre class="min-w-0 whitespace-pre-wrap break-all border border-line bg-background px-4 py-4 font-mono text-sm leading-7 text-foreground"><code>{{ installCommand }}</code></pre>
       </div>
 
       <div v-if="entry.outline?.length" class="mt-10 border-t border-line pt-8">
@@ -39,10 +39,11 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Copy, ExternalLink } from 'lucide-vue-next'
 
-defineProps({
+const props = defineProps({
   entry: {
     type: Object,
     required: true,
@@ -52,6 +53,7 @@ defineProps({
 defineEmits(['copy-install-command'])
 
 const { t } = useI18n()
+const installCommand = computed(() => props.entry.id === 'goutoujunshi' ? t('interface.library.installGoutoujunshi') : props.entry.installCommand)
 
 function outlineIndentClass(level) {
   if (level >= 4) return 'pl-6'

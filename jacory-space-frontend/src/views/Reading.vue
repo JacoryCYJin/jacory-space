@@ -5,7 +5,7 @@
         <div class="flex items-center justify-end gap-4">
           <span class="font-mono text-xs text-muted-foreground">{{ t('reading.status') }}</span>
         </div>
-        <p class="mt-12 font-mono text-xs tracking-[0.18em] text-blue">READING / ARCHIVE</p>
+        <p class="mt-12 font-mono text-xs tracking-[0.18em] text-blue">{{ t('interface.reading.archive') }}</p>
         <h1 class="mt-5 text-5xl font-medium tracking-tight md:text-7xl">{{ t('reading.title') }}</h1>
         <div class="mt-6 flex flex-wrap items-end justify-between gap-6">
           <p class="text-base text-muted-foreground">{{ t('reading.description') }}</p>
