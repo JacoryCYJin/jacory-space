@@ -3,29 +3,29 @@
     <section class="about-sheet page-gutter pb-8 md:pb-10">
       <div class="about-sheet-frame page-frame">
         <header class="about-sheet-header flex items-end justify-between">
-          <div>
+          <div class="flex w-full items-baseline justify-between gap-4 lg:block lg:w-auto">
             <p class="font-mono text-xs tracking-[0.16em] text-blue">{{ t('interface.about.sheet') }}</p>
-            <p class="tech mt-2">{{ t('about.sheet.subtitle') }}</p>
+            <p class="tech hidden shrink-0 lg:mt-2 lg:block">{{ t('about.sheet.subtitle') }}</p>
           </div>
         </header>
 
-        <div class="about-hero relative mt-8 lg:mt-10">
+        <div class="about-hero relative mt-4 lg:mt-10">
           <div class="about-hero-grid relative grid grid-cols-1 lg:grid-cols-[repeat(13,minmax(0,1fr))] lg:gap-y-12 lg:min-h-[38rem] lg:overflow-visible">
             <figure
-              class="about-identity-illustration relative col-start-1 row-start-1 flex aspect-[1254/1167] w-4/5 min-w-0 items-center justify-center self-stretch justify-self-end lg:pointer-events-none lg:absolute lg:col-start-auto lg:row-start-auto lg:left-[clamp(-9rem,-7vw,-5rem)] lg:z-0 lg:aspect-auto lg:min-h-[22rem] lg:w-auto lg:overflow-visible xl:left-[clamp(-7rem,-5vw,-3rem)] 2xl:left-[clamp(-3rem,-1.5vw,1rem)]"
+              class="about-identity-illustration relative col-start-1 row-start-1 flex aspect-[1254/1167] w-[65%] min-w-0 items-center justify-center self-stretch justify-self-start lg:pointer-events-none lg:absolute lg:col-start-auto lg:row-start-auto lg:left-[clamp(-9rem,-7vw,-5rem)] lg:z-0 lg:aspect-auto lg:min-h-[22rem] lg:w-auto lg:overflow-visible xl:left-[clamp(-7rem,-5vw,-3rem)] 2xl:left-[clamp(-3rem,-1.5vw,1rem)]"
             >
-              <div class="about-identity-media absolute inset-0 flex items-center justify-end lg:relative lg:inset-auto lg:w-full lg:justify-center">
+              <div class="about-identity-media absolute inset-0 flex items-center justify-start lg:relative lg:inset-auto lg:w-full lg:justify-center">
                 <img
                   :src="identityIllustration"
                   alt=""
-                  class="about-identity-image relative z-0 h-full w-auto max-w-[125%] object-contain opacity-80 mix-blend-multiply lg:h-auto lg:max-h-[44rem] lg:w-full lg:max-w-none lg:translate-x-0"
+                  class="about-identity-image relative z-0 h-full w-full max-w-full object-contain opacity-80 mix-blend-multiply lg:h-auto lg:max-h-[44rem] lg:max-w-none lg:translate-x-0"
                 />
               </div>
               <figcaption class="sr-only">{{ t('about.sheet.identityIllustrationAlt') }}</figcaption>
             </figure>
 
             <section
-              class="about-intro relative z-10 col-start-1 row-start-1 flex w-[70%] min-w-0 flex-col justify-between self-stretch lg:col-span-5 lg:col-start-5 lg:row-start-auto lg:w-auto lg:justify-center lg:pl-[clamp(2rem,4vw,4.75rem)]"
+              class="about-intro relative z-10 col-start-1 row-start-1 flex w-[55%] min-w-0 flex-col justify-center self-stretch justify-self-end lg:col-span-5 lg:col-start-5 lg:row-start-auto lg:w-auto lg:justify-self-stretch lg:pl-[clamp(2rem,4vw,4.75rem)]"
             >
               <h1
                 class="min-w-0 text-balance font-sans text-foreground"
@@ -48,26 +48,26 @@
             </section>
 
             <aside
-              class="about-side-panel relative z-10 mt-12 overflow-hidden border-t border-line pt-8 lg:-top-5 lg:col-span-4 lg:mt-0 lg:border-t-0 lg:pl-6 lg:pt-0 xl:pl-8"
+              class="about-side-panel relative z-10 mt-4 grid grid-cols-1 overflow-hidden border-t border-line pt-4 lg:-top-5 lg:col-span-4 lg:mt-0 lg:block lg:border-t-0 lg:pl-6 lg:pt-0 xl:pl-8"
             >
               <span aria-hidden="true" class="about-panel-line absolute bottom-0 left-0 top-0 hidden w-px origin-top bg-line lg:block" />
-              <section aria-labelledby="identity-heading" class="relative">
+              <section aria-labelledby="identity-heading" class="relative z-10 col-start-1 row-start-1 w-3/4 min-w-0 lg:w-auto">
                 <div class="about-identity-heading flex items-center justify-between">
                   <h2 id="identity-heading" class="font-mono text-xs tracking-[0.14em] text-blue">
                     {{ t('interface.about.identity') }}
                   </h2>
-                  <span aria-hidden="true" class="font-mono text-lg font-light text-muted-foreground">＋</span>
+                  <span aria-hidden="true" class="hidden font-mono text-lg font-light text-muted-foreground lg:inline">＋</span>
                 </div>
 
-                <dl class="mt-5">
+                <dl class="mt-4 grid gap-3 lg:mt-5 lg:block">
                   <div
                     v-for="item in identityRows"
                     :key="item.label"
-                    class="about-identity-row grid grid-cols-[5.5rem_1fr] gap-4 border-b border-line py-3.5 last:border-b-0"
+                    class="about-identity-row grid grid-cols-1 gap-1 border-line lg:grid-cols-[5.5rem_1fr] lg:gap-4 lg:border-b lg:py-3.5 lg:last:border-b-0"
                   >
-                    <dt class="tech text-[0.625rem]">{{ item.label }}</dt>
+                    <dt class="tech max-lg:text-xs lg:text-[0.625rem]">{{ item.label }}</dt>
                     <dd
-                      class="inline-flex items-center gap-2 text-xs leading-relaxed text-foreground"
+                      class="inline-flex min-w-0 items-center gap-2 text-sm leading-relaxed text-foreground lg:text-xs lg:leading-relaxed"
                       :class="isEnglishLocale ? 'font-sans font-normal' : 'font-mono'"
                     >
                       <span>{{ item.value }}</span>
@@ -81,15 +81,15 @@
                 </dl>
               </section>
 
-              <figure class="about-avatar-draft relative mt-9">
-                <figcaption class="font-mono text-xs tracking-[0.14em] text-blue">
+              <figure class="about-avatar-draft relative col-start-1 row-start-1 w-3/4 max-w-[17rem] self-center justify-self-end lg:mt-9 lg:w-auto lg:max-w-none lg:self-auto lg:justify-self-auto">
+                <figcaption class="sr-only font-mono text-xs tracking-[0.14em] text-blue lg:not-sr-only">
                   {{ t('interface.about.avatar') }}
                 </figcaption>
-                <div class="about-avatar-media mt-4 flex min-h-[13.5rem] items-center justify-center pt-4">
+                <div class="about-avatar-media flex items-center justify-center lg:mt-4 lg:min-h-[13.5rem] lg:pt-4">
                   <img
                     :src="avatarIllustration"
                     alt=""
-                    class="h-auto max-h-[20rem] w-[108%] max-w-none object-contain opacity-90 mix-blend-multiply"
+                    class="h-auto w-full max-w-[17rem] object-contain opacity-90 mix-blend-multiply lg:max-h-[20rem] lg:w-[108%] lg:max-w-none"
                   />
                 </div>
               </figure>
@@ -100,34 +100,34 @@
     </section>
 
     <section class="about-axioms page-gutter">
-      <div class="page-frame grid py-5 lg:grid-cols-[17rem_1fr] lg:py-0">
-        <div class="about-axioms-label flex items-center py-5 lg:pr-8">
+      <div class="page-frame grid lg:grid-cols-[17rem_1fr]">
+        <div class="about-axioms-label mb-2 flex items-center lg:mb-0 lg:py-5 lg:pr-8">
           <h2 class="font-mono text-xs tracking-[0.14em] text-blue">{{ t('interface.about.axioms') }}</h2>
         </div>
 
         <div class="relative">
           <span aria-hidden="true" class="about-axioms-line absolute inset-x-0 top-0 h-px origin-left bg-line" />
-          <ol class="grid grid-cols-2 md:grid-cols-5">
+          <ol class="grid grid-cols-5">
             <li
               v-for="(principle, index) in principles"
               :key="principle.label"
-              class="about-axiom relative px-4 py-5 before:absolute before:left-0 before:top-1/2 before:hidden before:h-16 before:-translate-y-1/2 before:border-l before:border-line before:content-[''] md:px-6 md:before:block md:first:before:hidden"
+              class="about-axiom relative min-w-0 py-2 pr-2 before:absolute before:left-0 before:top-1/2 before:hidden before:h-16 before:-translate-y-1/2 before:border-l before:border-line before:content-[''] lg:px-6 lg:py-5 lg:before:block lg:first:before:hidden"
             >
-              <span class="font-mono text-[0.625rem] tracking-[0.14em] text-blue">
+              <span class="font-mono tracking-[0.14em] text-blue max-lg:text-xs lg:text-[0.625rem]">
                 {{ String(index + 1).padStart(2, '0') }}
               </span>
-              <p class="mt-3 font-sans text-sm tracking-tight text-foreground" :class="isEnglishLocale ? 'font-normal' : 'font-medium'">{{ principle.label }}</p>
+              <p class="mt-1 break-words font-sans tracking-tight text-foreground lg:mt-3 lg:break-normal" :class="isEnglishLocale ? 'text-xs font-normal lg:text-sm' : 'text-sm font-medium'">{{ principle.label }}</p>
             </li>
           </ol>
         </div>
       </div>
     </section>
 
-    <footer class="about-contact page-gutter py-7">
-      <div class="page-frame flex flex-col gap-6 md:flex-row md:items-center">
+    <footer class="about-contact page-gutter pb-8 pt-4 lg:py-7">
+      <div class="page-frame flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-6">
         <p class="about-contact-item font-mono text-xs tracking-[0.14em] text-blue">{{ t('interface.about.contact') }}</p>
 
-        <nav :aria-label="t('about.contact.ariaLabel')" class="about-contact-item flex flex-wrap items-center gap-x-8 gap-y-3">
+        <nav :aria-label="t('about.contact.ariaLabel')" class="about-contact-item flex w-full flex-col lg:w-auto lg:flex-row lg:flex-wrap lg:items-center lg:gap-x-8 lg:gap-y-3">
           <component
             :is="link.href ? 'a' : 'span'"
             v-for="link in contactLinks"
@@ -135,20 +135,20 @@
             :href="link.href"
             :target="link.external ? '_blank' : undefined"
             :rel="link.external ? 'noopener noreferrer' : undefined"
-            class="group flex items-baseline gap-3 text-xs"
+            class="group flex min-h-12 items-center gap-4 border-b border-line py-3 text-sm lg:min-h-0 lg:items-baseline lg:gap-3 lg:border-b-0 lg:py-0 lg:text-xs"
             :class="isEnglishLocale ? 'font-sans' : 'font-mono'"
           >
-            <span class="text-foreground transition-colors duration-300 group-hover:text-blue">
+            <span class="w-16 shrink-0 text-foreground transition-colors duration-300 group-hover:text-blue lg:w-auto">
               {{ link.label }}
             </span>
-            <span class="text-muted-foreground">{{ link.value }}</span>
+            <span class="min-w-0 break-words text-muted-foreground">{{ link.value }}</span>
           </component>
         </nav>
 
-        <div class="about-contact-item hidden h-px flex-1 bg-line md:block">
+        <div class="about-contact-item hidden h-px flex-1 bg-line lg:block">
           <span class="ml-auto block h-1.5 w-1.5 -translate-y-[0.1875rem] rounded-full bg-blue" />
         </div>
-        <p class="about-contact-item tech md:text-right">{{ t('about.contact.thanks') }}</p>
+        <p class="about-contact-item tech mt-2 text-center lg:mt-0 lg:text-right">{{ t('about.contact.thanks') }}</p>
       </div>
     </footer>
 
@@ -176,10 +176,10 @@ const isCjkLocale = computed(() => isChineseLocale.value || isJapaneseLocale.val
 
 const sloganTitleClass = computed(() => (
   isChineseLocale.value
-    ? 'w-full text-5xl leading-[1.16] tracking-[-0.012em] sm:text-6xl md:text-7xl md:leading-[1.12] lg:w-[calc(100%+1.75rem)] lg:text-[clamp(3.35rem,6.25vw,5.8rem)]'
+    ? 'w-full text-4xl leading-[1.16] tracking-[-0.012em] sm:text-5xl md:text-6xl md:leading-[1.12] lg:w-[calc(100%+1.75rem)] lg:text-[clamp(3.35rem,6.25vw,5.8rem)]'
     : isJapaneseLocale.value
-      ? 'w-full text-3xl leading-[1.16] tracking-[-0.012em] sm:text-4xl md:text-5xl lg:w-auto lg:text-[clamp(2.45rem,4.4vw,4rem)] lg:leading-[0.98]'
-      : 'w-full text-4xl leading-[1.16] tracking-[-0.055em] sm:text-5xl md:text-6xl lg:w-auto lg:text-[clamp(2.45rem,4.4vw,4rem)] lg:leading-[0.98]'
+      ? 'w-full text-2xl leading-[1.16] tracking-[-0.012em] sm:text-3xl md:text-4xl lg:w-auto lg:text-[clamp(2.45rem,4.4vw,4rem)] lg:leading-[0.98]'
+      : 'w-full text-3xl leading-[1.16] tracking-[-0.055em] sm:text-4xl md:text-5xl lg:w-auto lg:text-[clamp(2.45rem,4.4vw,4rem)] lg:leading-[0.98]'
 ))
 
 const sloganEmphasisClass = computed(() => (
@@ -187,7 +187,7 @@ const sloganEmphasisClass = computed(() => (
 ))
 
 const statementClass = computed(() => (
-  isChineseLocale.value ? 'mt-6 lg:mt-12' : 'mt-6 lg:mt-8'
+  isChineseLocale.value ? 'mt-4 lg:mt-12' : 'mt-4 lg:mt-8'
 ))
 
 const identityRows = computed(() => [
@@ -405,13 +405,18 @@ onBeforeUnmount(() => {
 @media (max-width: 1023px) {
   .about-identity-image {
     -webkit-mask-image:
-      linear-gradient(to right, transparent, var(--ink) 48%, var(--ink) 92%, transparent),
+      linear-gradient(to left, transparent, var(--ink) 48%, var(--ink) 92%, transparent),
       linear-gradient(to bottom, transparent, var(--ink) 8%, var(--ink) 60%, transparent);
     mask-image:
-      linear-gradient(to right, transparent, var(--ink) 48%, var(--ink) 92%, transparent),
+      linear-gradient(to left, transparent, var(--ink) 48%, var(--ink) 92%, transparent),
       linear-gradient(to bottom, transparent, var(--ink) 8%, var(--ink) 60%, transparent);
     -webkit-mask-composite: source-in;
     mask-composite: intersect;
+  }
+
+  .about-avatar-media img {
+    -webkit-mask-image: linear-gradient(to right, transparent, var(--ink) 55%, var(--ink) 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, var(--ink) 55%, var(--ink) 92%, transparent);
   }
 }
 
