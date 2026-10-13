@@ -1,11 +1,10 @@
 <template>
-  <main ref="pageRoot" class="about-page grain min-h-screen bg-background pt-16">
+  <main ref="pageRoot" :style="pageSizing" class="about-page grain min-h-screen bg-background pt-16">
     <section class="about-sheet page-gutter pb-8 md:pb-10">
       <div class="about-sheet-frame page-frame">
         <header class="about-sheet-header flex items-end justify-between">
           <div class="flex w-full items-baseline justify-between gap-4 lg:block lg:w-auto">
             <p class="font-mono text-xs tracking-[0.16em] text-blue">{{ t('interface.about.sheet') }}</p>
-            <p class="tech hidden shrink-0 lg:mt-2 lg:block">{{ t('about.sheet.subtitle') }}</p>
           </div>
         </header>
 
@@ -169,6 +168,29 @@ const pageRoot = ref(null)
 const { t, locale } = useI18n()
 let motionMedia
 
+// Keep the desktop sheet's proportions in its own coordinate system. Navbar is
+// outside this element and its 64px clearance must stay in viewport pixels.
+const pageSizing = ref({})
+const updatePageSizing = () => {
+  const width = document.documentElement.clientWidth
+  const height = window.innerHeight
+  if (width < 1024) {
+    pageSizing.value = {}
+    return
+  }
+
+  const widthScale = width / 1440
+  const scale = height >= 720
+    ? Math.min(widthScale, (height - 64) / (900 - 64))
+    : widthScale
+
+  pageSizing.value = {
+    '--about-scale': scale,
+    '--about-height': `${height / scale}px`,
+    '--about-navbar-space': `${64 / scale}px`,
+  }
+}
+
 const isChineseLocale = computed(() => locale.value.startsWith('zh'))
 const isJapaneseLocale = computed(() => locale.value.startsWith('ja'))
 const isEnglishLocale = computed(() => locale.value.startsWith('en'))
@@ -176,10 +198,10 @@ const isCjkLocale = computed(() => isChineseLocale.value || isJapaneseLocale.val
 
 const sloganTitleClass = computed(() => (
   isChineseLocale.value
-    ? 'w-full text-4xl leading-[1.16] tracking-[-0.012em] sm:text-5xl md:text-6xl md:leading-[1.12] lg:w-[calc(100%+1.75rem)] lg:text-[clamp(3.35rem,6.25vw,5.8rem)]'
+    ? 'w-full text-4xl leading-[1.16] tracking-[-0.012em] sm:text-5xl md:text-6xl md:leading-[1.12] lg:w-[calc(100%+1.75rem)] lg:text-[clamp(3.35rem,calc(6.25*var(--about-vw)),5.8rem)]'
     : isJapaneseLocale.value
-      ? 'w-full text-2xl leading-[1.16] tracking-[-0.012em] sm:text-3xl md:text-4xl lg:w-auto lg:text-[clamp(2.45rem,4.4vw,4rem)] lg:leading-[0.98]'
-      : 'w-full text-3xl leading-[1.16] tracking-[-0.055em] sm:text-4xl md:text-5xl lg:w-auto lg:text-[clamp(2.45rem,4.4vw,4rem)] lg:leading-[0.98]'
+      ? 'w-full text-2xl leading-[1.16] tracking-[-0.012em] sm:text-3xl md:text-4xl lg:w-auto lg:text-[clamp(2.45rem,calc(4.4*var(--about-vw)),4rem)] lg:leading-[0.98]'
+      : 'w-full text-3xl leading-[1.16] tracking-[-0.055em] sm:text-4xl md:text-5xl lg:w-auto lg:text-[clamp(2.45rem,calc(4.4*var(--about-vw)),4rem)] lg:leading-[0.98]'
 ))
 
 const sloganEmphasisClass = computed(() => (
@@ -221,6 +243,9 @@ const contactLinks = computed(() => [
 
 onMounted(() => {
   if (!pageRoot.value) return
+
+  updatePageSizing()
+  window.addEventListener('resize', updatePageSizing)
 
   motionMedia = gsap.matchMedia()
   motionMedia.add(
@@ -396,11 +421,34 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  window.removeEventListener('resize', updatePageSizing)
   motionMedia?.revert()
 })
 </script>
 
 <style scoped>
+@media (min-width: 1024px) {
+  .about-page {
+    --about-vw: 14.4px;
+    --page-gutter: 6.3rem;
+    zoom: var(--about-scale, 1);
+    min-height: var(--about-height, 100dvh);
+    padding-top: var(--about-navbar-space, 4rem);
+  }
+
+  .about-identity-illustration {
+    left: -4.5rem;
+  }
+
+  .about-intro {
+    padding-left: 3.6rem;
+  }
+
+  .about-avatar-media img {
+    max-height: none;
+  }
+}
+
 /* Blend only the mobile illustration edges; keep the original desktop image. */
 @media (max-width: 1023px) {
   .about-identity-image {
@@ -423,7 +471,7 @@ onBeforeUnmount(() => {
 /* Keep the full identity sheet in one desktop viewport; short windows retain flow. */
 @media (min-width: 1024px) and (min-height: 720px) {
   .about-page {
-    height: 100dvh;
+    height: var(--about-height, 100dvh);
     min-height: 0;
     display: grid;
     grid-template-rows: minmax(0, 1fr) auto auto;
@@ -497,7 +545,7 @@ onBeforeUnmount(() => {
 
   .about-avatar-media img {
     height: 100%;
-    max-height: 20rem;
+    max-height: 100%;
     width: 100%;
   }
 }
