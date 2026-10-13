@@ -32,7 +32,7 @@
                   @wheel.passive="pauseTocFollowing"
                   @pointerdown="pauseTocFollowing"
                   @keydown="pauseTocFollowing"
-                  class="mt-5 min-h-0 space-y-3 overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                  class="mt-5 min-h-0 space-y-2 overflow-y-auto overscroll-y-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                   <li
                     v-for="item in displayToc"
@@ -65,7 +65,7 @@
             </aside>
 
             <article class="min-w-0 lg:order-2">
-              <header class="max-w-[54rem] border-b border-line pb-10 md:pb-12">
+              <header class="max-w-[54rem] border-b border-line pb-6">
                 <div data-post-enter class="font-mono text-xs font-medium leading-[1.2] tracking-[0.16em] text-blue">
                   {{ breadcrumbLabel }}
                 </div>
@@ -109,7 +109,7 @@
                 </div>
               </header>
 
-              <div data-post-enter class="mt-12 max-w-[54rem] font-reading">
+              <div data-post-enter class="mt-6 max-w-[54rem] font-reading [&>.article-body>:first-child]:mt-0">
                 <MarkdownArticle ref="article" compact :blocks="post.blocks" :collapsible-section="frontmatter.collapsibleSection || ''" @layout-change="refreshArticleLayout" />
               </div>
 
