@@ -10,25 +10,25 @@
         </header>
 
         <div class="about-hero relative mt-8 lg:mt-10">
-          <div class="about-hero-grid relative grid grid-cols-12 gap-y-12 lg:grid-cols-[repeat(13,minmax(0,1fr))] lg:min-h-[38rem] lg:overflow-visible">
+          <div class="about-hero-grid relative grid grid-cols-1 lg:grid-cols-[repeat(13,minmax(0,1fr))] lg:gap-y-12 lg:min-h-[38rem] lg:overflow-visible">
             <figure
-              class="about-identity-illustration relative col-span-12 flex min-h-[22rem] items-center justify-center overflow-hidden border-b border-line pb-8 lg:pointer-events-none lg:absolute lg:left-[clamp(-9rem,-7vw,-5rem)] lg:z-0 lg:overflow-visible lg:border-b-0 lg:pb-0 xl:left-[clamp(-7rem,-5vw,-3rem)] 2xl:left-[clamp(-3rem,-1.5vw,1rem)]"
+              class="about-identity-illustration relative col-start-1 row-start-1 flex aspect-[1254/1167] w-4/5 min-w-0 items-center justify-center self-stretch justify-self-end lg:pointer-events-none lg:absolute lg:col-start-auto lg:row-start-auto lg:left-[clamp(-9rem,-7vw,-5rem)] lg:z-0 lg:aspect-auto lg:min-h-[22rem] lg:w-auto lg:overflow-visible xl:left-[clamp(-7rem,-5vw,-3rem)] 2xl:left-[clamp(-3rem,-1.5vw,1rem)]"
             >
-              <div class="about-identity-media flex w-full items-center justify-center">
+              <div class="about-identity-media absolute inset-0 flex items-center justify-end lg:relative lg:inset-auto lg:w-full lg:justify-center">
                 <img
                   :src="identityIllustration"
                   alt=""
-                  class="about-identity-image relative z-0 h-auto max-h-[40rem] w-[125%] max-w-none object-contain opacity-80 mix-blend-multiply lg:max-h-[44rem] lg:w-full lg:translate-x-0"
+                  class="about-identity-image relative z-0 h-full w-auto max-w-[125%] object-contain opacity-80 mix-blend-multiply lg:h-auto lg:max-h-[44rem] lg:w-full lg:max-w-none lg:translate-x-0"
                 />
               </div>
               <figcaption class="sr-only">{{ t('about.sheet.identityIllustrationAlt') }}</figcaption>
             </figure>
 
             <section
-              class="about-intro relative z-10 col-span-12 flex flex-col justify-center lg:col-span-5 lg:col-start-5 lg:pl-[clamp(2rem,4vw,4.75rem)]"
+              class="about-intro relative z-10 col-start-1 row-start-1 flex w-[70%] min-w-0 flex-col justify-between self-stretch lg:col-span-5 lg:col-start-5 lg:row-start-auto lg:w-auto lg:justify-center lg:pl-[clamp(2rem,4vw,4.75rem)]"
             >
               <h1
-                class="text-balance font-sans text-foreground"
+                class="min-w-0 text-balance font-sans text-foreground"
                 :class="[sloganTitleClass, isEnglishLocale ? 'font-normal' : 'font-medium']"
               >
                 <span class="block overflow-hidden">
@@ -40,7 +40,7 @@
               </h1>
 
               <p
-                class="about-statement max-w-[31rem] whitespace-pre-line text-pretty text-sm leading-[1.75] text-muted-foreground md:text-[0.9375rem]"
+                class="about-statement min-w-0 max-w-[31rem] whitespace-pre-line text-pretty text-sm leading-[1.75] text-muted-foreground md:text-[0.9375rem]"
                 :class="[statementClass, isEnglishLocale ? 'lg:pr-8 xl:pr-10' : '']"
               >
                 {{ t('about.statement') }}
@@ -48,7 +48,7 @@
             </section>
 
             <aside
-              class="about-side-panel relative z-10 col-span-12 overflow-hidden border-t border-line pt-8 lg:-top-5 lg:col-span-4 lg:border-t-0 lg:pl-6 lg:pt-0 xl:pl-8"
+              class="about-side-panel relative z-10 mt-12 overflow-hidden border-t border-line pt-8 lg:-top-5 lg:col-span-4 lg:mt-0 lg:border-t-0 lg:pl-6 lg:pt-0 xl:pl-8"
             >
               <span aria-hidden="true" class="about-panel-line absolute bottom-0 left-0 top-0 hidden w-px origin-top bg-line lg:block" />
               <section aria-labelledby="identity-heading" class="relative">
@@ -176,10 +176,10 @@ const isCjkLocale = computed(() => isChineseLocale.value || isJapaneseLocale.val
 
 const sloganTitleClass = computed(() => (
   isChineseLocale.value
-    ? 'w-full text-[clamp(3.35rem,6.25vw,5.8rem)] leading-[1.16] tracking-[-0.012em] md:leading-[1.12] lg:w-[calc(100%+1.75rem)]'
+    ? 'w-full text-5xl leading-[1.16] tracking-[-0.012em] sm:text-6xl md:text-7xl md:leading-[1.12] lg:w-[calc(100%+1.75rem)] lg:text-[clamp(3.35rem,6.25vw,5.8rem)]'
     : isJapaneseLocale.value
-      ? 'text-[clamp(2.45rem,4.4vw,4rem)] leading-[0.98] tracking-[-0.012em]'
-      : 'text-[clamp(2.45rem,4.4vw,4rem)] leading-[0.98] tracking-[-0.055em]'
+      ? 'w-full text-3xl leading-[1.16] tracking-[-0.012em] sm:text-4xl md:text-5xl lg:w-auto lg:text-[clamp(2.45rem,4.4vw,4rem)] lg:leading-[0.98]'
+      : 'w-full text-4xl leading-[1.16] tracking-[-0.055em] sm:text-5xl md:text-6xl lg:w-auto lg:text-[clamp(2.45rem,4.4vw,4rem)] lg:leading-[0.98]'
 ))
 
 const sloganEmphasisClass = computed(() => (
@@ -187,7 +187,7 @@ const sloganEmphasisClass = computed(() => (
 ))
 
 const statementClass = computed(() => (
-  isChineseLocale.value ? 'mt-11 md:mt-12' : 'mt-8'
+  isChineseLocale.value ? 'mt-6 lg:mt-12' : 'mt-6 lg:mt-8'
 ))
 
 const identityRows = computed(() => [
@@ -401,6 +401,20 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
+/* Blend only the mobile illustration edges; keep the original desktop image. */
+@media (max-width: 1023px) {
+  .about-identity-image {
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, var(--ink) 48%, var(--ink) 92%, transparent),
+      linear-gradient(to bottom, transparent, var(--ink) 8%, var(--ink) 60%, transparent);
+    mask-image:
+      linear-gradient(to right, transparent, var(--ink) 48%, var(--ink) 92%, transparent),
+      linear-gradient(to bottom, transparent, var(--ink) 8%, var(--ink) 60%, transparent);
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
+  }
+}
+
 /* Keep the full identity sheet in one desktop viewport; short windows retain flow. */
 @media (min-width: 1024px) and (min-height: 720px) {
   .about-page {
