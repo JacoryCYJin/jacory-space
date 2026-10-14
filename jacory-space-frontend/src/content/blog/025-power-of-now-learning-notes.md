@@ -14,7 +14,9 @@ tags:
 ---
 
 :::highlight
-**学习来源**：叫我十三就行- · 哔哩哔哩 · 视频时长 28 分 06 秒
+**学习来源**：《当下的力量》 埃克哈特·托利
+
+**辅助解读**：叫我十三就行- · 哔哩哔哩 · 视频时长 28 分 06 秒
 
 :::link
 url: https://www.bilibili.com/video/BV1p9dAYfE6Z?vd_source=d8957fe53f41234299dd2f6fe7597da4
@@ -24,7 +26,6 @@ siteName: 哔哩哔哩
 image: https://i1.hdslb.com/bfs/archive/742d1b181af8dcd7f1b98337f125cbc06e7ee1e5.jpg
 :::
 
-**书籍**：《当下的力量》｜埃克哈特·托利
 :::
 
 # 笔记
