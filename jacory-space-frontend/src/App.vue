@@ -81,14 +81,14 @@ const pageMeta = computed(() => {
       path: '/about',
     },
     RetroFuturismSignalStudy: {
-      title: 'Retro-Futurism Signal Study — Jacory Space',
+      title: '复古未来主义信号实验 — Jacory Space',
       description: '日式复古未来主义视觉实验：模拟媒介、老化技术与清爽现代图形表现。',
       path: '/experiments/retro-futurism',
     },
   }
 
   const page = pages[route.name] || pages.Home
-  if (!pages[route.name] || route.name === 'Home') return page
+  if (!pages[route.name] || route.name === 'Home' || route.name === 'RetroFuturismSignalStudy') return page
   return { ...page, title: t(`interface.pages.${route.name}.title`), description: t(`interface.pages.${route.name}.description`) }
 })
 
