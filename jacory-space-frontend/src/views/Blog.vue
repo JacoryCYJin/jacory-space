@@ -296,7 +296,7 @@ function yearFromDate(date) {
 
 const allPosts = computed(() => posts.value.map(toEntry))
 const lead = computed(() => allPosts.value[0] ?? null)
-const archiveEntries = computed(() => allPosts.value.slice(1))
+const archiveEntries = computed(() => allPosts.value)
 const entries = computed(() => {
   return archiveEntries.value.filter((entry) => {
     const categoryMatches = activeCategoryFilter.value === 'all' || entry.category === activeCategoryFilter.value
