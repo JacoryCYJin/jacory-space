@@ -28,7 +28,7 @@
         >
           <aside
             data-lenis-prevent
-            class="border-b border-line pb-5 md:pb-8 lg:min-h-0 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8"
+            class="border-b border-line pb-5 md:pb-8 lg:min-h-0 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             :class="isAsideOverflowing ? 'lg:overflow-y-auto lg:overscroll-contain' : ''"
             :style="detailAsideStyle"
           >
