@@ -385,6 +385,15 @@ function renderLinkPreview(block, { embedded = false } = {}) {
   const host = linkHost(block.url)
   const favicon = block.favicon
   const image = block.image
+  let imageReferrerPolicy
+  try {
+    const imageHost = new URL(image).hostname
+    if (imageHost === 'hdslb.com' || imageHost.endsWith('.hdslb.com')) {
+      imageReferrerPolicy = 'no-referrer'
+    }
+  } catch {
+    // Relative image URLs retain the default referrer policy.
+  }
   const description = block.description
   const displayUrl = block.resolvedUrl || block.url
 
@@ -443,6 +452,7 @@ function renderLinkPreview(block, { embedded = false } = {}) {
         ? h('span', { class: 'relative hidden overflow-hidden border-l border-line md:block' }, [
             h('img', {
               src: image,
+              referrerpolicy: imageReferrerPolicy,
               alt: '',
               loading: 'lazy',
               class: 'absolute inset-0 h-full w-full object-cover',
