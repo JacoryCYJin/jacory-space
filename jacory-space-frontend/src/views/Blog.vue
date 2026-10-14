@@ -140,49 +140,28 @@
             </span>
             <span class="hidden font-mono text-xs text-haze md:inline" aria-hidden="true">/</span>
 
-            <label class="relative inline-flex min-w-0 items-center">
-              <span class="sr-only">{{ t('blog.fieldNotes.filterCategory') }}</span>
-              <select
-                v-model="activeCategoryFilter"
-                class="w-full min-w-0 appearance-none md:w-auto bg-transparent py-0 pl-0 pr-6 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] max-md:tracking-normal text-haze transition-colors duration-300 hover:text-muted-foreground focus:text-muted-foreground focus:outline-none"
-              >
-                <option value="all">{{ t('blog.fieldNotes.filterCategory') }}</option>
-                <option v-for="category in categoryOptions" :key="category.id" :value="category.id">
-                  {{ category.label }}
-                </option>
-              </select>
-              <ChevronDown class="pointer-events-none absolute right-0 h-4 w-4 text-haze" aria-hidden="true" />
-            </label>
+            <SingleSelect
+              v-model="activeCategoryFilter"
+              :label="t('blog.fieldNotes.filterCategory')"
+              :options="[{ value: 'all', label: t('blog.fieldNotes.filterCategory') }, ...categoryOptions.map(option => ({ value: option.id, label: option.label }))]"
+              class="w-full font-medium tracking-[0.18em] max-md:tracking-normal md:w-auto"
+            />
             <span class="hidden font-mono text-xs text-haze md:inline" aria-hidden="true">/</span>
 
-            <label class="relative inline-flex min-w-0 items-center">
-              <span class="sr-only">{{ t('blog.fieldNotes.filterTopic') }}</span>
-              <select
-                v-model="activeTopicFilter"
-                class="w-full min-w-0 appearance-none md:w-auto bg-transparent py-0 pl-0 pr-6 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] max-md:tracking-normal text-haze transition-colors duration-300 hover:text-muted-foreground focus:text-muted-foreground focus:outline-none"
-              >
-                <option value="all">{{ t('blog.fieldNotes.filterTopic') }}</option>
-                <option v-for="topic in topicOptions" :key="topic.id" :value="topic.id">
-                  {{ topic.label }}
-                </option>
-              </select>
-              <ChevronDown class="pointer-events-none absolute right-0 h-4 w-4 text-haze" aria-hidden="true" />
-            </label>
+            <SingleSelect
+              v-model="activeTopicFilter"
+              :label="t('blog.fieldNotes.filterTopic')"
+              :options="[{ value: 'all', label: t('blog.fieldNotes.filterTopic') }, ...topicOptions.map(option => ({ value: option.id, label: option.label }))]"
+              class="w-full font-medium tracking-[0.18em] max-md:tracking-normal md:w-auto"
+            />
             <span class="hidden font-mono text-xs text-haze md:inline" aria-hidden="true">/</span>
 
-            <label class="relative inline-flex min-w-0 items-center">
-              <span class="sr-only">{{ t('blog.fieldNotes.filterYear') }}</span>
-              <select
-                v-model="activeYearFilter"
-                class="w-full min-w-0 appearance-none md:w-auto bg-transparent py-0 pl-0 pr-6 font-mono text-xs font-medium uppercase leading-[1.2] tracking-[0.18em] max-md:tracking-normal text-haze transition-colors duration-300 hover:text-muted-foreground focus:text-muted-foreground focus:outline-none"
-              >
-                <option value="all">{{ t('blog.fieldNotes.filterYear') }}</option>
-                <option v-for="year in yearOptions" :key="year" :value="year">
-                  {{ year }}
-                </option>
-              </select>
-              <ChevronDown class="pointer-events-none absolute right-0 h-4 w-4 text-haze" aria-hidden="true" />
-            </label>
+            <SingleSelect
+              v-model="activeYearFilter"
+              :label="t('blog.fieldNotes.filterYear')"
+              :options="[{ value: 'all', label: t('blog.fieldNotes.filterYear') }, ...yearOptions.map(year => ({ value: year, label: year }))]"
+              class="w-full font-medium tracking-[0.18em] max-md:tracking-normal md:w-auto"
+            />
           </div>
         </div>
 
@@ -253,6 +232,7 @@ import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
 import { ChevronDown, ListFilter } from 'lucide-vue-next'
 import FooterReveal from '../components/FooterReveal.vue'
+import SingleSelect from '../components/ui/SingleSelect.vue'
 import { blogCategories } from '../content/blog-categories.js'
 import { blogTopics } from '../content/blog-topics.js'
 import { listPosts } from '../lib/blog/index.js'
