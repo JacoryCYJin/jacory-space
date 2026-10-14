@@ -2,7 +2,7 @@ const developmentLibraryEntries = import.meta.env.DEV ? {
   podcastReadingSummary: { title: 'ポッドキャスト学習ノート', description: "ポッドキャストの資料を原意に忠実で理解・復習しやすい学習ノートに整理し、知識の主要な流れを再構成する核心的な問いと回答、現実の場面で繰り返し使える判断の枠組みと方法を抽出します。" },
   podcastContentSummary: { title: 'ポッドキャスト内容要約', description: '話し言葉の字幕を、読みやすい内容要約と次の企画候補に整理します。' },
   podcastToBlog: { title: 'ポッドキャストからブログ下書き', description: 'ポッドキャスト字幕から一本の軸を取り出し、匿名化した中国語ブログ下書きにします。' },
-  blogMarkdownPolish: { title: 'ブログ Markdown の推敲', description: '既存の下書きを Jacory Space 形式に沿った正式なブログ Markdown に整えます。' },
+  learningNotesEditor: {"title":"学習ノート編集","description":"多様な出典の文字稿を、原意に忠実で重要な知識を保ち、効果的に圧縮した学習ノートに整理します。ノート・問答・実践で理解、復習、活用を支えます。"},
 } : {}
 
 const developmentLibraryDetails = import.meta.env.DEV ? {
@@ -13,7 +13,7 @@ const developmentLibraryDetails = import.meta.env.DEV ? {
   },
   podcastContentSummary: { about: 'ポッドキャスト字幕から、読みやすい要約、主要な考え、話の流れ、次の企画を抽出します。', usage: '構造化した字幕を貼り付けるか、title・source・transcript フィールドを持つ JSON をアップロードします。', notes: '字幕に基づいて整理し、不足箇所は補わずに不確実性として示します。' },
   podcastToBlog: { about: 'ポッドキャスト素材を、個人的な視点の境界を保った、独立して読める中国語ブログ記事に再構成します。', usage: '字幕を入力します。モデルが最も強い軸を選び、利用可能な Markdown ブログ下書きを出力します。', notes: '識別できる出典と私的な詳細を取り除き、元の話者の経験を著者の経験には書き換えません。' },
-  blogMarkdownPolish: { about: '著者の中心的な考えを変えずに、下書きの文章リズム、frontmatter、ファイル名、サイトの Markdown 形式を整えます。', usage: '中国語ブログの下書きを一つまたは複数貼り付けます。仮のファイル名や未完成の frontmatter を含めても構いません。', notes: 'まったく別の記事に書き換えるのではなく、編集と整理を行う Prompt です。' },
+  learningNotesEditor: {"about":"動画、講座、ポッドキャスト、インタビュー、講演、会議、読書共有などの文字稿を、知識そのものを中心に整理します。核心的な知識、必要な説明と条件を残し、冗長さと重複を削減して、単独で読める学習ノートにします。","usage":"原文、既存のノート、または複数の資料を渡し、個別に扱うか統合するかを指定します。原文と旧ノートがある場合は原文に照らして確認します。笔记・问答・实践の全文を、markdown と指定した一つのコードブロックにまとめて出力します。","notes":"原則として実際に読めた提供資料だけを使い、外部知識を追加せず、主観的な見解を事実として扱いません。ノートだけで重要な知識を理解でき、問答は再説明、実践は根拠のある再利用可能な方法に役割を分けます。三部の合計は原文より短くし、編集過程や検証記録を本文に含めません。"},
 } : {}
 
 export default {
@@ -22,7 +22,7 @@ export default {
     description: '再利用できるプロンプト、Agent Skill、仕事の方法をまとめた個人の資産庫です。見つけ、理解し、持ち帰れます。',
     indexLabel: 'アセット索引', browseLabel: '種類で絞り込み', tagsLabel: 'タグで絞り込み', filterAria: 'アセットを絞り込む', searchLabel: 'アセットを検索', searchPlaceholder: 'タイトルまたはタグを検索', updatedLabel: '最終更新',
     filters: { all: 'すべて', prompts: 'PROMPTS', skills: 'SKILLS' }, copy: 'コピー', copied: 'コピー済み', expandContent: 'すべて表示', collapseContent: '折りたたむ', copySuccess: 'クリップボードにコピーしました', copyError: 'コピーに失敗しました。手動で選択してください。', empty: '一致するアセットはありません', backToLibrary: 'ライブラリに戻る', versionLabel: 'バージョン', commitLabel: 'COMMIT', licenseLabel: 'ライセンス', catalogedAtLabel: '収録日', assetsLabel: 'アセット', promptsLabel: 'PROMPTS', skillsLabel: 'SKILLS', aboutLabel: '用途', contentLabel: 'PROMPT CONTENT', skillContentLabel: 'SKILL CONTENT', externalSkillLabel: 'EXTERNAL SKILL', usageLabel: '使い方', notesLabel: 'メモ', useCasesLabel: '利用シーン', precautionsLabel: '注意事項', coreContentLabel: '主要内容', capabilityBoundaryLabel: '対象範囲', contentOutlineLabel: '内容目次', sourceAndDeploymentLabel: 'ソースと導入', sourceRepositoryLabel: 'ソースリポジトリ', deploymentCommandLabel: '導入コマンド', copyInstallCommand: '導入コマンドをコピー', installCommandCopied: '導入コマンドをコピーしました', switchToGrid: '2列表示に切り替え', switchToList: 'リスト表示に切り替え', notFound: 'アセットが見つかりません',
-    tags: { relationships: "親密な関係", communication: "コミュニケーション", emotionalSupport: "感情のサポート", podcast: 'ポッドキャスト', summary: '要約', writing: '執筆', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '画像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: 'アニメーション' },
+    tags: { ...(import.meta.env.DEV ? { learning: "学習" } : {}), relationships: "親密な関係", communication: "コミュニケーション", emotionalSupport: "感情のサポート", podcast: 'ポッドキャスト', summary: '要約', writing: '執筆', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '画像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: 'アニメーション' },
     clearTags: 'クリア',
     expandFilters: '絞り込み',
     expandSearch: '検索',

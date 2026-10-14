@@ -2,7 +2,7 @@ const developmentLibraryEntries = import.meta.env.DEV ? {
   podcastReadingSummary: { title: '播客学习笔记', description: "将播客材料整理为忠实原意、便于理解和复习的学习笔记，再提炼帮助重建知识主线的核心问答，以及可在现实场景中反复调用的判断框架与方法。" },
   podcastContentSummary: { title: '播客内容总结', description: '把口语化播客字幕整理成清晰、可阅读的内容总结与后续选题。' },
   podcastToBlog: { title: '播客转博客初稿', description: '从播客字幕中提炼一条主线，写成去标识化的中文博客初稿。' },
-  blogMarkdownPolish: { title: '博客 Markdown 润色', description: '将已有草稿整理为符合 Jacory Space 格式的正式博客 Markdown。' },
+  learningNotesEditor: {"title":"学习笔记编辑","description":"将多种来源的文字稿整理为忠实原意、知识完整且有效压缩的学习笔记，按笔记、问答、实践帮助理解、复习和调用。"},
 } : {}
 
 const developmentLibraryDetails = import.meta.env.DEV ? {
@@ -21,11 +21,7 @@ const developmentLibraryDetails = import.meta.env.DEV ? {
     usage: '输入播客转录；模型会自行判断最适合展开的一条主线，并输出可用的博客 Markdown 初稿。',
     notes: '规则会主动去除可识别的来源与私人细节，不将原讲述者经历改写成作者亲历。',
   },
-  blogMarkdownPolish: {
-    about: '在不改变作者核心观点的前提下，润色草稿的表达节奏、frontmatter、文件名和站内 Markdown 格式。',
-    usage: '粘贴一篇或多篇中文博客草稿；可附带临时文件名或未完成的 frontmatter。',
-    notes: '它是编辑与整理，不会把原文改写成另一篇全新的文章。',
-  },
+  learningNotesEditor: {"about":"以知识为主体整理视频、课程、播客、访谈、演讲、会议或读书分享等文字稿，保留核心知识、必要解释和限定条件，删除冗余并合并重复，形成可独立阅读的学习笔记。","usage":"提供原始文字稿、已有笔记或多份材料，并说明分别处理还是综合；有原文和旧笔记时，以原文为依据核对。最终将笔记、问答、实践的完整正文放在一个标注为 markdown 的代码块中。","notes":"默认只依据提供且实际读取的材料，不添加外部知识，不把主观观点写成事实。笔记独立承载重要知识，问答用于复述，实践提取有依据的可复用方法；三部分合计应短于原文，正文不含编辑过程与验收记录。"},
 } : {}
 
 export default {
@@ -42,7 +38,7 @@ export default {
     searchPlaceholder: '搜索标题或标签',
     updatedLabel: '最后更新',
     filters: { all: '全部', prompts: 'Prompts', skills: 'Skills' },
-    tags: { relationships: "亲密关系", communication: "沟通", emotionalSupport: "情绪支持", podcast: '播客', summary: '总结', writing: '写作', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '图像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: '动画' },
+    tags: { ...(import.meta.env.DEV ? { learning: "学习" } : {}), relationships: "亲密关系", communication: "沟通", emotionalSupport: "情绪支持", podcast: '播客', summary: '总结', writing: '写作', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '图像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: '动画' },
     clearTags: '清除',
     expandFilters: '筛选',
     expandSearch: '搜索',
