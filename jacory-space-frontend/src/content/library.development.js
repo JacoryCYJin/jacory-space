@@ -1,7 +1,7 @@
 import podcastContentSummary from './library/prompts/podcast-content-summary.md?raw'
 import podcastReadingSummary from './library/prompts/podcast-reading-summary.md?raw'
 import podcastToBlog from './library/prompts/podcast-to-blog.md?raw'
-import blogMarkdownPolish from './library/prompts/blog-markdown-polish.md?raw'
+import learningNotesEditor from './library/prompts/learning-notes-editor.md?raw'
 import minecraftSkinPreview from './library/prompts/minecraft-skin-preview.md?raw'
 
 export const libraryEntries = [
@@ -33,13 +33,13 @@ export const libraryEntries = [
     id: 'blog-markdown-polish',
     type: 'prompt',
     no: '003',
-    titleKey: 'library.entries.blogMarkdownPolish.title',
-    descriptionKey: 'library.entries.blogMarkdownPolish.description',
-    detailKey: 'blogMarkdownPolish',
-    content: blogMarkdownPolish,
-    tags: ['writing', 'markdown'],
-    version: 'v1.1.0',
-    updated: '2026.10.11',
+    titleKey: 'library.entries.learningNotesEditor.title',
+    descriptionKey: 'library.entries.learningNotesEditor.description',
+    detailKey: 'learningNotesEditor',
+    content: learningNotesEditor,
+    tags: ['learning', 'writing', 'markdown'],
+    version: 'v2.0.0',
+    updated: '2026.10.14',
   },
   {
     id: 'minecraft-skin-preview',
