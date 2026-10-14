@@ -186,8 +186,6 @@ const toast = reactive({ visible: false, message: '', type: 'success' })
 let toastTimer
 let motionMedia
 let revealObserver
-let entryTargets = []
-let entriesInteracted = false
 
 gsap.registerPlugin(CustomEase)
 
@@ -246,15 +244,6 @@ async function copyEntry(entry) {
   }
 }
 
-// A result change ends pending entry reveals so reused and new rows stay visible.
-watch([filteredEntries, viewMode], () => {
-  entriesInteracted = true
-  const targets = [...entryTargets, ...(pageRoot.value?.querySelectorAll('[data-library-entry]') || [])]
-  targets.forEach((item) => revealObserver?.unobserve(item))
-  gsap.killTweensOf(targets)
-  gsap.set(targets, { clearProps: 'opacity,visibility,transform' })
-}, { flush: 'post' })
-
 onMounted(() => {
   const root = pageRoot.value
   if (!root) return
@@ -263,7 +252,7 @@ onMounted(() => {
   motionMedia = gsap.matchMedia()
   motionMedia.add('(prefers-reduced-motion: no-preference)', (context) => {
     const sections = [...root.querySelectorAll('[data-library-enter]')]
-    entryTargets = entriesInteracted ? [] : [...root.querySelectorAll('[data-library-entry]')]
+    let entryTargets = [...root.querySelectorAll('[data-library-entry]')]
     const targets = [...sections, ...entryTargets]
     const pending = new Set(targets)
     const inViewport = (item) => {
@@ -298,7 +287,32 @@ onMounted(() => {
       context.reveal([...pending])
     }
 
+    context.add('restartEntries', () => {
+      entryTargets.forEach((item) => {
+        pending.delete(item)
+        revealObserver?.unobserve(item)
+      })
+      gsap.killTweensOf(entryTargets)
+      gsap.set(entryTargets, { clearProps: 'opacity,visibility,transform' })
+
+      entryTargets = [...root.querySelectorAll('[data-library-entry]')]
+      if (!entryTargets.length) return
+      entryTargets.forEach((item) => pending.add(item))
+      gsap.set(entryTargets, { autoAlpha: 0, y: 14 })
+      context.reveal(entryTargets.filter(inViewport), true)
+      if (revealObserver) {
+        entryTargets.filter((item) => pending.has(item)).forEach((item) => revealObserver.observe(item))
+      } else {
+        context.reveal(entryTargets.filter((item) => pending.has(item)))
+      }
+    })
+
+    const stopEntryWatch = watch([filteredEntries, viewMode], () => {
+      context.restartEntries()
+    }, { flush: 'post' })
+
     return () => {
+      stopEntryWatch()
       revealObserver?.disconnect()
       revealObserver = null
     }
