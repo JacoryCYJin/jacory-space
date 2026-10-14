@@ -12,46 +12,12 @@
     >
       <div class="page-frame pb-20 md:pb-28 lg:pb-0" :class="isViewportBound ? 'lg:flex lg:h-full lg:min-h-0 lg:flex-col' : ''">
         <header class="border-b border-line pb-6 md:pb-14 lg:pb-10 2xl:pb-14 lg:shrink-0">
-          <router-link to="/library" class="tech hidden items-center gap-2 text-xs text-muted-foreground transition-colors hover:text-blue md:inline-flex">
-            <ChevronLeft :size="14" stroke-width="1.5" aria-hidden="true" />
-            {{ t('library.backToLibrary') }}
-          </router-link>
-          <div class="grid gap-6 md:mt-12 md:gap-10 lg:mt-8 lg:grid-cols-[minmax(0,1fr)_16rem] lg:items-end lg:gap-16 2xl:mt-12">
+          <div class="grid">
             <div data-detail-enter class="min-w-0">
               <p class="tech mb-5 text-xs text-blue">{{ entry.no }} · {{ entryTypeLabel }}</p>
               <h1 class="max-w-4xl font-sans text-5xl font-medium leading-[0.95] tracking-tight text-foreground md:text-7xl">{{ t(entry.titleKey) }}</h1>
               <p class="mt-7 max-w-2xl text-base leading-8 text-foreground">{{ t(entry.descriptionKey) }}</p>
             </div>
-            <dl data-detail-enter class="grid grid-cols-2 gap-5 border-t border-line pt-4 font-mono text-xs uppercase tracking-[0.12em] lg:border-t-0 lg:border-l lg:pl-8 lg:pt-0">
-              <template v-if="isExternalSkill">
-                <div v-if="externalVersion">
-                  <dt class="text-haze">{{ t('library.versionLabel') }}</dt>
-                  <dd class="mt-2 text-foreground md:mt-3">{{ externalVersion }}</dd>
-                </div>
-                <div v-if="externalCommit">
-                  <dt class="text-haze">{{ t('library.commitLabel') }}</dt>
-                  <dd class="mt-2 text-foreground md:mt-3">{{ externalCommit }}</dd>
-                </div>
-                <div v-if="entry.license">
-                  <dt class="text-haze">{{ t('library.licenseLabel') }}</dt>
-                  <dd class="mt-2 text-foreground md:mt-3">{{ entry.license }}</dd>
-                </div>
-                <div>
-                  <dt class="text-haze">{{ t('library.catalogedAtLabel') }}</dt>
-                  <dd class="mt-2 text-foreground md:mt-3">{{ entry.updated }}</dd>
-                </div>
-              </template>
-              <template v-else>
-                <div>
-                  <dt class="text-haze">{{ t('library.versionLabel') }}</dt>
-                  <dd class="mt-2 text-foreground md:mt-3">{{ entry.version }}</dd>
-                </div>
-                <div>
-                  <dt class="text-haze">{{ t('library.updatedLabel') }}</dt>
-                  <dd class="mt-2 text-foreground md:mt-3">{{ entry.updated }}</dd>
-                </div>
-              </template>
-            </dl>
           </div>
         </header>
 
@@ -132,7 +98,7 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { Check, ChevronLeft, Copy } from 'lucide-vue-next'
+import { Check, Copy } from 'lucide-vue-next'
 import { useRoute } from 'vue-router'
 import FooterReveal from '../components/FooterReveal.vue'
 import StatusToast from '../components/StatusToast.vue'
@@ -158,8 +124,6 @@ let detailHeightFrame
 const entry = computed(() => getLibraryEntry(route.params.id))
 const isOriginalSkill = computed(() => entry.value?.type === 'skill' && entry.value.sourceType === 'original')
 const isExternalSkill = computed(() => entry.value?.type === 'skill' && entry.value.sourceType === 'external')
-const externalVersion = computed(() => entry.value?.sourceRef?.version || entry.value?.sourceRef?.tag)
-const externalCommit = computed(() => entry.value?.sourceRef?.commit?.slice(0, 7))
 const entryTypeLabel = computed(() => {
   if (isExternalSkill.value) return t('interface.library.external')
   return entry.value?.type === 'skill' ? t('interface.library.skill') : t('interface.library.prompt')

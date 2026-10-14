@@ -215,8 +215,8 @@ function tagLabel(tag) {
 }
 
 function entryTypeLabel(entry) {
-  if (entry.type === 'skill' && entry.sourceType === 'external') return t('interface.library.external')
-  return entry.type === 'skill' ? t('interface.library.skill') : t('interface.library.prompt')
+  if (entry.type === 'skill' && entry.sourceType === 'external') return 'EXTERNAL SKILL'
+  return entry.type === 'skill' ? 'SKILL' : 'PROMPT'
 }
 
 function canCopyEntry(entry) {
