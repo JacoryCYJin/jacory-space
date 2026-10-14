@@ -5,7 +5,7 @@
       <div class="footer-reveal__extension" aria-hidden="true" />
     </div>
     <div class="footer-reveal__panel">
-      <div class="footer-reveal__panel-content">
+      <div ref="panelContentRef" class="footer-reveal__panel-content">
         <div class="footer-reveal__gridline" aria-hidden="true" />
         <div class="footer-reveal__header" aria-hidden="true" />
         <Footer ref="footerRef" />
@@ -20,6 +20,7 @@ import Footer from './Footer.vue'
 
 const footerRef = ref(null)
 const contentRef = ref(null)
+const panelContentRef = ref(null)
 const footerBodyHeight = ref(0)
 const footerDividerHeight = ref(0)
 const footerRevealProgress = ref(1)
@@ -69,8 +70,16 @@ function measureFooterBody() {
     footerBodyHeight.value + overlapHeight <= window.innerHeight - 64
 
   const footerRule = footer.querySelector('.footer-rule')
-  if (footerRule) {
-    footerDividerHeight.value = footerRule.offsetTop
+  const panelContent = panelContentRef.value
+  if (footerRule && panelContent && panelContent.offsetWidth > 0) {
+    const panelRect = panelContent.getBoundingClientRect()
+    const scale = panelRect.width / panelContent.offsetWidth
+    // Both bounds share the reveal transform; convert back to layout pixels.
+    if (scale > 0) {
+      footerDividerHeight.value = Math.max(0,
+        (footerRule.getBoundingClientRect().top - panelRect.top) / scale
+      )
+    }
   }
 
   updateFooterRevealProgress()
@@ -114,6 +123,9 @@ onMounted(async () => {
   if (typeof ResizeObserver !== 'undefined' && footer) {
     footerResizeObserver = new ResizeObserver(scheduleFooterMeasure)
     footerResizeObserver.observe(footer)
+    for (const element of footer.querySelectorAll('.footer-stage, .footer-rule')) {
+      footerResizeObserver.observe(element)
+    }
   }
 
   document.fonts?.ready.then(scheduleFooterMeasure)
@@ -246,9 +258,11 @@ onBeforeUnmount(() => {
     display: grid;
     width: 100%;
     height: var(--footer-reveal-divider-height, 0px);
+    overflow: hidden;
     padding-inline: var(--page-gutter);
     pointer-events: none;
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
     column-gap: var(--footer-grid-gap);
   }
 
