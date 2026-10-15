@@ -1,4 +1,5 @@
 const developmentLibraryEntries = import.meta.env.DEV ? {
+  englishSpeakingPartner: {"title":"英语口语搭子","description":"以自然聊天练习日常英语口语，动态调整难度，穿插简短纠错、表达复用与复盘，让你多开口。"},
   podcastReadingSummary: { title: '播客学习笔记', description: "将播客材料整理为忠实原意、便于理解和复习的学习笔记，再提炼帮助重建知识主线的核心问答，以及可在现实场景中反复调用的判断框架与方法。" },
   podcastContentSummary: { title: '播客内容总结', description: '把口语化播客字幕整理成清晰、可阅读的内容总结与后续选题。' },
   podcastToBlog: { title: '播客转博客初稿', description: '从播客字幕中提炼一条主线，写成去标识化的中文博客初稿。' },
@@ -6,6 +7,7 @@ const developmentLibraryEntries = import.meta.env.DEV ? {
 } : {}
 
 const developmentLibraryDetails = import.meta.env.DEV ? {
+  englishSpeakingPartner: {"about":"面向日常交流而非考试，通过闲聊、旅行、购物、工作沟通和观点讨论，练习听懂、快速组织语言与自然表达。","usage":"将完整 Prompt 粘贴到新对话中，即可从简单的英语聊天开始；也可使用语音模式，需要中文解释时明确说“用中文解释”。","notes":"正常聊天每次回复 1～3 句，每 3～5 轮简短纠正重点问题，每约 8～12 轮或话题结束时复盘。卡壳时先等待，再按需给提示；仅在确实能够判断发音时提供发音建议，不根据文字转写猜测。"},
   podcastReadingSummary: {
     about: "围绕节目的主要知识主线，按概念、因果或问题关系组织可独立理解的笔记，保留必要解释与代表性材料，合并重复解释和支线内容；完成后再提炼核心问答，最后筛选值得在现实场景中反复调用的实践内容。",
     usage: "粘贴播客转录文本、提供附件，或上传含 title、source、transcript 字段的 JSON。依次生成中文笔记、问答和实践，整体放在一个 Markdown 代码块中，从 # 笔记 开始。",
@@ -38,7 +40,7 @@ export default {
     searchPlaceholder: '搜索标题或标签',
     updatedLabel: '最后更新',
     filters: { all: '全部', prompts: 'Prompts', skills: 'Skills' },
-    tags: { ...(import.meta.env.DEV ? { learning: "学习" } : {}), relationships: "亲密关系", communication: "沟通", emotionalSupport: "情绪支持", podcast: '播客', summary: '总结', writing: '写作', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '图像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: '动画' },
+    tags: { ...(import.meta.env.DEV ? { learning: "学习", english: "英语", speaking: "口语" } : {}), relationships: "亲密关系", communication: "沟通", emotionalSupport: "情绪支持", podcast: '播客', summary: '总结', writing: '写作', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '图像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: '动画' },
     clearTags: '清除',
     expandFilters: '筛选',
     expandSearch: '搜索',

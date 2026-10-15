@@ -1,3 +1,4 @@
+import englishSpeakingPartner from './library/prompts/english-speaking-partner.md?raw'
 import podcastContentSummary from './library/prompts/podcast-content-summary.md?raw'
 import podcastReadingSummary from './library/prompts/podcast-reading-summary.md?raw'
 import podcastToBlog from './library/prompts/podcast-to-blog.md?raw'
@@ -143,6 +144,18 @@ export const libraryEntries = [
       { level: 1, title: '经典社交体系的使用边界' },
       { level: 1, title: '安全边界' },
     ],
+  },
+  {
+    id: 'english-speaking-partner',
+    type: 'prompt',
+    no: '009',
+    titleKey: 'library.entries.englishSpeakingPartner.title',
+    descriptionKey: 'library.entries.englishSpeakingPartner.description',
+    detailKey: 'englishSpeakingPartner',
+    content: englishSpeakingPartner,
+    tags: ['english', 'speaking', 'communication'],
+    version: 'v1.0.0',
+    updated: '2026.10.15',
   },
 ]
 
