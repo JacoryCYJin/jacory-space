@@ -1,4 +1,5 @@
 const developmentLibraryEntries = import.meta.env.DEV ? {
+  englishSpeakingPartner: {"title":"英会話パートナー","description":"自然な会話で日常英語を練習します。難易度の調整、短い添削、表現の再利用と振り返りで、自分が話す時間を増やします。"},
   podcastReadingSummary: { title: 'ポッドキャスト学習ノート', description: "ポッドキャストの資料を原意に忠実で理解・復習しやすい学習ノートに整理し、知識の主要な流れを再構成する核心的な問いと回答、現実の場面で繰り返し使える判断の枠組みと方法を抽出します。" },
   podcastContentSummary: { title: 'ポッドキャスト内容要約', description: '話し言葉の字幕を、読みやすい内容要約と次の企画候補に整理します。' },
   podcastToBlog: { title: 'ポッドキャストからブログ下書き', description: 'ポッドキャスト字幕から一本の軸を取り出し、匿名化した中国語ブログ下書きにします。' },
@@ -6,6 +7,7 @@ const developmentLibraryEntries = import.meta.env.DEV ? {
 } : {}
 
 const developmentLibraryDetails = import.meta.env.DEV ? {
+  englishSpeakingPartner: {"about":"試験対策ではなく、雑談、旅行、買い物、仕事のやり取り、意見交換を通じて、聞き取り、素早く言葉を組み立てる力、自然な表現を練習します。","usage":"中国語のプロンプト全文を新しいチャットに貼り付けると、簡単な英会話が始まります。音声モードも利用できます。中国語の説明が必要なときは「用中文解释」と伝えます。","notes":"通常の返答は1～3文で、3～5往復ごとに短く添削し、約8～12往復または話題の終了時に振り返ります。言葉に詰まったときは待ち、必要に応じてヒントを出します。発音の助言は実際に判断できる場合に限り、文字起こしから推測しません。"},
   podcastReadingSummary: {
     about: "番組の主要な知識の流れを軸に、概念・因果・問いの関係に沿って単独で理解できるノートを構成します。必要な説明と代表的な資料を残し、重複する説明や枝葉の内容をまとめます。その後、核心となる問いと回答を抽出し、現実の場面で繰り返し使える実践内容を厳選します。",
     usage: "文字起こしを貼り付けるか、添付資料、または title・source・transcript フィールドを持つ JSON を渡します。ノート、問いと回答、実践をこの順で中国語で生成し、# 笔记 から始まる一つの Markdown コードブロックにまとめます。",
@@ -22,7 +24,7 @@ export default {
     description: '再利用できるプロンプト、Agent Skill、仕事の方法をまとめた個人の資産庫です。見つけ、理解し、持ち帰れます。',
     indexLabel: 'アセット索引', browseLabel: '種類で絞り込み', tagsLabel: 'タグで絞り込み', filterAria: 'アセットを絞り込む', searchLabel: 'アセットを検索', searchPlaceholder: 'タイトルまたはタグを検索', updatedLabel: '最終更新',
     filters: { all: 'すべて', prompts: 'PROMPTS', skills: 'SKILLS' }, copy: 'コピー', copied: 'コピー済み', expandContent: 'すべて表示', collapseContent: '折りたたむ', copySuccess: 'クリップボードにコピーしました', copyError: 'コピーに失敗しました。手動で選択してください。', empty: '一致するアセットはありません', backToLibrary: 'ライブラリに戻る', versionLabel: 'バージョン', commitLabel: 'COMMIT', licenseLabel: 'ライセンス', catalogedAtLabel: '収録日', assetsLabel: 'アセット', promptsLabel: 'PROMPTS', skillsLabel: 'SKILLS', aboutLabel: '用途', contentLabel: 'PROMPT CONTENT', skillContentLabel: 'SKILL CONTENT', externalSkillLabel: 'EXTERNAL SKILL', usageLabel: '使い方', notesLabel: 'メモ', useCasesLabel: '利用シーン', precautionsLabel: '注意事項', coreContentLabel: '主要内容', capabilityBoundaryLabel: '対象範囲', contentOutlineLabel: '内容目次', sourceAndDeploymentLabel: 'ソースと導入', sourceRepositoryLabel: 'ソースリポジトリ', deploymentCommandLabel: '導入コマンド', copyInstallCommand: '導入コマンドをコピー', installCommandCopied: '導入コマンドをコピーしました', switchToGrid: '2列表示に切り替え', switchToList: 'リスト表示に切り替え', notFound: 'アセットが見つかりません',
-    tags: { ...(import.meta.env.DEV ? { learning: "学習" } : {}), relationships: "親密な関係", communication: "コミュニケーション", emotionalSupport: "感情のサポート", podcast: 'ポッドキャスト', summary: '要約', writing: '執筆', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '画像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: 'アニメーション' },
+    tags: { ...(import.meta.env.DEV ? { learning: "学習", english: "英語", speaking: "英会話" } : {}), relationships: "親密な関係", communication: "コミュニケーション", emotionalSupport: "感情のサポート", podcast: 'ポッドキャスト', summary: '要約', writing: '執筆', markdown: 'Markdown', minecraft: 'Minecraft', imageGeneration: '画像生成', threejs: 'Three.js', webgl: 'WebGL', vue: 'Vue', gsap: 'GSAP', animation: 'アニメーション' },
     clearTags: 'クリア',
     expandFilters: '絞り込み',
     expandSearch: '検索',
