@@ -140,6 +140,7 @@ function renderInline(tokens) {
           'mark',
           {
             class: `article-mark ${colorClass}`,
+            style: { '--article-marker-fill': `var(--article-marker-${markerToken(token.token)})` },
             'data-marker-highlight': '',
             'data-highlight-style': style,
             'data-drawing-mode': 'highlight',
@@ -449,7 +450,9 @@ function renderLinkPreview(block, { embedded = false } = {}) {
         ],
       ),
       image
-        ? h('span', { class: 'relative hidden overflow-hidden border-l border-line md:block' }, [
+        ? h('span', {
+            class: 'relative block aspect-video overflow-hidden border-t border-line md:aspect-auto md:border-l md:border-t-0',
+          }, [
             h('img', {
               src: image,
               referrerpolicy: imageReferrerPolicy,
@@ -879,6 +882,17 @@ export default {
 
 .article-body :deep(.highlight) {
   pointer-events: none;
+}
+
+@media (max-width: 767px) {
+  .article-mark {
+    /* The drawing library clears this inline; mobile uses the inline text box instead. */
+    background-color: var(--article-marker-fill) !important;
+  }
+
+  .article-body :deep(.highlight) {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
