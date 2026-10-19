@@ -14,9 +14,14 @@ tags:
 ---
 
 :::highlight
+**来源**：沈枯燥在搞教育 · 哔哩哔哩 · 视频时长 33 分 27 秒
+
 :::link
 url: https://www.bilibili.com/video/BV1JXnj6eELr
 title: AI取代你的学术工作之后，你到底还为什么要活着【个人的奋斗 S5E16】
+description: 《个人的奋斗》纪实频道，记录上交学子（及其他）成长的微（hei）历史，回旋镖批发中心
+siteName: 哔哩哔哩
+image: https://i1.hdslb.com/bfs/archive/af3998c33139f782390c3d791d9a07b96e5f4c96.jpg@1200w_630h
 :::
 
 :::
