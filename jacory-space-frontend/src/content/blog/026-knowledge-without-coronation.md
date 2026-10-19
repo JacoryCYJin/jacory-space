@@ -14,10 +14,6 @@ tags:
 ---
 
 :::highlight
-**感悟来源**：《个人的奋斗 S5E16》
-
-**视频作者**：沈枯燥在搞教育 · 哔哩哔哩
-
 :::link
 url: https://www.bilibili.com/video/BV1JXnj6eELr
 title: AI取代你的学术工作之后，你到底还为什么要活着【个人的奋斗 S5E16】
