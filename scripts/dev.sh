@@ -13,19 +13,31 @@ SERVICES=(
 
 usage() {
   cat <<'EOF'
-Jacory Space 开发服务脚本
+Site 开发指令
+
+在本项目根目录执行；工作区根目录需在动作前加 site。
 
 用法:
-  bash scripts/dev.sh                 启动全部服务
-  bash scripts/dev.sh <service>       启动单个服务
-  bash scripts/dev.sh restart [service] 重启全部或单个服务
-  bash scripts/dev.sh stop [service]  停止全部或单个服务
-  bash scripts/dev.sh status          查看运行状态
-  bash scripts/dev.sh ls              列出可用服务
-  bash scripts/dev.sh list            列出可用服务（同 ls）
+  bash scripts/dev.sh <动作> [服务]
+  bash scripts/dev.sh start [服务]       启动全部或指定服务
+  bash scripts/dev.sh stop [服务]        停止全部或指定服务
+  bash scripts/dev.sh restart [服务]     重启全部或指定服务
+  bash scripts/dev.sh status [服务]      查看全部或指定服务状态
+  bash scripts/dev.sh logs [服务]        查看最近 120 行日志
+  bash scripts/dev.sh list               列出服务及用途（别名 ls）
+  bash scripts/dev.sh --help             显示帮助，支持 <动作> --help
+  bash scripts/dev.sh build [服务]       执行前端 npm run build，不启动服务
 
-可用服务:
-  jacory-space-frontend
+服务: jacory-space-frontend
+
+示例（本项目根目录）：
+  bash scripts/dev.sh start jacory-space-frontend
+  bash scripts/dev.sh logs jacory-space-frontend
+示例（工作区根目录）：
+  bash scripts/dev.sh site start jacory-space-frontend
+
+方括号表示可选参数，不要输入括号。list/ls 查看服务，status 查看运行状态。
+未指定服务时操作本项目全部服务。无参数、直接写服务名等旧写法仍兼容并提示规范写法。
 EOF
 }
 
@@ -60,11 +72,15 @@ service_exists() {
 }
 
 list_services() {
-  local item name dir cmd port
-  printf '%-24s %-8s %s\n' "SERVICE" "PORT" "COMMAND"
+  local item name dir cmd port description
+  printf '%-24s %-8s %s\n' "SERVICE" "PORT" "DESCRIPTION"
   for item in "${SERVICES[@]}"; do
     IFS='|' read -r name dir cmd port <<< "$item"
-    printf '%-24s %-8s %s\n' "$name" "$port" "$cmd"
+    case "$name" in
+      jacory-space-frontend) description='个人网站前端开发服务' ;;
+      *) description="$name" ;;
+    esac
+    printf '%-24s %-8s %s\n' "$name" "$port" "$description"
   done
 }
 
@@ -307,11 +323,12 @@ restart_service() {
 }
 
 print_status() {
-  local item name dir cmd port pid
+  local item name dir cmd port pid target="${1:-}"
   printf '%-24s %-8s %-8s %s\n' "SERVICE" "PORT" "PID" "STATUS"
 
   for item in "${SERVICES[@]}"; do
     IFS='|' read -r name dir cmd port <<< "$item"
+    [[ -z "$target" || "$name" == "$target" ]] || continue
     pid="$(read_pid "$name" || true)"
     if is_pid_running "$pid"; then
       printf '%-24s %-8s %-8s %s\n' "$name" "$port" "$pid" "running"
@@ -323,60 +340,84 @@ print_status() {
   done
 }
 
-main() {
-  local action="${1:-start}"
-  local target="${2:-}"
+logs() {
+  local target="${1:-}" item name dir cmd port file
+  for item in "${SERVICES[@]}"; do
+    IFS='|' read -r name dir cmd port <<< "$item"
+    [[ -z "$target" || "$name" == "$target" ]] || continue
+    file="$(log_file_for "$name")"
+    if [[ -f "$file" ]]; then
+      printf '\n--- %s ---\n' "$name"
+      tail -n 120 "$file"
+    else
+      echo "[$name] 暂无日志: $file"
+    fi
+  done
+}
 
+cli_error() {
+  echo "[dev] $*；使用 bash scripts/dev.sh --help 查看用法" >&2
+  return 2
+}
+
+run_service_action() {
+  local action="$1" target="$2" item name rest
   ensure_runtime_dirs
+  if [[ -n "$target" ]]; then
+    "${action}_service" "$target"
+  else
+    for item in "${SERVICES[@]}"; do
+      IFS='|' read -r name rest <<< "$item"
+      "${action}_service" "$name"
+    done
+  fi
+}
 
+build_service() {
+  local dir
+  dir="$(get_service_field "$1" 2)"
+  (cd "$ROOT/$dir" && npm run build)
+}
+
+main() {
+  local action="${1:-start}" target arg
+  for arg in "$@"; do
+    case "$arg" in -h|--help) usage; return 0 ;; esac
+  done
+  if [[ "$action" == help ]]; then
+    [[ $# -le 2 ]] || { cli_error "help 最多接受一个动作"; return 2; }
+    usage
+    return 0
+  fi
+  if [[ $# -eq 0 ]]; then
+    echo "[兼容] 请改用: bash scripts/dev.sh start" >&2
+  fi
+  shift || true
   case "$action" in
-    -h|--help|help)
-      usage
-      ;;
     list|ls)
+      [[ $# -eq 0 ]] || { cli_error "list 不接受服务参数"; return 2; }
       list_services
-      ;;
-    status)
-      print_status
-      ;;
-    stop)
-      if [[ -n "$target" ]]; then
-        stop_service "$target"
-      else
-        for item in "${SERVICES[@]}"; do
-          IFS='|' read -r name _ _ _ <<< "$item"
-          stop_service "$name"
-        done
-      fi
-      ;;
-    restart)
-      if [[ -n "$target" ]]; then
-        restart_service "$target"
-      else
-        for item in "${SERVICES[@]}"; do
-          IFS='|' read -r name _ _ _ <<< "$item"
-          restart_service "$name"
-        done
-      fi
-      ;;
-    start)
-      if [[ -n "$target" ]]; then
-        start_service "$target"
-      else
-        for item in "${SERVICES[@]}"; do
-          IFS='|' read -r name _ _ _ <<< "$item"
-          start_service "$name"
-        done
-      fi
+      return
       ;;
     jacory-space-frontend)
-      start_service "$action"
+      [[ $# -eq 0 ]] || { cli_error "服务名后不接受额外参数，请使用 start <服务>"; return 2; }
+      echo "[兼容] 请改用: bash scripts/dev.sh start $action" >&2
+      set -- "$action"
+      action=start
       ;;
-    *)
-      echo "未知命令: $action" >&2
-      usage
-      exit 1
-      ;;
+    start|stop|restart|status|logs|build) ;;
+    *) cli_error "不支持的动作: $action"; return 2 ;;
+  esac
+  [[ $# -le 1 ]] || { cli_error "$action 最多接受一个服务"; return 2; }
+  target="${1:-}"
+  if [[ -n "$target" ]] && ! service_exists "$target"; then
+    cli_error "未知服务: $target"
+    return 2
+  fi
+  case "$action" in
+    status) print_status "$target" ;;
+    logs) logs "$target" ;;
+    *) run_service_action "$action" "$target" ;;
   esac
 }
 

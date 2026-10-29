@@ -1,11 +1,12 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
+import { wordReviewPlugin } from './server/word-review-vite.js'
 
 const loadingAvatarPath = fileURLToPath(new URL('./src/assets/home-loading/jacory-o-avatar.png', import.meta.url))
 
 export default defineConfig(({ command }) => ({
-  plugins: [vue()],
+  plugins: [vue(), wordReviewPlugin()],
   build: {
     // The loading identity must not depend on a separate image request completing.
     assetsInlineLimit: (filePath) => filePath === loadingAvatarPath ? true : undefined,

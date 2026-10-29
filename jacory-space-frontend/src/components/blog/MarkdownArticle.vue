@@ -4,7 +4,7 @@ import { ChevronDown } from 'lucide-vue-next'
 import { MarkerHighlighter } from 'markerhighlight'
 
 const LINK_CLASS =
-  'article-link break-words text-blue no-underline transition-colors'
+  'article-link break-words text-blue no-underline'
 const INLINE_CODE_CLASS =
   'break-words rounded-sm border border-line bg-card px-1.5 py-0.5 font-mono text-sm text-foreground'
 const META_LABEL_CLASS =
@@ -766,14 +766,6 @@ export default {
   background-repeat: no-repeat;
   background-size: 100% 1px;
   text-decoration: none;
-  transition:
-    color 360ms var(--ease-premium),
-    background-size 520ms var(--ease-premium);
-}
-
-.article-link:hover {
-  color: var(--blue);
-  background-size: 100% 2px;
 }
 
 .article-strong {
@@ -896,7 +888,6 @@ export default {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .article-link,
   .article-strong {
     transition: none;
   }

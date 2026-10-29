@@ -10,7 +10,9 @@ site/
 ```
 
 The media parser backend and desktop runtime now live in the separate `media-parser` repository.
-This site is a pure frontend surface.
+The public site is a statically rendered frontend. The Stubborn Words tool also
+has an optional authenticated, read-only Notion endpoint; see
+[`../features/stubborn-words.md`](../features/stubborn-words.md) for local and production setup.
 
 ## Runtime
 
@@ -50,6 +52,7 @@ Routes:
 ```txt
 /               -> Home.vue
 /tools          -> Tools.vue
+/tools/stubborn-words -> StubbornWords.vue (private words fetched at runtime)
 /tools/media-parser -> MediaParserSoftware.vue
 /media-parser   -> redirect /tools/media-parser
 /video-parser   -> redirect /tools/media-parser
