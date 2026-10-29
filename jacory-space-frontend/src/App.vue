@@ -39,6 +39,11 @@ const pageMeta = computed(() => {
       description: '按书籍收藏与重读摘抄，留下阅读时的思考。',
       path: '/tools/reading',
     },
+    StubbornWords: {
+      title: `${t('words.title')} — Jacory Space`,
+      description: t('words.toolDescription'),
+      path: '/tools/stubborn-words',
+    },
     Tools: {
       title: 'Tools — Jacory Space',
       description: 'Jacory Space 的自建工具、界面实验与项目入口。',
@@ -88,7 +93,7 @@ const pageMeta = computed(() => {
   }
 
   const page = pages[route.name] || pages.Home
-  if (!pages[route.name] || route.name === 'Home' || route.name === 'RetroFuturismSignalStudy') return page
+  if (!pages[route.name] || ['Home', 'RetroFuturismSignalStudy', 'StubbornWords'].includes(route.name)) return page
   return { ...page, title: t(`interface.pages.${route.name}.title`), description: t(`interface.pages.${route.name}.description`) }
 })
 

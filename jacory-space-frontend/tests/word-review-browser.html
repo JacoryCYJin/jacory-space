@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>每日过词器 · 浏览器验证</title>
+<body>
+  <h1>浏览器验证专用</h1>
+  <p>仅使用合成测试词，不读取 Notion。不会进入产品构建。使用单独的测试浏览器页。</p>
+  <button id="seed">载入两条合成测试词并验证复习</button>
+  <button id="clear">清除测试进度并返回真实页面</button>
+  <p><a href="?desktop">查看 1440px 桌面布局</a></p>
+  <script type="module">
+    import { createSession, STORAGE_KEY } from '/src/lib/word-review/session.js'
+    const viewId = '401b7127-7273-80a1-96f9-000c4cc7c28f'
+    document.querySelector('#seed').onclick = () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(createSession({
+        viewId, viewName: '浏览器验证 · 合成词表', loadedAt: new Date().toISOString(),
+        words: [
+          { id: 'test-sample', word: 'sample', meaning: [{ text: 'n. ', bold: false }, { text: '样本', bold: true }, { text: '；样品', bold: false }] },
+          { id: 'test-example', word: 'example', meaning: [{ text: 'n. 例子；范例', bold: false }] },
+        ],
+      })))
+      location.assign('/tools/stubborn-words')
+    }
+    document.querySelector('#clear').onclick = () => {
+      localStorage.removeItem(STORAGE_KEY)
+      location.assign('/tools/stubborn-words')
+    }
+    if (new URLSearchParams(location.search).has('desktop')) {
+      const frame = document.createElement('iframe')
+      frame.title = '1440px 桌面验证'
+      frame.src = '/tools/stubborn-words'
+      frame.style.cssText = 'width:1440px;height:1100px;border:0'
+      frame.style.zoom = Math.min(1, (window.innerWidth - 16) / 1440)
+      document.body.append(frame)
+    }
+  </script>
+</body>
+</html>

@@ -1,5 +1,6 @@
 import interfaceMessages from './interface'
 import reading from './reading'
+import words from './words'
 import common from './common'
 import home from './home'
 import tools from './tools'
@@ -13,6 +14,7 @@ import library from './library'
 export default {
   ...interfaceMessages,
   ...reading,
+  ...words,
   ...common,
   ...home,
   ...tools,

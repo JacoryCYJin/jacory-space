@@ -88,6 +88,11 @@ let toolsContext = null
 
 const projects = computed(() => [
   {
+    id: '008', no: '008', title: t('words.title'), layer: 'TOOLS', category: 'tool', status: 'wip',
+    pos: [3.7, -0.2], description: t('words.toolDescription'),
+    stack: ['Notion', 'Vue'], version: 'v0.1.0', updated: '2026.10.22', href: '/tools/stubborn-words'
+  },
+  {
     id: '007', no: '007', title: t('reading.title'), layer: 'TOOLS', category: 'tool', status: 'wip',
     pos: [6.0, 1.8], description: t('reading.toolDescription'),
     stack: ['Reading', 'Markdown'], version: 'v0.1.0', updated: '2026.09.24', href: '/tools/reading'
