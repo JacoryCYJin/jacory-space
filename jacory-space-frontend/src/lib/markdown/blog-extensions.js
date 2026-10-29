@@ -58,7 +58,28 @@ function hydrateLinkPreview(block, previews) {
   }
 }
 
+export function buildWikiLinkIndex(postMentions = {}) {
+  const index = new Map()
+  for (const [slug, post] of Object.entries(postMentions)) {
+    const aliases = Array.isArray(post.aliases) ? post.aliases : [post.aliases]
+    for (const name of [slug, post.title, ...aliases]) {
+      if (typeof name !== 'string' || !name.trim()) continue
+      const key = name.trim()
+      // Ambiguous names stay unresolved instead of depending on article order.
+      if (index.has(key) && index.get(key) !== slug) index.set(key, null)
+      else if (!index.has(key)) index.set(key, slug)
+    }
+  }
+  return index
+}
+
 function hydrateInlineToken(token, context) {
+  if (token.type === 'wikiLink') {
+    const slug = context.wikiLinks.get(token.target)
+    return slug
+      ? { type: 'link', value: token.value, href: `/blog/${encodeURIComponent(slug)}` }
+      : { type: 'text', value: token.raw }
+  }
   if (token.type === 'linkMention' && token.url) {
     const preview = linkPreviewForUrl(context.linkPreviews, token.url)
     return {
@@ -164,7 +185,11 @@ function hydrateBlock(block, context) {
 }
 
 export function hydrateBlocks(blocks, context = {}) {
-  return blocks.map((block) => hydrateBlock(block, context))
+  const resolvedContext = {
+    ...context,
+    wikiLinks: context.wikiLinks ?? buildWikiLinkIndex(context.postMentions),
+  }
+  return blocks.map((block) => hydrateBlock(block, resolvedContext))
 }
 
 function pad2(n) {

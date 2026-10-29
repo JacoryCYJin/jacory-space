@@ -1,5 +1,7 @@
 ---
 title: "Skill 框架调研：按需加载的专项能力包"
+aliases:
+  - "Skill 框架调研"
 description: "Skill 是按需加载的专项能力包，用来封装某类任务的做法、资料、脚本和模板。它和 Rule 的区别是：Rule 是长期约束，Skill 是任务触发后才加载的执行说明，最关键的设计点是 description。"
 date: "2026.06.17"
 category: "research"
