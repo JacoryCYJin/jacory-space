@@ -28,7 +28,8 @@ function listMatch(line) {
 function appendContinuation(item, line) {
   const value = line.trim()
   if (!value) return
-  appendText(item.inlines, ` ${value}`)
+  appendText(item.inlines, ' ')
+  item.inlines.push(...parseInline(value))
 }
 
 function parseList(lines, start, baseIndent) {
@@ -108,12 +109,23 @@ function parseImage(line) {
 }
 
 function splitTableRow(line) {
-  return line
-    .trim()
-    .replace(/^\|/, '')
-    .replace(/\|$/, '')
-    .split('|')
-    .map((cell) => cell.trim())
+  const source = line.trim().replace(/^\|/, '').replace(/\|$/, '')
+  const cells = ['']
+  let cursor = 0
+  while (cursor < source.length) {
+    const rest = source.slice(cursor)
+    // Keep pipes in code, escapes and wikilinks inside their table cell.
+    const protectedText = /^(?:\\.|`[^`]+`|\[\[[^\[\]\n]+\]\])/.exec(rest)
+    if (protectedText) {
+      cells[cells.length - 1] += protectedText[0]
+      cursor += protectedText[0].length
+    } else {
+      if (rest[0] === '|') cells.push('')
+      else cells[cells.length - 1] += rest[0]
+      cursor += 1
+    }
+  }
+  return cells.map((cell) => cell.trim())
 }
 
 function isBlockStart(line) {

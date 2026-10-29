@@ -57,16 +57,16 @@ function parseFrontmatter(raw, fileName) {
     const [, key, rawValue] = kv
     const value = rawValue.trim()
 
-    if (key === 'tags' && !value) {
+    if ((key === 'tags' || key === 'aliases') && !value) {
       const tags = []
       let cursor = i + 1
       while (cursor < lines.length) {
         const item = /^\s*-\s+(.*)$/.exec(lines[cursor])
         if (!item) break
-        tags.push(item[1])
+        tags.push(key === 'aliases' ? stripQuotes(item[1]) : item[1])
         cursor += 1
       }
-      frontmatter.tags = tags
+      frontmatter[key] = tags
       i = cursor - 1
       continue
     }
@@ -80,6 +80,9 @@ function parseFrontmatter(raw, fileName) {
   }
 
   const tags = parseTagDefinitions(frontmatter.tags)
+  frontmatter.aliases = Array.isArray(frontmatter.aliases)
+    ? frontmatter.aliases
+    : frontmatter.aliases ? [frontmatter.aliases] : []
   frontmatter.tags = tags.map((tag) => tag.name)
   frontmatter.tagColors = Object.fromEntries(tags.filter((tag) => tag.color).map((tag) => [tag.name, tag.color]))
 
@@ -149,6 +152,7 @@ function toMeta(slug, frontmatter) {
     slug,
     index: frontmatter.index,
     title: frontmatter.title,
+    aliases: frontmatter.aliases,
     description: frontmatter.description,
     date: frontmatter.date,
     category: category.slug,

@@ -18,7 +18,7 @@ function trimTrailingUrlPunctuation(value) {
 
 // Handles escapes, `code`, **strong**, *em*, ~~del~~, ==mark==,
 // @color[token][text], @mark[token][text], @accent[text], @link[href],
-// @post[slug], [text](href), and bare http(s) URLs.
+// @post[slug], [[target|label]], [text](href), and bare http(s) URLs.
 export function parseInline(text) {
   const tokens = []
   let cursor = 0
@@ -42,6 +42,18 @@ export function parseInline(text) {
     if (code) {
       tokens.push({ type: 'code', value: code[1] })
       cursor += code[0].length
+      continue
+    }
+
+    const wikiLink = /^\[\[([^\[\]\n|]+)(?:\|([^\[\]\n|]+))?\]\]/.exec(rest)
+    if (wikiLink && wikiLink[1].trim() && (wikiLink[2] === undefined || wikiLink[2].trim())) {
+      tokens.push({
+        type: 'wikiLink',
+        target: wikiLink[1].trim(),
+        value: (wikiLink[2] ?? wikiLink[1]).trim(),
+        raw: wikiLink[0],
+      })
+      cursor += wikiLink[0].length
       continue
     }
 

@@ -272,7 +272,7 @@ readTime: "14 MIN"
 - 关键原则：**把 AI 可能需要猜的东西写清楚，不需要猜的东西不用写**
 
 ## 与 Rule、Skill 的关系
-这篇笔记讨论的结构化 Prompt 方法，和 [[Rule 框架调研]]、[[Skill 框架调研]] 是互补关系：
+这篇笔记讨论的结构化 Prompt 方法，和 [[Rule 框架调研|Rule 框架调研]]、[[Skill 框架调研|Skill 框架调研]] 是互补关系：
 
 | 机制 | 性质 | 时效 | 适用场景 |
 |------|------|------|----------|
@@ -303,4 +303,4 @@ readTime: "14 MIN"
 - Cursor Rules：awesome-cursorrules 社区最佳实践：https://github.com/PatrickJS/awesome-cursorrules
 - Agent Skills 开放标准：https://agentskills.io
 - Open AI Codex CLI 文档：https://openai.github.io/codex/
-- 本 vault 已有笔记：[[Rule 框架调研]]、[[Skill 框架调研]]、[[Harness 框架调研]]
+- 本 vault 已有笔记：[[Rule 框架调研|Rule 框架调研]]、[[Skill 框架调研|Skill 框架调研]]、[[Harness 框架调研|Harness 框架调研]]

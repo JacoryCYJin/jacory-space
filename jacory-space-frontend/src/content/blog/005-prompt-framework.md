@@ -1,5 +1,7 @@
 ---
 title: "Prompt 框架调研：把任务规格交给模型"
+aliases:
+  - "Prompt 框架调研"
 description: "Prompt 是本次任务规格，用来把目标、输入、约束、输出和评估标准传给模型。主流做法已从「写一句提示词」变成「结构化 prompt + 上下文组织 + 输出约束 + eval 迭代」。"
 date: "2026.06.18"
 category: "research"

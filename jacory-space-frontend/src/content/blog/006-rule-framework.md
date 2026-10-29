@@ -1,5 +1,7 @@
 ---
 title: "Rule 框架调研：长期生效的行为约束"
+aliases:
+  - "Rule 框架调研"
 description: "Rule 是长期生效的行为约束，用来告诉 Agent 持续遵守什么。成熟 Rule 架构的核心是分层：全局规则、项目规则、路径规则、本地私有规则、团队规则。"
 date: "2026.06.18"
 category: "research"
